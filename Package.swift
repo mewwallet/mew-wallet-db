@@ -15,7 +15,7 @@ let package = Package(
     .package(name: "mdbx-ios", url: "https://github.com/Foboz/mdbx-ios.git", .upToNextMinor(from: "1.0.7"))
   ],
   targets: [
-    .target(name: "mew-wallet-db", dependencies: [], path: "Sources"),
+    .target(name: "mew-wallet-db", dependencies: ["mdbx-ios"], path: "Sources"),
     .testTarget(name: "mew-wallet-db-tests", dependencies: ["mew-wallet-db"]),
   ]
 )
