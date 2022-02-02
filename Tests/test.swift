@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import MEWwalletDB
+@testable import mew_wallet_db
 
 private let testJson = """
 {
@@ -263,7 +263,7 @@ private struct ArrayResult<T: Codable>: Codable {
 
 private let projectId = "0x00"
 
-final class MEWwalletDBTests: XCTestCase {
+final class mew_wallet_db_tests: XCTestCase {
   var prices: [Price] = []
   
   lazy var df: DateFormatter = {
