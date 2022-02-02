@@ -9,7 +9,7 @@ let package = Package(
     .macOS(.v10_13),
   ],
   products: [
-    .library(name: "mew-wallet-db", targets: ["mew-wallet-db"])
+    .library(name: "MEWwalletDB", targets: ["mew-wallet-db"])
   ],
   dependencies: [
     .package(name: "mdbx-ios", url: "https://github.com/Foboz/mdbx-ios.git", .upToNextMinor(from: "1.0.7"))
