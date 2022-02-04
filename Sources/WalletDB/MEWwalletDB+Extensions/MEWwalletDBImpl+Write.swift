@@ -11,14 +11,10 @@ import OSLog
 
 public extension MEWwalletDBImpl {
   func writeAsync(table: MDBXTable, key: MDBXKey, value: Data, completionBlock: @escaping (Bool) -> MDBXWriteAction) {
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: writeLogger, name: "writeAsync of value", "to table: %{private}@", table.rawValue)
-    }
+    os_signpost(.begin, log: writeLogger, name: "writeAsync of value", "to table: %{private}@", table.rawValue)
     writeWorker.async { [weak self] in
       guard let self = self else {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "writeAsync of value", "aborted")
-        }
+        os_signpost(.end, log: writeLogger, name: "writeAsync of value", "aborted")
         return
       }
       
@@ -33,20 +29,14 @@ public extension MEWwalletDBImpl {
           flags: [.upsert]
         )
         
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: writeLogger, name: "writeAsync of value", "put finished")
-        }
+        os_signpost(.event, log: writeLogger, name: "writeAsync of value", "put finished")
         
         let action = completionBlock(true)
         try self.process(writeAction: action, table: table)
         
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "writeAsync of value", "done")
-        }
+        os_signpost(.end, log: writeLogger, name: "writeAsync of value", "done")
       } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "writeAsync of value", "Error: %{private}@", error.localizedDescription)
-        }
+        os_signpost(.end, log: writeLogger, name: "writeAsync of value", "Error: %{private}@", error.localizedDescription)
         os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
         _ = completionBlock(false)
       }
@@ -54,14 +44,10 @@ public extension MEWwalletDBImpl {
   }
   
   func writeAsync(table: MDBXTable, key: MDBXKey, object: MDBXObject, completionBlock: @escaping (Bool) -> MDBXWriteAction) {
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: writeLogger, name: "writeAsync of Object", "to table: %{private}@", table.rawValue)
-    }
+    os_signpost(.begin, log: writeLogger, name: "writeAsync of Object", "to table: %{private}@", table.rawValue)
     writeWorker.async { [weak self] in
       guard let self = self else {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "writeAsync of Object", "aborted")
-        }
+        os_signpost(.end, log: writeLogger, name: "writeAsync of Object", "aborted")
         return
       }
       
@@ -76,20 +62,14 @@ public extension MEWwalletDBImpl {
           flags: [.upsert]
         )
         
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: writeLogger, name: "writeAsync of object", "put finished")
-        }
+        os_signpost(.event, log: writeLogger, name: "writeAsync of object", "put finished")
         
         let action = completionBlock(true)
         try self.process(writeAction: action, table: table)
         
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "writeAsync of object", "done")
-        }
+        os_signpost(.end, log: writeLogger, name: "writeAsync of object", "done")
       } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "writeAsync of object", "Error: %{private}@", error.localizedDescription)
-        }
+        os_signpost(.end, log: writeLogger, name: "writeAsync of object", "Error: %{private}@", error.localizedDescription)
         os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
         _ = completionBlock(false)
       }
@@ -101,9 +81,7 @@ public extension MEWwalletDBImpl {
   }
   
   func write(table: MDBXTable, key: MDBXKey, value: Data) throws {
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: writeLogger, name: "write of value", "to table: %{private}@", table.rawValue)
-    }
+    os_signpost(.begin, log: writeLogger, name: "write of value", "to table: %{private}@", table.rawValue)
     var writeError: Error?
     writeWorker.sync {
       do {
@@ -116,101 +94,70 @@ public extension MEWwalletDBImpl {
           database: db,
           flags: [.upsert]
         )
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "write of value", "done")
-        }
+        os_signpost(.end, log: writeLogger, name: "write of value", "done")
       } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "write of value", "Error: %{private}@", error.localizedDescription)
-        }
+        os_signpost(.end, log: writeLogger, name: "write of value", "Error: %{private}@", error.localizedDescription)
         os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
         writeError = error
       }
     }
     if let error = writeError { throw error }
   }
-
+  
   func writeIfNotExists<T: Encodable>(table: MDBXTable, key: MDBXKey, value: T) throws {
     try writeIfNotExists(table: table, key: key, value: try encoder.encode(value))
   }
   
   func writeIfNotExists(table: MDBXTable, key: MDBXKey, value: Data) throws {
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: writeLogger, name: "write of value if not exists", "to table: %{private}@", table.rawValue)
-    }
+    os_signpost(.begin, log: writeLogger, name: "write of value if not exists", "to table: %{private}@", table.rawValue)
+    
     var writeError: Error?
-    readWorker.sync { [weak self] in
-      guard let self = self else { return }
-      
-      do {
-        try self.readTransaction.renew()
-        defer {
-          try? self.readTransaction.reset()
+    
+    do {
+      let _ = try self.read(key: key, table: table)
+    } catch MDBXError.notFound {
+      self.writeWorker.sync {
+        do {
+          var key = key.key
+          var value = value
+          let db = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
+          try self.writeTransaction.put(
+            value: &value,
+            forKey: &key,
+            database: db,
+            flags: [.upsert]
+          )
+          os_signpost(.end, log: writeLogger, name: "write of value", "done")
+        } catch {
+          os_signpost(.end, log: writeLogger, name: "write of value", "Error: %{private}@", error.localizedDescription)
+          os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
+          writeError = error
         }
-        let db = try self.prepareTable(table: table, transaction: self.readTransaction, create: false)
-        var key = key.key
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: writeLogger, name: "read", "ready for read")
-        }
-        let _ = try self.readTransaction.getValue(for: &key, database: db)
-      } catch MDBXError.notFound {
-        self.writeWorker.sync {
-          do {
-            var key = key.key
-            var value = value
-            let db = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
-            try self.writeTransaction.put(
-              value: &value,
-              forKey: &key,
-              database: db,
-              flags: [.upsert]
-            )
-            if #available(iOS 12.0, *) {
-              os_signpost(.end, log: writeLogger, name: "write of value", "done")
-            }
-          } catch {
-            if #available(iOS 12.0, *) {
-              os_signpost(.end, log: writeLogger, name: "write of value", "Error: %{private}@", error.localizedDescription)
-            }
-            os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
-            writeError = error
-          }
-        }
-      } catch {
-        writeError = error
       }
+    } catch {
+      writeError = error
     }
     if let error = writeError { throw error }
-
   }
   
   func commit(table: MDBXTable) {
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: writeLogger, name: "commit", "to table: %{private}@", table.rawValue)
-    }
+    os_signpost(.begin, log: writeLogger, name: "commit", "to table: %{private}@", table.rawValue)
     
     writeWorker.sync { [weak self] in
       guard let self = self else {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "commit", "aborted")
-        }
+        os_signpost(.end, log: writeLogger, name: "commit", "aborted")
         return
       }
       
       do {
         let _ = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
         try self.writeTransaction.commit()
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: writeLogger, name: "commit", "commited")
-        }
+        os_signpost(.event, log: writeLogger, name: "commit", "commited")
         try self.beginTransaction(transaction: self.writeTransaction)
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "commit", "re-begin transaction")
-        }
+        os_signpost(.end, log: writeLogger, name: "commit", "re-begin transaction")
+        
       } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: writeLogger, name: "commit", "Error: %{private}@", error.localizedDescription)
-        }
+        os_signpost(.end, log: writeLogger, name: "commit", "Error: %{private}@", error.localizedDescription)
         os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
       }
     }

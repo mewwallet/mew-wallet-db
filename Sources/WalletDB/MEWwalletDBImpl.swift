@@ -23,9 +23,6 @@ public final class MEWwalletDBImpl: WalletDB {
   internal let writeWorker: BackgroundWorker = .init()
   internal var writeTransaction: MDBXTransaction!
   
-  internal let readWorker: BackgroundWorker = .init()
-  internal var readTransaction: MDBXTransaction!
-  
   internal let encoder: JSONEncoder
   internal let decoder: JSONDecoder
   
@@ -33,7 +30,6 @@ public final class MEWwalletDBImpl: WalletDB {
     self.encoder = encoder
     self.decoder = decoder
     writeWorker.name = "writer"
-    readWorker.name = "reader"
   }
   
   deinit {
