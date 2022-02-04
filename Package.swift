@@ -6,7 +6,7 @@ let package = Package(
   name: "mew-wallet-db",
   platforms: [
     .iOS(.v13),
-    .macOS(.v10_13),
+    .macOS(.v10_15),
   ],
   products: [
     .library(name: "mew-wallet-db", targets: ["mew-wallet-db"])
