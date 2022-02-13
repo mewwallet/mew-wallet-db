@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message NetworkError {
+  string error = 1; // Error description
+  repeated string messages = 2; // Optional: Messages
+}

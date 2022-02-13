@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+message PurchaseHistoryResponse {
+  repeated TransactionIdPB results = 1;
+  string pagination_token = 2;
+}
+
+message PurchaseProvidersPlatformAndISOResponse {
+  string web = 1;
+}
+
+message QuoteAndOrderForPurchasingETHViaSimplexResponse {
+  string url = 1;
+  FormPB form = 2;
+  string form_encoded = 3;
+  int32 content_length = 4;
+}
+
+message PurchasProvidersAndLimitsAndISOResponse {
+  repeated ProviderPB providers = 1;
+}
+
+message ProviderPB {
+  string name = 1;
+  repeated string fiat_currencies = 2;
+  repeated string crypto_currencies = 3;
+  bool ach = 4;
+  repeated PricePB prices = 5;
+  repeated LimitPB limits = 6;
+  repeated RatePB conversion_rates = 7;
+}
+
+
+message PricePB {
+  string fiat_currency = 1;
+  string crypto_currency = 2;
+  string price = 3;
+}
+
+message LimitPB {
+  string type = 1;
+  string fiat_currency = 2;
+  LimitInternalPB limit = 3;
+}
+
+message LimitInternalPB {
+  string min = 1;
+  string max = 2;
+}
+
+message RatePB {
+  string fiat_currency = 1;
+  string exchange_rate = 2;
+}
+
+message FormPB {
+  string version = 1;
+  string payment_flow_type = 2;
+  string return_url = 3;
+  string quote_id = 4;
+  string payment_id = 5;
+  string user_id = 6;
+  string destination_wallet_address = 7;
+  string destination_wallet_currency = 8;
+  string fiat_total_amount_amount = 9;
+  string fiat_total_amount_currency = 10;
+  int32 digital_total_amount_amount = 11;
+  string digital_total_amount_currency = 12;
+}
+
+message TransactionIdPB {
+  string transaction_id = 1;
+  string fiat_amount = 2;
+  string fiat_currency = 3;
+  string crypto_amount = 4;
+  string timestamp = 5;
+  string status = 6;
+  string provider = 7;
+}
+

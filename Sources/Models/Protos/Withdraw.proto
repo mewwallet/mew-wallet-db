@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message WithdrawResponse {
+  string amount = 1; 
+  string final_amount = 2; 
+  string minimum_deposit = 3; 
+  string ren_fee_percentage = 4; 
+  string mew_fee_percentage = 5; 
+  string total_fee_percentage = 6; 
+  string transfer_fee = 7; 
+}
