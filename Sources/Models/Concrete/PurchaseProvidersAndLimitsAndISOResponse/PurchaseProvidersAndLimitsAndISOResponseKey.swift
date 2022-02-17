@@ -2,7 +2,7 @@
 
 import Foundation
 
-public final class WithdrawResponseKey: MDBXKey {
+public final class PurchaseProvidersAndLimitsAndISOResponseKey: MDBXKey {
     public var key: Data = Data()
     
     public var projectId: Data {

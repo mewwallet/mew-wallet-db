@@ -23,5 +23,7 @@ public enum MDBXTable: String, CaseIterable {
   case recipient = "Recipient_0"
   case token = "Token_0"
   case balance = "Balance_0"
-  case withdrawResponse = "WithdrawResponse_0"
+  case withdrawResponse = "WithdrawResponse_0"    
+  case transactionsHistoryResponse = "TransactionsHistoryResponse_0"
+  case providersPBDResponse = "ProvidersPBD"
 }

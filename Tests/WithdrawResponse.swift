@@ -6,13 +6,13 @@ import SwiftProtobuf
 
 private let testJson = """
 {
-    amount: "0",
-    final_amount: "0",
-    minimum_deposit: "0.00001355",
-    ren_fee_percentage: "0.001",
-    mew_fee_percentage: "0.01",
-    total_fee_percentage: "0.011",
-    transfer_fee: "0.000008"
+    "amount": "0",
+    "final_amount": "0",
+    "minimum_deposit": "0.00001355",
+    "ren_fee_percentage": "0.001",
+    "mew_fee_percentage": "0.01",
+    "total_fee_percentage": "0.011",
+    "transfer_fee": "0.000008"
 }
 """
 
@@ -43,7 +43,6 @@ final class withdraw_response_tests: XCTestCase {
         super.setUp()
         db = MEWwalletDBImpl(encoder: self.encoder, decoder: self.decoder)
         db.delete(databaseName: "test")
-        withdrawResponseData = WithdrawResponse()
         
         guard let data = testJson.data(using: .utf8) else {
             XCTFail("Invalid json")
@@ -51,11 +50,17 @@ final class withdraw_response_tests: XCTestCase {
         }
         
         do {
-            self.withdrawResponseData = try WithdrawResponse(jsonUTF8Data: data)
             try self.db.start(databaseName: "test", tables: MDBXTable.allCases)
         } catch {
             XCTFail(error.localizedDescription)
         }
+        
+        do {
+            self.withdrawResponseData = try WithdrawResponse(jsonUTF8Data: data)
+        } catch {
+            XCTFail("withdraw response data error: \(error.localizedDescription)")
+        }
+        
     }
     
     override func tearDown() {
@@ -65,44 +70,43 @@ final class withdraw_response_tests: XCTestCase {
     
     func test() {
         
-        XCTAssert("1" == "1")
-//        let expectation = XCTestExpectation()
-//        let key = WithdrawResponseKey()
-
-//        writeWithdrawResponse {
-//            self.db.commit(table: .withdrawResponse)
-////            self.db.readAsync(key: key.key, table: .withdrawResponse) { withdrawResponseData in
-////
-////                MDBXObject
-////                XCTAssert(withdrawResponseData.amount == self.withdrawResponseData.amount)
-////            }
-//        }
+        writeWithdrawResponse {
+            self.db.commit(table: .withdrawResponse)
+            let key = WithdrawResponseKey(projectId: .eth, id: "000000")
+            self.db.readAsync(key: key, table: .withdrawResponse) { withdrawResponseData in
+                guard let _ = withdrawResponseData else {
+                    print("withdraw response data is error")
+                    return
+                }
+            }
+        }
         
     }
     
-//    private func writeWithdrawResponse(completionBlock: @escaping () -> Void) {
-//
-//        let key = WithdrawResponseKey()
-//
-//        do {
-//            //let encoded = try! encoder.encode($0.element)
-//        } catch {
-//
-//        }
-//
-//        db.writeAsync(table: .withdrawResponse, key: key, value: encoded) { success -> MDBXWriteAction in
-//            switch success {
-//            case true:
-//                debugPrint("================")
-//                debugPrint("Successful write (WithdrawResponse)")
-//                debugPrint("================")
-//            case false:
-//                XCTFail("Failed to write data")
-//            }
-//            return .none
-//
-//        }
-//
-//    }
+    private func writeWithdrawResponse(completionBlock: @escaping () -> Void) {
+
+        let key = WithdrawResponseKey(projectId: .eth, id: "000000")
+
+        guard let data = testJson.data(using: .utf8) else {
+            XCTFail("Invalid json")
+            return
+        }
+        
+        db.writeAsync(table: .withdrawResponse, key: key, value: data) { success -> MDBXWriteAction in
+            switch success {
+            case true:
+                debugPrint("================")
+                debugPrint("Successful write (WithdrawResponse)")
+                debugPrint("================")
+                completionBlock()
+            case false:
+                completionBlock()
+                XCTFail("Failed to write data")
+                
+            }
+            return .none
+        }
+
+    }
 
 }

@@ -73,7 +73,7 @@ struct QuoteAndOrderForPurchasingETHViaSimplexResponse {
   fileprivate var _form: FormPB? = nil
 }
 
-struct PurchasProvidersAndLimitsAndISOResponse {
+struct PurchaseProvidersAndLimitsAndISOResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -362,8 +362,8 @@ extension QuoteAndOrderForPurchasingETHViaSimplexResponse: SwiftProtobuf.Message
   }
 }
 
-extension PurchasProvidersAndLimitsAndISOResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "PurchasProvidersAndLimitsAndISOResponse"
+extension PurchaseProvidersAndLimitsAndISOResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "PurchaseProvidersAndLimitsAndISOResponse"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "providers"),
   ]
@@ -387,7 +387,7 @@ extension PurchasProvidersAndLimitsAndISOResponse: SwiftProtobuf.Message, SwiftP
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: PurchasProvidersAndLimitsAndISOResponse, rhs: PurchasProvidersAndLimitsAndISOResponse) -> Bool {
+  static func ==(lhs: PurchaseProvidersAndLimitsAndISOResponse, rhs: PurchaseProvidersAndLimitsAndISOResponse) -> Bool {
     if lhs.providers != rhs.providers {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

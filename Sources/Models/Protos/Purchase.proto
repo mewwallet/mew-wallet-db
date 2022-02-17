@@ -16,7 +16,7 @@ message QuoteAndOrderForPurchasingETHViaSimplexResponse {
   int32 content_length = 4;
 }
 
-message PurchasProvidersAndLimitsAndISOResponse {
+message PurchaseProvidersAndLimitsAndISOResponse {
   repeated ProviderPB providers = 1;
 }
 
