@@ -16,7 +16,7 @@ private let testJson = """
 }
 """
 
-final class withdraw_response_tests: XCTestCase {
+final class transactions_response_tests: XCTestCase {
     
     private lazy var df: DateFormatter = {
         let df = DateFormatter()
@@ -38,9 +38,9 @@ final class withdraw_response_tests: XCTestCase {
     
     private var withdrawResponseData: WithdrawResponse!
     private var db: MEWwalletDBImpl!
-    let key = WithdrawResponseKey(projectId: .eth, id: "000000")
-    private let table: MDBXTable = .withdrawResponse
-
+    private let key = WithdrawResponseKey(projectId: .eth, id: "000000")
+    private let table: MDBXTable = .transactionsHistoryResponse
+    
     override func setUp() {
         super.setUp()
         db = MEWwalletDBImpl(encoder: self.encoder, decoder: self.decoder)
@@ -73,21 +73,13 @@ final class withdraw_response_tests: XCTestCase {
     func test() {
         
         writeWithdrawResponse {
-            self.db.commit(table: .withdrawResponse)
+            self.db.commit(table: self.table)
             
-            guard let data = try? self.db.read(key: self.key, table: self.table) else {
-                XCTFail("withdraw response read data error")
-                return
-            }
-            
-            guard let  withdrawResponseData_ = try? WithdrawResponse(jsonUTF8Data: data) else {
-                XCTFail("withdraw response serialize to json data error")
-                return
-            }
-                
-            guard withdrawResponseData_.minimumDeposit == self.withdrawResponseData.minimumDeposit else {
-                XCTFail("Invalid withdraw response data")
-                return
+            self.db.readAsync(key: self.key, table: self.table) { withdrawResponseData in
+                guard let _ = withdrawResponseData else {
+                    print("withdraw response data is error")
+                    return
+                }
             }
         }
         
@@ -100,7 +92,7 @@ final class withdraw_response_tests: XCTestCase {
             return
         }
         
-        db.writeAsync(table: self.table, key: self.key, value: data) { success -> MDBXWriteAction in
+        db.writeAsync(table: .withdrawResponse, key: self.key, value: data) { success -> MDBXWriteAction in
             switch success {
             case true:
                 debugPrint("================")

@@ -68,10 +68,6 @@ final class purchas_providers_limits_iso_response_tests: XCTestCase {
             XCTFail("Invalid json")
             return
         }
-        
-        if let str = String(data: data, encoding: .utf8) {
-            print("str:\(str)")
-        }
 
         do {
             try self.db.start(databaseName: "test", tables: MDBXTable.allCases)
