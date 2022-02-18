@@ -54,7 +54,7 @@
 		<key>mew-wallet-db-tests.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>70</integer>
+			<integer>1</integer>
 		</dict>
 		<key>mew-wallet-db.xcscheme_^#shared#^_</key>
 		<dict>
@@ -85,6 +85,11 @@
 			<true/>
 		</dict>
 		<key>mew-wallet-db-tests</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>mew-wallet-db_mew-wallet-db-tests</key>
 		<dict>
 			<key>primary</key>
 			<true/>

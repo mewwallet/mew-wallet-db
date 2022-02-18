@@ -27,107 +27,107 @@ private let testJson = """
 """
 
 final class transactions_response_tests: XCTestCase {
+  
+  private lazy var df: DateFormatter = {
+    let df = DateFormatter()
+    df.dateFormat = "yyyy-MM-dd'T'hh:mm:ss.SSSZ"
+    return df
+  }()
+  
+  private lazy var decoder: JSONDecoder = {
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .formatted(self.df)
+    return decoder
+  }()
+  
+  private lazy var encoder: JSONEncoder = {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .formatted(self.df)
+    return encoder
+  }()
+  
+  private var db: MEWwalletDBImpl!
+  private let table: MDBXTable = .transactionsHistoryResponse
+  
+  override func setUp() {
+    super.setUp()
+    db = MEWwalletDBImpl(encoder: self.encoder, decoder: self.decoder)
+    db.delete(databaseName: "test")
     
-    private lazy var df: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd'T'hh:mm:ss.SSSZ"
-        return df
-    }()
-    
-    private lazy var decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(self.df)
-        return decoder
-    }()
-    
-    private lazy var encoder: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(self.df)
-        return encoder
-    }()
-    
-    private var db: MEWwalletDBImpl!
-    private let table: MDBXTable = .transactionsHistoryResponse
-    
-    override func setUp() {
-        super.setUp()
-        db = MEWwalletDBImpl(encoder: self.encoder, decoder: self.decoder)
-        db.delete(databaseName: "test")
-                
-        do {
-            try self.db.start(databaseName: "test", tables: MDBXTable.allCases)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
+    do {
+      try self.db.start(databaseName: "test", tables: MDBXTable.allCases)
+    } catch {
+      XCTFail(error.localizedDescription)
     }
     
-    override func tearDown() {
-        super.tearDown()
-        db.delete(databaseName: "test")
+  }
+  
+  override func tearDown() {
+    super.tearDown()
+    db.delete(databaseName: "test")
+  }
+  
+  func test() {
+    
+    guard let data = testJson.data(using: .utf8) else {
+      XCTFail("Invalid json")
+      return
     }
     
-    func test() {
-        
-        guard let data = testJson.data(using: .utf8) else {
-            XCTFail("Invalid json")
-            return
-        }
-
-        guard let transactionsHistoryResponse = try? TransactionsHistoryResponse(jsonUTF8Data: data) else {
-            XCTFail("serialise data error")
-            return
-        }
-        
-        writeToDB(items: transactionsHistoryResponse.transactions) {
-            self.db.commit(table: self.table)
-            
-            for item in transactionsHistoryResponse.transactions {
-                let key = TransactionsHistoryResponseKey(projectId: .eth, id: item.hash)
-                guard let data = try? self.db.read(key: key, table: self.table) else {
-                    XCTFail("withdraw response read data error")
-                    return
-                }
-                
-                guard let  transactionPBData_ = try? TransactionPB(jsonUTF8Data: data) else {
-                    XCTFail("withdraw response serialize to json data error")
-                    return
-                }
-                    
-                guard transactionPBData_.hash == item.hash else {
-                    XCTFail("Invalid withdraw response data")
-                    return
-                }
-            }
-        }
-        
+    guard let transactionsHistoryResponse = try? TransactionsHistoryResponse(jsonUTF8Data: data) else {
+      XCTFail("serialise data error")
+      return
     }
     
-    private func writeToDB(items: [TransactionPB], completionBlock: @escaping () -> Void) {
-
-        guard let data = testJson.data(using: .utf8) else {
-            XCTFail("Invalid json")
-            return
+    writeToDB(items: transactionsHistoryResponse.transactions) {
+      self.db.commit(table: self.table)
+      
+      for item in transactionsHistoryResponse.transactions {
+        let key = TransactionsHistoryResponseKey(projectId: .eth, id: item.hash)
+        guard let data = try? self.db.read(key: key, table: self.table) else {
+          XCTFail("withdraw response read data error")
+          return
         }
         
-        for item in items {
-            let key = TransactionsHistoryResponseKey(projectId: .eth, id: item.hash)
-            db.writeAsync(table: self.table, key: key, value: data) { success -> MDBXWriteAction in
-                switch success {
-                case true:
-                    debugPrint("================")
-                    debugPrint("Successful write tx with hash: \(item.hash)")
-                    debugPrint("================")
-                    completionBlock()
-                case false:
-                    completionBlock()
-                    XCTFail("Failed to write data")
-                    
-                }
-                return .none
-            }
+        guard let  transactionPBData_ = try? TransactionPB(jsonUTF8Data: data) else {
+          XCTFail("withdraw response serialize to json data error")
+          return
         }
-
+        
+        guard transactionPBData_.hash == item.hash else {
+          XCTFail("Invalid withdraw response data")
+          return
+        }
+      }
     }
-
+    
+  }
+  
+  private func writeToDB(items: [TransactionPB], completionBlock: @escaping () -> Void) {
+    
+    guard let data = testJson.data(using: .utf8) else {
+      XCTFail("Invalid json")
+      return
+    }
+    
+    for item in items {
+      let key = TransactionsHistoryResponseKey(projectId: .eth, id: item.hash)
+      db.writeAsync(table: self.table, key: key, value: data) { success -> MDBXWriteAction in
+        switch success {
+        case true:
+          debugPrint("================")
+          debugPrint("Successful write tx with hash: \(item.hash)")
+          debugPrint("================")
+          completionBlock()
+        case false:
+          completionBlock()
+          XCTFail("Failed to write data")
+          
+        }
+        return .none
+      }
+    }
+    
+  }
+  
 }

@@ -38,97 +38,97 @@ private let testJson = """
 
 
 final class purchas_providers_limits_iso_response_tests: XCTestCase {
+  
+  private lazy var df: DateFormatter = {
+    let df = DateFormatter()
+    df.dateFormat = "yyyy-MM-dd'T'hh:mm:ss.SSSZ"
+    return df
+  }()
+  
+  private lazy var decoder: JSONDecoder = {
+    let decoder = JSONDecoder()
+    return decoder
+  }()
+  
+  private lazy var encoder: JSONEncoder = {
+    let encoder = JSONEncoder()
+    return encoder
+  }()
+  
+  private var purchaseProvidersAndLimitsAndISOResponseData: PurchaseProvidersAndLimitsAndISOResponse!
+  private var db: MEWwalletDBImpl!
+  private let key = PurchaseProvidersAndLimitsAndISOResponseKey(projectId: .eth, id: "000000")
+  
+  override func setUp() {
+    super.setUp()
+    db = MEWwalletDBImpl(encoder: self.encoder, decoder: self.decoder)
+    db.delete(databaseName: "test")
     
-    private lazy var df: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd'T'hh:mm:ss.SSSZ"
-        return df
-    }()
-    
-    private lazy var decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        return decoder
-    }()
-    
-    private lazy var encoder: JSONEncoder = {
-        let encoder = JSONEncoder()
-        return encoder
-    }()
-    
-    private var purchaseProvidersAndLimitsAndISOResponseData: PurchaseProvidersAndLimitsAndISOResponse!
-    private var db: MEWwalletDBImpl!
-    private let key = PurchaseProvidersAndLimitsAndISOResponseKey(projectId: .eth, id: "000000")
-    
-    override func setUp() {
-        super.setUp()
-        db = MEWwalletDBImpl(encoder: self.encoder, decoder: self.decoder)
-        db.delete(databaseName: "test")
-        
-        guard let data = testJson.data(using: .utf8) else {
-            XCTFail("Invalid json")
-            return
-        }
-
-        do {
-            try self.db.start(databaseName: "test", tables: MDBXTable.allCases)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
-        
-        if let str = String(data: data, encoding: .utf8) {
-            print(str)
-        }
-        
-        do {
-            self.purchaseProvidersAndLimitsAndISOResponseData = try PurchaseProvidersAndLimitsAndISOResponse(jsonUTF8Data: data)
-        } catch {
-            XCTFail("providers response data error: \(error.localizedDescription)")
-        }
-        
+    guard let data = testJson.data(using: .utf8) else {
+      XCTFail("Invalid json")
+      return
     }
     
-    override func tearDown() {
-        super.tearDown()
-        db.delete(databaseName: "test")
+    do {
+      try self.db.start(databaseName: "test", tables: MDBXTable.allCases)
+    } catch {
+      XCTFail(error.localizedDescription)
     }
     
-    func test() {
-        
-        writeToDB {
-            self.db.commit(table: .providersPBDResponse)
-            self.db.readAsync(key: self.key, table: .providersPBDResponse) { withdrawResponseData in
-                guard let _ = withdrawResponseData else {
-                    print("providers response data is error")
-                    return
-                }
-            }
-        }
-        
+    
+    if let str = String(data: data, encoding: .utf8) {
+      print(str)
     }
     
-    private func writeToDB(completionBlock: @escaping () -> Void) {
-
-        guard let data = testJson.data(using: .utf8) else {
-            XCTFail("Invalid json")
-            return
-        }
-        
-        db.writeAsync(table: .providersPBDResponse, key: key, value: data) { success -> MDBXWriteAction in
-            switch success {
-            case true:
-                debugPrint("================")
-                debugPrint("Successful write (ProvidersResponse)")
-                debugPrint("================")
-                completionBlock()
-            case false:
-                completionBlock()
-                XCTFail("Failed to write data")
-                
-            }
-            return .none
-        }
-
+    do {
+      self.purchaseProvidersAndLimitsAndISOResponseData = try PurchaseProvidersAndLimitsAndISOResponse(jsonUTF8Data: data)
+    } catch {
+      XCTFail("providers response data error: \(error.localizedDescription)")
     }
-
+    
+  }
+  
+  override func tearDown() {
+    super.tearDown()
+    db.delete(databaseName: "test")
+  }
+  
+  func test() {
+    
+    writeToDB {
+      self.db.commit(table: .providersPBDResponse)
+      self.db.readAsync(key: self.key, table: .providersPBDResponse) { withdrawResponseData in
+        guard let _ = withdrawResponseData else {
+          print("providers response data is error")
+          return
+        }
+      }
+    }
+    
+  }
+  
+  private func writeToDB(completionBlock: @escaping () -> Void) {
+    
+    guard let data = testJson.data(using: .utf8) else {
+      XCTFail("Invalid json")
+      return
+    }
+    
+    db.writeAsync(table: .providersPBDResponse, key: key, value: data) { success -> MDBXWriteAction in
+      switch success {
+      case true:
+        debugPrint("================")
+        debugPrint("Successful write (ProvidersResponse)")
+        debugPrint("================")
+        completionBlock()
+      case false:
+        completionBlock()
+        XCTFail("Failed to write data")
+        
+      }
+      return .none
+    }
+    
+  }
+  
 }
