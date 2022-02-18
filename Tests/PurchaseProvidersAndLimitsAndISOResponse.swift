@@ -75,6 +75,11 @@ final class purchas_providers_limits_iso_response_tests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
         
+        
+        if let str = String(data: data, encoding: .utf8) {
+            print(str)
+        }
+        
         do {
             self.purchaseProvidersAndLimitsAndISOResponseData = try PurchaseProvidersAndLimitsAndISOResponse(jsonUTF8Data: data)
         } catch {

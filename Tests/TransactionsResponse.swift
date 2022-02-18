@@ -6,13 +6,23 @@ import SwiftProtobuf
 
 private let testJson = """
 {
-    "amount": "0",
-    "final_amount": "0",
-    "minimum_deposit": "0.00001355",
-    "ren_fee_percentage": "0.001",
-    "mew_fee_percentage": "0.01",
-    "total_fee_percentage": "0.011",
-    "transfer_fee": "0.000008"
+"transactions": [
+  {
+    "hash": "0x977e290e33ae303490f4812622c1f0bd3e01722cc72a925eebc3d1b05f41fb47",
+    "address": "0x4c572fbc03d4a2b683cf4f10ffdcafd00885e108",
+    "contract_address": "0x4c572fbc03d4a2b683cf4f10ffdcafd00885e108",
+    "type": "TRANSFER",
+    "balance": "0x2386f26fc10000",
+    "delta": "0x2386f26fc10000",
+    "from": "0x4c572fbc03d4a2b683cf4f10ffdcafd00885e108",
+    "to": "0x4c572fbc03d4a2b683cf4f10ffdcafd00885e108",
+    "block_hash": "0x977e290e33ae303490f4812622c1f0bd3e01722cc72a925eebc3d1b05f41fb47",
+    "block_number": 6548234,
+    "status": "PENDING",
+    "timestamp": "2019-10-10T20:37:01.000Z",
+    "nonce": 1
+  }
+]
 }
 """
 
@@ -36,31 +46,18 @@ final class transactions_response_tests: XCTestCase {
         return encoder
     }()
     
-    private var withdrawResponseData: WithdrawResponse!
     private var db: MEWwalletDBImpl!
-    private let key = WithdrawResponseKey(projectId: .eth, id: "000000")
     private let table: MDBXTable = .transactionsHistoryResponse
     
     override func setUp() {
         super.setUp()
         db = MEWwalletDBImpl(encoder: self.encoder, decoder: self.decoder)
         db.delete(databaseName: "test")
-        
-        guard let data = testJson.data(using: .utf8) else {
-            XCTFail("Invalid json")
-            return
-        }
-        
+                
         do {
             try self.db.start(databaseName: "test", tables: MDBXTable.allCases)
         } catch {
             XCTFail(error.localizedDescription)
-        }
-        
-        do {
-            self.withdrawResponseData = try WithdrawResponse(jsonUTF8Data: data)
-        } catch {
-            XCTFail("withdraw response data error: \(error.localizedDescription)")
         }
         
     }
@@ -72,12 +69,33 @@ final class transactions_response_tests: XCTestCase {
     
     func test() {
         
-        writeWithdrawResponse {
+        guard let data = testJson.data(using: .utf8) else {
+            XCTFail("Invalid json")
+            return
+        }
+
+        guard let transactionsHistoryResponse = try? TransactionsHistoryResponse(jsonUTF8Data: data) else {
+            XCTFail("serialise data error")
+            return
+        }
+        
+        writeToDB(items: transactionsHistoryResponse.transactions) {
             self.db.commit(table: self.table)
             
-            self.db.readAsync(key: self.key, table: self.table) { withdrawResponseData in
-                guard let _ = withdrawResponseData else {
-                    print("withdraw response data is error")
+            for item in transactionsHistoryResponse.transactions {
+                let key = TransactionsHistoryResponseKey(projectId: .eth, id: item.hash)
+                guard let data = try? self.db.read(key: key, table: self.table) else {
+                    XCTFail("withdraw response read data error")
+                    return
+                }
+                
+                guard let  transactionPBData_ = try? TransactionPB(jsonUTF8Data: data) else {
+                    XCTFail("withdraw response serialize to json data error")
+                    return
+                }
+                    
+                guard transactionPBData_.hash == item.hash else {
+                    XCTFail("Invalid withdraw response data")
                     return
                 }
             }
@@ -85,26 +103,29 @@ final class transactions_response_tests: XCTestCase {
         
     }
     
-    private func writeWithdrawResponse(completionBlock: @escaping () -> Void) {
+    private func writeToDB(items: [TransactionPB], completionBlock: @escaping () -> Void) {
 
         guard let data = testJson.data(using: .utf8) else {
             XCTFail("Invalid json")
             return
         }
         
-        db.writeAsync(table: .withdrawResponse, key: self.key, value: data) { success -> MDBXWriteAction in
-            switch success {
-            case true:
-                debugPrint("================")
-                debugPrint("Successful write (WithdrawResponse)")
-                debugPrint("================")
-                completionBlock()
-            case false:
-                completionBlock()
-                XCTFail("Failed to write data")
-                
+        for item in items {
+            let key = TransactionsHistoryResponseKey(projectId: .eth, id: item.hash)
+            db.writeAsync(table: self.table, key: key, value: data) { success -> MDBXWriteAction in
+                switch success {
+                case true:
+                    debugPrint("================")
+                    debugPrint("Successful write tx with hash: \(item.hash)")
+                    debugPrint("================")
+                    completionBlock()
+                case false:
+                    completionBlock()
+                    XCTFail("Failed to write data")
+                    
+                }
+                return .none
             }
-            return .none
         }
 
     }
