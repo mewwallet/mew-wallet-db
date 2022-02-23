@@ -134,35 +134,23 @@ public extension MEWwalletDBImpl {
   
   func read(key: MDBXKey, table: MDBXTable) throws -> Data? {
     var result: Data?
-    var readError: Error?
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: readLogger, name: "read", "from table: %{private}@", table.rawValue)
-    }
-    readWorker.sync {
-      do {
-        try self.readTransaction.renew()
-        defer {
-          try? self.readTransaction.reset()
-        }
-        let db = try self.prepareTable(table: table, transaction: self.readTransaction, create: false)
-        var key = key.key
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: readLogger, name: "read", "ready for read")
-        }
-        result = try self.readTransaction.getValue(for: &key, database: db)
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "read", "done")
-        }
-      } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "read", "Error: %{private}@", error.localizedDescription)
-        }
-        os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
-        readError = error
-      }
-    }
+    let signpost: StaticString = "read"
+    os_signpost(.begin, log: readLogger, name: signpost, "from table: %{private}@", table.rawValue)
     
-    if let error = readError {
+    do {
+      let transaction = MDBXTransaction(self.environment)
+      try transaction.begin(flags: [.readOnly])
+      defer {
+        try? transaction.abort()
+      }
+      let db = try self.prepareTable(table: table, transaction: transaction, create: false)
+      var key = key.key
+      os_signpost(.event, log: readLogger, name: signpost, "ready for read")
+      result = try transaction.getValue(for: &key, database: db)
+      os_signpost(.end, log: readLogger, name: signpost, "done")
+    } catch {
+      os_signpost(.end, log: readLogger, name: signpost, "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
       throw error
     }
     
