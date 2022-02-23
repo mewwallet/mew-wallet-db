@@ -17,8 +17,10 @@ public protocol WalletDB: AnyObject {
   func fetchAll<T: MDBXObject>(from table: MDBXTable) throws -> [T]
   func fetchRange<T: MDBXObject>(startKey: MDBXKey, endKey: MDBXKey, table: MDBXTable) throws -> [T]
 
-  //  func count(in table: MDBXTable) throws -> Int
+  @available(*, renamed: "read()")
   func readAsync<T: MDBXObject>(key: MDBXKey, table: MDBXTable, completionBlock: @escaping (T?) -> Void)
+  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTable, completionBlock: @escaping (T?) -> Void)
+  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTable) async throws -> T? 
   func read<T: MDBXObject>(key: MDBXKey, table: MDBXTable) throws -> T
   
   // MARK: - Write

@@ -55,23 +55,12 @@ public extension MEWwalletDBImpl {
       }
     }
     
-    readWorker.sync {
-      let readTransaction = MDBXTransaction(environment)
-      self.readTransaction = readTransaction
-      do {
-        try self.readTransaction.begin(flags: [.readOnlyPrepare])
-      } catch {
-        os_log("Error of read transaction: %{private}@", log: lifecycleLogger, type: .error, error.localizedDescription)
-      }
-    }
-    
     guard success else {
       throw MEWwalletDBError.internalError
     }
   }
   
   func stop() {
-    readWorker.stop()
     writeWorker.sync {
       do {
         try self.writeTransaction.abort()

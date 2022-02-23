@@ -417,7 +417,7 @@ final class mew_wallet_db_tests: XCTestCase {
         self.writeDexes {
           do {
             let dexes2: [DexItem] = try self.db.fetchAll(from: .dex)
-            XCTAssert(dexes.count == dexes2.count)
+            XCTAssertEqual(dexes.count, dexes2.count)
             debugPrint("Number after 2nd write: \(dexes2.count)")
             dexExpectation.fulfill()
           } catch {
@@ -732,5 +732,57 @@ final class mew_wallet_db_tests: XCTestCase {
     } catch {
       XCTFail(error.localizedDescription)
     }
+  }
+  
+  func testAwait() {
+    actor AwaitActor {
+      var expectation: XCTestExpectation
+      var count: Int
+      var done: Int = 0
+      
+      init(expectation: XCTestExpectation, count: Int) {
+        self.expectation = expectation
+        self.count = count
+      }
+      
+      func up() {
+        done += 1
+        guard done == count else {
+          return
+        }
+        self.expectation.fulfill()
+      }
+    }
+    
+    let expectation = XCTestExpectation()
+    let readCount = 100000
+    let awaitActor = AwaitActor(expectation: expectation, count: readCount)
+    
+    writePrices {
+      self.db.commit(table: .price)
+      
+      Task {
+        let prices: [Price] = try self.db.fetchAll(from: .price)
+        XCTAssert(prices.count == self.prices.count)
+        debugPrint("Number after write: \(prices.count)")
+        
+        for _ in 0..<readCount {
+          Task {
+            let contractAddress = self.prices[Int(arc4random()) % self.prices.count].tokenMetaKey.contractAddress
+            let tokenMetaKey = TokenMetaKey(projectId: .eth, contractAddress: contractAddress)
+            let priceKey = PriceKey(tokenMetaKey: tokenMetaKey).key
+            
+            do {
+              _ = try await self.db.read(key: priceKey, table: .price)
+              await awaitActor.up()
+            } catch {
+              XCTFail(error.localizedDescription)
+            }
+          }
+        }
+      }
+    }
+    
+    wait(for: [expectation], timeout: 10)
   }
 }
