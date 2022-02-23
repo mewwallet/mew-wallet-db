@@ -1,19 +1,17 @@
 syntax = "proto3";
 
 message TokensAccountRouteResponse {
-  repeated TokenMetaPB tokens = 1;
+  repeated TokenMetaPB featured = 1;
 }
 
 message TokenMetaPB {
   string contract_address = 1;
   string price = 2;
-  string timestamp = 3;
+  string volume_24h = 3;
   string name = 4;
   string symbol = 5;
   int32 decimals = 6;
-  string icon = 7;
-  string icon_png = 8;
-  string website = 9;
-  repeated string sparkline = 10;
+  string timestamp = 7;
+  string icon = 8;
 }
 

@@ -85,17 +85,17 @@ final class transactions_response_tests: XCTestCase {
       for item in transactionsHistoryResponse.transactions {
         let key = TransactionsHistoryResponseKey(projectId: .eth, id: item.hash)
         guard let data = try? self.db.read(key: key, table: self.table) else {
-          XCTFail("withdraw response read data error")
+          XCTFail("response read data error")
           return
         }
         
         guard let  transactionPBData_ = try? TransactionPB(jsonUTF8Data: data) else {
-          XCTFail("withdraw response serialize to json data error")
+          XCTFail("response serialize to json data error")
           return
         }
         
         guard transactionPBData_.hash == item.hash else {
-          XCTFail("Invalid withdraw response data")
+          XCTFail("Invalid response data")
           return
         }
       }
