@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+message DeltaPB {
+  string contract_address = 1;
+  string type = 2;
+  string delta = 3;
+  string from = 4;
+  string to = 5;
+  string status = 6;
+}

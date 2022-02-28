@@ -1,0 +1,6 @@
+syntax = "proto3";
+import "TransactionPB.proto";
+
+message TransactionsHistoryResponse {
+  repeated TransactionPB transactions = 1; //Array transactions
+}

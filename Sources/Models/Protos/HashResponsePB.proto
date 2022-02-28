@@ -1,0 +1,18 @@
+syntax = "proto3";
+import "DeltaPB.proto";
+
+message HashResponsePB {
+  string hash = 1;
+  string block_hash = 2;
+  int32 block_number = 3;
+  string from = 4;
+  string to = 5;
+  string timestamp = 6;
+  string value = 7;
+  string gas = 8;
+  string gas_price = 9;
+  string gas_used = 10;
+  int32 nonce = 11;
+  repeated DeltaPB deltas = 12;
+}
+

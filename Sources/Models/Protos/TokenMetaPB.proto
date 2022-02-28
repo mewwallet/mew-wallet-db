@@ -1,9 +1,5 @@
 syntax = "proto3";
 
-message TokensAccountRouteResponse {
-  repeated TokenMetaPB featured = 1;
-}
-
 message TokenMetaPB {
   string contract_address = 1;
   string price = 2;

@@ -1,4 +1,10 @@
 
+//
+//  PurchaseProvidersAndLimitsAndISOResponseKey.swift
+//
+//
+//  Created by Sergey Kolokolnikov on 02/28/22.
+//
 
 import Foundation
 

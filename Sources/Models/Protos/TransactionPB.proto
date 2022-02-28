@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message TransactionPB {
+  string hash = 1;
+  string address = 2;
+  string contract_address = 3;
+  string type = 4;
+  string balance = 5;
+  string delta = 6;
+  string from = 7;
+  string to = 8;
+  string block_hash = 9;
+  int32 block_number = 10;
+  string status = 11;
+  string timestamp = 12;
+  int32 nonce = 13;
+}
