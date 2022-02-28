@@ -9,7 +9,8 @@ let package = Package(
     .macOS(.v10_13)
   ],
   products: [
-    .library(name: "mew-wallet-db", targets: ["mew-wallet-db"])
+    .library(name: "mew-wallet-db",
+             targets: ["mew-wallet-db"])
   ],
   dependencies: [
     .package(name: "MEWextensions",
@@ -33,7 +34,8 @@ let package = Package(
     .testTarget(name: "mew-wallet-db-tests",
             dependencies: ["mew-wallet-db"],
             path: "Tests",
-            resources: [ .process("marketItems.json"),
-            .process("tokenMetas.json")])
+            resources: [
+              .process("marketItems.json"),
+              .process("tokenMetas.json")])
   ]
 )

@@ -115,7 +115,7 @@ final class tokens_response_tests: XCTestCase {
       self.db.commit(table: self.table)
       
       for item in tokensAccountRouteResponse.featured {
-        let key = TokenResponseKey(projectId: .eth, id: item.contractAddress)
+        let key = TokenMetaKeyV2(projectId: .eth, address: item.contractAddress)
         guard let data = try? self.db.read(key: key, table: self.table) else {
           XCTFail("response read data error")
           return
@@ -143,7 +143,7 @@ final class tokens_response_tests: XCTestCase {
     }
     
     for item in items {
-      let key = TokenResponseKey(projectId: .eth, id: item.contractAddress)
+      let key = TokenMetaKeyV2(projectId: .eth, address: item.contractAddress)
       db.writeAsync(table: self.table, key: key, value: data) { success -> MDBXWriteAction in
         switch success {
         case true:
