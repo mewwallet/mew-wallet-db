@@ -1,4 +1,3 @@
-
 //
 //  WithdrawResponseKey.swift
 //

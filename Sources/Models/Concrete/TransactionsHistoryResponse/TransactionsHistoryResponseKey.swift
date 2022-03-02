@@ -1,4 +1,3 @@
-
 //
 //  TransactionsHistoryResponseKey.swift
 //
