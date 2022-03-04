@@ -23,12 +23,12 @@ public final class DexItem: MDBXObject {
   public let price: Decimal
   public let volume24h: Decimal
   
-  public var meta: TokenMeta? {
-    guard let key = tokenMetaKey else { return nil }
-    return _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
-  }
+//  public var meta: TokenMeta? {
+//    guard let key = tokenMetaKey else { return nil }
+//    return _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
+//  }
   
-  private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
+//  private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
   
   public init(
     symbol: String?,

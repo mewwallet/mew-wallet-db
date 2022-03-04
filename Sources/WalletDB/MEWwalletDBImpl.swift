@@ -16,12 +16,9 @@ public enum MDBXWriteAction {
 }
 
 public final class MEWwalletDBImpl: WalletDB {
-  var environment: MDBXEnvironment!
-  
-  internal var tables: [MDBXTable : MDBXDatabase] = [:]
-  
-  internal let writeWorker: BackgroundWorker = .init()
-  internal var writeTransaction: MDBXTransaction!
+  internal var environment: MDBXEnvironment!
+  internal var tables: [MDBXTableName: MDBXDatabase] = [:]
+  internal var writer: Writer!
   
   internal let encoder: JSONEncoder
   internal let decoder: JSONDecoder
@@ -29,7 +26,6 @@ public final class MEWwalletDBImpl: WalletDB {
   public init(encoder: JSONEncoder, decoder: JSONDecoder) {
     self.encoder = encoder
     self.decoder = decoder
-    writeWorker.name = "writer"
   }
   
   deinit {

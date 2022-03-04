@@ -21,7 +21,7 @@ public final class Token: MDBXObject {
     let key = BalanceKey(address: address, tokenMetaKey: tokenMetaKey)
     return _balance.getData(key: key, policy: .ignoreCache, database: self.database)
   }
-  
+
   private let _tokenMeta = MDBXPointer<TokenMetaKey, TokenMeta>(.tokenMeta)
   public var tokenMeta: TokenMeta? {
     return _tokenMeta.getData(key: tokenMetaKey, database: self.database)

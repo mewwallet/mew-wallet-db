@@ -15,28 +15,28 @@ public final class Recipient: MDBXObject {
   public let address: String
   
   // Create one common table to store all transfers to resolve relationship issues ?
-  private let _fromCompletedTransfers = MDBXRelationship<CompletedTransferKey, CompletedTransfer>(.completedTransfer)
-  public var fromCompletedTransfers: [CompletedTransfer]? {
-    return getTransfers(from: _fromCompletedTransfers)
-  }
+//  private let _fromCompletedTransfers = MDBXRelationship<CompletedTransferKey, CompletedTransfer>(.completedTransfer)
+//  public var fromCompletedTransfers: [CompletedTransfer]? {
+//    return getTransfers(from: _fromCompletedTransfers)
+//  }
+//
+//  private let _ownedCompletedTransfers = MDBXRelationship<CompletedTransferKey, CompletedTransfer>(.completedTransfer)
+//  public var ownedCompletedTransfers: [CompletedTransfer]? {
+//    return getTransfers(from: _ownedCompletedTransfers)
+//  }
+//
+//  private let _toCompletedTransfers = MDBXRelationship<CompletedTransferKey, CompletedTransfer>(.completedTransfer)
+//  public var toCompletedTransfers: [CompletedTransfer]? {
+//    return getTransfers(from: _toCompletedTransfers)
+//  }
   
-  private let _ownedCompletedTransfers = MDBXRelationship<CompletedTransferKey, CompletedTransfer>(.completedTransfer)
-  public var ownedCompletedTransfers: [CompletedTransfer]? {
-    return getTransfers(from: _ownedCompletedTransfers)
-  }
-  
-  private let _toCompletedTransfers = MDBXRelationship<CompletedTransferKey, CompletedTransfer>(.completedTransfer)
-  public var toCompletedTransfers: [CompletedTransfer]? {
-    return getTransfers(from: _toCompletedTransfers)
-  }
-  
-  private let _toSwap = MDBXPointer<RecipientKey, Recipient>(.recipient)
-  public var toSwap: Recipient? {
-    return _toSwap.getData(
-      key: .init(projectId: .eth, address: address),
-      database: self.database
-    )
-  }
+//  private let _toSwap = MDBXPointer<RecipientKey, Recipient>(.recipient)
+//  public var toSwap: Recipient? {
+//    return _toSwap.getData(
+//      key: .init(projectId: .eth, address: address),
+//      database: self.database
+//    )
+//  }
   
   public init(address: String) {
     self.address = address

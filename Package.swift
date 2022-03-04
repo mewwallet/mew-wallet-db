@@ -13,11 +13,14 @@ let package = Package(
   ],
   dependencies: [
     .package(name: "MEWextensions", url: "https://github.com/Foboz/MEWextensions.git", .exact("1.0.9")),
-    .package(name: "mdbx-ios", url: "https://github.com/Foboz/mdbx-ios.git", .upToNextMinor(from: "1.0.7"))
+    .package(name: "mdbx-ios", url: "https://github.com/Foboz/mdbx-ios.git", .branch("feature/engine-update")),
+    .package(name: "swift-algorithms", url: "https://github.com/apple/swift-algorithms.git", .exact("1.0.0"))
   ],
   targets: [
     .target(name: "mew-wallet-db",
-            dependencies: ["mdbx-ios", "MEWextensions"],
+            dependencies: ["mdbx-ios",
+                           .product(name: "Algorithms", package: "swift-algorithms"),
+                           "MEWextensions"],
             path: "Sources"),
     .testTarget(name: "mew-wallet-db-tests",
                 dependencies: ["mew-wallet-db"],

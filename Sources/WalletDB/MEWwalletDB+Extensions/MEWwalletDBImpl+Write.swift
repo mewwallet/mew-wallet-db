@@ -10,168 +10,70 @@ import mdbx_ios
 import OSLog
 
 public extension MEWwalletDBImpl {
-  func writeAsync(table: MDBXTable, key: MDBXKey, value: Data, completionBlock: @escaping (Bool) -> MDBXWriteAction) {
-    os_signpost(.begin, log: writeLogger, name: "writeAsync of value", "to table: %{private}@", table.rawValue)
-    writeWorker.async { [weak self] in
-      guard let self = self else {
-        os_signpost(.end, log: writeLogger, name: "writeAsync of value", "aborted")
-        return
-      }
-      
+  func write(table: MDBXTableName, key: MDBXKey, value: Data, override: Bool = true) async throws {
+    let db = try self.database(for: table)
+    try await self.writer.write(table: db, key: key, value: value, override: override)
+  }
+  
+  func write(table: MDBXTableName, key: MDBXKey, value: MDBXObject, override: Bool = true) async throws {
+    let value = try self.encoder.encode(value)
+    try await self.write(table: table, key: key, value: value, override: override)
+  }
+  
+  func write(table: MDBXTableName, keysAndValues: [(MDBXKey, Data)], override: Bool = true) async throws {
+    let db = try self.database(for: table)
+    try await self.writer.write(table: db, keysAndValues: keysAndValues, override: override)
+  }
+  
+  func write(table: MDBXTableName, keysAndValues: [(MDBXKey, MDBXObject)], override: Bool = true) async throws {
+    let keysAndValues: [(MDBXKey, Data)] = try keysAndValues.map({
+      let data = try self.encoder.encode($0.1)
+      return ($0.0, data)
+    })
+    try await self.write(table: table, keysAndValues: keysAndValues, override: override)
+  }
+  
+  func writeAsync(table: MDBXTableName, key: MDBXKey, value: Data, override: Bool = true, completion: @escaping (Bool) -> Void) {
+    Task {
       do {
-        var key = key.key
-        var value = value
-        let db = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
-        try self.writeTransaction.put(
-          value: &value,
-          forKey: &key,
-          database: db,
-          flags: [.upsert]
-        )
-        
-        os_signpost(.event, log: writeLogger, name: "writeAsync of value", "put finished")
-        
-        let action = completionBlock(true)
-        try self.process(writeAction: action, table: table)
-        
-        os_signpost(.end, log: writeLogger, name: "writeAsync of value", "done")
+        try await self.write(table: table, key: key, value: value, override: override)
+        completion(true)
       } catch {
-        os_signpost(.end, log: writeLogger, name: "writeAsync of value", "Error: %{private}@", error.localizedDescription)
-        os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
-        _ = completionBlock(false)
+        completion(false)
       }
     }
   }
   
-  func writeAsync(table: MDBXTable, key: MDBXKey, object: MDBXObject, completionBlock: @escaping (Bool) -> MDBXWriteAction) {
-    os_signpost(.begin, log: writeLogger, name: "writeAsync of Object", "to table: %{private}@", table.rawValue)
-    writeWorker.async { [weak self] in
-      guard let self = self else {
-        os_signpost(.end, log: writeLogger, name: "writeAsync of Object", "aborted")
-        return
-      }
-      
+  func writeAsync(table: MDBXTableName, key: MDBXKey, value: MDBXObject, override: Bool = true, completion: @escaping (Bool) -> Void) {
+    Task {
       do {
-        var key = key.key
-        var value = try self.encoder.encode(object)
-        let db = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
-        try self.writeTransaction.put(
-          value: &value,
-          forKey: &key,
-          database: db,
-          flags: [.upsert]
-        )
-        
-        os_signpost(.event, log: writeLogger, name: "writeAsync of object", "put finished")
-        
-        let action = completionBlock(true)
-        try self.process(writeAction: action, table: table)
-        
-        os_signpost(.end, log: writeLogger, name: "writeAsync of object", "done")
+        try await self.write(table: table, key: key, value: value, override: override)
+        completion(true)
       } catch {
-        os_signpost(.end, log: writeLogger, name: "writeAsync of object", "Error: %{private}@", error.localizedDescription)
-        os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
-        _ = completionBlock(false)
+        completion(false)
       }
     }
   }
   
-  func write<T: Encodable>(table: MDBXTable, key: MDBXKey, value: T) throws {
-    try write(table: table, key: key, value: try encoder.encode(value))
-  }
-  
-  func write(table: MDBXTable, key: MDBXKey, value: Data) throws {
-    os_signpost(.begin, log: writeLogger, name: "write of value", "to table: %{private}@", table.rawValue)
-    var writeError: Error?
-    writeWorker.sync {
+  func writeAsync(table: MDBXTableName, keysAndValues: [(MDBXKey, Data)], override: Bool = true, completion: @escaping (Bool) -> Void) {
+    Task {
       do {
-        var key = key.key
-        var value = value
-        let db = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
-        try self.writeTransaction.put(
-          value: &value,
-          forKey: &key,
-          database: db,
-          flags: [.upsert]
-        )
-        os_signpost(.end, log: writeLogger, name: "write of value", "done")
+        try await self.write(table: table, keysAndValues: keysAndValues, override: override)
+        completion(true)
       } catch {
-        os_signpost(.end, log: writeLogger, name: "write of value", "Error: %{private}@", error.localizedDescription)
-        os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
-        writeError = error
+        completion(false)
       }
     }
-    if let error = writeError { throw error }
   }
   
-  func writeIfNotExists<T: Encodable>(table: MDBXTable, key: MDBXKey, value: T) throws {
-    try writeIfNotExists(table: table, key: key, value: try encoder.encode(value))
-  }
-  
-  func writeIfNotExists(table: MDBXTable, key: MDBXKey, value: Data) throws {
-    os_signpost(.begin, log: writeLogger, name: "write of value if not exists", "to table: %{private}@", table.rawValue)
-    
-    var writeError: Error?
-    
-    do {
-      let _ = try self.read(key: key, table: table)
-    } catch MDBXError.notFound {
-      self.writeWorker.sync {
-        do {
-          var key = key.key
-          var value = value
-          let db = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
-          try self.writeTransaction.put(
-            value: &value,
-            forKey: &key,
-            database: db,
-            flags: [.upsert]
-          )
-          os_signpost(.end, log: writeLogger, name: "write of value", "done")
-        } catch {
-          os_signpost(.end, log: writeLogger, name: "write of value", "Error: %{private}@", error.localizedDescription)
-          os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
-          writeError = error
-        }
-      }
-    } catch {
-      writeError = error
-    }
-    if let error = writeError { throw error }
-  }
-  
-  func commit(table: MDBXTable) {
-    os_signpost(.begin, log: writeLogger, name: "commit", "to table: %{private}@", table.rawValue)
-    
-    writeWorker.sync { [weak self] in
-      guard let self = self else {
-        os_signpost(.end, log: writeLogger, name: "commit", "aborted")
-        return
-      }
-      
+  func writeAsync(table: MDBXTableName, keysAndValues: [(MDBXKey, MDBXObject)], override: Bool = true, completion: @escaping (Bool) -> Void) {
+    Task {
       do {
-        let _ = try self.prepareTable(table: table, transaction: self.writeTransaction, create: true)
-        try self.writeTransaction.commit()
-        os_signpost(.event, log: writeLogger, name: "commit", "commited")
-        try self.beginTransaction(transaction: self.writeTransaction)
-        os_signpost(.end, log: writeLogger, name: "commit", "re-begin transaction")
-        
+        try await self.write(table: table, keysAndValues: keysAndValues, override: override)
+        completion(true)
       } catch {
-        os_signpost(.end, log: writeLogger, name: "commit", "Error: %{private}@", error.localizedDescription)
-        os_log("Error: %{private}@", log: writeLogger, type: .error, error.localizedDescription)
+        completion(false)
       }
-    }
-  }
-  
-  // MARK: - Private
-  
-  private func process(writeAction: MDBXWriteAction, table: MDBXTable) throws {
-    switch writeAction {
-    case .commit:
-      commit(table: table)
-    case .abort:
-      try self.writeTransaction.abort()
-    default: break
     }
   }
 }

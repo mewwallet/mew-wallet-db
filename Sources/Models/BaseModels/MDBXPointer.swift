@@ -14,9 +14,9 @@ public enum RelationshipLoadPolicy {
 
 public class MDBXPointer<K: MDBXKey, T: MDBXObject> {
   private var _data: T?
-  private var _table: MDBXTable
+  private var _table: MDBXTableName
   
-  init(_ table: MDBXTable) {
+  init(_ table: MDBXTableName) {
     _table = table
   }
   

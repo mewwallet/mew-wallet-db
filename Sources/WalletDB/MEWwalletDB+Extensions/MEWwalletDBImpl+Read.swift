@@ -10,10 +10,17 @@ import mdbx_ios
 import OSLog
 
 public extension MEWwalletDBImpl {
-  func fetchAll<T: MDBXObject>(from table: MDBXTable) throws -> [T] {
+  // MARK: - Ranges
+  
+  func fetchAll<T: MDBXObject>(from table: MDBXTableName) throws -> [T] {
+    return try self.fetchRange(startKey: nil, endKey: nil, from: table)
+  }
+  
+  func fetchRange<T: MDBXObject>(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> [T] {
     var results = [T]()
+    let db = try self.database(for: table)
     
-    os_signpost(.begin, log: readLogger, name: "fetchAll", "from table: %{private}@", table.rawValue)
+    os_signpost(.begin, log: .info(.read), name: "fetchRange", "from table: %{private}@", table.rawValue)
     
     do {
       let transaction = MDBXTransaction(self.environment)
@@ -22,121 +29,47 @@ public extension MEWwalletDBImpl {
         try? transaction.abort()
       }
       
-      let db = try self.prepareTable(table: table, transaction: transaction, create: false)
-      
-      os_signpost(.event, log: readLogger, name: "fetchAll", "cursor prepared")
-      
-      let cursor = try self.prepareCursor(transaction: transaction, database: db)
-      var key = Data()
-      
-      var hasNext = true
-      while hasNext {
-        do {
-          let data: Data
-          if key.isEmpty {
-            data = try cursor.getValue(key: &key, operation: [.setLowerBound, .first])
-          } else {
-            data = try cursor.getValue(key: &key, operation: [.next])
-          }
-          
-          let encoded = try self.decoder.decode(T.self, from: data)
-          encoded.database = self
-          results.append(encoded)
-        } catch {
-          hasNext = false
-        }
+      os_signpost(.event, log: .info(.read), name: "fetchRange", "cursor prepared")
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: db.db)
+      defer {
+        cursor.close()
       }
       
-      os_signpost(.end, log: readLogger, name: "fetchAll", "done")
+      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: db.db)
+        .map { data in
+          let encoded = try self.decoder.decode(T.self, from: data)
+          encoded.database = self
+          return encoded
+        }
+      
+      os_signpost(.end, log: .info(.read), name: "fetchRange", "done")
     } catch {
-      os_signpost(.end, log: readLogger, name: "fetchAll", "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
+      os_signpost(.end, log: .info(.read), name: "fetchRange", "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@", log: .info(.read), type: .error, error.localizedDescription)
       throw error
     }
     
     return results
   }
   
-  @available(*, renamed: "read()")
-  func readAsync<T: MDBXObject>(key: MDBXKey, table: MDBXTable, completionBlock: @escaping (T?) -> Void) {
-    read(key: key, table: table, completionBlock: completionBlock)
-  }
-  
-  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTable, completionBlock: @escaping (T?) -> Void) {
-    Task {
-      do {
-        let result: T? = try await read(key: key, table: table)
-        completionBlock(result)
-      } catch {
-        completionBlock(nil)
-      }
-    }
-  }
-  
-  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTable) async throws -> T? {
+  // MARK: - Single Objects
+
+  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) async throws -> T? {
+    let table = try self.database(for: table)
     return try _read(key: key, table: table, signpost: "readAsync")
   }
   
-  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTable) throws -> T {
+  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) throws -> T {
+    let table = try self.database(for: table)
     return try _read(key: key, table: table, signpost: "read")
   }
-  
-  func fetchRange<T: MDBXObject>(startKey: MDBXKey, endKey: MDBXKey, table: MDBXTable) throws -> [T] {
-    var results = [T]()
-    
-    os_signpost(.begin, log: readLogger, name: "fetchRange", "from table: %{private}@", table.rawValue)
-    
-    do {
-      let transaction = MDBXTransaction(self.environment)
-      try transaction.begin(flags: [.readOnly])
-      defer {
-        try? transaction.abort()
-      }
-      let db = try self.prepareTable(table: table, transaction: transaction, create: false)
-      
-      os_signpost(.event, log: readLogger, name: "fetchRange", "cursor prepared")
-      let cursor = try self.prepareCursor(transaction: transaction, database: db)
-      
-      var key = startKey.key
-      var endKey = endKey.key
-      var hasNext = true
-      while hasNext {
-        do {
-          let data: Data
-          if results.isEmpty {
-            data = try cursor.getValue(key: &key, operation: [.setLowerBound, .first])
-          } else {
-            data = try cursor.getValue(key: &key, operation: [.next])
-          }
-          
-          if transaction.compare(a: &key, b: &endKey, database: db) > 0 {
-            os_signpost(.end, log: readLogger, name: "fetchRange", "done")
-            hasNext = false
-            break
-          }
-          
-          let encoded = try self.decoder.decode(T.self, from: data)
-          encoded.database = self
-          results.append(encoded)
-        } catch {
-          hasNext = false
-        }
-      }
-      os_signpost(.end, log: readLogger, name: "fetchRange", "done")
-    } catch {
-      os_signpost(.end, log: readLogger, name: "fetchRange", "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
-      throw error
-    }
-    
-    return results
-  }
-  
+
   // MARK: - Private
   
   private func _read<T: MDBXObject>(key: MDBXKey, table: MDBXTable, signpost: StaticString) throws -> T {
     var result: T!
-    os_signpost(.begin, log: readLogger, name: signpost, "from table: %{private}@", table.rawValue)
+    os_signpost(.begin, log: .info(.read), name: signpost, "from table: %{private}@", table.name.rawValue)
     
     do {
       let transaction = MDBXTransaction(self.environment)
@@ -144,16 +77,15 @@ public extension MEWwalletDBImpl {
       defer {
         try? transaction.abort()
       }
-      let db = try self.prepareTable(table: table, transaction: transaction, create: false)
       var key = key.key
-      os_signpost(.event, log: readLogger, name: signpost, "ready for read")
-      let data = try transaction.getValue(for: &key, database: db)
+      os_signpost(.event, log: .info(.read), name: signpost, "ready for read")
+      let data = try transaction.getValue(for: &key, database: table.db)
       result = try self.decoder.decode(T.self, from: data)
       result?.database = self
-      os_signpost(.end, log: readLogger, name: signpost, "done")
+      os_signpost(.end, log: .info(.read), name: signpost, "done")
     } catch {
-      os_signpost(.end, log: readLogger, name: signpost, "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
+      os_signpost(.end, log: .info(.read), name: signpost, "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@", log: .error(.read), type: .error, error.localizedDescription)
       throw error
     }
     
