@@ -23,6 +23,7 @@ public enum MDBXTableName: String, CaseIterable {
   case pendingTransfer    = "PendingTransfer_0"
   case recipient          = "Recipient_0"
   case token              = "Token_0"
+  case token_v2           = "Token_1"
   case balance            = "Balance_0"
 }
 

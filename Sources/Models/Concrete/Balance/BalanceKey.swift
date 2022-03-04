@@ -1,11 +1,11 @@
+////
+////  File.swift
+////  
+////
+////  Created by Nail Galiaskarov on 6/21/21.
+////
 //
-//  File.swift
-//  
+//import Foundation
 //
-//  Created by Nail Galiaskarov on 6/21/21.
-//
-
-import Foundation
-
-public final class BalanceKey: TokenKey {
-}
+//public final class BalanceKey: TokenKey {
+//}

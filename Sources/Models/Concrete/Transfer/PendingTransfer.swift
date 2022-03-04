@@ -1,11 +1,11 @@
+////
+////  File.swift
+////  
+////
+////  Created by Nail Galiaskarov on 6/22/21.
+////
 //
-//  File.swift
-//  
+//import Foundation
 //
-//  Created by Nail Galiaskarov on 6/22/21.
-//
-
-import Foundation
-
-public final class PendingTransfer: Transfer {
-}
+//public final class PendingTransfer: Transfer {
+//}

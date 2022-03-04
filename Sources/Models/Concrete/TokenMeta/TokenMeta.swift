@@ -37,7 +37,7 @@ public final class TokenMeta: MDBXObject {
   private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
   private let _price: MDBXPointer<PriceKey, Price> = .init(.price)
 
-  let marketItems: MDBXPointer<MarketItemKey, MarketItem> = .init(.marketItem)
+//  let marketItems: MDBXPointer<MarketItemKey, MarketItem> = .init(.marketItem)
   
   public init(
     name: String? = nil,

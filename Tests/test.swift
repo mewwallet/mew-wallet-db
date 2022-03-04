@@ -459,202 +459,202 @@ final class mew_wallet_db_tests: XCTestCase {
     wait(for: [expectation], timeout: 5)
   }
 
-  func testBalances() {
-    let expectation = XCTestExpectation()
-    
-    Task {
-      do {
-        let (checksum, totalCount) = try await writeBalances()
-        let allResults: [Balance] = try db.fetchAll(from: .balance)
-        
-        XCTAssertTrue(allResults.count == totalCount)
-        
-        var resultChecksum = 0
-        allResults.forEach {
-          resultChecksum = resultChecksum ^ $0.amount.hashValue ^ $0.contractAddress.hashValue
-        }
-        XCTAssertTrue(resultChecksum == checksum)
-      } catch {
-        XCTFail(error.localizedDescription)
-      }
-      expectation.fulfill()
-    }
-    
-    wait(for: [expectation], timeout: 5.0)
-  }
+//  func testBalances() {
+//    let expectation = XCTestExpectation()
+//
+//    Task {
+//      do {
+//        let (checksum, totalCount) = try await writeBalances()
+//        let allResults: [Balance] = try db.fetchAll(from: .balance)
+//
+//        XCTAssertTrue(allResults.count == totalCount)
+//
+//        var resultChecksum = 0
+//        allResults.forEach {
+//          resultChecksum = resultChecksum ^ $0.amount.hashValue ^ $0.contractAddress.hashValue
+//        }
+//        XCTAssertTrue(resultChecksum == checksum)
+//      } catch {
+//        XCTFail(error.localizedDescription)
+//      }
+//      expectation.fulfill()
+//    }
+//
+//    wait(for: [expectation], timeout: 5.0)
+//  }
 
-  func testTokens() {
-    let expectation = XCTestExpectation()
-    
-    Task {
-      do {
-        let _ = try await writeBalances()
-        
-        let address = Data(hex: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")
-        let tokenMetas = try decoder.decode([TokenMeta].self, from: tokensData)
-        
-        
-        var checksum: Int = 0
-        for tokenMeta in tokenMetas {
-          try await db.write(table: .tokenMeta, key: tokenMeta.tokenMetaKey, value: encoder.encode(tokenMeta))
-          
-          let tokenKey = TokenKey(address: address, tokenMetaKey: tokenMeta.tokenMetaKey)
-          let token = Token(address: address, tokenMetaKey: tokenMeta.tokenMetaKey)
-          
-          XCTAssertTrue(tokenKey.address == address.setLengthLeft(MDBXKeyLength.address))
-          
-          try await db.write(table: .token, key: tokenKey, value: encoder.encode(token))
-          checksum = checksum ^ token.address.hashValue ^ token.tokenMetaKey.contractAddress.hashValue
-        }
-        
-        let allResults: [Token] = try db.fetchAll(from: .token)
-        XCTAssertTrue(allResults.count == tokenMetas.count)
-        
-        var resultChecksum = 0
-        allResults.forEach {
-          resultChecksum = resultChecksum ^ $0.address.hashValue ^ $0.tokenMetaKey.contractAddress.hashValue
-        }
-        XCTAssertTrue(resultChecksum == checksum)
-        
-        // check if there is a primary token
-        let ethContractAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-        let ethKey = TokenKey(address: address, tokenMetaKey: .init(projectId: .eth, contractAddress: ethContractAddress))
-        let token: Token = try db.read(key: ethKey, table: .token)
-        XCTAssertTrue(token.isPrimary)
-        XCTAssertTrue(token.balance!.amount == Decimal(hex: "0x10e2a3d14a33690"))
-        XCTAssertTrue(token.tokenMeta!.name == "Ethereum")
-      } catch {
-        XCTFail(error.localizedDescription)
-      }
-      expectation.fulfill()
-    }
-    
-    wait(for: [expectation], timeout: 5.0)
-  }
+//  func testTokens() {
+//    let expectation = XCTestExpectation()
+//
+//    Task {
+//      do {
+//        let _ = try await writeBalances()
+//
+//        let address = Data(hex: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")
+//        let tokenMetas = try decoder.decode([TokenMeta].self, from: tokensData)
+//
+//
+//        var checksum: Int = 0
+//        for tokenMeta in tokenMetas {
+//          try await db.write(table: .tokenMeta, key: tokenMeta.tokenMetaKey, value: encoder.encode(tokenMeta))
+//
+//          let tokenKey = TokenKey(address: address, tokenMetaKey: tokenMeta.tokenMetaKey)
+//          let token = Token(address: address, tokenMetaKey: tokenMeta.tokenMetaKey)
+//
+//          XCTAssertTrue(tokenKey.address == address.setLengthLeft(MDBXKeyLength.address))
+//
+//          try await db.write(table: .token, key: tokenKey, value: encoder.encode(token))
+//          checksum = checksum ^ token.address.hashValue ^ token.tokenMetaKey.contractAddress.hashValue
+//        }
+//
+//        let allResults: [Token] = try db.fetchAll(from: .token)
+//        XCTAssertTrue(allResults.count == tokenMetas.count)
+//
+//        var resultChecksum = 0
+//        allResults.forEach {
+//          resultChecksum = resultChecksum ^ $0.address.hashValue ^ $0.tokenMetaKey.contractAddress.hashValue
+//        }
+//        XCTAssertTrue(resultChecksum == checksum)
+//
+//        // check if there is a primary token
+//        let ethContractAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+//        let ethKey = TokenKey(address: address, tokenMetaKey: .init(projectId: .eth, contractAddress: ethContractAddress))
+//        let token: Token = try db.read(key: ethKey, table: .token)
+//        XCTAssertTrue(token.isPrimary)
+//        XCTAssertTrue(token.balance!.amount == Decimal(hex: "0x10e2a3d14a33690"))
+//        XCTAssertTrue(token.tokenMeta!.name == "Ethereum")
+//      } catch {
+//        XCTFail(error.localizedDescription)
+//      }
+//      expectation.fulfill()
+//    }
+//
+//    wait(for: [expectation], timeout: 5.0)
+//  }
 
-  func testTransfers() {
-    let expecation = XCTestExpectation()
-    Task {
-      do {
-        let decoder = JSONDecoder()
-        // custom date decoding strategy
-        decoder.dateDecodingStrategy = .custom { decoder -> Date in
-          let container = try decoder.singleValueContainer()
-          let dateStr = try container.decode(String.self)
-          let dateFormatter = ISO8601DateFormatter()
-          dateFormatter.formatOptions = [.withFullDate, .withFullTime, .withFractionalSeconds]
-          
-          let date = dateFormatter.date(from: dateStr)
-          
-          guard let date_ = date else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date string \(dateStr)")
-          }
-          return date_
-        }
-        
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .custom({ date, encoder in
-          let dateFormatter = ISO8601DateFormatter()
-          dateFormatter.formatOptions = [.withFullDate, .withFullTime, .withFractionalSeconds]
-          
-          var container = encoder.singleValueContainer()
-          try container.encode(dateFormatter.string(from: date))
-        })
-        
-        let address = Data(hex: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")
-        let transfers = try decoder.decode([Transfer].self, from: transfersData)
-        
-        var completedChecksum: Int = 0
-        var pendingChecksum: Int = 0
-        
-        for transfer in transfers {
-          let tokenMeta = TokenMeta(tokenMetaKey: transfer.tokenMetaKey)
-          try await db.write(table: .tokenMeta, key: transfer.tokenMetaKey, value: encoder.encode(tokenMeta))
-          
-          let transferKey = TransferKey(
-            projectId: .eth,
-            address: address,
-            blockNumber: Decimal(transfer.blockNumber),
-            direction: transfer.direction.rawValue,
-            nonce: Decimal(transfer.nonce)
-          )
-          XCTAssertTrue(transferKey.address == address.setLengthLeft(MDBXKeyLength.address))
-          
-          if transfer.isPending {
-            try await db.write(table: .pendingTransfer, key: transferKey, value: encoder.encode(transfer))
-            pendingChecksum = pendingChecksum ^ transfer.ownerKey.address.hashValue ^ transfer.tokenMetaKey.contractAddress.hashValue ^ transfer.amount.hashValue ^ transfer.blockNumber.hashValue ^ transfer.txHash.hashValue ^ transfer.nonce.hashValue
-          } else {
-            try await db.write(table: .completedTransfer, key: transferKey, value: encoder.encode(transfer))
-            completedChecksum = completedChecksum ^ transfer.ownerKey.address.hashValue ^ transfer.tokenMetaKey.contractAddress.hashValue ^ transfer.amount.hashValue ^ transfer.blockNumber.hashValue ^ transfer.txHash.hashValue ^ transfer.nonce.hashValue
-          }
-          
-          let recipientKeys = [transfer.ownerKey, transfer.fromKey, transfer.toKey].compactMap { $0 }
-          for recipientKey in recipientKeys {
-            let recipient = Recipient(address: recipientKey.address)
-            try await db.write(table: .recipient, key: recipientKey, value: encoder.encode(recipient))
-          }
-        }
-        
-        XCTAssert(try transferReadChecksum(from: .completedTransfer) == completedChecksum)
-        XCTAssert(try transferReadChecksum(from: .pendingTransfer) == pendingChecksum)
-        
-        let ethereumTransfer = TransferKey(
-          projectId: .eth,
-          address: address,
-          blockNumber: Decimal(12695817),
-          direction: TransferDirection.outgoing.rawValue,
-          nonce: Decimal(1507)
-        )
-        let transfer: Transfer = try db.read(key: ethereumTransfer, table: .completedTransfer)
-        XCTAssertFalse(transfer.isPending)
-        XCTAssert(transfer.blockNumber == 12695817)
-        XCTAssert(transfer.nonce == 1507)
-        XCTAssert(transfer.from!.address == address.hexString)
-        XCTAssert(transfer.owner!.address == address.hexString)
-        XCTAssert(transfer.to!.address == "0x14095009d85dd694ef5a9ccf9436baf719cb3588")
-        XCTAssert(transfer.direction == .outgoing)
-      } catch {
-        XCTFail(error.localizedDescription)
-      }
-      expecation.fulfill()
-    }
-    
-    wait(for: [expecation], timeout: 5.0)
-  }
+//  func testTransfers() {
+//    let expecation = XCTestExpectation()
+//    Task {
+//      do {
+//        let decoder = JSONDecoder()
+//        // custom date decoding strategy
+//        decoder.dateDecodingStrategy = .custom { decoder -> Date in
+//          let container = try decoder.singleValueContainer()
+//          let dateStr = try container.decode(String.self)
+//          let dateFormatter = ISO8601DateFormatter()
+//          dateFormatter.formatOptions = [.withFullDate, .withFullTime, .withFractionalSeconds]
+//
+//          let date = dateFormatter.date(from: dateStr)
+//
+//          guard let date_ = date else {
+//            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date string \(dateStr)")
+//          }
+//          return date_
+//        }
+//
+//        let encoder = JSONEncoder()
+//        encoder.dateEncodingStrategy = .custom({ date, encoder in
+//          let dateFormatter = ISO8601DateFormatter()
+//          dateFormatter.formatOptions = [.withFullDate, .withFullTime, .withFractionalSeconds]
+//
+//          var container = encoder.singleValueContainer()
+//          try container.encode(dateFormatter.string(from: date))
+//        })
+//
+//        let address = Data(hex: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")
+//        let transfers = try decoder.decode([Transfer].self, from: transfersData)
+//
+//        var completedChecksum: Int = 0
+//        var pendingChecksum: Int = 0
+//
+//        for transfer in transfers {
+//          let tokenMeta = TokenMeta(tokenMetaKey: transfer.tokenMetaKey)
+//          try await db.write(table: .tokenMeta, key: transfer.tokenMetaKey, value: encoder.encode(tokenMeta))
+//
+//          let transferKey = TransferKey(
+//            projectId: .eth,
+//            address: address,
+//            blockNumber: Decimal(transfer.blockNumber),
+//            direction: transfer.direction.rawValue,
+//            nonce: Decimal(transfer.nonce)
+//          )
+//          XCTAssertTrue(transferKey.address == address.setLengthLeft(MDBXKeyLength.address))
+//
+//          if transfer.isPending {
+//            try await db.write(table: .pendingTransfer, key: transferKey, value: encoder.encode(transfer))
+//            pendingChecksum = pendingChecksum ^ transfer.ownerKey.address.hashValue ^ transfer.tokenMetaKey.contractAddress.hashValue ^ transfer.amount.hashValue ^ transfer.blockNumber.hashValue ^ transfer.txHash.hashValue ^ transfer.nonce.hashValue
+//          } else {
+//            try await db.write(table: .completedTransfer, key: transferKey, value: encoder.encode(transfer))
+//            completedChecksum = completedChecksum ^ transfer.ownerKey.address.hashValue ^ transfer.tokenMetaKey.contractAddress.hashValue ^ transfer.amount.hashValue ^ transfer.blockNumber.hashValue ^ transfer.txHash.hashValue ^ transfer.nonce.hashValue
+//          }
+//
+//          let recipientKeys = [transfer.ownerKey, transfer.fromKey, transfer.toKey].compactMap { $0 }
+//          for recipientKey in recipientKeys {
+//            let recipient = Recipient(address: recipientKey.address)
+//            try await db.write(table: .recipient, key: recipientKey, value: encoder.encode(recipient))
+//          }
+//        }
+//
+//        XCTAssert(try transferReadChecksum(from: .completedTransfer) == completedChecksum)
+//        XCTAssert(try transferReadChecksum(from: .pendingTransfer) == pendingChecksum)
+//
+//        let ethereumTransfer = TransferKey(
+//          projectId: .eth,
+//          address: address,
+//          blockNumber: Decimal(12695817),
+//          direction: TransferDirection.outgoing.rawValue,
+//          nonce: Decimal(1507)
+//        )
+//        let transfer: Transfer = try db.read(key: ethereumTransfer, table: .completedTransfer)
+//        XCTAssertFalse(transfer.isPending)
+//        XCTAssert(transfer.blockNumber == 12695817)
+//        XCTAssert(transfer.nonce == 1507)
+//        XCTAssert(transfer.from!.address == address.hexString)
+//        XCTAssert(transfer.owner!.address == address.hexString)
+//        XCTAssert(transfer.to!.address == "0x14095009d85dd694ef5a9ccf9436baf719cb3588")
+//        XCTAssert(transfer.direction == .outgoing)
+//      } catch {
+//        XCTFail(error.localizedDescription)
+//      }
+//      expecation.fulfill()
+//    }
+//
+//    wait(for: [expecation], timeout: 5.0)
+//  }
+//
+//  private func transferReadChecksum(from table: MDBXTableName) throws -> Int {
+//    let allResults: [Transfer] = try db.fetchAll(from: table)
+//
+//    var resultChecksum = 0
+//    allResults.forEach {
+//      resultChecksum = resultChecksum ^ $0.ownerKey.address.hashValue ^ $0.tokenMetaKey.contractAddress.hashValue ^ $0.amount.hashValue ^ $0.blockNumber.hashValue ^ $0.txHash.hashValue ^ $0.nonce.hashValue
+//    }
+//    return resultChecksum
+//  }
 
-  private func transferReadChecksum(from table: MDBXTableName) throws -> Int {
-    let allResults: [Transfer] = try db.fetchAll(from: table)
-
-    var resultChecksum = 0
-    allResults.forEach {
-      resultChecksum = resultChecksum ^ $0.ownerKey.address.hashValue ^ $0.tokenMetaKey.contractAddress.hashValue ^ $0.amount.hashValue ^ $0.blockNumber.hashValue ^ $0.txHash.hashValue ^ $0.nonce.hashValue
-    }
-    return resultChecksum
-  }
-
-  private func writeBalances() async throws -> (checksum: Int, count: Int) {
-    let decoder = JSONDecoder()
-    decoder.dateDecodingStrategy = .iso8601
-    let encoder = JSONEncoder()
-
-
-    let address = Data(hex: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")
-    let balances = try decoder.decode([Balance].self, from: balanceData)
-    var checksum: Int = 0
-    for balance in balances {
-      let balanceKey = BalanceKey(
-        address: address,
-        tokenMetaKey: .init(projectId: .eth, contractAddress: balance.contractAddress)
-      )
-      XCTAssertTrue(balanceKey.address == address.setLengthLeft(MDBXKeyLength.address))
-      XCTAssertTrue(balanceKey.tokenMetaKey!.contractAddress == balance.contractAddress)
-
-      try await db.write(table: .balance, key: balanceKey, value: encoder.encode(balance))
-      checksum = checksum ^ balance.amount.hashValue ^ balance.contractAddress.hashValue
-    }
-
-    return (checksum, balances.count)
-  }
+//  private func writeBalances() async throws -> (checksum: Int, count: Int) {
+//    let decoder = JSONDecoder()
+//    decoder.dateDecodingStrategy = .iso8601
+//    let encoder = JSONEncoder()
+//
+//
+//    let address = Data(hex: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")
+//    let balances = try decoder.decode([Balance].self, from: balanceData)
+//    var checksum: Int = 0
+//    for balance in balances {
+//      let balanceKey = BalanceKey(
+//        address: address,
+//        tokenMetaKey: .init(projectId: .eth, contractAddress: balance.contractAddress)
+//      )
+//      XCTAssertTrue(balanceKey.address == address.setLengthLeft(MDBXKeyLength.address))
+//      XCTAssertTrue(balanceKey.tokenMetaKey!.contractAddress == balance.contractAddress)
+//
+//      try await db.write(table: .balance, key: balanceKey, value: encoder.encode(balance))
+//      checksum = checksum ^ balance.amount.hashValue ^ balance.contractAddress.hashValue
+//    }
+//
+//    return (checksum, balances.count)
+//  }
 
   private func writePrices(completionBlock: @escaping () -> Void) {
     let priceAndKeys: [(PriceKey, Price)] = self.prices.map { price in

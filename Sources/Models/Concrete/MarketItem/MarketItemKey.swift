@@ -1,11 +1,11 @@
+////
+////  File.swift
+////  
+////
+////  Created by Nail Galiaskarov on 5/31/21.
+////
 //
-//  File.swift
-//  
+//import Foundation
 //
-//  Created by Nail Galiaskarov on 5/31/21.
-//
-
-import Foundation
-
-public class MarketItemKey: TokenMetaKey {
-}
+//public class MarketItemKey: TokenMetaKey {
+//}
