@@ -8,15 +8,12 @@
 import Foundation
 import mdbx_ios
 
-public enum MDBXProjectId: Data {
-  case eth                = "0x00"
-}
-
 public enum MDBXTableName: String, CaseIterable {
-  case price              = "Price_0"
   case dex                = "Dex_0"
   case orderedDex         = "OrderedDex_0"
   case tokenMeta          = "TokenMeta_0"
+  
+  case price              = "Price_0"
   case marketItem         = "Market_0"
   case rawTransaction     = "RawTransaction_0"
   case completedTransfer  = "CompletedTransfer_0"

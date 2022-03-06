@@ -8,24 +8,15 @@
 import Foundation
 import mdbx_ios
 
-public enum MDBXWriteAction {
-  case `break`
-  case abort
-  case commit
-  case none
-}
-
 public final class MEWwalletDBImpl: WalletDB {
+  static weak var shared: MEWwalletDBImpl!
+  
   internal var environment: MDBXEnvironment!
   internal var tables: [MDBXTableName: MDBXDatabase] = [:]
   internal var writer: Writer!
   
-  internal let encoder: JSONEncoder
-  internal let decoder: JSONDecoder
-  
-  public init(encoder: JSONEncoder, decoder: JSONDecoder) {
-    self.encoder = encoder
-    self.decoder = decoder
+  public init() {
+    MEWwalletDBImpl.shared = self
   }
   
   deinit {

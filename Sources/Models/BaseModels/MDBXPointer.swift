@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import mdbx_ios
 
 public enum RelationshipLoadPolicy {
   case ignoreCache
@@ -20,19 +21,19 @@ public class MDBXPointer<K: MDBXKey, T: MDBXObject> {
     _table = table
   }
   
-  func getData(key: K, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) -> T? {
+  func getData(key: K, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> T {
     guard let database = database else {
-      return _data
+      guard let data = _data else {
+        throw MDBXError.notFound
+      }
+      return data
     }
     if policy == .ignoreCache || _data == nil {
-      do {
-        let data: T = try database.read(key: key, table: _table)
-        _data = data
-        _data?.database = database
-      } catch {
-      }
+      let data: T = try database.read(key: key, table: _table)
+      _data = data
+      _data?.database = database
     }
-    return _data
+    return _data!
   }
     
   func updateData(_ data: T?) {

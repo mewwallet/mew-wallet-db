@@ -18,5 +18,14 @@ extension MEWwalletDBImpl {
   public func drop(table: MDBXTableName, delete: Bool) async throws {
     let db = try self.database(for: table)
     try await self.writer.drop(table: db, delete: delete)
+    if delete {
+      self.tables.removeValue(forKey: table)
+    }
+  }
+  
+  public func recover(table: MDBXTableName) async throws {
+    guard self.tables[table] == nil else { throw MDBXError.keyExist }
+    let db = try await self.writer.recover(table: table)
+    self.tables[table] = db
   }
 }

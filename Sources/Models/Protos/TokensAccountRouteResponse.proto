@@ -1,6 +1,0 @@
-syntax = "proto3";
-import "TokenMetaPB.proto";
-
-message TokensAccountRouteResponse {
-  repeated TokenMetaPB featured = 1;
-}

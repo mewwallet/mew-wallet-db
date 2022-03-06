@@ -37,8 +37,8 @@ public extension MEWwalletDBImpl {
       }
       
       results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: db.db)
-        .map { data in
-          let encoded = try self.decoder.decode(T.self, from: data)
+        .compactMap {
+          var encoded = try T(serializedData: $0.1, chain: $0.0.chain, key: $0.0)
           encoded.database = self
           return encoded
         }
@@ -80,7 +80,7 @@ public extension MEWwalletDBImpl {
       var key = key.key
       os_signpost(.event, log: .info(.read), name: signpost, "ready for read")
       let data = try transaction.getValue(for: &key, database: table.db)
-      result = try self.decoder.decode(T.self, from: data)
+      result = try T(serializedData: data, chain: key.chain, key: key)
       result?.database = self
       os_signpost(.end, log: .info(.read), name: signpost, "done")
     } catch {

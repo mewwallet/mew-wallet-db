@@ -9,27 +9,29 @@ import Foundation
 import mdbx_ios
 
 extension MDBXCursor {
-  func fetchAll(from database: MDBXDatabase) throws -> [Data] {
+  func fetchAll(from database: MDBXDatabase) throws -> [(Data, Data)] {
     try self.fetchRange(startKey: nil, endKey: nil, from: database)
   }
   
-  func fetchRange(startKey: MDBXKey?, endKey: MDBXKey?, from database: MDBXDatabase) throws -> [Data] {
+  func fetchRange(startKey: MDBXKey?, endKey: MDBXKey?, from database: MDBXDatabase) throws -> [(Data, Data)] {
     let transaction = try self.transaction
     
     let isRange = endKey != nil
     
-    var results: [Data] = []
+    var results: [(Data, Data)] = []
     var key = startKey?.key ?? Data()
     var endKey = endKey?.key ?? Data()
     
     var hasNext = true
     while hasNext {
       do {
-        let data: Data
+        let data: (Data, Data)
         if results.isEmpty || key.isEmpty {
-          data = try self.getValue(key: &key, operation: [.setLowerBound, .first])
+          let value = try self.getValue(key: &key, operation: [.setLowerBound, .first])
+          data = (key, value)
         } else {
-          data = try self.getValue(key: &key, operation: [.next])
+          let value = try self.getValue(key: &key, operation: [.next])
+          data = (key, value)
         }
         
         if isRange {

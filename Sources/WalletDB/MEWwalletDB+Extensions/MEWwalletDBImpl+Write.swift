@@ -10,69 +10,73 @@ import mdbx_ios
 import OSLog
 
 public extension MEWwalletDBImpl {
-  func write(table: MDBXTableName, key: MDBXKey, value: Data, override: Bool = true) async throws {
+  @discardableResult
+  func write(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
     let db = try self.database(for: table)
-    try await self.writer.write(table: db, key: key, value: value, override: override)
+    return try await self.writer.write(table: db, key: key, data: data, mode: mode)
   }
   
-  func write(table: MDBXTableName, key: MDBXKey, value: MDBXObject, override: Bool = true) async throws {
-    let value = try self.encoder.encode(value)
-    try await self.write(table: table, key: key, value: value, override: override)
+  @discardableResult
+  func write(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int {
+    let data = try object.serialized
+    return try await self.write(table: table, key: key, data: data, mode: mode)
   }
   
-  func write(table: MDBXTableName, keysAndValues: [(MDBXKey, Data)], override: Bool = true) async throws {
+  @discardableResult
+  func write(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode) async throws -> Int {
     let db = try self.database(for: table)
-    try await self.writer.write(table: db, keysAndValues: keysAndValues, override: override)
+    return try await self.writer.write(table: db, keysAndData: keysAndData, mode: mode)
   }
   
-  func write(table: MDBXTableName, keysAndValues: [(MDBXKey, MDBXObject)], override: Bool = true) async throws {
-    let keysAndValues: [(MDBXKey, Data)] = try keysAndValues.map({
-      let data = try self.encoder.encode($0.1)
+  @discardableResult 
+  func write(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int {
+    let keysAndData: [(MDBXKey, Data)] = try keysAndObjects.map({
+      let data = try $0.1.serialized
       return ($0.0, data)
     })
-    try await self.write(table: table, keysAndValues: keysAndValues, override: override)
+    return try await self.write(table: table, keysAndData: keysAndData, mode: mode)
   }
   
-  func writeAsync(table: MDBXTableName, key: MDBXKey, value: Data, override: Bool = true, completion: @escaping (Bool) -> Void) {
+  func writeAsync(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void) {
     Task {
       do {
-        try await self.write(table: table, key: key, value: value, override: override)
-        completion(true)
+        let count = try await self.write(table: table, key: key, data: data, mode: mode)
+        completion(true, count)
       } catch {
-        completion(false)
+        completion(false, 0)
       }
     }
   }
   
-  func writeAsync(table: MDBXTableName, key: MDBXKey, value: MDBXObject, override: Bool = true, completion: @escaping (Bool) -> Void) {
+  func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void) {
     Task {
       do {
-        try await self.write(table: table, key: key, value: value, override: override)
-        completion(true)
+        let count = try await self.write(table: table, key: key, object: object, mode: mode)
+        completion(true, count)
       } catch {
-        completion(false)
+        completion(false, 0)
       }
     }
   }
   
-  func writeAsync(table: MDBXTableName, keysAndValues: [(MDBXKey, Data)], override: Bool = true, completion: @escaping (Bool) -> Void) {
+  func writeAsync(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void) {
     Task {
       do {
-        try await self.write(table: table, keysAndValues: keysAndValues, override: override)
-        completion(true)
+        let count = try await self.write(table: table, keysAndData: keysAndData, mode: mode)
+        completion(true, count)
       } catch {
-        completion(false)
+        completion(false, 0)
       }
     }
   }
   
-  func writeAsync(table: MDBXTableName, keysAndValues: [(MDBXKey, MDBXObject)], override: Bool = true, completion: @escaping (Bool) -> Void) {
+  func writeAsync(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void) {
     Task {
       do {
-        try await self.write(table: table, keysAndValues: keysAndValues, override: override)
-        completion(true)
+        let count = try await self.write(table: table, keysAndObjects: keysAndObjects, mode: mode)
+        completion(true, count)
       } catch {
-        completion(false)
+        completion(false, 0)
       }
     }
   }

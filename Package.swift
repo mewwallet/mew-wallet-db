@@ -24,14 +24,13 @@ let package = Package(
                            .product(name: "Algorithms", package: "swift-algorithms"),
                            "MEWextensions",
                            "SwiftProtobuf"],
-            path: "Sources"),
+            path: "Sources",
+            exclude: [
+              "Models/Concrete/Protos/models"
+            ]),
     
     .testTarget(name: "mew-wallet-db-tests",
             dependencies: ["mew-wallet-db"],
-            path: "Tests",
-            resources: [
-              .process("marketItems.json"),
-              .process("tokenMetas.json")
-            ])
+            path: "Tests")
   ]
 )

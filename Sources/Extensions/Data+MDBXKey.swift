@@ -8,6 +8,10 @@
 import Foundation
 
 extension Data: MDBXKey {
+  public var chain: MDBXChain {
+    return MDBXChain(rawValue: self[0..<MDBXKeyLength.chain])
+  }
+  
   public var key: Data {
     return self
   }  

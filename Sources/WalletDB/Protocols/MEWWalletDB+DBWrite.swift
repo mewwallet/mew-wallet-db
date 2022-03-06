@@ -7,13 +7,68 @@
 
 import Foundation
 
+public enum DBWriteError: Error {
+  case badMode
+}
+
+public struct DBWriteMode: OptionSet {
+  /*
+   * +----------+----------+-----------+----------+
+   * |          |  APPEND  |  OVERRIDE |  CHANGES |
+   * +----------+----------+-----------+----------+
+   * | APPEND   |   new    |    all    |    new   |
+   * +----------+----------+-----------+----------+
+   * | OVERRIDE |   all    |   exist   |  changes |
+   * +----------+----------+-----------+----------+
+   * | CHANGES  |   new    |  changes  |  nothing |
+   * +----------+----------+-----------+----------+
+   *
+   * all: append + override changes
+   */
+  
+  /// Option to write new objects
+  /// - mask: 0b00000001
+  static let append                       = DBWriteMode(rawValue: 1 << 0)
+  /// Option to override existing objects
+  /// - mask: 0b00000010
+  static let override                     = DBWriteMode(rawValue: 1 << 1)
+  /// Option to override changed only objects
+  /// - mask: 0b00000100
+  static let changes                      = DBWriteMode(rawValue: 1 << 2)
+  
+  
+  /// Write all objects
+  /// - mask: 0b00000011
+  static let `default`: DBWriteMode       = [.append, .override]
+  /// Override changes only
+  /// - mask: 0b00000110
+  static let overrideChanges: DBWriteMode = [.override, .changes]
+  /// Append new and oveerride changes
+  /// - mask: 0b00000111
+  static let all: DBWriteMode             = [.append, .override, .changes]
+
+  public let rawValue: UInt8
+  
+  public init(rawValue: UInt8) {
+    self.rawValue = rawValue
+  }
+}
+
 public protocol DBWrite {
-  func write(table: MDBXTableName, key: MDBXKey, value: Data, override: Bool) async throws
-  func write(table: MDBXTableName, key: MDBXKey, value: MDBXObject, override: Bool) async throws
-  func write(table: MDBXTableName, keysAndValues: [(MDBXKey, Data)], override: Bool) async throws
-  func write(table: MDBXTableName, keysAndValues: [(MDBXKey, MDBXObject)], override: Bool) async throws
-  func writeAsync(table: MDBXTableName, key: MDBXKey, value: Data, override: Bool, completion: @escaping (Bool) -> Void)
-  func writeAsync(table: MDBXTableName, key: MDBXKey, value: MDBXObject, override: Bool, completion: @escaping (Bool) -> Void)
-  func writeAsync(table: MDBXTableName, keysAndValues: [(MDBXKey, Data)], override: Bool, completion: @escaping (Bool) -> Void)
-  func writeAsync(table: MDBXTableName, keysAndValues: [(MDBXKey, MDBXObject)], override: Bool, completion: @escaping (Bool) -> Void)
+  @discardableResult
+  func write(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int
+  
+  @discardableResult
+  func write(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int
+  
+  @discardableResult
+  func write(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode) async throws -> Int
+  
+  @discardableResult
+  func write(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int
+  
+  func writeAsync(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
+  func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
+  func writeAsync(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
+  func writeAsync(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
 }

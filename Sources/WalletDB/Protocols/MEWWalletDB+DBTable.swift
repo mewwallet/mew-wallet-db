@@ -9,4 +9,5 @@ import Foundation
 
 public protocol DBTable {
   func drop(table: MDBXTableName, delete: Bool) async throws
+  func recover(table: MDBXTableName) async throws 
 }
