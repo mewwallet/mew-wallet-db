@@ -76,7 +76,7 @@ private let testJson = """
 
 private let projectId = "0x00"
 
-final class mew_wallet_db_tests: XCTestCase {
+final class TokenMeta_tests: XCTestCase {
   private var db: MEWwalletDBImpl!
 
   override func setUp() {

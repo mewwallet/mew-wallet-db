@@ -11,9 +11,11 @@ public enum MDBXKeyLength {
   public static let chain             = 16
   public static let contractAddress   = 20
   public static let order             = 2
+  public static let hash              = 32
   
   public static var tokenMeta:      Int { return chain + contractAddress }
   public static var orderedDexItem: Int { return chain + order + contractAddress }
+  public static var rawTransaction: Int { return chain + hash }
   
   public static let address = 24
   public static let blockNumber = 8
