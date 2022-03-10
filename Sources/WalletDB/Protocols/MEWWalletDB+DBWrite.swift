@@ -71,4 +71,7 @@ public protocol DBWrite {
   func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
   func writeAsync(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
   func writeAsync(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
+  
+  func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, completion: @escaping (Bool, Int) -> Void)
+
 }

@@ -80,4 +80,17 @@ public extension MEWwalletDBImpl {
       }
     }
   }
+
+  func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, completion: @escaping (Bool, Int) -> Void) {
+    Task {
+      do {
+        let count = try await self.write(table: table, key: key, object: object, mode: [.append, .changes, .override])
+        completion(true, count)
+      } catch {
+        completion(false, 0)
+      }
+    }
+
+  }
+  
 }
