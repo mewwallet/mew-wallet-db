@@ -58,7 +58,7 @@ private let testJson = """
 
 final class TokenMetaTests: XCTestCase {
   private var db: MEWwalletDBImpl!
-  private let table: MDBXTableName = .token_v2
+  private let table: MDBXTableName = .tokenMeta
   
   override func setUp() {
     super.setUp()

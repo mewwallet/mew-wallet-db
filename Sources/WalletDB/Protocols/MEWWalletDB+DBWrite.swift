@@ -28,24 +28,24 @@ public struct DBWriteMode: OptionSet {
   
   /// Option to write new objects
   /// - mask: 0b00000001
-  static let append                       = DBWriteMode(rawValue: 1 << 0)
+  public static let append                       = DBWriteMode(rawValue: 1 << 0)
   /// Option to override existing objects
   /// - mask: 0b00000010
-  static let override                     = DBWriteMode(rawValue: 1 << 1)
+  public static let override                     = DBWriteMode(rawValue: 1 << 1)
   /// Option to override changed only objects
   /// - mask: 0b00000100
-  static let changes                      = DBWriteMode(rawValue: 1 << 2)
+  public static let changes                      = DBWriteMode(rawValue: 1 << 2)
   
   
   /// Write all objects
   /// - mask: 0b00000011
-  static let `default`: DBWriteMode       = [.append, .override]
+  public static let `default`: DBWriteMode       = [.append, .override]
   /// Override changes only
   /// - mask: 0b00000110
-  static let overrideChanges: DBWriteMode = [.override, .changes]
+  public static let overrideChanges: DBWriteMode = [.override, .changes]
   /// Append new and oveerride changes
   /// - mask: 0b00000111
-  static let all: DBWriteMode             = [.append, .override, .changes]
+  public static let all: DBWriteMode             = [.append, .override, .changes]
 
   public let rawValue: UInt8
   
@@ -71,7 +71,4 @@ public protocol DBWrite {
   func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
   func writeAsync(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
   func writeAsync(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
-  
-  func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, completion: @escaping (Bool, Int) -> Void)
-
 }
