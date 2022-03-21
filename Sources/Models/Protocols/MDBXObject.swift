@@ -16,17 +16,5 @@ public protocol MDBXObject {
   init(jsonString: String, chain: MDBXChain, key: Data?) throws
   init(jsonData: Data, chain: MDBXChain, key: Data?) throws
   static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self]
-}
-
-public class MDBXObjectOld: Codable {
-  weak var database: WalletDB?
-  
-  init() {
-  }
-  
-  required public init(from decoder: Decoder) throws {
-  }
-  
-  public func encode(to encoder: Encoder) throws {
-  }
+  static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self]
 }

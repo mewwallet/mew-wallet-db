@@ -118,6 +118,13 @@ extension DexItem: MDBXObject {
     let objects = try _DexItem.array(fromJSONString: string, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
+  
+  public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    let objects = try _DexItem.array(fromJSONUTF8Data: data, options: options)
+    return objects.lazy.map({ $0.wrapped(chain) })
+  }
 }
 
 // MARK: - _DexItem + ProtoWrappedMessage
