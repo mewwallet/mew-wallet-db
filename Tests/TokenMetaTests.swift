@@ -148,6 +148,13 @@ final class TokenMeta_tests: XCTestCase {
     wait(for: [expectation], timeout: 5.0)
   }
   
+  func testKey() {
+    let tokenKey = TokenKey(chain: .eth, address: "0x112233445566778899aabbccddeeff0011223344", contractAddress: "0x5566778899aabbccddeeff001122334455667788")
+    XCTAssertEqual(tokenKey.address, "0x112233445566778899aabbccddeeff0011223344")
+    XCTAssertEqual(tokenKey.contractAddress, "0x5566778899aabbccddeeff001122334455667788")
+    XCTAssertEqual(tokenKey.key.hexString, "0x00000000000000000000000000000001112233445566778899aabbccddeeff00112233445566778899aabbccddeeff001122334455667788")
+  }
+  
   
 
 //  func test() {

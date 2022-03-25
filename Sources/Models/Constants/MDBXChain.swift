@@ -8,21 +8,25 @@
 import Foundation
 
 private enum _MDBXChain: Data {
+  case invalid       = "0x00000000000000000000000000000000"
   case eth           = "0x00000000000000000000000000000001"
   
   var chain: MDBXChain {
     switch self {
-    case .eth: return .eth
+    case .invalid:    return .invalid
+    case .eth:        return .eth
     }
   }
 }
 
 public enum MDBXChain {
+  case invalid
   case eth
   case custom(Data)
   
   var rawValue: Data {
     switch self {
+    case .invalid:          return _MDBXChain.invalid.rawValue
     case .eth:              return _MDBXChain.eth.rawValue
     case .custom(let data): return data
     }

@@ -24,34 +24,11 @@ actor Writer {
   // MARK: - Write
   
   func write(table: MDBXTable, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
-    let mode: DBWriteMode = mode.isEmpty ? .default : mode
-    guard mode.contains(.append) || mode.contains(.override) else {
-      throw DBWriteError.badMode
-    }
-    
-    os_signpost(.begin, log: .info(.write), name: "write", "to table: %{private}@", table.name.rawValue)
-    
-    do {
-      try self.transaction.begin(parent: nil, flags: [.readWrite])
-      
-      guard try self.canWrite(key: key, data: data, in: table, with: mode) else {
-        try? self.transaction.abort()
-        return 0
-      }
-      
-      try self.transaction.write(key: key, value: data, database: table.db)
-      
-      os_signpost(.event, log: .info(.write), name: "write", "put finished")
-      try self.transaction.commit()
-      
-      os_signpost(.end, log: .info(.write), name: "write", "done")
-      return 1
-    } catch {
-      os_signpost(.end, log: .error(.write), name: "write", "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@", log: .error(.write), type: .error, error.localizedDescription)
-      try self.transaction.abort()
-      return 0
-    }
+    return try await self.write(table: table, keysAndData: [(key, data)], mode: mode)
+  }
+  
+  func write(table: MDBXTable, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int {
+    return try await self.write(table: table, keysAndObject: [(key, object)], mode: mode)
   }
   
   func write(table: MDBXTable, keysAndData: [MDBXKeyData], mode: DBWriteMode) async throws -> Int {
@@ -66,12 +43,89 @@ actor Writer {
     
     do {
       var totalCount = 0
+      var dropped = !mode.contains(.dropTable)
+      
       for chunk in chunks {
         try self.transaction.begin(parent: nil, flags: [.readWrite])
+        /// Drop table if required
+        if !dropped {
+          try self.transaction.drop(database: table.db, delete: false)
+          dropped = true
+        }
         var count = 0
         for (key, data) in chunk {
           guard try self.canWrite(key: key, data: data, in: table, with: mode) else {
             continue
+          }
+          
+          count += 1
+          try self.transaction.write(key: key, value: data, database: table.db)
+        }
+        
+        if count > 0 {
+          os_signpost(.event, log: .info(.write), name: "write", "put finished")
+          try self.transaction.commit()
+        } else {
+          os_signpost(.event, log: .info(.write), name: "write", "nothing to put")
+          try self.transaction.abort()
+        }
+        totalCount += count
+      }
+      
+      os_signpost(.end, log: .info(.write), name: "write", "done")
+      return totalCount
+    } catch {
+      os_signpost(.end, log: .error(.write), name: "write", "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@", log: .error(.write), type: .error, error.localizedDescription)
+      try self.transaction.abort()
+      return 0
+    }
+  }
+  
+  func write(table: MDBXTable, keysAndObject: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int {
+    let mode: DBWriteMode = mode.isEmpty ? .default : mode
+    guard mode.contains(.append) || mode.contains(.override) else {
+      throw DBWriteError.badMode
+    }
+    
+    os_signpost(.begin, log: .info(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+    
+    let chunks = keysAndObject.chunks(ofCount: WriterStatic.chunkSize)
+    
+    do {
+      var totalCount = 0
+      var dropped = !mode.contains(.dropTable)
+      for chunk in chunks {
+        try self.transaction.begin(parent: nil, flags: [.readWrite])
+        
+        /// Drop table if required
+        if !dropped {
+          try self.transaction.drop(database: table.db, delete: false)
+          dropped = true
+        }
+        var count = 0
+        for (key, object) in chunk {
+          var data = try object.serialized
+          guard try self.canWrite(key: key, data: data, in: table, with: mode) else {
+            continue
+          }
+          
+          /// Merge objects if required
+          if mode.contains(.merge) {
+            var key = key.key
+            do {
+              let cachedData = try self.transaction.getValue(for: &key, database: table.db)
+              var cachedObject = try type(of: object).init(serializedData: cachedData, chain: key.chain, key: key)
+              cachedObject.merge(with: object)
+              data = try cachedObject.serialized
+              /// Double check if we need to override object
+              if mode.contains(.overrideChanges), cachedData == data {
+                continue
+              }
+            } catch MDBXError.notFound {
+            } catch {
+              throw error
+            }
           }
           
           count += 1
@@ -169,7 +223,7 @@ actor Writer {
         var key = key.key
         do {
           let cachedData = try self.transaction.getValue(for: &key, database: table.db)
-          hasChanges = data == cachedData
+          hasChanges = (data != cachedData)
         } catch MDBXError.notFound {
         } catch {
           throw error

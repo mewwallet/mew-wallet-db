@@ -46,6 +46,42 @@ public extension MEWwalletDBImpl {
       os_signpost(.end, log: .info(.read), name: "fetchRange", "done")
     } catch {
       os_signpost(.end, log: .info(.read), name: "fetchRange", "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@. Table: %{private}@, Key: %{private}@", log: .error(.read), type: .error, error.localizedDescription, table.rawValue)
+      throw error
+    }
+    
+    return results
+  }
+  
+  func countAll(from table: MDBXTableName) throws -> Int {
+    return try self.countRange(startKey: nil, endKey: nil, from: table)
+  }
+  
+  func countRange(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> Int {
+    var results: Int = 0
+    let db = try self.database(for: table)
+    
+    os_signpost(.begin, log: .info(.read), name: "countRange", "from table: %{private}@", table.rawValue)
+    
+    do {
+      let transaction = MDBXTransaction(self.environment)
+      try transaction.begin(flags: [.readOnly])
+      defer {
+        try? transaction.abort()
+      }
+      
+      os_signpost(.event, log: .info(.read), name: "countRange", "cursor prepared")
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: db.db)
+      defer {
+        cursor.close()
+      }
+      
+      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: db.db).count
+      
+      os_signpost(.end, log: .info(.read), name: "countRange", "done")
+    } catch {
+      os_signpost(.end, log: .info(.read), name: "countRange", "Error: %{private}@", error.localizedDescription)
       os_log("Error: %{private}@", log: .info(.read), type: .error, error.localizedDescription)
       throw error
     }
@@ -85,7 +121,7 @@ public extension MEWwalletDBImpl {
       os_signpost(.end, log: .info(.read), name: signpost, "done")
     } catch {
       os_signpost(.end, log: .info(.read), name: signpost, "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@", log: .error(.read), type: .error, error.localizedDescription)
+      os_log("Error: %{private}@. Table: %{private}@, Key: %{private}@", log: .error(.read), type: .error, error.localizedDescription, table.name.rawValue, key.key.hexString)
       throw error
     }
     

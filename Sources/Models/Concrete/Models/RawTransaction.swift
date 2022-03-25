@@ -89,6 +89,28 @@ extension RawTransaction: MDBXObject {
     let objects = try _RawTransaction.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
+  
+  mutating public func merge(with object: MDBXObject) {
+    let other = object as! RawTransaction
+    
+    self._wrapped.hash                  = other._wrapped.hash
+    self._wrapped.from                  = other._wrapped.from
+    self._wrapped.to                    = other._wrapped.to
+    self._wrapped.value                 = other._wrapped.value
+    self._wrapped.input                 = other._wrapped.input
+    self._wrapped.nonce                 = other._wrapped.nonce
+    self._wrapped.gas                   = other._wrapped.gas
+    self._wrapped.gasPrice              = other._wrapped.gasPrice
+    if other._wrapped.hasBlockNumber {
+      self._wrapped.blockNumber         = other._wrapped.blockNumber
+    }
+    if other._wrapped.hasMaxFeePerGas {
+      self._wrapped.maxFeePerGas        = other._wrapped.maxFeePerGas
+    }
+    if other._wrapped.hasMaxPriorityFeePerGas {
+      self._wrapped.maxPriorityFeePerGas  = other._wrapped.maxPriorityFeePerGas
+    }
+  }
 }
 
 // MARK: - _RawTransaction + ProtoWrappedMessage

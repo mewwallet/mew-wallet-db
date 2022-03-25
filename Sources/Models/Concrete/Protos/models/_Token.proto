@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message _Token {
+  string address              = 1;
+  string contract_address     = 2;
+  string amount               = 3;
+  string locked_amount        = 4;
+}

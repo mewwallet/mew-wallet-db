@@ -18,8 +18,8 @@ public extension MEWwalletDBImpl {
   
   @discardableResult
   func write(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int {
-    let data = try object.serialized
-    return try await self.write(table: table, key: key, data: data, mode: mode)
+    let db = try self.database(for: table)
+    return try await self.writer.write(table: db, key: key, object: object, mode: mode)
   }
   
   @discardableResult
@@ -30,11 +30,8 @@ public extension MEWwalletDBImpl {
   
   @discardableResult 
   func write(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int {
-    let keysAndData: [(MDBXKey, Data)] = try keysAndObjects.map({
-      let data = try $0.1.serialized
-      return ($0.0, data)
-    })
-    return try await self.write(table: table, keysAndData: keysAndData, mode: mode)
+    let db = try self.database(for: table)
+    return try await self.writer.write(table: db, keysAndObject: keysAndObjects, mode: mode)
   }
   
   func writeAsync(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void) {

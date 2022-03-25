@@ -30,7 +30,13 @@ public class MDBXPointer<K: MDBXKey, T: MDBXObject> {
       }
       return data
     }
-    if policy == .ignoreCache || _data == nil {
+    switch policy {
+    case .cacheOrLoad:
+      if let _data = _data {
+        return _data
+      }
+      fallthrough
+    case .ignoreCache:
       let data: T = try database.read(key: key, table: _table)
       _data = data
       _data?.database = database

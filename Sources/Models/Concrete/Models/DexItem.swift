@@ -125,6 +125,12 @@ extension DexItem: MDBXObject {
     let objects = try _DexItem.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
+  
+  mutating public func merge(with object: MDBXObject) {
+    let other = object as! DexItem
+    
+    self._wrapped.contractAddress       = other._wrapped.contractAddress
+  }
 }
 
 // MARK: - _DexItem + ProtoWrappedMessage

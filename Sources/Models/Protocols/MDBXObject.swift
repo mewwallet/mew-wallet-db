@@ -17,4 +17,5 @@ public protocol MDBXObject {
   init(jsonData: Data, chain: MDBXChain, key: Data?) throws
   static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self]
   static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self]
+  mutating func merge(with object: MDBXObject)
 }

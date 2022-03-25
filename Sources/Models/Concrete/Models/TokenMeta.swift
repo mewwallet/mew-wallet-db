@@ -17,6 +17,19 @@ public struct TokenMeta: Equatable {
   // MARK: - Private Properties
   
   private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
+  
+  // MARK: - LifeCycle
+   
+  public init(chain: MDBXChain, contractAddress: String, database: WalletDB? = nil) {
+    self.database = database ?? MEWwalletDBImpl.shared
+    self._wrapped = .with {
+      $0.contractAddress = contractAddress
+      $0.name = "No Token Name"
+      $0.symbol = "MNKY"
+      $0.decimals = 0
+    }
+    self._chain = chain
+  }
 }
 
 // MARK: - TokenMeta + Properties
@@ -104,6 +117,30 @@ extension TokenMeta: MDBXObject {
     options.ignoreUnknownFields = true
     let objects = try _TokenMeta.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
+  }
+  
+  mutating public func merge(with object: MDBXObject) {
+    let other = object as! TokenMeta
+    
+    self._wrapped.contractAddress       = other._wrapped.contractAddress
+    self._wrapped.name                  = other._wrapped.name
+    self._wrapped.symbol                = other._wrapped.symbol
+    self._wrapped.decimals              = other._wrapped.decimals
+    if other._wrapped.hasIcon {
+      self._wrapped.icon                = other._wrapped.icon
+    }
+    if other._wrapped.hasPrice {
+      self._wrapped.price               = other._wrapped.price
+    }
+    if other._wrapped.hasMarketCap {
+      self._wrapped.marketCap           = other._wrapped.marketCap
+    }
+    if !other._wrapped.sparkline.isEmpty {
+      self._wrapped.sparkline           = other._wrapped.sparkline
+    }
+    if other._wrapped.hasVolume24H {
+      self._wrapped.volume24H           = other._wrapped.volume24H
+    }
   }
 }
 

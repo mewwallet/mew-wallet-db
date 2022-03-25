@@ -24,7 +24,7 @@ public extension MEWwalletDBImpl {
     
     let geometry = MDBXGeometry(
       sizeLower: -1,
-      sizeNow: 1024 * 10,
+      sizeNow: 1024 * 1000,
       sizeUpper: 1024 * 1024 * 50,
       growthStep: 1024,
       shrinkThreshold: -1,
