@@ -8,7 +8,6 @@
 import Foundation
 
 public protocol DBLifecycle {
-  func start(name: String, tables: [MDBXTableName]) throws
+  func start(path: String, tables: [MDBXTableName]) throws
   func stop()
-  func delete(name: String)
 }

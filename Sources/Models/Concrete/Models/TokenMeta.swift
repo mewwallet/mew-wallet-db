@@ -20,13 +20,13 @@ public struct TokenMeta: Equatable {
   
   // MARK: - LifeCycle
    
-  public init(chain: MDBXChain, contractAddress: String, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, contractAddress: String, name: String = "No Token Name", symbol: String = "MNKY", decimals: Int32 = 0, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress
-      $0.name = "No Token Name"
-      $0.symbol = "MNKY"
-      $0.decimals = 0
+      $0.name = name
+      $0.symbol = symbol
+      $0.decimals = decimals
     }
     self._chain = chain
   }
@@ -125,7 +125,9 @@ extension TokenMeta: MDBXObject {
     self._wrapped.contractAddress       = other._wrapped.contractAddress
     self._wrapped.name                  = other._wrapped.name
     self._wrapped.symbol                = other._wrapped.symbol
-    self._wrapped.decimals              = other._wrapped.decimals
+    if other._wrapped.hasDecimals {
+      self._wrapped.decimals            = other._wrapped.decimals
+    }
     if other._wrapped.hasIcon {
       self._wrapped.icon                = other._wrapped.icon
     }

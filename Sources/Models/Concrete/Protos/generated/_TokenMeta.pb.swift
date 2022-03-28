@@ -31,7 +31,14 @@ struct _TokenMeta {
 
   var symbol: String = String()
 
-  var decimals: Int32 = 0
+  var decimals: Int32 {
+    get {return _decimals ?? 0}
+    set {_decimals = newValue}
+  }
+  /// Returns true if `decimals` has been explicitly set.
+  var hasDecimals: Bool {return self._decimals != nil}
+  /// Clears the value of `decimals`. Subsequent reads from it will return its default value.
+  mutating func clearDecimals() {self._decimals = nil}
 
   var icon: String {
     get {return _icon ?? String()}
@@ -75,6 +82,7 @@ struct _TokenMeta {
 
   init() {}
 
+  fileprivate var _decimals: Int32? = nil
   fileprivate var _icon: String? = nil
   fileprivate var _price: String? = nil
   fileprivate var _marketCap: String? = nil
@@ -106,7 +114,7 @@ extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
       case 1: try { try decoder.decodeSingularStringField(value: &self.contractAddress) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.symbol) }()
-      case 4: try { try decoder.decodeSingularInt32Field(value: &self.decimals) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self._decimals) }()
       case 5: try { try decoder.decodeSingularStringField(value: &self._icon) }()
       case 6: try { try decoder.decodeSingularStringField(value: &self._price) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self._marketCap) }()
@@ -131,9 +139,9 @@ extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if !self.symbol.isEmpty {
       try visitor.visitSingularStringField(value: self.symbol, fieldNumber: 3)
     }
-    if self.decimals != 0 {
-      try visitor.visitSingularInt32Field(value: self.decimals, fieldNumber: 4)
-    }
+    try { if let v = self._decimals {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
+    } }()
     try { if let v = self._icon {
       try visitor.visitSingularStringField(value: v, fieldNumber: 5)
     } }()
@@ -156,7 +164,7 @@ extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if lhs.contractAddress != rhs.contractAddress {return false}
     if lhs.name != rhs.name {return false}
     if lhs.symbol != rhs.symbol {return false}
-    if lhs.decimals != rhs.decimals {return false}
+    if lhs._decimals != rhs._decimals {return false}
     if lhs._icon != rhs._icon {return false}
     if lhs._price != rhs._price {return false}
     if lhs._marketCap != rhs._marketCap {return false}

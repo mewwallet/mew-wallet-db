@@ -32,7 +32,14 @@ struct _RawTransaction {
   var from: String = String()
 
   /// to: DATA, 20 Bytes - address of the receiver. null when its a contract creation transaction.
-  var to: String = String()
+  var to: String {
+    get {return _to ?? String()}
+    set {_to = newValue}
+  }
+  /// Returns true if `to` has been explicitly set.
+  var hasTo: Bool {return self._to != nil}
+  /// Clears the value of `to`. Subsequent reads from it will return its default value.
+  mutating func clearTo() {self._to = nil}
 
   /// value: QUANTITY - value transferred in Wei.
   var value: String = String()
@@ -83,6 +90,7 @@ struct _RawTransaction {
 
   init() {}
 
+  fileprivate var _to: String? = nil
   fileprivate var _blockNumber: String? = nil
   fileprivate var _maxFeePerGas: String? = nil
   fileprivate var _maxPriorityFeePerGas: String? = nil
@@ -114,7 +122,7 @@ extension _RawTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.hash) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.from) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.to) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._to) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.value) }()
       case 5: try { try decoder.decodeSingularStringField(value: &self.input) }()
       case 6: try { try decoder.decodeSingularStringField(value: &self.nonce) }()
@@ -139,9 +147,9 @@ extension _RawTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if !self.from.isEmpty {
       try visitor.visitSingularStringField(value: self.from, fieldNumber: 2)
     }
-    if !self.to.isEmpty {
-      try visitor.visitSingularStringField(value: self.to, fieldNumber: 3)
-    }
+    try { if let v = self._to {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    } }()
     if !self.value.isEmpty {
       try visitor.visitSingularStringField(value: self.value, fieldNumber: 4)
     }
@@ -172,7 +180,7 @@ extension _RawTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
   static func ==(lhs: _RawTransaction, rhs: _RawTransaction) -> Bool {
     if lhs.hash != rhs.hash {return false}
     if lhs.from != rhs.from {return false}
-    if lhs.to != rhs.to {return false}
+    if lhs._to != rhs._to {return false}
     if lhs.value != rhs.value {return false}
     if lhs.input != rhs.input {return false}
     if lhs.nonce != rhs.nonce {return false}

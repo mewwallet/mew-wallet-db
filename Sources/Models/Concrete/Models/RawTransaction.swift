@@ -13,6 +13,47 @@ public struct RawTransaction: Equatable {
   public weak var database: WalletDB?
   var _wrapped: _RawTransaction
   var _chain: MDBXChain
+  
+  // MARK: - LifeCycle
+  
+  public init(chain: MDBXChain,
+       hash: String,
+       from: String,
+       to: String?,
+       value: String,
+       input: String,
+       nonce: String,
+       gas: String,
+       gasPrice: String,
+       blockNumber: String?,
+       maxFeePerGas: String?,
+       maxPriorityFeePerGas: String?,
+       database: WalletDB? = nil) {
+    self.database = database ?? MEWwalletDBImpl.shared
+    var transaction = _RawTransaction.with {
+      $0.hash = hash
+      $0.from = from
+      $0.value = value
+      $0.input = input
+      $0.nonce = nonce
+      $0.gas = gas
+      $0.gasPrice = gasPrice
+    }
+    if let to = to {
+      transaction.to = to
+    }
+    if let blockNumber = blockNumber {
+      transaction.blockNumber = blockNumber
+    }
+    if let maxFeePerGas = maxFeePerGas {
+      transaction.maxFeePerGas = maxFeePerGas
+    }
+    if let maxPriorityFeePerGas = maxPriorityFeePerGas {
+      transaction.maxPriorityFeePerGas = maxPriorityFeePerGas
+    }
+    _wrapped = transaction
+    self._chain = chain
+  }
 }
 
 // MARK: - RawTransaction + Properties
@@ -22,7 +63,10 @@ extension RawTransaction {
   
   public var hash: String { self._wrapped.hash }
   public var from: String { self._wrapped.from }
-  public var to: String { self._wrapped.to }
+  public var to: String? {
+    guard self._wrapped.hasTo else { return nil }
+    return self._wrapped.to
+  }
   public var value: Decimal { Decimal(hex: self._wrapped.value) }
   public var input: Data { Data(hex: self._wrapped.input) }
   public var nonce: Decimal { Decimal(hex: self._wrapped.nonce) }
@@ -95,12 +139,14 @@ extension RawTransaction: MDBXObject {
     
     self._wrapped.hash                  = other._wrapped.hash
     self._wrapped.from                  = other._wrapped.from
-    self._wrapped.to                    = other._wrapped.to
     self._wrapped.value                 = other._wrapped.value
     self._wrapped.input                 = other._wrapped.input
     self._wrapped.nonce                 = other._wrapped.nonce
     self._wrapped.gas                   = other._wrapped.gas
     self._wrapped.gasPrice              = other._wrapped.gasPrice
+    if other._wrapped.hasTo {
+      self._wrapped.to                    = other._wrapped.to
+    }
     if other._wrapped.hasBlockNumber {
       self._wrapped.blockNumber         = other._wrapped.blockNumber
     }

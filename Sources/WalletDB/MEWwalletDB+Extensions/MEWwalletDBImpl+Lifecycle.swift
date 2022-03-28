@@ -10,11 +10,7 @@ import mdbx_ios
 import OSLog
 
 public extension MEWwalletDBImpl {
-  private var databaseURL: URL {
-    return FileManager.default.temporaryDirectory
-  }
-  
-  func start(name: String, tables: [MDBXTableName]) throws {
+  func start(path: String, tables: [MDBXTableName]) throws {
     guard environment == nil else { return }
     
     let environment = MDBXEnvironment()
@@ -24,7 +20,7 @@ public extension MEWwalletDBImpl {
     
     let geometry = MDBXGeometry(
       sizeLower: -1,
-      sizeNow: 1024 * 1000,
+      sizeNow: 1024 * 10,
       sizeUpper: 1024 * 1024 * 50,
       growthStep: 1024,
       shrinkThreshold: -1,
@@ -39,7 +35,6 @@ public extension MEWwalletDBImpl {
     }
     #endif
     try environment.setGeometry(geometry)
-    let path = self.databaseURL.appendingPathComponent(name).path
     
     os_log("Database path: %{private}@", log: .info(.lifecycle), type: .info, path)
     
@@ -53,11 +48,6 @@ public extension MEWwalletDBImpl {
   func stop() {
     self.tables.removeAll()
     self.environment.close(false)
-  }
-  
-  func delete(name: String) {
-    let path = self.databaseURL.appendingPathComponent(name).path
-    try? FileManager.default.removeItem(atPath: path)
   }
   
   // MARK: - Private
