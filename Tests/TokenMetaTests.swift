@@ -127,9 +127,6 @@ final class TokenMeta_tests: XCTestCase {
           (dexItem3.key, dexItem3)
         ], mode: .append)
         
-        let dexes: [DexItem] = try db.fetchAll(from: .orderedDex)
-        let metas = dexes.map({$0.alternateKey?.key.chain})
-        
         var dex = try dexItem.meta.dexItem.meta.dexItem
         dex.order = 0
       } catch {

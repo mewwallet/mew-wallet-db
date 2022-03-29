@@ -15,7 +15,7 @@ public enum RelationshipLoadPolicy {
 
 // TODO: Re-do to @propertyWrapper when "Property wrappers currently cannot define an 'async' or 'throws' accessor" will be fixed
 
-public class MDBXPointer<K: MDBXKey, T: MDBXObject> {
+public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
   private var _data: T?
   private var _table: MDBXTableName
   

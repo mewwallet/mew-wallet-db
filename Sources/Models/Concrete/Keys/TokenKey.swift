@@ -8,7 +8,7 @@
 import Foundation
 import MEWextensions
 
-public class TokenKey: MDBXKey {
+public final class TokenKey: MDBXKey {
   
   // MARK: - Public
   

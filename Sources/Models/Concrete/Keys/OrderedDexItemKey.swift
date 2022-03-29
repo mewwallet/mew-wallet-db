@@ -9,7 +9,7 @@ import Foundation
 import MEWextensions
 
 /// Chain + Order + ContractAddress
-public class OrderedDexItemKey: MDBXKey {
+public final class OrderedDexItemKey: MDBXKey {
   
   // MARK: - Public
   

@@ -8,7 +8,7 @@
 import Foundation
 import MEWextensions
 
-public class RawTransactionKey: MDBXKey {
+public final class RawTransactionKey: MDBXKey {
   
   // MARK: - Public
   

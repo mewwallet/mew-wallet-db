@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
+public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
   private var _data: [T]?
   private let _table: MDBXTableName
   

@@ -7,5 +7,4 @@
 
 import Foundation
 
-public final class DexItemKey: TokenMetaKey {
-}
+public typealias DexItemKey = TokenMetaKey
