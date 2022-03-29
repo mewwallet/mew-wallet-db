@@ -19,19 +19,26 @@ private let projectId = "0x00"
 
 final class RawTransaction_tests: XCTestCase {
   private var db: MEWwalletDBImpl!
+  
+  lazy private var _path: String = {
+    let fileManager = FileManager.default
+    let url = fileManager.temporaryDirectory.appendingPathComponent("test-db")
+    return url.path
+  }()
 
   override func setUp() {
     super.setUp()
+    
     db = MEWwalletDBImpl()
-    db.delete(name: "test")
+    try? FileManager.default.removeItem(atPath: self._path)
 
-    try! db.start(name: "test", tables: MDBXTableName.allCases)
+    try! db.start(path: self._path, tables: MDBXTableName.allCases)
   }
 
   override func tearDown() {
     super.tearDown()
 
-    db.delete(name: "test")
+    try? FileManager.default.removeItem(atPath: self._path)
     db = nil
   }
   
@@ -45,19 +52,7 @@ final class RawTransaction_tests: XCTestCase {
         
         let loadTx: RawTransaction = try db.read(key: tx.key, table: .rawTransaction)
         debugPrint(loadTx)
-//        debugPrint(tx)
-//
-//        debugPrint(tx.hash)
-//        debugPrint(tx.from)
-//        debugPrint(tx.to)
-//        debugPrint(tx.value)
-//        debugPrint(tx.input)
-//        debugPrint(tx.nonce)
-//        debugPrint(tx.blockNumber)
-//        debugPrint(tx.gas)
-//        debugPrint(tx.gasPrice)
-//        debugPrint(tx.maxFeePerGas)
-//        debugPrint(tx.maxPriorityFeePerGas)
+        debugPrint(tx)
       } catch {
         debugPrint(error)
       }

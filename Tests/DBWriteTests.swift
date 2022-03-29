@@ -110,18 +110,24 @@ private let testJson3 = """
 final class DBWrite_tests: XCTestCase {
   private var db: MEWwalletDBImpl!
   
+  lazy private var _path: String = {
+    let fileManager = FileManager.default
+    let url = fileManager.temporaryDirectory.appendingPathComponent("test-db")
+    return url.path
+  }()
+  
   override func setUp() {
     super.setUp()
     db = MEWwalletDBImpl()
-    db.delete(name: "test")
-    
-    try! db.start(name: "test", tables: MDBXTableName.allCases)
+    try? FileManager.default.removeItem(atPath: self._path)
+
+    try! db.start(path: self._path, tables: MDBXTableName.allCases)
   }
   
   override func tearDown() {
     super.tearDown()
     
-    db.delete(name: "test")
+    try? FileManager.default.removeItem(atPath: self._path)
     db = nil
   }
   
@@ -212,7 +218,7 @@ final class DBWrite_tests: XCTestCase {
         XCTAssertEqual(set2.count, 3)
         count = try await db.write(table: .tokenMeta, keysAndObjects: set2, mode: [.override, .changes])
         fetched = try db.fetchAll(from: .tokenMeta)
-        XCTAssertEqual(count, 2)
+        XCTAssertEqual(count, 1)
         XCTAssertEqual(fetched.count, 5)
         
         try await db.drop(table: .tokenMeta, delete: false)
@@ -227,7 +233,7 @@ final class DBWrite_tests: XCTestCase {
         XCTAssertEqual(set3.count, 7)
         count = try await db.write(table: .tokenMeta, keysAndObjects: set3, mode: [.append, .override, .changes])
         fetched = try db.fetchAll(from: .tokenMeta)
-        XCTAssertEqual(count, 6)
+        XCTAssertEqual(count, 2)
         XCTAssertEqual(fetched.count, 5)
         
         try await db.drop(table: .tokenMeta, delete: false)

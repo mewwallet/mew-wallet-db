@@ -14,15 +14,6 @@ public enum MDBXTableName: String, CaseIterable {
   case tokenMeta          = "TokenMeta_0"
   case token              = "Token_0"
   case rawTransaction     = "RawTransaction_0"
-  
-//  case price              = "Price_0"
-//  case marketItem         = "Market_0"
-//  case completedTransfer  = "CompletedTransfer_0"
-//  case pendingTransfer    = "PendingTransfer_0"
-//  case recipient          = "Recipient_0"
-//  case token              = "Token_0"
-//  case token_v2           = "Token_1"
-//  case balance            = "Balance_0"
 }
 
 typealias MDBXTable = (name: MDBXTableName, db: MDBXDatabase)
