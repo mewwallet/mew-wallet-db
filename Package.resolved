@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "mdbx-ios",
-        "repositoryURL": "https://github.com/Foboz/mdbx-ios.git",
+        "repositoryURL": "git@github.com:mewwallet/mdbx-ios.git",
         "state": {
           "branch": "feature/engine-update",
-          "revision": "8cef95ddfa8f26ecabc3b5bdf78fcc35c6300ca8",
+          "revision": "8b32f8bdc4aeaa7ea376990574ebb74e9900d15b",
           "version": null
         }
       },
