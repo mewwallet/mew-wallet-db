@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+message NFTCollectionPB {
+  string contract_address = 1;
+  string name = 2;
+  string symbol = 3;
+  string icon = 4;
+  string description = 5;
+  string schema_type = 6;
+  map<string,string> social = 7;
+  Stats stats = 8;
+  repeated Asset assets = 9;
+}
+
+message Stats {
+  string count = 1;
+  string owners = 2;
+  Market market = 3;
+}
+
+message Market {
+  Floor floor = 1;
+}
+
+message Floor {
+  string price = 1;
+  Token token = 2;
+}
+
+message Token {
+  string contract_address = 1;
+  string symbol = 2;
+  string name = 3;
+  string icon = 4;
+  string website = 5;
+  int32 decimals = 6;
+}
+
+message Asset {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  repeated URL urls = 4;
+  string opensea_url = 5;
+}
+
+message URL {
+  string type = 1;
+  string url = 2;
+}

@@ -1,0 +1,6 @@
+syntax = "proto3";
+import "NFTCollectionPB.proto";
+
+message NFTCollectionResponse {
+  repeated NFTCollectionPB featured = 1;
+}
