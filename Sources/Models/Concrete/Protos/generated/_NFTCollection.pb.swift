@@ -134,8 +134,8 @@ struct Floor {
 
   var price: String = String()
 
-  var token: Token {
-    get {return _token ?? Token()}
+  var token: TokenPB {
+    get {return _token ?? TokenPB()}
     set {_token = newValue}
   }
   /// Returns true if `token` has been explicitly set.
@@ -147,10 +147,10 @@ struct Floor {
 
   init() {}
 
-  fileprivate var _token: Token? = nil
+  fileprivate var _token: TokenPB? = nil
 }
 
-struct Token {
+struct TokenPB {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -466,8 +466,8 @@ extension Floor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
   }
 }
 
-extension Token: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "Token"
+extension TokenPB: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "TokenPB"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "contract_address"),
     2: .same(proto: "symbol"),
@@ -516,7 +516,7 @@ extension Token: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: Token, rhs: Token) -> Bool {
+  static func ==(lhs: TokenPB, rhs: TokenPB) -> Bool {
     if lhs.contractAddress != rhs.contractAddress {return false}
     if lhs.symbol != rhs.symbol {return false}
     if lhs.name != rhs.name {return false}

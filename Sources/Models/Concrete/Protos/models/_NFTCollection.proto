@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-message NFTCollectionPB {
+message _NFTCollection {
   string contract_address = 1;
   string name = 2;
   string symbol = 3;
@@ -24,10 +24,10 @@ message Market {
 
 message Floor {
   string price = 1;
-  Token token = 2;
+  _Token2 token = 2;
 }
 
-message Token {
+message _Token2 {
   string contract_address = 1;
   string symbol = 2;
   string name = 3;
@@ -40,11 +40,11 @@ message Asset {
   string id = 1;
   string name = 2;
   string description = 3;
-  repeated URL urls = 4;
+  repeated _URL urls = 4;
   string opensea_url = 5;
 }
 
-message URL {
+message _URL {
   string type = 1;
   string url = 2;
 }
