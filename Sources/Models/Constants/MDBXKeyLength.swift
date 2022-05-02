@@ -10,6 +10,7 @@ import Foundation
 public enum MDBXKeyLength {
   public static let chain             = 16
   public static let contractAddress   = 20
+  public static let accountAddress    = 20
   public static let address           = 20
   public static let order             = 2
   public static let hash              = 32

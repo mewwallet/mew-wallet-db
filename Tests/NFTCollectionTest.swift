@@ -579,7 +579,6 @@ private let testJson = """
     ]
   }
 ]
-
 """
 
 final class nft_collection_tests: XCTestCase {
@@ -593,12 +592,12 @@ final class nft_collection_tests: XCTestCase {
     let url = fileManager.temporaryDirectory.appendingPathComponent("test-db")
     return url.path
   }()
-
+  
   override func setUp() {
     super.setUp()
     db = MEWwalletDBImpl()
     try? FileManager.default.removeItem(atPath: self._path)
-
+    
     do {
       try self.db.start(path: self._path, tables: MDBXTableName.allCases)
     } catch {
@@ -615,37 +614,19 @@ final class nft_collection_tests: XCTestCase {
   
   func test() {
     let expectation = XCTestExpectation()
-    guard let data = testJson.data(using: .utf8) else {
-      XCTFail("Invalid json")
-      return
-    }
-    
-    guard let nftCollectionResponse = try? NFTCollectionResponse(jsonUTF8Data: data) else {
-      XCTFail("serialise data error")
-      return
-    }
-    
+
     Task {
       do {
-        for item in nftCollectionResponse.featured {
-          let key = NFTCollectionKey(chain: .eth, contractAddress: account_address, accountAddress: item.contractAddress)
+        
+        let objects = try NFTCollection.array(fromJSONString: testJson, chain: .eth)
+        let keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
+          return ($0.key, $0)
+        })
+        try await db.write(table: .nftCollection, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
 
-          try await db.write(table: self.table, key: key, data: item.jsonUTF8Data(), mode: .append)
-          
-//          guard let data: Data = try? db.read(key: key, table: self.table) else {
-//            XCTFail("response read data error")
-//            return
-//          }
-//
-//          guard let  nftCollectionPBData_ = try? NFTCollectionPB(jsonUTF8Data: data) else {
-//            XCTFail("response serialize to json data error")
-//            return
-//          }
-//
-//          guard nftCollectionPBData_.contractAddress == item.contractAddress else {
-//            XCTFail("Invalid response data")
-//            return
-//          }
+        if let first = objects.first {
+          let nftObject: NFTCollection = try db.read(key: first.key, table: .nftCollection)
+          XCTAssertEqual(first, nftObject)
         }
         
       } catch {

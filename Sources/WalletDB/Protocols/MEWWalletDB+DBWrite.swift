@@ -67,6 +67,7 @@ extension DBWriteMode {
     case .tokenMeta:      return .appendOverrideMerge
     case .token:          return .default
     case .rawTransaction: return .default
+    case .nftCollection: return .default
     }
   }
 }
