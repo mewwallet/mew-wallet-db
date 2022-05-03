@@ -1,4 +1,6 @@
 syntax = "proto3";
+import "_Social.proto";
+import "_Stats.proto";
 
 message _NFTCollection {
   string contract_address = 1;
@@ -7,44 +9,7 @@ message _NFTCollection {
   string icon = 4;
   string description = 5;
   string schema_type = 6;
-  map<string,string> social = 7;
-  Stats stats = 8;
-  repeated Asset assets = 9;
-}
-
-message Stats {
-  string count = 1;
-  string owners = 2;
-  Market market = 3;
-}
-
-message Market {
-  Floor floor = 1;
-}
-
-message Floor {
-  string price = 1;
-  _Token2 token = 2;
-}
-
-message _Token2 {
-  string contract_address = 1;
-  string symbol = 2;
-  string name = 3;
-  string icon = 4;
-  string website = 5;
-  int32 decimals = 6;
-}
-
-message Asset {
-  string id = 1;
-  string name = 2;
-  string description = 3;
-  repeated _URL urls = 4;
-  string opensea_url = 5;
-}
-
-message _URL {
-  string type = 1;
-  string url = 2;
+  _Social social = 7;
+  _Stats stats = 8;
+  repeated _Asset assets = 9;
 }

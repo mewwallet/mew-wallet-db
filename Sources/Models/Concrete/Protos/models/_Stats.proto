@@ -1,0 +1,8 @@
+syntax = "proto3";
+import "_Market.proto";
+
+message _Stats {
+  string count = 1;
+  string owners = 2;
+  _Market market = 3;
+}

@@ -17,7 +17,7 @@ public struct NFTCollection: Equatable {
   var accountAddress: String = ""
   // MARK: - LifeCycle
    
-  public init(chain: MDBXChain, contractAddress: String, name: String = "No Token Name", symbol: String = "MNKY", icon: String = "https://", description: String = "", schema_type: String = "", social: [String: String]) {
+  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: [String: Any], assets: [[String: Any]], address: String) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress
@@ -26,8 +26,11 @@ public struct NFTCollection: Equatable {
       $0.icon = icon
       $0.description_p = description
       $0.schemaType = schema_type
-      $0.social = social
+//      $0.social = _Social()
+//      $0.stats = .with {_ in }
+//      $0.assets = [_Asset]()
     }
+    self.accountAddress = address
     self._chain = chain
   }
 }
@@ -39,14 +42,19 @@ extension NFTCollection {
   public var contract_address: String { self._wrapped.contractAddress }
   public var name: String { self._wrapped.name }
   public var symbol: String { self._wrapped.symbol }
-  public var icon: String { String(self._wrapped.icon) }
-  public var schemaType: String { String(self._wrapped.schemaType) }
+  public var icon: String { self._wrapped.icon }
+  public var description: String { self._wrapped.description_p }
+  public var schemaType: String { self._wrapped.schemaType }
+//  public var social: _Social { self._wrapped.social }
+//  public var stats: _Stats { self._wrapped.stats }
+//  public var assets: [_Asset] { self._wrapped.assets }
+  public var account_address: String { self.accountAddress }
 }
 
 // MARK: - NFTCollection + MDBXObject
 
 extension NFTCollection: MDBXObject {
-  
+
   public var serialized: Data {
     get throws {
       return try self._wrapped.serializedData()
@@ -76,20 +84,21 @@ extension NFTCollection: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _NFTCollection(jsonString: jsonString, options: options)
+    //self.accountAddress = address
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _NFTCollection.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({$0.wrapped(chain)})
   }
   
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _NFTCollection.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({$0.wrapped(chain)})
   }
   
   public mutating func merge(with object: MDBXObject) {

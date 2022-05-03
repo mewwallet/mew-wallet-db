@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message _URL {
+  string type = 1;
+  string url = 2;
+}
