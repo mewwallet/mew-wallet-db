@@ -17,7 +17,7 @@ public struct NFTCollection: Equatable {
   var accountAddress: String = ""
   // MARK: - LifeCycle
    
-  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: [String: Any], assets: [[String: Any]], address: String) {
+  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: Stats, assets: [Asset], address: String) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress
@@ -26,9 +26,9 @@ public struct NFTCollection: Equatable {
       $0.icon = icon
       $0.description_p = description
       $0.schemaType = schema_type
-//      $0.social = _Social()
-//      $0.stats = .with {_ in }
-//      $0.assets = [_Asset]()
+      $0.social = social._wrapped
+      $0.stats = stats._wrapped
+      $0.assets = assets.lazy.map({$0._wrapped})
     }
     self.accountAddress = address
     self._chain = chain

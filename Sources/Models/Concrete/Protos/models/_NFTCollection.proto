@@ -1,6 +1,7 @@
 syntax = "proto3";
 import "_Social.proto";
 import "_Stats.proto";
+import "_Asset.proto";
 
 message _NFTCollection {
   string contract_address = 1;

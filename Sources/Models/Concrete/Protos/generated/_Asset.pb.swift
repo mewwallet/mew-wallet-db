@@ -31,7 +31,7 @@ struct _Asset {
 
   var description_p: String = String()
 
-  var urls: [_URL] = []
+  var urls: [_URLType] = []
 
   var openseaURL: String = String()
 

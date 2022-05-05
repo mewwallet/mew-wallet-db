@@ -1,26 +1,26 @@
 //
-//  Social.swift
+//  URLType.swift
 //  
 //
-//  Created by Sergey Kolokolnikov on 03.05.2022.
+//  Created by Sergey Kolokolnikov on 05.05.2022.
 //
 
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
 
-public struct Social: Equatable {
+public struct URLType: Equatable {
   public weak var database: WalletDB?
-  var _wrapped: _Social
+  var _wrapped: _URLType
   var _chain: MDBXChain
     
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, website: String, discord: String, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, type: String, url: String, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
-      $0.website = website
-      $0.discord = discord
+      $0.type = type
+      $0.url = url
     }
     self._chain = chain
   }
@@ -28,17 +28,17 @@ public struct Social: Equatable {
 
 // MARK: - Token + Properties
 
-extension Social {
+extension URLType {
 
   // MARK: - Properties
   
-  public var website: String { self._wrapped.website }
-  public var discord: String { self._wrapped.discord }
+  public var type: String { self._wrapped.type }
+  public var url: String { self._wrapped.url }
 }
 
 // MARK: - Token + MDBXObject
 
-extension Social: MDBXObject {
+extension URLType: MDBXObject {
   public var serialized: Data {
     get throws {
       return try self._wrapped.serializedData()
@@ -46,63 +46,63 @@ extension Social: MDBXObject {
   }
   
   public var key: MDBXKey {
-    return SocialKey(chain: _chain)
+    return URLTypeKey(chain: _chain)
   }
   
   public var alternateKey: MDBXKey? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _Social(serializedData: data)
+    self._wrapped = try _URLType(serializedData: data)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._wrapped = try _Social(jsonUTF8Data: jsonData, options: options)
+    self._wrapped = try _URLType(jsonUTF8Data: jsonData, options: options)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._wrapped = try _Social(jsonString: jsonString, options: options)
+    self._wrapped = try _URLType(jsonString: jsonString, options: options)
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    let objects = try _Social.array(fromJSONString: string, options: options)
+    let objects = try _URLType.array(fromJSONString: string, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    let objects = try _Social.array(fromJSONUTF8Data: data, options: options)
+    let objects = try _URLType.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
   mutating public func merge(with object: MDBXObject) {
-    let other = object as! Social
-    self._wrapped.website               = other._wrapped.website
-    self._wrapped.discord               = other._wrapped.discord
+    let other = object as! URLType
+    self._wrapped.type               = other._wrapped.type
+    self._wrapped.url               = other._wrapped.url
   }
 }
 
 // MARK: - _Token + ProtoWrappedMessage
 
-extension _Social: ProtoWrappedMessage {
-  func wrapped(_ chain: MDBXChain) -> Social {
-    return Social(self, chain: chain)
+extension _URLType: ProtoWrappedMessage {
+  func wrapped(_ chain: MDBXChain) -> URLType {
+    return URLType(self, chain: chain)
   }
 }
 
 // MARK: - Token + Equitable
 
-public extension Social {
-  static func ==(lhs: Social, rhs: Social) -> Bool {
+public extension URLType {
+  static func ==(lhs: URLType, rhs: URLType) -> Bool {
     return lhs._chain == rhs._chain
         && lhs._wrapped == rhs._wrapped
   }
@@ -110,8 +110,8 @@ public extension Social {
 
 // MARK: - Token + ProtoWrapper
 
-extension Social: ProtoWrapper {
-  init(_ wrapped: _Social, chain: MDBXChain) {
+extension URLType: ProtoWrapper {
+  init(_ wrapped: _URLType, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
   }

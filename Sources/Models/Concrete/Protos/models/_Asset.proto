@@ -1,10 +1,10 @@
 syntax = "proto3";
-import "_URL.proto";
+import "_URLType.proto";
 
 message _Asset {
   string id = 1;
   string name = 2;
   string description = 3;
-  repeated _URL urls = 4;
+  repeated _URLType urls = 4;
   string opensea_url = 5;
 }
