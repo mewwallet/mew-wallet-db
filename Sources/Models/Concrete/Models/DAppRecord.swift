@@ -234,6 +234,7 @@ extension DAppRecord: CustomDebugStringConvertible {
     icon: \(self._wrapped.iconURL)
     favorite: \(self._wrapped.favorite)
     recent: \(self._wrapped.recent)
+    hasPreview: \(self._wrapped.hasPreview)
     """
   }
 }
