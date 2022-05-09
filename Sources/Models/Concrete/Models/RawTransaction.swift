@@ -171,8 +171,8 @@ extension _RawTransaction: ProtoWrappedMessage {
 
 public extension RawTransaction {
   static func ==(lhs: RawTransaction, rhs: RawTransaction) -> Bool {
-    return lhs._chain == rhs._chain
-        && lhs._wrapped == rhs._wrapped
+    return lhs._chain == rhs._chain &&
+           lhs._wrapped == rhs._wrapped
   }
 }
 
