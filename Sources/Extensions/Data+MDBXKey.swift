@@ -10,7 +10,7 @@ import OSLog
 
 extension Data: MDBXKey {
   public var chain: MDBXChain {
-    guard self.count > MDBXKeyLength.chain else {
+    guard self.count >= MDBXKeyLength.chain else {
       os_log("Warning: invalid key", log: .error(.read), type: .fault)
       return .invalid
     }

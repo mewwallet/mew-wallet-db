@@ -8,4 +8,4 @@
 import Foundation
 import mdbx_ios
 
-public protocol WalletDB: AnyObject, DBLifecycle, DBRead, DBWrite, DBTable { }
+public protocol WalletDB: AnyObject, DBLifecycle, DBRead, DBWrite, DBTable, DBDelete { }
