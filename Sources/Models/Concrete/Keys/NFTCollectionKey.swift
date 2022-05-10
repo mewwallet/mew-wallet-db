@@ -36,7 +36,7 @@ public final class NFTCollectionKey: MDBXKey {
   public init(chain: MDBXChain, contractAddress: String, accountAddress: String) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let contractAddressPart = Data(hex: contractAddress).setLengthLeft(MDBXKeyLength.contractAddress)
-    let accountAddressPart = Data(hex: accountAddress).setLengthLeft(MDBXKeyLength.accountAddress)
+    let accountAddressPart = Data(hex: accountAddress).setLengthLeft(MDBXKeyLength.address)
     
     self.key = chainPart + contractAddressPart + accountAddressPart
   }

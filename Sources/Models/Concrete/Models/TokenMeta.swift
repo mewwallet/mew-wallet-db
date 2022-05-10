@@ -158,8 +158,8 @@ extension _TokenMeta: ProtoWrappedMessage {
 
 public extension TokenMeta {
   static func ==(lhs: TokenMeta, rhs: TokenMeta) -> Bool {
-    return lhs._chain == rhs._chain
-        && lhs._wrapped == rhs._wrapped
+    return lhs._chain == rhs._chain &&
+           lhs._wrapped == rhs._wrapped
   }
 }
 

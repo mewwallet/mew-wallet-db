@@ -124,8 +124,8 @@ extension _Token: ProtoWrappedMessage {
 
 public extension Token {
   static func ==(lhs: Token, rhs: Token) -> Bool {
-    return lhs._chain == rhs._chain
-        && lhs._wrapped == rhs._wrapped
+    return lhs._chain == rhs._chain &&
+           lhs._wrapped == rhs._wrapped
   }
 }
 

@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message _DAppRecordReference {
+  bytes reference = 1;
+  uint64 uuid     = 2;
+}

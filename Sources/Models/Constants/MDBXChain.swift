@@ -43,3 +43,9 @@ public enum MDBXChain {
 }
 
 extension MDBXChain: Equatable {}
+
+extension MDBXChain: CustomDebugStringConvertible {
+  public var debugDescription: String {
+    self.rawValue.hexString
+  }
+}

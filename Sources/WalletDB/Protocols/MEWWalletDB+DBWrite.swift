@@ -62,12 +62,15 @@ public struct DBWriteMode: OptionSet {
 extension DBWriteMode {
   public static func recommended(_ table: MDBXTableName) -> DBWriteMode {
     switch table {
-    case .dex:            return [.default, .dropTable]
-    case .orderedDex:     return [.default, .dropTable]
-    case .tokenMeta:      return .appendOverrideMerge
-    case .token:          return .default
-    case .rawTransaction: return .default
-    case .nftCollection: return .default
+    case .dex:                return [.default, .dropTable]
+    case .orderedDex:         return [.default, .dropTable]
+    case .tokenMeta:          return .appendOverrideMerge
+    case .token:              return .default
+    case .rawTransaction:     return .default
+    case .dappRecord:         return .appendOverrideMerge
+    case .dappRecordRecent:   return .appendOverrideMerge
+    case .dappRecordFavorite: return .appendOverrideMerge
+    case .nftCollection:      return .default
     }
   }
 }

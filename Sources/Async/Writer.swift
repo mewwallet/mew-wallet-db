@@ -174,6 +174,31 @@ actor Writer {
     }
   }
   
+  // MARK: - Delete
+  
+  func delete(key: MDBXKey, in table: MDBXTable) async throws -> Int {
+    os_signpost(.begin, log: .info(.table), name: "delete", "table: %{private}@ (%d)", table.name.rawValue)
+    
+    do {
+      var key = key.key
+      os_signpost(.event, log: .info(.table), name: "delete", "ready to delete")
+      try self.transaction.begin(parent: nil, flags: [.readWrite])
+      try self.transaction.delete(key: &key, database: table.db)
+      try self.transaction.commit()
+      os_signpost(.end, log: .info(.table), name: "delete", "dropped")
+      return 1
+    } catch MDBXError.notFound {
+      try? self.transaction.abort()
+      os_signpost(.end, log: .info(.table), name: "delete", "Key not found")
+      return 0
+    } catch {
+      try? self.transaction.abort()
+      os_signpost(.end, log: .info(.table), name: "delete", "Error: %{private}@", error.localizedDescription)
+      os_log("Delete error: %{private}@", log: .info(.table), type: .error, error.localizedDescription)
+      throw error
+    }
+  }
+  
   // MARK: - Recover
   
   func recover(table: MDBXTableName) throws -> MDBXDatabase {
