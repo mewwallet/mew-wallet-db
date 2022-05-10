@@ -90,11 +90,6 @@ public extension MEWwalletDBImpl {
   }
   
   // MARK: - Single Objects
-
-  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) async throws -> T? {
-    let table = try self.database(for: table)
-    return try _read(key: key, table: table, signpost: "readAsync")
-  }
   
   func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) throws -> T {
     let table = try self.database(for: table)

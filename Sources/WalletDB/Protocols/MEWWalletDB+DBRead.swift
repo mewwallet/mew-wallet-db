@@ -12,6 +12,5 @@ public protocol DBRead {
   func fetchRange<T: MDBXObject>(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> [T]
   func countAll(from table: MDBXTableName) throws -> Int
   func countRange(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> Int
-  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) async throws -> T?
   func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) throws -> T
 }
