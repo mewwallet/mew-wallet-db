@@ -35,3 +35,12 @@ extension URLType {
   public var type: String { self._wrapped.type }
   public var url: String { self._wrapped.url }
 }
+
+// MARK: - URLType + Equitable
+
+public extension URLType {
+  static func ==(lhs: URLType, rhs: URLType) -> Bool {
+    return lhs._chain == rhs._chain
+        && lhs._wrapped == rhs._wrapped
+  }
+}

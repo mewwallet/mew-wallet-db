@@ -35,3 +35,12 @@ extension Floor {
   public var price: String { self._wrapped.price }
   //public var token: [_TokenMeta] { self._wrapped.token }
 }
+
+// MARK: - Floor + Equitable
+
+public extension Floor {
+  static func ==(lhs: Floor, rhs: Floor) -> Bool {
+    return lhs._chain == rhs._chain
+        && lhs._wrapped == rhs._wrapped
+  }
+}

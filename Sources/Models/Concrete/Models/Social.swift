@@ -35,3 +35,12 @@ extension Social {
   public var website: String { self._wrapped.website }
   public var discord: String { self._wrapped.discord }
 }
+
+// MARK: - Social + Equitable
+
+public extension Social {
+  static func ==(lhs: Social, rhs: Social) -> Bool {
+    return lhs._chain == rhs._chain
+        && lhs._wrapped == rhs._wrapped
+  }
+}

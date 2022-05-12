@@ -36,3 +36,12 @@ extension Stats {
   public var count: String { self._wrapped.count }
   public var owners: String { self._wrapped.owners }
 }
+
+// MARK: - Stats + Equitable
+
+public extension Stats {
+  static func ==(lhs: Stats, rhs: Stats) -> Bool {
+    return lhs._chain == rhs._chain
+        && lhs._wrapped == rhs._wrapped
+  }
+}

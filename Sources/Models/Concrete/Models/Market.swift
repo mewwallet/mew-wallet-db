@@ -31,5 +31,14 @@ extension Market {
 
   // MARK: - Properties
   
-  //public var floor: String { self._wrapped.floor }
+  //public var floor: Floor { self._wrapped.floor }
+}
+
+// MARK: - Market + Equitable
+
+public extension Market {
+  static func ==(lhs: Market, rhs: Market) -> Bool {
+    return lhs._chain == rhs._chain
+        && lhs._wrapped == rhs._wrapped
+  }
 }

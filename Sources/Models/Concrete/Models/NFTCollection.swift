@@ -48,7 +48,7 @@ extension NFTCollection {
 //  public var social: _Social { self._wrapped.social }
 //  public var stats: _Stats { self._wrapped.stats }
 //  public var assets: [_Asset] { self._wrapped.assets }
-  public var account_address: String { self.accountAddress }
+  public var account_address: String { self.address }
 }
 
 // MARK: - NFTCollection + MDBXObject
