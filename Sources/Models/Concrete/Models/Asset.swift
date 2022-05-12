@@ -29,7 +29,7 @@ public struct Asset: Equatable {
   }
 }
 
-// MARK: - Token + Properties
+// MARK: - Asset + Properties
 
 extension Asset {
 
@@ -42,7 +42,7 @@ extension Asset {
   public var openseaURL: String { self._wrapped.openseaURL }
 }
 
-// MARK: - Token + MDBXObject
+// MARK: - Asset + MDBXObject
 
 extension Asset: MDBXObject {
   public var serialized: Data {
@@ -100,7 +100,7 @@ extension Asset: MDBXObject {
   }
 }
 
-// MARK: - _Token + ProtoWrappedMessage
+// MARK: - _Asset + ProtoWrappedMessage
 
 extension _Asset: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> Asset {
@@ -108,7 +108,7 @@ extension _Asset: ProtoWrappedMessage {
   }
 }
 
-// MARK: - Token + Equitable
+// MARK: - Asset + Equitable
 
 public extension Asset {
   static func ==(lhs: Asset, rhs: Asset) -> Bool {
@@ -117,7 +117,7 @@ public extension Asset {
   }
 }
 
-// MARK: - Token + ProtoWrapper
+// MARK: - Asset + ProtoWrapper
 
 extension Asset: ProtoWrapper {
   init(_ wrapped: _Asset, chain: MDBXChain) {
