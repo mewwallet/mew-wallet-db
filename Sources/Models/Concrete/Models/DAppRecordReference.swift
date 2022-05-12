@@ -61,6 +61,10 @@ extension DAppRecordReference {
   public var asd: Data {
     self._wrapped.reference
   }
+  
+  public var timestamp: Date {
+    self._timestamp
+  }
 
   public var dappRecord: DAppRecord {
     get throws {
