@@ -31,6 +31,10 @@ struct _Asset {
 
   var description_p: String = String()
 
+  var hidden: Bool = false
+
+  var favorite: Bool = false
+
   var urls: [_URLType] = []
 
   var openseaURL: String = String()
@@ -48,8 +52,10 @@ extension _Asset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBas
     1: .same(proto: "id"),
     2: .same(proto: "name"),
     3: .same(proto: "description"),
-    4: .same(proto: "urls"),
-    5: .standard(proto: "opensea_url"),
+    4: .same(proto: "hidden"),
+    5: .same(proto: "favorite"),
+    6: .same(proto: "urls"),
+    7: .standard(proto: "opensea_url"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -61,8 +67,10 @@ extension _Asset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBas
       case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.description_p) }()
-      case 4: try { try decoder.decodeRepeatedMessageField(value: &self.urls) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self.openseaURL) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self.hidden) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self.favorite) }()
+      case 6: try { try decoder.decodeRepeatedMessageField(value: &self.urls) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.openseaURL) }()
       default: break
       }
     }
@@ -78,11 +86,17 @@ extension _Asset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBas
     if !self.description_p.isEmpty {
       try visitor.visitSingularStringField(value: self.description_p, fieldNumber: 3)
     }
+    if self.hidden != false {
+      try visitor.visitSingularBoolField(value: self.hidden, fieldNumber: 4)
+    }
+    if self.favorite != false {
+      try visitor.visitSingularBoolField(value: self.favorite, fieldNumber: 5)
+    }
     if !self.urls.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.urls, fieldNumber: 4)
+      try visitor.visitRepeatedMessageField(value: self.urls, fieldNumber: 6)
     }
     if !self.openseaURL.isEmpty {
-      try visitor.visitSingularStringField(value: self.openseaURL, fieldNumber: 5)
+      try visitor.visitSingularStringField(value: self.openseaURL, fieldNumber: 7)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -91,6 +105,8 @@ extension _Asset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBas
     if lhs.id != rhs.id {return false}
     if lhs.name != rhs.name {return false}
     if lhs.description_p != rhs.description_p {return false}
+    if lhs.hidden != rhs.hidden {return false}
+    if lhs.favorite != rhs.favorite {return false}
     if lhs.urls != rhs.urls {return false}
     if lhs.openseaURL != rhs.openseaURL {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

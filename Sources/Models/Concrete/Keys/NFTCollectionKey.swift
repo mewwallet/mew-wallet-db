@@ -13,7 +13,7 @@ public final class NFTCollectionKey: MDBXKey {
   public let key: Data
   public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
   public var contractAddress: String { return self._contractAddress }
-  public var accountAddress: String { return self._accountAddress }
+  public var address: String { return self._address }
   
   // MARK: - Private
   
@@ -22,28 +22,40 @@ public final class NFTCollectionKey: MDBXKey {
     return key[_chainRange]
   }()
   
-  private lazy var _contractAddressRange: Range<Int> = { _chainRange.endIndex..<32 }()
-  private lazy var _accountAddressRange: Range<Int> = { 32..<key.count }()
+  private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<32 }()
+  private lazy var _contractAddressRange: Range<Int> = { 32..<key.count }()
   private lazy var _contractAddress: String = {
     return key[_contractAddressRange].hexString
   }()
-  private lazy var _accountAddress: String = {
-    return key[_accountAddressRange].hexString
+  private lazy var _address: String = {
+    return key[_addressRange].hexString
   }()
-
+  
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, contractAddress: String, accountAddress: String) {
+  public init(chain: MDBXChain, address: String, contractAddress: String) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let contractAddressPart = Data(hex: contractAddress).setLengthLeft(MDBXKeyLength.contractAddress)
-    let accountAddressPart = Data(hex: accountAddress).setLengthLeft(MDBXKeyLength.address)
+    let addressPart = Data(hex: address).setLengthLeft(MDBXKeyLength.address)
     
-    self.key = chainPart + contractAddressPart + accountAddressPart
+    self.key = chainPart + addressPart + contractAddressPart
   }
   
+  public init(chain: MDBXChain, address: String, lowerRange: Bool) {
+    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let addressPart         = Data(hex: address).setLengthLeft(MDBXKeyLength.address)
+    let contractAddressPart: Data
+    if lowerRange {
+      contractAddressPart = Data().setLengthLeft(MDBXKeyLength.contractAddress)
+    } else {
+      contractAddressPart = Data(repeating: 0xFF, count: MDBXKeyLength.contractAddress)
+    }
+    self.key = chainPart + addressPart + contractAddressPart
+  }
+
   init?(data: Data) {
     guard data.count == MDBXKeyLength.tokenMeta else { return nil }
     self.key = data
   }
-
+  
 }

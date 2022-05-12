@@ -14,7 +14,7 @@ public struct NFTCollection: Equatable {
   var _wrapped: _NFTCollection
   var _chain: MDBXChain
     
-  var accountAddress: String = ""
+  var address: String = ""
   // MARK: - LifeCycle
    
   public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: Stats, assets: [Asset], address: String) {
@@ -30,7 +30,7 @@ public struct NFTCollection: Equatable {
       $0.stats = stats._wrapped
       $0.assets = assets.lazy.map({$0._wrapped})
     }
-    self.accountAddress = address
+    self.address = address
     self._chain = chain
   }
 }
@@ -62,7 +62,7 @@ extension NFTCollection: MDBXObject {
   }
   
   public var key: MDBXKey {
-    return NFTCollectionKey(chain: _chain, contractAddress: self.contract_address, accountAddress: self.accountAddress)
+    return NFTCollectionKey(chain: _chain, address: self.address, contractAddress: self.contract_address)
   }
   
   public var alternateKey: MDBXKey? { return nil }

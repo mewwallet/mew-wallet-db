@@ -5,6 +5,8 @@ message _Asset {
   string id = 1;
   string name = 2;
   string description = 3;
-  repeated _URLType urls = 4;
-  string opensea_url = 5;
+  bool hidden = 4;
+  bool favorite = 5;
+  repeated _URLType urls = 6;
+  string opensea_url = 7;
 }
