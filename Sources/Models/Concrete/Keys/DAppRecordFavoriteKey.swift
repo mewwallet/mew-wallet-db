@@ -1,0 +1,44 @@
+//
+//  File.swift
+//  
+//
+//  Created by Mikhail Nikanorov on 5/5/22.
+//
+
+import Foundation
+
+public final class DAppRecordFavoriteKey: MDBXKey {
+  
+  // MARK: - Public
+  
+  public let key: Data
+  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
+  public var order: UInt16 { return self._order }
+  
+  // MARK: - Private
+  
+  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
+  private lazy var _chain: Data = {
+    return key[_chainRange]
+  }()
+  
+  private lazy var _orderRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order }()
+  private lazy var _order: UInt16 = {
+    let value = key[_orderRange].withUnsafeBytes { $0.load(as: UInt16.self) }
+    return UInt16(bigEndian: value)
+  }()
+  
+  // MARK: - Lifecycle
+  
+  public init(chain: MDBXChain, order: UInt16) {
+    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
+    
+    self.key = chainPart + orderPart
+  }
+  
+  init?(data: Data) {
+    guard data.count == MDBXKeyLength.dAppRecordFavorite else { return nil }
+    self.key = data
+  }
+}

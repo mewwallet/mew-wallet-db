@@ -10,240 +10,116 @@ import mdbx_ios
 import OSLog
 
 public extension MEWwalletDBImpl {
-  func fetchAll<T: MDBXObject>(from table: MDBXTable) throws -> [T] {
+  // MARK: - Ranges
+  
+  func fetchAll<T: MDBXObject>(from table: MDBXTableName) throws -> [T] {
+    return try self.fetchRange(startKey: nil, endKey: nil, from: table)
+  }
+  
+  func fetchRange<T: MDBXObject>(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> [T] {
     var results = [T]()
-    var readError: Error?
+    let db = try self.database(for: table)
     
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: readLogger, name: "fetchAll", "from table: %{private}@", table.rawValue)
-    }
+    os_signpost(.begin, log: .info(.read), name: "fetchRange", "from table: %{private}@", table.rawValue)
     
-    readWorker.sync {
-      do {
-        try self.readTransaction.renew()
-        defer {
-          try? self.readTransaction.reset()
-        }
-        let db = try self.prepareTable(table: table, transaction: self.readTransaction, create: false)
-        
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: readLogger, name: "fetchAll", "cursor prepared")
-        }
-        let cursor = try self.prepareCursor(transaction: self.readTransaction, database: db)
-        var key = Data()
-        
-        var hasNext = true
-        while hasNext {
-          do {
-            let data: Data
-            if key.isEmpty {
-              data = try cursor.getValue(key: &key, operation: [.setLowerBound, .first])
-            } else {
-              data = try cursor.getValue(key: &key, operation: [.next])
-            }
-            
-            let encoded = try self.decoder.decode(T.self, from: data)
-            encoded.database = self
-            results.append(encoded)
-          } catch {
-            hasNext = false
-          }
-        }
-        
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "fetchAll", "done")
-        }
-      } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "fetchAll", "Error: %{private}@", error.localizedDescription)
-        }
-        os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
-        readError = error
+    do {
+      let transaction = MDBXTransaction(self.environment)
+      try transaction.begin(flags: [.readOnly])
+      defer {
+        try? transaction.abort()
       }
-    }
-    
-    if let error = readError {
+      
+      os_signpost(.event, log: .info(.read), name: "fetchRange", "cursor prepared")
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: db.db)
+      defer {
+        cursor.close()
+      }
+      
+      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: db.db)
+        .compactMap {
+          var encoded = try T(serializedData: $0.1, chain: $0.0.chain, key: $0.0)
+          encoded.database = self
+          return encoded
+        }
+      
+      os_signpost(.end, log: .info(.read), name: "fetchRange", "done")
+    } catch {
+      os_signpost(.end, log: .info(.read), name: "fetchRange", "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@. Table: %{private}@, Key: %{private}@", log: .error(.read), type: .error, error.localizedDescription, table.rawValue)
       throw error
     }
     
     return results
   }
   
-  
-  func readAsync<T: MDBXObject>(key: MDBXKey, table: MDBXTable, completionBlock: @escaping (T?) -> Void) {
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: readLogger, name: "readAsync", "from table: %{private}@", table.rawValue)
-    }
-    readWorker.async {[weak self] in
-      guard let self = self else {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "readAsync", "aborted")
-        }
-        return
-      }
-      do {
-        try self.readTransaction.renew()
-        defer {
-          try? self.readTransaction.reset()
-        }
-        let db = try self.prepareTable(table: table, transaction: self.readTransaction, create: false)
-        var key = key.key
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: readLogger, name: "readAsync", "ready for read")
-        }
-        let data = try self.readTransaction.getValue(for: &key, database: db)
-        let result = try self.decoder.decode(T.self, from: data)
-        result.database = self
-        
-        completionBlock(result)
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "readAsync", "done")
-        }
-      } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "readAsync", "Error: %{private}@", error.localizedDescription)
-        }
-        os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
-        completionBlock(nil)
-      }
-    }
+  func countAll(from table: MDBXTableName) throws -> Int {
+    return try self.countRange(startKey: nil, endKey: nil, from: table)
   }
   
-  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTable) throws -> T {
-    var result: T!
-    var readError: Error?
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: readLogger, name: "read", "from table: %{private}@", table.rawValue)
-    }
-    readWorker.sync {
-      do {
-        try self.readTransaction.renew()
-        defer {
-          try? self.readTransaction.reset()
-        }
-        let db = try self.prepareTable(table: table, transaction: self.readTransaction, create: false)
-        var key = key.key
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: readLogger, name: "read", "ready for read")
-        }
-        let data = try self.readTransaction.getValue(for: &key, database: db)
-        result = try self.decoder.decode(T.self, from: data)
-        result?.database = self
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "read", "done")
-        }
-      } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "read", "Error: %{private}@", error.localizedDescription)
-        }
-        os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
-        readError = error
+  func countRange(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> Int {
+    var results: Int = 0
+    let db = try self.database(for: table)
+    
+    os_signpost(.begin, log: .info(.read), name: "countRange", "from table: %{private}@", table.rawValue)
+    
+    do {
+      let transaction = MDBXTransaction(self.environment)
+      try transaction.begin(flags: [.readOnly])
+      defer {
+        try? transaction.abort()
       }
+      
+      os_signpost(.event, log: .info(.read), name: "countRange", "cursor prepared")
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: db.db)
+      defer {
+        cursor.close()
+      }
+      
+      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: db.db).count
+      
+      os_signpost(.end, log: .info(.read), name: "countRange", "done")
+    } catch {
+      os_signpost(.end, log: .info(.read), name: "countRange", "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@", log: .info(.read), type: .error, error.localizedDescription)
+      throw error
     }
     
-    if let error = readError {
+    return results
+  }
+  
+  // MARK: - Single Objects
+  
+  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) throws -> T {
+    let table = try self.database(for: table)
+    return try _read(key: key, table: table, signpost: "read")
+  }
+
+  // MARK: - Private
+  
+  private func _read<T: MDBXObject>(key: MDBXKey, table: MDBXTable, signpost: StaticString) throws -> T {
+    var result: T!
+    os_signpost(.begin, log: .info(.read), name: signpost, "from table: %{private}@", table.name.rawValue)
+    
+    do {
+      let transaction = MDBXTransaction(self.environment)
+      try transaction.begin(flags: [.readOnly])
+      defer {
+        try? transaction.abort()
+      }
+      var key = key.key
+      os_signpost(.event, log: .info(.read), name: signpost, "ready for read")
+      let data = try transaction.getValue(for: &key, database: table.db)
+      result = try T(serializedData: data, chain: key.chain, key: key)
+      result?.database = self
+      os_signpost(.end, log: .info(.read), name: signpost, "done")
+    } catch {
+      os_signpost(.end, log: .info(.read), name: signpost, "Error: %{private}@", error.localizedDescription)
+      os_log("Error: %{private}@. Table: %{private}@, Key: %{private}@", log: .error(.read), type: .error, error.localizedDescription, table.name.rawValue, key.key.hexString)
       throw error
     }
     
     return result
   }
-  
-  func fetchRange<T: MDBXObject>(startKey: MDBXKey, endKey: MDBXKey, table: MDBXTable) throws -> [T] {
-    var results = [T]()
-    var readError: Error?
-    
-    if #available(iOS 12.0, *) {
-      os_signpost(.begin, log: readLogger, name: "fetchRange", "from table: %{private}@", table.rawValue)
-    }
-    
-    readWorker.sync {
-      do {
-        try self.readTransaction.renew()
-        defer {
-          try? self.readTransaction.reset()
-        }
-        let db = try self.prepareTable(table: table, transaction: self.readTransaction, create: false)
-        
-        if #available(iOS 12.0, *) {
-          os_signpost(.event, log: readLogger, name: "fetchRange", "cursor prepared")
-        }
-        let cursor = try self.prepareCursor(transaction: self.readTransaction, database: db)
-
-        var key = startKey.key
-        var endKey = endKey.key
-        var hasNext = true
-        while hasNext {
-          do {
-            let data: Data
-            if results.isEmpty {
-              data = try cursor.getValue(key: &key, operation: [.setLowerBound, .first])
-            } else {
-              data = try cursor.getValue(key: &key, operation: [.next])
-            }
-            
-            if self.readTransaction.compare(a: &key, b: &endKey, database: db) > 0 {
-              if #available(iOS 12.0, *) {
-                os_signpost(.end, log: readLogger, name: "fetchRange", "done")
-              }
-              hasNext = false
-              break
-            }
-            
-            let encoded = try self.decoder.decode(T.self, from: data)
-            encoded.database = self
-            results.append(encoded)
-          } catch {
-            hasNext = false
-          }
-        }
-        
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "fetchRange", "done")
-        }
-      } catch {
-        if #available(iOS 12.0, *) {
-          os_signpost(.end, log: readLogger, name: "fetchRange", "Error: %{private}@", error.localizedDescription)
-        }
-        os_log("Error: %{private}@", log: readLogger, type: .error, error.localizedDescription)
-        readError = error
-      }
-    }
-    
-    if let error = readError {
-      throw error
-    }
-    
-    return results
-  }
-  
-  // TODO: Works for duplicate only, not in use atm
-  /*
-  func count(in table: MDBXTable) throws -> Int {
-    var count: Int = 0
-    var readError: Error?
-    
-    readWorker.sync {
-      do {
-        try self.readTransaction.renew()
-        defer {
-          try? self.readTransaction.reset()
-        }
-        let db = try self.prepareTable(table: table, transaction: self.readTransaction, create: false)
-        
-        let cursor = try self.prepareCursor(transaction: self.readTransaction, database: db)
-        var key = Data()
-        _ = try cursor.getValue(key: &key, operation: [.setLowerBound])
-        count = try cursor.count()
-      } catch {
-        readError = error
-      }
-    }
-    
-    if let error = readError {
-      throw error
-    }
-    
-    return count
-  }
- */
 }

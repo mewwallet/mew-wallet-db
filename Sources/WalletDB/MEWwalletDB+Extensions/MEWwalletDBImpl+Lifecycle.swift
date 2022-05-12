@@ -10,7 +10,7 @@ import mdbx_ios
 import OSLog
 
 public extension MEWwalletDBImpl {
-  func start(databaseName: String, tables: [MDBXTable]) throws {
+  func start(path: String, tables: [MDBXTableName]) throws {
     guard environment == nil else { return }
     
     let environment = MDBXEnvironment()
@@ -28,58 +28,51 @@ public extension MEWwalletDBImpl {
     )
     #if DEBUG
     try environment.setHandleSlowReaders { (env, txn, pid, tid, laggard, gap, space, retry) -> Int32 in
-      os_log("===========", log: lifecycleLogger, type: .info)
-      os_log("Slow reader", log: lifecycleLogger, type: .info)
-      os_log("===========", log: lifecycleLogger, type: .info)
+      os_log("===========", log: .info(.lifecycle), type: .info)
+      os_log("Slow reader", log: .info(.lifecycle), type: .info)
+      os_log("===========", log: .info(.lifecycle), type: .info)
       return -1
     }
     #endif
     try environment.setGeometry(geometry)
-    let path = FileManager.default.temporaryDirectory.appendingPathComponent(databaseName).path
     
-    os_log("Database path: %{private}@", log: lifecycleLogger, type: .info, path)
+    os_log("Database path: %{private}@", log: .info(.lifecycle), type: .info, path)
     
     try environment.open(path: path, flags: [.envDefaults, .noTLS], mode: .iOSPermission)
     self.environment = environment
     
-    var success = true
-    writeWorker.sync {
-      let writeTransaction = MDBXTransaction(environment)
-
-      do {
-        try self.beginTransaction(transaction: writeTransaction)
-        self.writeTransaction = writeTransaction
-      } catch {
-        os_log("Error of write transaction: %{private}@", log: lifecycleLogger, type: .error, error.localizedDescription)
-        success = false
-      }
-    }
-    
-    readWorker.sync {
-      let readTransaction = MDBXTransaction(environment)
-      self.readTransaction = readTransaction
-      do {
-        try self.readTransaction.begin(flags: [.readOnlyPrepare])
-      } catch {
-        os_log("Error of read transaction: %{private}@", log: lifecycleLogger, type: .error, error.localizedDescription)
-      }
-    }
-    
-    guard success else {
-      throw MEWwalletDBError.internalError
-    }
+    self.tables = try self.prepare(tables: tables, in: environment)
+    self.writer = Writer(environment: environment)
   }
   
   func stop() {
-    readWorker.stop()
-    writeWorker.sync {
-      do {
-        try self.writeTransaction.abort()
-      } catch {
-        os_log("Error during %{private}@: %{private}@", log: lifecycleLogger, type: .error, error.localizedDescription)
-      }
-    }
-    writeWorker.stop()
+    self.tables.removeAll()
     self.environment.close(false)
+  }
+  
+  // MARK: - Private
+  
+  private func prepare(tables: [MDBXTableName], in environment: MDBXEnvironment) throws -> [MDBXTableName: MDBXDatabase] {
+    os_signpost(.begin, log: .info(.table), name: "prepare")
+    let transaction = MDBXTransaction(environment)
+    try transaction.begin(parent: nil, flags: [.readWrite])
+    var dbs: [MDBXTableName: MDBXDatabase] = [:]
+    do {
+      for table in tables {
+        os_signpost(.event, log: .info(.table), name: "prepare", "table prepare: %{private}@", table.rawValue)
+        let db = MDBXDatabase()
+        try db.open(transaction: transaction, name: table.rawValue, flags: .create)
+        dbs[table] = db
+        os_signpost(.event, log: .info(.table), name: "prepare", "table done: %{private}@", table.rawValue)
+      }
+      try transaction.commit()
+      os_signpost(.end, log: .info(.table), name: "prepare")
+    } catch {
+      try transaction.abort()
+      os_signpost(.end, log: .info(.table), name: "prepare", "error: %{private}@", error.localizedDescription)
+      os_log("Prepare table error: %{private}@", log: .error(.table), type: .fault, error.localizedDescription)
+      throw error
+    }
+    return dbs
   }
 }
