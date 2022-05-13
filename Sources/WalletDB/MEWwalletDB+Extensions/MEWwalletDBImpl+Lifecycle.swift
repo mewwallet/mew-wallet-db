@@ -8,71 +8,63 @@
 import Foundation
 import mdbx_ios
 import OSLog
+import Combine
+#if canImport(UIKit)
+import UIKit
+#endif
 
 public extension MEWwalletDBImpl {
   func start(path: String, tables: [MDBXTableName]) throws {
-    guard environment == nil else { return }
-    
-    let environment = MDBXEnvironment()
-    try environment.create()
-    try environment.setMaxReader(42)
-    try environment.setMaxDatabases(42)
-    
-    let geometry = MDBXGeometry(
-      sizeLower: -1,
-      sizeNow: 1024 * 10,
-      sizeUpper: 1024 * 1024 * 50,
-      growthStep: 1024,
-      shrinkThreshold: -1,
-      pageSize: -1
-    )
-    #if DEBUG
-    try environment.setHandleSlowReaders { (env, txn, pid, tid, laggard, gap, space, retry) -> Int32 in
-      os_log("===========", log: .info(.lifecycle), type: .info)
-      os_log("Slow reader", log: .info(.lifecycle), type: .info)
-      os_log("===========", log: .info(.lifecycle), type: .info)
-      return -1
-    }
-    #endif
-    try environment.setGeometry(geometry)
+    guard !self.started else { return }
+    self.started = true
+    self.path = path
+    self.tableNames = tables
     
     os_log("Database path: %{private}@", log: .info(.lifecycle), type: .info, path)
     
-    try environment.open(path: path, flags: [.envDefaults, .noTLS], mode: .iOSPermission)
-    self.environment = environment
+    self.prepareEnvironment(path: path, tables: tables)
     
-    self.tables = try self.prepare(tables: tables, in: environment)
-    self.writer = Writer(environment: environment)
+    #if os(iOS)
+    NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
+      .sink {[weak self] _ in
+        self?.dropEnvironment()
+      }
+      .store(in: &cancellable)
+    NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+      .sink {[weak self] _ in
+        self?.prepareEnvironment(path: path, tables: tables)
+      }
+      .store(in: &cancellable)
+    #endif
   }
   
   func stop() {
-    self.tables.removeAll()
-    self.environment.close(false)
+    self.dropEnvironment()
+  }
+  
+  // MARK: - Internal
+  
+  internal func getEnvironment() throws -> MEWwalletDBEnvironment {
+    if let environment = self.environment {
+      return environment
+    } else {
+      throw MEWwalletDBError.backgroundState
+    }
   }
   
   // MARK: - Private
   
-  private func prepare(tables: [MDBXTableName], in environment: MDBXEnvironment) throws -> [MDBXTableName: MDBXDatabase] {
-    os_signpost(.begin, log: .info(.table), name: "prepare")
-    let transaction = MDBXTransaction(environment)
-    try transaction.begin(parent: nil, flags: [.readWrite])
-    var dbs: [MDBXTableName: MDBXDatabase] = [:]
+  private func prepareEnvironment(path: String, tables: [MDBXTableName]) {
+    guard self.environment == nil else { return }
     do {
-      for table in tables {
-        os_signpost(.event, log: .info(.table), name: "prepare", "table prepare: %{private}@", table.rawValue)
-        let db = MDBXDatabase()
-        try db.open(transaction: transaction, name: table.rawValue, flags: .create)
-        dbs[table] = db
-        os_signpost(.event, log: .info(.table), name: "prepare", "table done: %{private}@", table.rawValue)
-      }
-      try transaction.commit()
-      os_signpost(.end, log: .info(.table), name: "prepare")
+      let environment = try MEWwalletDBEnvironment(path: path, tables: tables)
+      self.environment = environment
     } catch {
-      try transaction.abort()
-      os_signpost(.end, log: .info(.table), name: "prepare", "error: %{private}@", error.localizedDescription)
-      os_log("Prepare table error: %{private}@", log: .error(.table), type: .fault, error.localizedDescription)
-      throw error
+      os_log("Prepare environment error: %{private}@", log: .error(.lifecycle), type: .fault, error.localizedDescription)
     }
-    return dbs
+  }
+  
+  private func dropEnvironment() {
+    self.environment = nil
   }
 }
