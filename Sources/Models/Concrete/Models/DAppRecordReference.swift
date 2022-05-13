@@ -61,15 +61,20 @@ extension DAppRecordReference {
   public var asd: Data {
     self._wrapped.reference
   }
-  
-  public var timestamp: Date {
-    self._timestamp
-  }
 
   public var dappRecord: DAppRecord {
     get throws {
       let key = DAppRecordKey(chain: _chain, hash: self._wrapped.reference)
       return try _dappRecord.getData(key: key, policy: .ignoreCache, database: self.database)
+    }
+  }
+  
+  public var dappRecordSetter: DAppRecord? {
+    get {
+      return nil
+    }
+    set(record) {
+      self._wrapped.reference = record?.url.sha256 ?? Data()
     }
   }
   
