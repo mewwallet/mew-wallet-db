@@ -70,6 +70,15 @@ extension DAppRecordReference {
     }
   }
   
+  public var dappRecordSetter: DAppRecord? {
+    get {
+      return nil
+    }
+    set(record) {
+      self._wrapped.reference = record?.url.sha256 ?? Data()
+    }
+  }
+  
   // MARK: - Properties
   public var uuid: UInt64 { self._wrapped.uuid }
 }

@@ -12,26 +12,34 @@ import OSLog
 public extension MEWwalletDBImpl {
   @discardableResult
   func write(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
-    let db = try self.database(for: table)
-    return try await self.writer.write(table: db, key: key, data: data, mode: mode)
+    let environment = try self.getEnvironment()
+    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+    let table = (table, db)
+    return try await environment.writer.write(table: table, key: key, data: data, mode: mode)
   }
   
   @discardableResult
   func write(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int {
-    let db = try self.database(for: table)
-    return try await self.writer.write(table: db, key: key, object: object, mode: mode)
+    let environment = try self.getEnvironment()
+    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+    let table = (table, db)
+    return try await environment.writer.write(table: table, key: key, object: object, mode: mode)
   }
   
   @discardableResult
   func write(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode) async throws -> Int {
-    let db = try self.database(for: table)
-    return try await self.writer.write(table: db, keysAndData: keysAndData, mode: mode)
+    let environment = try self.getEnvironment()
+    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+    let table = (table, db)
+    return try await environment.writer.write(table: table, keysAndData: keysAndData, mode: mode)
   }
   
   @discardableResult 
   func write(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int {
-    let db = try self.database(for: table)
-    return try await self.writer.write(table: db, keysAndObject: keysAndObjects, mode: mode)
+    let environment = try self.getEnvironment()
+    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+    let table = (table, db)
+    return try await environment.writer.write(table: table, keysAndObject: keysAndObjects, mode: mode)
   }
   
   func writeAsync(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void) {

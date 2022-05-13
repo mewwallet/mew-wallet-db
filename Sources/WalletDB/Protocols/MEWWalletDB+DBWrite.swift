@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 public enum DBWriteError: Error {
   case badMode
@@ -76,6 +77,8 @@ extension DBWriteMode {
 }
 
 public protocol DBWrite {
+  var canWrite: AnyPublisher<Bool, Never> { get }
+  
   @discardableResult
   func write(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int
   
