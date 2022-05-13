@@ -40,8 +40,8 @@ public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
       let data: T = try database.read(key: key, table: _table)
       _data = data
       _data?.database = database
+      return data
     }
-    return _data!
   }
     
   func updateData(_ data: T?) {

@@ -4,7 +4,7 @@ message _TokenMeta {
   string contract_address     = 1;
   string name                 = 2;
   string symbol               = 3;
-  optional int32 decimals              = 4;
+  optional int32 decimals     = 4;
   optional string icon        = 5;
   optional string price       = 6;
   optional string market_cap  = 7;

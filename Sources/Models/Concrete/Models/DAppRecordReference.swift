@@ -58,10 +58,6 @@ public struct DAppRecordReference: Equatable {
 extension DAppRecordReference {
   // MARK: - Relations
   
-  public var asd: Data {
-    self._wrapped.reference
-  }
-
   public var dappRecord: DAppRecord {
     get throws {
       let key = DAppRecordKey(chain: _chain, hash: self._wrapped.reference)
