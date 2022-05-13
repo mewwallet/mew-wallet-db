@@ -13,10 +13,12 @@ public struct Asset: Equatable {
   public weak var database: WalletDB?
   var _wrapped: _Asset
   var _chain: MDBXChain
-    
+  var address: String?
+  var contract_address: String?
+  
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, id: String, name: String, description: String, urls: [URLType], opensea_url: String, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, id: String, name: String, description: String, urls: [URLType], opensea_url: String, database: WalletDB? = nil, address: String, contract_address: String) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.id = id
@@ -26,6 +28,8 @@ public struct Asset: Equatable {
       $0.openseaURL = opensea_url
     }
     self._chain = chain
+    self.address = address
+    self.contract_address = contract_address
   }
 }
 
@@ -38,13 +42,21 @@ extension Asset {
   public var id: String { self._wrapped.id }
   public var name: String { self._wrapped.name }
   public var description_p: String { self._wrapped.description_p }
-  //public var urls: [URL] { self.urls }
+  public var urls: [URLType] {
+    var result = [URLType]()
+    for _urlType in self._wrapped.urls {
+      let urlType = URLType(chain: self._chain, type: _urlType.type, url: _urlType.url, database: self.database)
+      result.append(urlType)
+    }
+    return result
+  }
   public var openseaURL: String { self._wrapped.openseaURL }
 }
 
 // MARK: - Asset + MDBXObject
 
 extension Asset: MDBXObject {
+
   public var serialized: Data {
     get throws {
       return try self._wrapped.serializedData()

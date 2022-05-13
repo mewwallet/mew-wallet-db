@@ -619,16 +619,34 @@ final class nft_collection_tests: XCTestCase {
       do {
         
         let objects = try NFTCollection.array(fromJSONString: testJson, chain: .eth)
-        let keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
+        let keysAndObjectsNFTCollections: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
           return ($0.key, $0)
         })
-        try await db.write(table: .nftCollection, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
+
+        var assets: [Asset] = [Asset]()
+        
+        objects.forEach { item in
+          assets.append(contentsOf: item.assets)
+        }
+        
+        let keysAndObjectsAssets: [(MDBXKey, MDBXObject)] = assets.lazy.map ({
+          return ($0.key, $0)
+        })
+
+        try await db.write(table: .nftCollection, keysAndObjects: keysAndObjectsNFTCollections, mode: [.append, .changes, .override])
+
+        try await db.write(table: .asset, keysAndObjects: keysAndObjectsAssets, mode: [.append, .changes, .override])
 
         if let first = objects.first {
           let nftObject: NFTCollection = try db.read(key: first.key, table: .nftCollection)
           XCTAssertEqual(first, nftObject)
         }
-        
+
+        if let first = assets.first {
+          let asset: Asset = try db.read(key: first.key, table: .asset)
+          XCTAssertEqual(first, asset)
+        }
+
       } catch {
         debugPrint(error)
       }

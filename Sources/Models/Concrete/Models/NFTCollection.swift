@@ -45,9 +45,19 @@ extension NFTCollection {
   public var icon: String { self._wrapped.icon }
   public var description: String { self._wrapped.description_p }
   public var schemaType: String { self._wrapped.schemaType }
-//  public var social: _Social { self._wrapped.social }
-//  public var stats: _Stats { self._wrapped.stats }
-//  public var assets: [_Asset] { self._wrapped.assets }
+  public var assets: [Asset] {
+    var result = [Asset]()
+    for item in self._wrapped.assets {
+      var urlsType = [URLType]()
+      for _urltype in item.urls {
+        let urltype = URLType(chain: self._chain, type: _urltype.type, url: _urltype.url, database: self.database)
+        urlsType.append(urltype)
+      }
+      let asset = Asset(chain: self._chain, id: item.id, name: item.name, description: item.description_p, urls: urlsType, opensea_url: item.openseaURL, database: self.database, address: self.address, contract_address: self.contract_address)
+      result.append(asset)
+    }
+    return result
+  }
   public var account_address: String { self.address }
 }
 
