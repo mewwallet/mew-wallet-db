@@ -5,9 +5,9 @@
         "package": "mdbx-ios",
         "repositoryURL": "git@github.com:mewwallet/mdbx-ios.git",
         "state": {
-          "branch": "feature/engine-update",
-          "revision": "8b32f8bdc4aeaa7ea376990574ebb74e9900d15b",
-          "version": null
+          "branch": null,
+          "revision": "321bbef5a1201e0a21add3b52fa268fd79bad6d8",
+          "version": "1.0.9"
         }
       },
       {
