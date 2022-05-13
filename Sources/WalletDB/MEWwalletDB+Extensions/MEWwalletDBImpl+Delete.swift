@@ -12,7 +12,8 @@ import OSLog
 public extension MEWwalletDBImpl {
   @discardableResult
   func delete(key: MDBXKey, in table: MDBXTableName) async throws -> Int {
-    let db = try self.database(for: table)
-    return try await self.writer.delete(key: key, in: db)
+    let environment = try self.getEnvironment()
+    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+    return try await environment.writer.delete(key: key, in: (table, db))
   }
 }

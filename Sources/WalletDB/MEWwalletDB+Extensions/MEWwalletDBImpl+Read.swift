@@ -18,12 +18,15 @@ public extension MEWwalletDBImpl {
   
   func fetchRange<T: MDBXObject>(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> [T] {
     var results = [T]()
-    let db = try self.database(for: table)
     
     os_signpost(.begin, log: .info(.read), name: "fetchRange", "from table: %{private}@", table.rawValue)
     
     do {
-      let transaction = MDBXTransaction(self.environment)
+      let environment = try self.getEnvironment()
+      guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+      let table: MDBXTable = (table, db)
+      
+      let transaction = MDBXTransaction(environment.environment)
       try transaction.begin(flags: [.readOnly])
       defer {
         try? transaction.abort()
@@ -31,12 +34,12 @@ public extension MEWwalletDBImpl {
       
       os_signpost(.event, log: .info(.read), name: "fetchRange", "cursor prepared")
       let cursor = MDBXCursor()
-      try cursor.open(transaction: transaction, database: db.db)
+      try cursor.open(transaction: transaction, database: table.db)
       defer {
         cursor.close()
       }
       
-      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: db.db)
+      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: table.db)
         .compactMap {
           var encoded = try T(serializedData: $0.1, chain: $0.0.chain, key: $0.0)
           encoded.database = self
@@ -44,9 +47,13 @@ public extension MEWwalletDBImpl {
         }
       
       os_signpost(.end, log: .info(.read), name: "fetchRange", "done")
+    } catch MEWwalletDBError.backgroundState {
+      os_signpost(.end, log: .info(.read), name: "fetchRange", "Error: BackgroundState")
+      os_log("Error: Background state. Table: %{private}@", log: .error(.read), type: .fault, table.rawValue)
+      throw MEWwalletDBError.backgroundState
     } catch {
       os_signpost(.end, log: .info(.read), name: "fetchRange", "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@. Table: %{private}@, Key: %{private}@", log: .error(.read), type: .error, error.localizedDescription, table.rawValue)
+      os_log("Error: %{private}@. Table: %{private}@", log: .error(.read), type: .error, error.localizedDescription, table.rawValue)
       throw error
     }
     
@@ -59,12 +66,15 @@ public extension MEWwalletDBImpl {
   
   func countRange(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> Int {
     var results: Int = 0
-    let db = try self.database(for: table)
     
     os_signpost(.begin, log: .info(.read), name: "countRange", "from table: %{private}@", table.rawValue)
     
     do {
-      let transaction = MDBXTransaction(self.environment)
+      let environment = try self.getEnvironment()
+      guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+      let table: MDBXTable = (table, db)
+      
+      let transaction = MDBXTransaction(environment.environment)
       try transaction.begin(flags: [.readOnly])
       defer {
         try? transaction.abort()
@@ -72,14 +82,18 @@ public extension MEWwalletDBImpl {
       
       os_signpost(.event, log: .info(.read), name: "countRange", "cursor prepared")
       let cursor = MDBXCursor()
-      try cursor.open(transaction: transaction, database: db.db)
+      try cursor.open(transaction: transaction, database: table.db)
       defer {
         cursor.close()
       }
       
-      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: db.db).count
+      results = try cursor.fetchRange(startKey: startKey, endKey: endKey, from: table.db).count
       
       os_signpost(.end, log: .info(.read), name: "countRange", "done")
+    } catch MEWwalletDBError.backgroundState {
+      os_signpost(.end, log: .info(.read), name: "countRange", "Error: BackgroundState")
+      os_log("Error: BackgroundState", log: .info(.read), type: .fault)
+      throw MEWwalletDBError.backgroundState
     } catch {
       os_signpost(.end, log: .info(.read), name: "countRange", "Error: %{private}@", error.localizedDescription)
       os_log("Error: %{private}@", log: .info(.read), type: .error, error.localizedDescription)
@@ -92,7 +106,9 @@ public extension MEWwalletDBImpl {
   // MARK: - Single Objects
   
   func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) throws -> T {
-    let table = try self.database(for: table)
+    let environment = try self.getEnvironment()
+    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
+    let table: MDBXTable = (table, db)
     return try _read(key: key, table: table, signpost: "read")
   }
 
@@ -103,7 +119,8 @@ public extension MEWwalletDBImpl {
     os_signpost(.begin, log: .info(.read), name: signpost, "from table: %{private}@", table.name.rawValue)
     
     do {
-      let transaction = MDBXTransaction(self.environment)
+      let environment = try self.getEnvironment()
+      let transaction = MDBXTransaction(environment.environment)
       try transaction.begin(flags: [.readOnly])
       defer {
         try? transaction.abort()
@@ -114,6 +131,10 @@ public extension MEWwalletDBImpl {
       result = try T(serializedData: data, chain: key.chain, key: key)
       result?.database = self
       os_signpost(.end, log: .info(.read), name: signpost, "done")
+    } catch MEWwalletDBError.backgroundState {
+      os_signpost(.end, log: .info(.read), name: signpost, "Error: BackgroundState")
+      os_log("Error: BackgroundState. Table: %{private}@, Key: %{private}@", log: .error(.read), type: .fault, table.name.rawValue, key.key.hexString)
+      throw MEWwalletDBError.backgroundState
     } catch {
       os_signpost(.end, log: .info(.read), name: signpost, "Error: %{private}@", error.localizedDescription)
       os_log("Error: %{private}@. Table: %{private}@, Key: %{private}@", log: .error(.read), type: .error, error.localizedDescription, table.name.rawValue, key.key.hexString)
