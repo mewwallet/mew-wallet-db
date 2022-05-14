@@ -64,7 +64,7 @@ extension Asset: MDBXObject {
   }
   
   public var key: MDBXKey {
-    return AssetKey(chain: _chain)
+    return AssetKey(chain: _chain, address: address ?? "", contractAddress: contract_address ?? "", id: id)
   }
   
   public var alternateKey: MDBXKey? { return nil }

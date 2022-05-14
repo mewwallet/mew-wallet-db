@@ -2,7 +2,7 @@
 //  File.swift
 //  
 //
-//  Created by Sergey Kolokolnikov on 28.04.2022.
+//  Created by Sergey Kolokolnikov on 13.05.2022.
 //
 
 import Foundation
@@ -581,7 +581,7 @@ private let testJson = """
 ]
 """
 
-final class nft_collection_tests: XCTestCase {
+final class asset_tests: XCTestCase {
   
   private var db: MEWwalletDBImpl!
   private let table: MDBXTableName = .nftCollection
@@ -618,16 +618,23 @@ final class nft_collection_tests: XCTestCase {
     Task {
       do {
         
-        let objects = try NFTCollection.array(fromJSONString: testJson, chain: .eth)
+        let nftCollection = try NFTCollection.array(fromJSONString: testJson, chain: .eth)
+
+        var objects: [Asset] = [Asset]()
+        
+        nftCollection.forEach { item in
+          objects.append(contentsOf: item.assets)
+        }
+        
         let keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
           return ($0.key, $0)
         })
 
-        try await db.write(table: .nftCollection, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
+        try await db.write(table: .asset, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
 
         if let first = objects.first {
-          let nftObject: NFTCollection = try db.read(key: first.key, table: .nftCollection)
-          XCTAssertEqual(first, nftObject)
+          let asset: Asset = try db.read(key: first.key, table: .asset)
+          XCTAssertEqual(first, asset)
         }
 
       } catch {
