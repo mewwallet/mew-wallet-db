@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class DAppRecordFavoriteKey: MDBXKey {
+public final class DAppRecordReferenceKey: MDBXKey {
   
   // MARK: - Public
   
