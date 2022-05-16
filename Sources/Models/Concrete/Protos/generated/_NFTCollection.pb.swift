@@ -73,7 +73,7 @@ struct _NFTCollection {
   /// Clears the value of `stats`. Subsequent reads from it will return its default value.
   mutating func clearStats() {_uniqueStorage()._stats = nil}
 
-  var assets: [_Asset] {
+  var assets: [_NFTAsset] {
     get {return _storage._assets}
     set {_uniqueStorage()._assets = newValue}
   }
@@ -110,7 +110,7 @@ extension _NFTCollection: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     var _schemaType: String = String()
     var _social: _Social? = nil
     var _stats: _Stats? = nil
-    var _assets: [_Asset] = []
+    var _assets: [_NFTAsset] = []
 
     static let defaultInstance = _StorageClass()
 

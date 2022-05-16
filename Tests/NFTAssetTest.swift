@@ -581,7 +581,7 @@ private let testJson = """
 ]
 """
 
-final class asset_tests: XCTestCase {
+final class nft_asset_tests: XCTestCase {
   
   private var db: MEWwalletDBImpl!
   private let table: MDBXTableName = .nftCollection
@@ -620,7 +620,7 @@ final class asset_tests: XCTestCase {
         
         let nftCollection = try NFTCollection.array(fromJSONString: testJson, chain: .eth)
 
-        var objects: [Asset] = [Asset]()
+        var objects: [NFTAsset] = [NFTAsset]()
         
         nftCollection.forEach { item in
           objects.append(contentsOf: item.assets)
@@ -630,10 +630,10 @@ final class asset_tests: XCTestCase {
           return ($0.key, $0)
         })
 
-        try await db.write(table: .asset, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
+        try await db.write(table: .nftAsset, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
 
         if let first = objects.first {
-          let asset: Asset = try db.read(key: first.key, table: .asset)
+          let asset: Asset = try db.read(key: first.key, table: .nftAsset)
           XCTAssertEqual(first, asset)
         }
 

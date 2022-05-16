@@ -22,7 +22,8 @@ public enum MDBXKeyLength {
   public static var dAppRecord:           Int { return chain + hash + uuid }
   public static var dAppRecordFavorite:   Int { return chain + order }
   public static var dAppRecordRecent:     Int { return chain }
-  
+  public static var nftAsset:             Int { return token + hash }
+
   public static let blockNumber = 8
   public static let direction = 1
   public static let nonce = 12

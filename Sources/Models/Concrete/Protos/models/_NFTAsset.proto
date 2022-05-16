@@ -1,7 +1,7 @@
 syntax = "proto3";
 import "_URLType.proto";
 
-message _Asset {
+message _NFTAsset {
   string id = 1;
   string name = 2;
   string description = 3;

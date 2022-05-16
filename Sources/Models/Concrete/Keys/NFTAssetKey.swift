@@ -7,9 +7,8 @@
 
 import Foundation
 import MEWextensions
-import CryptoSwift
 
-public final class AssetKey: MDBXKey {
+public final class NFTAssetKey: MDBXKey {
   
   // MARK: - Public
   
@@ -26,9 +25,9 @@ public final class AssetKey: MDBXKey {
     return key[_chainRange]
   }()
   
-  private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<32 }()
-  private lazy var _contractAddressRange: Range<Int> = { 32..<64 }()
-  private lazy var _idRange: Range<Int> = { 64..<key.count }()
+  private lazy var _addressRange: Range<Int> = { _chainRange.startIndex..<MDBXKeyLength.address }()
+  private lazy var _contractAddressRange: Range<Int> = { MDBXKeyLength.address..<MDBXKeyLength.token }()
+  private lazy var _idRange: Range<Int> = { MDBXKeyLength.token..<key.count }()
   private lazy var _contractAddress: String = {
     return key[_contractAddressRange].hexString
   }()
@@ -43,15 +42,15 @@ public final class AssetKey: MDBXKey {
   
   public init(chain: MDBXChain, address: String, contractAddress: String, id: String) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = address.data(using: .utf8)?.setLengthLeft(MDBXKeyLength.address) ?? Data()
-    let contractAddressPart = contractAddress.data(using: .utf8)?.setLengthLeft(MDBXKeyLength.contractAddress) ?? Data()
-    let assetIdPart         = id.data(using: .utf8)?.sha256().setLengthLeft(MDBXKeyLength.hash) ?? Data()
+    let addressPart         = Data(hex: address).setLengthLeft(MDBXKeyLength.address)
+    let contractAddressPart = Data(hex: contractAddress).setLengthLeft(MDBXKeyLength.contractAddress)
+    let assetIdPart         = id.sha256.setLengthLeft(MDBXKeyLength.hash)
     
     self.key = chainPart + addressPart + contractAddressPart + assetIdPart
   }
   
   init?(data: Data) {
-    guard data.count == MDBXKeyLength.token + MDBXKeyLength.hash else { return nil }
+    guard data.count == MDBXKeyLength.nftAsset else { return nil }
     self.key = data
   }
 }

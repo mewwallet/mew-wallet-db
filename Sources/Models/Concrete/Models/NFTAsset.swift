@@ -9,7 +9,7 @@ import Foundation
 import SwiftProtobuf
 import mdbx_ios
 
-public struct Asset: Equatable {
+public struct NFTAsset: Equatable {
   public weak var database: WalletDB?
   var _wrapped: _Asset
   var _chain: MDBXChain
@@ -35,13 +35,13 @@ public struct Asset: Equatable {
 
 // MARK: - Asset + Properties
 
-extension Asset {
+extension NFTAsset {
 
   // MARK: - Properties
   
   public var id: String { self._wrapped.id }
   public var name: String { self._wrapped.name }
-  public var description_p: String { self._wrapped.description_p }
+  public var description: String { self._wrapped.description_p }
   public var urls: [URLType] {
     var result = [URLType]()
     for _urlType in self._wrapped.urls {
@@ -55,7 +55,7 @@ extension Asset {
 
 // MARK: - Asset + MDBXObject
 
-extension Asset: MDBXObject {
+extension NFTAsset: MDBXObject {
 
   public var serialized: Data {
     get throws {
@@ -64,7 +64,7 @@ extension Asset: MDBXObject {
   }
   
   public var key: MDBXKey {
-    return AssetKey(chain: _chain, address: address ?? "", contractAddress: contract_address ?? "", id: id)
+    return NFTAssetKey(chain: _chain, address: address ?? "", contractAddress: contract_address ?? "", id: id)
   }
   
   public var alternateKey: MDBXKey? { return nil }
@@ -122,8 +122,8 @@ extension _Asset: ProtoWrappedMessage {
 
 // MARK: - Asset + Equitable
 
-public extension Asset {
-  static func ==(lhs: Asset, rhs: Asset) -> Bool {
+public extension NFTAsset {
+  static func ==(lhs: NFTAsset, rhs: NFTAsset) -> Bool {
     return lhs._chain == rhs._chain
         && lhs._wrapped == rhs._wrapped
   }
@@ -131,7 +131,7 @@ public extension Asset {
 
 // MARK: - Asset + ProtoWrapper
 
-extension Asset: ProtoWrapper {
+extension NFTAsset: ProtoWrapper {
   init(_ wrapped: _Asset, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped

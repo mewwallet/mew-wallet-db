@@ -1,7 +1,7 @@
 syntax = "proto3";
 import "_Social.proto";
 import "_Stats.proto";
-import "_Asset.proto";
+import "_NFTAsset.proto";
 
 message _NFTCollection {
   string contract_address = 1;
@@ -12,5 +12,5 @@ message _NFTCollection {
   string schema_type = 6;
   _Social social = 7;
   _Stats stats = 8;
-  repeated _Asset assets = 9;
+  repeated _NFTAsset assets = 9;
 }

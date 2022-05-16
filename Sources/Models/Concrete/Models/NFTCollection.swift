@@ -17,7 +17,7 @@ public struct NFTCollection: Equatable {
   var address: String = ""
   // MARK: - LifeCycle
    
-  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: Stats, assets: [Asset], address: String) {
+  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: Stats, assets: [NFTAsset], address: String) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress
@@ -45,15 +45,15 @@ extension NFTCollection {
   public var icon: String { self._wrapped.icon }
   public var description: String { self._wrapped.description_p }
   public var schemaType: String { self._wrapped.schemaType }
-  public var assets: [Asset] {
-    var result = [Asset]()
+  public var assets: [NFTAsset] {
+    var result = [NFTAsset]()
     for item in self._wrapped.assets {
       var urlsType = [URLType]()
       for _urltype in item.urls {
         let urltype = URLType(chain: self._chain, type: _urltype.type, url: _urltype.url, database: self.database)
         urlsType.append(urltype)
       }
-      let asset = Asset(chain: self._chain, id: item.id, name: item.name, description: item.description_p, urls: urlsType, opensea_url: item.openseaURL, database: self.database, address: self.address, contract_address: self.contract_address)
+      let asset = NFTAsset(chain: self._chain, id: item.id, name: item.name, description: item.description_p, urls: urlsType, opensea_url: item.openseaURL, database: self.database, address: self.address, contract_address: self.contract_address)
       result.append(asset)
     }
     return result
@@ -77,24 +77,26 @@ extension NFTCollection: MDBXObject {
   
   public var alternateKey: MDBXKey? { return nil }
   
-  public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
+  public init(serializedData data: Data, chain: MDBXChain, key: Data?, address: String?) throws {
     self._chain = chain
     self._wrapped = try _NFTCollection(serializedData: data)
+    self.address = address
   }
   
-  public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
+  public init(jsonData: Data, chain: MDBXChain, key: Data?, address: String?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _NFTCollection(jsonUTF8Data: jsonData, options: options)
+    self.address = address
   }
   
-  public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
+  public init(jsonString: String, chain: MDBXChain, key: Data?, address: String?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _NFTCollection(jsonString: jsonString, options: options)
-    //self.accountAddress = address
+    self.address = address
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
