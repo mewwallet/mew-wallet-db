@@ -180,11 +180,6 @@ extension DAppRecord: Hashable {
     } else {
       hasher.combine(self.url)
       hasher.combine(self.address)
-//      hasher.combine(self.title)
-//      hasher.combine(self.icon)
-//      hasher.combine(self.preview)
-//      hasher.combine(self.favorite)
-//      hasher.combine(self.recent)
     }
   }
 }
