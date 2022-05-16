@@ -11,12 +11,11 @@ import mdbx_ios
 import MEWextensions
 
 public struct DAppRecordReference: Equatable {
-  private var _restoredAlternateKey: DAppRecordFavoriteKey?
+  private var _restoredAlternateKey: DAppRecordReferenceKey?
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecordReference
   var _chain: MDBXChain
-  var _timestamp: Date = Date()
-  public var order: UInt16?
+  public var order: UInt16 = 0
   
   // MARK: - Private Properties
   
@@ -24,15 +23,17 @@ public struct DAppRecordReference: Equatable {
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, url: URL, timestamp: Date = Date(), order: UInt16?, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, url: URL, order: UInt16, title: String?, icon: URL?, preview: Data?, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
-    self._timestamp = timestamp
     self.order = order
     
     self._wrapped = .with {
       $0.reference = url.sha256
       $0.uuid = UUID().uint64uuid
+      if let title = title          { $0.title = title }
+      if let icon = icon            { $0.iconURL = icon.absoluteString }
+      if let preview = preview      { $0.preview = preview }
     }
   }
   
@@ -40,16 +41,8 @@ public struct DAppRecordReference: Equatable {
   
   mutating private func tryRestorePrimaryKeyInfo(_ key: Data?) {
     guard let key = key else { return }
-    if let primaryKey = DAppRecordRecentKey(data: key) {
-      _timestamp = Date(timeIntervalSince1970: primaryKey.timestamp)
-    }
-  }
-  
-  mutating private func tryRestoreAlternateKey(_ key: Data?) {
-    guard let key = key else { return }
-    if let alternateKey = DAppRecordFavoriteKey(data: key) {
-      _restoredAlternateKey = alternateKey
-      order = alternateKey.order
+    if let primaryKey = DAppRecordReferenceKey(data: key) {
+      order = primaryKey.order
     }
   }
 }
@@ -59,13 +52,9 @@ public struct DAppRecordReference: Equatable {
 extension DAppRecordReference {
   // MARK: - Relations
   
-  public var asd: Data {
-    self._wrapped.reference
-  }
-
   public var dappRecord: DAppRecord {
     get throws {
-      let key = DAppRecordKey(chain: _chain, hash: self._wrapped.reference)
+      let key = DAppRecordKey(chain: _chain, hash: self._wrapped.reference, uuid: self.uuid)
       return try _dappRecord.getData(key: key, policy: .ignoreCache, database: self.database)
     }
   }
@@ -80,7 +69,53 @@ extension DAppRecordReference {
   }
   
   // MARK: - Properties
+  
   public var uuid: UInt64 { self._wrapped.uuid }
+  
+  public var icon: URL? {
+    set {
+      guard let icon = newValue else { return }
+      self._wrapped.iconURL = icon.absoluteString
+    }
+    get {
+      guard self._wrapped.hasIconURL else { return nil }
+      return URL(string: self._wrapped.iconURL)
+    }
+  }
+  
+  public var title: String? {
+    set {
+      if let title = newValue {
+        self._wrapped.title = title
+      } else {
+        self._wrapped.clearTitle()
+      }
+    }
+    get {
+      guard self._wrapped.hasTitle else { return nil }
+      return self._wrapped.title
+    }
+  }
+  
+  public var preview: Data? {
+    set {
+      if let preview = newValue {
+        self._wrapped.preview = preview
+      } else {
+        self._wrapped.clearPreview()
+      }
+    }
+    get {
+      guard self._wrapped.hasPreview else { return nil }
+      return self._wrapped.preview
+    }
+  }
+  
+  // MARK: - Functions
+  
+  mutating public func update(url: URL) {
+    self._wrapped.reference = url.sha256
+  }
 }
 
 // MARK: - DAppRecordReference + MDBXObject
@@ -92,22 +127,17 @@ extension DAppRecordReference: MDBXObject {
     }
   }
   
-  /// Recent key
+  /// Reference key
   public var key: MDBXKey {
-    return DAppRecordRecentKey(chain: _chain, timestamp: self._timestamp.timeIntervalSince1970)
+    return DAppRecordReferenceKey(chain: _chain, order: order)
   }
   
-  /// Favorite key
-  public var alternateKey: MDBXKey? {
-    guard let order = order else { return nil }
-    return DAppRecordFavoriteKey(chain: _chain, order: order)
-  }
+  public var alternateKey: MDBXKey? { return nil }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _DAppRecordReference(serializedData: data)
     self.tryRestorePrimaryKeyInfo(key)
-    self.tryRestoreAlternateKey(key)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -116,7 +146,6 @@ extension DAppRecordReference: MDBXObject {
     self._chain = chain
     self._wrapped = try _DAppRecordReference(jsonUTF8Data: jsonData, options: options)
     self.tryRestorePrimaryKeyInfo(key)
-    self.tryRestoreAlternateKey(key)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -125,7 +154,6 @@ extension DAppRecordReference: MDBXObject {
     self._chain = chain
     self._wrapped = try _DAppRecordReference(jsonString: jsonString, options: options)
     self.tryRestorePrimaryKeyInfo(key)
-    self.tryRestoreAlternateKey(key)
   }
 
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -146,6 +174,21 @@ extension DAppRecordReference: MDBXObject {
     let other = object as! DAppRecordReference
     self._wrapped.reference               = other._wrapped.reference
     self._wrapped.uuid                    = other._wrapped.uuid
+    if other._wrapped.hasTitle {
+      self._wrapped.title = other._wrapped.title
+    } else {
+      self._wrapped.clearTitle()
+    }
+    if other._wrapped.hasIconURL {
+      self._wrapped.iconURL = other._wrapped.iconURL
+    } else {
+      self._wrapped.clearIconURL()
+    }
+    if other._wrapped.hasPreview {
+      self._wrapped.preview = other._wrapped.preview
+    } else {
+      self._wrapped.clearPreview()
+    }
   }
 }
 
@@ -163,6 +206,10 @@ public extension DAppRecordReference {
   static func ==(lhs: DAppRecordReference, rhs: DAppRecordReference) -> Bool {
     return lhs._chain == rhs._chain &&
            lhs._wrapped == rhs._wrapped
+  }
+  
+  static func ==(lhs: DAppRecordReference, rhs: URL) -> Bool {
+    return lhs._wrapped.reference == rhs.sha256
   }
 }
 

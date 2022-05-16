@@ -27,24 +27,6 @@ struct _DAppRecord {
 
   var url: String = String()
 
-  var favorite: Bool {
-    get {return _favorite ?? false}
-    set {_favorite = newValue}
-  }
-  /// Returns true if `favorite` has been explicitly set.
-  var hasFavorite: Bool {return self._favorite != nil}
-  /// Clears the value of `favorite`. Subsequent reads from it will return its default value.
-  mutating func clearFavorite() {self._favorite = nil}
-
-  var recent: Bool {
-    get {return _recent ?? false}
-    set {_recent = newValue}
-  }
-  /// Returns true if `recent` has been explicitly set.
-  var hasRecent: Bool {return self._recent != nil}
-  /// Clears the value of `recent`. Subsequent reads from it will return its default value.
-  mutating func clearRecent() {self._recent = nil}
-
   var address: String {
     get {return _address ?? String()}
     set {_address = newValue}
@@ -54,43 +36,13 @@ struct _DAppRecord {
   /// Clears the value of `address`. Subsequent reads from it will return its default value.
   mutating func clearAddress() {self._address = nil}
 
-  var title: String {
-    get {return _title ?? String()}
-    set {_title = newValue}
-  }
-  /// Returns true if `title` has been explicitly set.
-  var hasTitle: Bool {return self._title != nil}
-  /// Clears the value of `title`. Subsequent reads from it will return its default value.
-  mutating func clearTitle() {self._title = nil}
-
-  var iconURL: String {
-    get {return _iconURL ?? String()}
-    set {_iconURL = newValue}
-  }
-  /// Returns true if `iconURL` has been explicitly set.
-  var hasIconURL: Bool {return self._iconURL != nil}
-  /// Clears the value of `iconURL`. Subsequent reads from it will return its default value.
-  mutating func clearIconURL() {self._iconURL = nil}
-
-  var preview: Data {
-    get {return _preview ?? Data()}
-    set {_preview = newValue}
-  }
-  /// Returns true if `preview` has been explicitly set.
-  var hasPreview: Bool {return self._preview != nil}
-  /// Clears the value of `preview`. Subsequent reads from it will return its default value.
-  mutating func clearPreview() {self._preview = nil}
+  var type: UInt32 = 0
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _favorite: Bool? = nil
-  fileprivate var _recent: Bool? = nil
   fileprivate var _address: String? = nil
-  fileprivate var _title: String? = nil
-  fileprivate var _iconURL: String? = nil
-  fileprivate var _preview: Data? = nil
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -99,12 +51,8 @@ extension _DAppRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   static let protoMessageName: String = "_DAppRecord"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "url"),
-    2: .same(proto: "favorite"),
-    3: .same(proto: "recent"),
-    4: .same(proto: "address"),
-    5: .same(proto: "title"),
-    6: .standard(proto: "icon_url"),
-    7: .same(proto: "preview"),
+    2: .same(proto: "address"),
+    3: .same(proto: "type"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -114,12 +62,8 @@ extension _DAppRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.url) }()
-      case 2: try { try decoder.decodeSingularBoolField(value: &self._favorite) }()
-      case 3: try { try decoder.decodeSingularBoolField(value: &self._recent) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self._address) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self._title) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self._iconURL) }()
-      case 7: try { try decoder.decodeSingularBytesField(value: &self._preview) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._address) }()
+      case 3: try { try decoder.decodeSingularUInt32Field(value: &self.type) }()
       default: break
       }
     }
@@ -133,35 +77,19 @@ extension _DAppRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     if !self.url.isEmpty {
       try visitor.visitSingularStringField(value: self.url, fieldNumber: 1)
     }
-    try { if let v = self._favorite {
-      try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
-    } }()
-    try { if let v = self._recent {
-      try visitor.visitSingularBoolField(value: v, fieldNumber: 3)
-    } }()
     try { if let v = self._address {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     } }()
-    try { if let v = self._title {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
-    } }()
-    try { if let v = self._iconURL {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
-    } }()
-    try { if let v = self._preview {
-      try visitor.visitSingularBytesField(value: v, fieldNumber: 7)
-    } }()
+    if self.type != 0 {
+      try visitor.visitSingularUInt32Field(value: self.type, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _DAppRecord, rhs: _DAppRecord) -> Bool {
     if lhs.url != rhs.url {return false}
-    if lhs._favorite != rhs._favorite {return false}
-    if lhs._recent != rhs._recent {return false}
     if lhs._address != rhs._address {return false}
-    if lhs._title != rhs._title {return false}
-    if lhs._iconURL != rhs._iconURL {return false}
-    if lhs._preview != rhs._preview {return false}
+    if lhs.type != rhs.type {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

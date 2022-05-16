@@ -10,27 +10,46 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct DAppRecord: Equatable {
+  public struct RecordType: OptionSet {
+    public static let unknown   = RecordType(rawValue: 0 << 0)
+    public static let recent    = RecordType(rawValue: 1 << 0)
+    public static let favorite  = RecordType(rawValue: 1 << 1)
+    public let rawValue: UInt32
+    
+    public init(rawValue: UInt32) {
+      self.rawValue = rawValue
+    }
+  }
+  
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecord
   var _chain: MDBXChain
   var _hash: Data
-  public var recentReference: DAppRecordReference?
+  var _uuid: UInt64 = 0
+  
+  public var reference: DAppRecordReference?
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, url: URL, address: String?, title: String?, icon: URL?, favorite: Bool? = nil, recent: Bool? = nil, preview: Data?, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, url: URL, address: String?, type: DAppRecord.RecordType, uuid: UInt64, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
     self._hash = url.sha256
+    self._uuid = uuid
     
     self._wrapped = .with {
       $0.url = url.absoluteString
-      if let favorite = favorite  { $0.favorite = favorite }
-      if let recent = recent      { $0.recent = recent }
-      if let address = address    { $0.address = address }
-      if let title = title        { $0.title = title }
-      if let icon = icon          { $0.iconURL = icon.absoluteString }
-      if let preview = preview    { $0.preview = preview }
+      $0.type = type.rawValue
+      if let address = address { $0.address = address }
+    }
+  }
+  
+  // MARK: - Private
+  
+  mutating private func tryRestorePrimaryKeyInfo(_ key: Data?) {
+    guard let key = key else { return }
+    if let primaryKey = DAppRecordKey(data: key) {
+      _uuid = primaryKey.uuid
     }
   }
 }
@@ -51,44 +70,11 @@ extension DAppRecord {
       return self._wrapped.address
     }
   }
-  public var title: String? {
-    set {
-      guard let title = newValue else { return }
-      self._wrapped.title = title
-    }
-    get {
-      guard self._wrapped.hasTitle else { return nil }
-      return self._wrapped.title
-    }
-  }
-  public var icon: URL? {
-    set {
-      guard let icon = newValue else { return }
-      self._wrapped.iconURL = icon.absoluteString
-    }
-    get {
-      guard self._wrapped.hasIconURL else { return nil }
-      return URL(string: self._wrapped.iconURL)
-    }
-  }
-  public var preview: Data? {
-    guard self._wrapped.hasPreview else { return nil }
-    return self._wrapped.preview
-  }
-  public var favorite: Bool {
-    set { self._wrapped.favorite = newValue }
-    get {
-      guard self._wrapped.hasFavorite else { return false }
-      return self._wrapped.favorite
-    }
-  }
-  public var recent: Bool {
-    set { self._wrapped.recent = newValue }
-    get {
-      guard self._wrapped.hasRecent else { return false }
-      return self._wrapped.recent
-    }
-  }
+  public var title: String?   { self.reference?.title }
+  public var icon: URL?       { self.reference?.icon }
+  public var preview: Data?   { self.reference?.preview }
+  public var type: RecordType { RecordType(rawValue: self._wrapped.type) }
+  public var uuid: UInt64     { self._uuid }
 }
 
 // MARK: - DAppRecord + MDBXObject
@@ -101,7 +87,7 @@ extension DAppRecord: MDBXObject {
   }
 
   public var key: MDBXKey {
-    return DAppRecordKey(chain: _chain, hash: _hash)
+    return DAppRecordKey(chain: _chain, hash: _hash, uuid: _uuid)
   }
 
   public var alternateKey: MDBXKey? {
@@ -112,6 +98,7 @@ extension DAppRecord: MDBXObject {
     self._chain = chain
     self._wrapped = try _DAppRecord(serializedData: data)
     self._hash = self._wrapped.url.sha256
+    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -120,6 +107,7 @@ extension DAppRecord: MDBXObject {
     self._chain = chain
     self._wrapped = try _DAppRecord(jsonUTF8Data: jsonData, options: options)
     self._hash = self._wrapped.url.sha256
+    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -128,6 +116,7 @@ extension DAppRecord: MDBXObject {
     self._chain = chain
     self._wrapped = try _DAppRecord(jsonString: jsonString, options: options)
     self._hash = self._wrapped.url.sha256
+    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -148,30 +137,6 @@ extension DAppRecord: MDBXObject {
     let other = object as! DAppRecord
     
     self._wrapped.url = other._wrapped.url
-    if other._wrapped.hasFavorite {
-      self._wrapped.favorite = other._wrapped.favorite
-    }
-    if other._wrapped.hasRecent {
-      self._wrapped.recent = other._wrapped.recent
-    }
-    if other._wrapped.hasAddress {
-      self._wrapped.address = other._wrapped.address
-    } else {
-      self._wrapped.clearAddress()
-    }
-    if other._wrapped.hasTitle {
-      self._wrapped.title = other._wrapped.title
-    }
-    if other._wrapped.hasIconURL {
-      self._wrapped.iconURL = other._wrapped.iconURL
-    }
-    if other._wrapped.hasPreview {
-      if other._wrapped.preview.isEmpty {
-        self._wrapped.clearPreview()
-      } else {
-        self._wrapped.preview = other._wrapped.preview
-      }
-    }
   }
 }
 
@@ -187,8 +152,8 @@ extension _DAppRecord: ProtoWrappedMessage {
 
 public extension DAppRecord {
   static func ==(lhs: DAppRecord, rhs: DAppRecord) -> Bool {
-    if let lhsUUID = lhs.recentReference?.uuid, let rhsUUID = rhs.recentReference?.uuid {
-      return lhsUUID == rhsUUID
+    if let lhsUUID = lhs.reference?.uuid, let rhsUUID = rhs.reference?.uuid {
+      return lhsUUID == rhsUUID && lhs._hash == rhs._hash
     }
     return lhs._chain == rhs._chain &&
            lhs._wrapped == rhs._wrapped
@@ -202,6 +167,7 @@ extension DAppRecord: ProtoWrapper {
     self._chain = chain
     self._wrapped = wrapped
     self._hash = wrapped.url.sha256
+    self._uuid = UUID().uint64uuid
   }
 }
 
@@ -209,32 +175,11 @@ extension DAppRecord: ProtoWrapper {
 
 extension DAppRecord: Hashable {
   public func hash(into hasher: inout Hasher) {
-    if let uuid = recentReference?.uuid {
+    if let uuid = reference?.uuid {
       hasher.combine(uuid)
     } else {
       hasher.combine(self.url)
       hasher.combine(self.address)
-      hasher.combine(self.title)
-      hasher.combine(self.icon)
-      hasher.combine(self.preview)
-      hasher.combine(self.favorite)
-      hasher.combine(self.recent)
     }
-  }
-}
-
-// MARK: DAppRecord + CustomDebugStringConvertible
-
-extension DAppRecord: CustomDebugStringConvertible {
-  public var debugDescription: String {
-    """
-    url: \(self._wrapped.url)
-    address: \(self._wrapped.address)
-    title: \(self._wrapped.title)
-    icon: \(self._wrapped.iconURL)
-    favorite: \(self._wrapped.favorite)
-    recent: \(self._wrapped.recent)
-    hasPreview: \(self._wrapped.hasPreview)
-    """
   }
 }

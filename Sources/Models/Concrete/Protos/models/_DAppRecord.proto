@@ -2,10 +2,6 @@ syntax = "proto3";
 
 message _DAppRecord {
   string url                  = 1;
-  optional bool favorite      = 2;
-  optional bool recent        = 3;
-  optional string address     = 4;
-  optional string title       = 5;
-  optional string icon_url    = 6;
-  optional bytes preview      = 7;
+  optional string address     = 2;
+  uint32 type                 = 3;
 }
