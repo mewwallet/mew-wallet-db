@@ -13,15 +13,15 @@ public enum MDBXKeyLength {
   public static let address               = 20
   public static let order                 = 2
   public static let hash                  = 32
-  public static let timestamp             = 8
+  public static let uuid                  = 8
   
   public static var tokenMeta:            Int { return chain + contractAddress }
   public static var orderedDexItem:       Int { return chain + order + contractAddress }
   public static var rawTransaction:       Int { return chain + hash }
   public static var token:                Int { return chain + address + contractAddress }
-  public static var dAppRecord:           Int { return chain + hash }
+  public static var dAppRecord:           Int { return chain + hash + uuid }
   public static var dAppRecordFavorite:   Int { return chain + order }
-  public static var dAppRecordRecent:     Int { return chain + timestamp }
+  public static var dAppRecordRecent:     Int { return chain }
   
   public static let blockNumber = 8
   public static let direction = 1
