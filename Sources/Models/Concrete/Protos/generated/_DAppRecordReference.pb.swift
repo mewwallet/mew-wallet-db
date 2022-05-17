@@ -38,15 +38,6 @@ struct _DAppRecordReference {
   /// Clears the value of `title`. Subsequent reads from it will return its default value.
   mutating func clearTitle() {self._title = nil}
 
-  var iconURL: String {
-    get {return _iconURL ?? String()}
-    set {_iconURL = newValue}
-  }
-  /// Returns true if `iconURL` has been explicitly set.
-  var hasIconURL: Bool {return self._iconURL != nil}
-  /// Clears the value of `iconURL`. Subsequent reads from it will return its default value.
-  mutating func clearIconURL() {self._iconURL = nil}
-
   var preview: Data {
     get {return _preview ?? Data()}
     set {_preview = newValue}
@@ -61,7 +52,6 @@ struct _DAppRecordReference {
   init() {}
 
   fileprivate var _title: String? = nil
-  fileprivate var _iconURL: String? = nil
   fileprivate var _preview: Data? = nil
 }
 
@@ -73,8 +63,7 @@ extension _DAppRecordReference: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     1: .same(proto: "reference"),
     2: .same(proto: "uuid"),
     3: .same(proto: "title"),
-    4: .standard(proto: "icon_url"),
-    5: .same(proto: "preview"),
+    4: .same(proto: "preview"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -86,8 +75,7 @@ extension _DAppRecordReference: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       case 1: try { try decoder.decodeSingularBytesField(value: &self.reference) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.uuid) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self._title) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self._iconURL) }()
-      case 5: try { try decoder.decodeSingularBytesField(value: &self._preview) }()
+      case 4: try { try decoder.decodeSingularBytesField(value: &self._preview) }()
       default: break
       }
     }
@@ -107,11 +95,8 @@ extension _DAppRecordReference: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     try { if let v = self._title {
       try visitor.visitSingularStringField(value: v, fieldNumber: 3)
     } }()
-    try { if let v = self._iconURL {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
-    } }()
     try { if let v = self._preview {
-      try visitor.visitSingularBytesField(value: v, fieldNumber: 5)
+      try visitor.visitSingularBytesField(value: v, fieldNumber: 4)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -120,7 +105,6 @@ extension _DAppRecordReference: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if lhs.reference != rhs.reference {return false}
     if lhs.uuid != rhs.uuid {return false}
     if lhs._title != rhs._title {return false}
-    if lhs._iconURL != rhs._iconURL {return false}
     if lhs._preview != rhs._preview {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

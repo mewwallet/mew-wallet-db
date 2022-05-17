@@ -71,6 +71,8 @@ extension DBWriteMode {
     case .dappRecord:         return .appendOverrideMerge
     case .dappRecordRecent:   return .appendOverrideMerge
     case .dappRecordFavorite: return .appendOverrideMerge
+    case .dappRecordMeta:     return .default
+    case .dappRecordHistory:  return .appendOverrideMerge
     }
   }
 }
