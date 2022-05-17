@@ -8,6 +8,7 @@
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
+import MEWextensions
 
 public struct DAppRecord: Equatable {
   public struct RecordType: OptionSet {
@@ -28,6 +29,10 @@ public struct DAppRecord: Equatable {
   var _uuid: UInt64 = 0
   
   public var reference: DAppRecordReference?
+  
+  // MARK: - Private properties
+  
+  private let _meta: MDBXPointer<DAppRecordMetaKey, DAppRecordMeta> = .init(.dappRecordMeta)
   
   // MARK: - Lifecycle
   
@@ -57,6 +62,16 @@ public struct DAppRecord: Equatable {
 // MARK: - DAppRecord + Properties
 
 extension DAppRecord {
+  // MARK: - Relations
+  
+  private var meta: DAppRecordMeta {
+    get throws {
+      guard let host = self.url.hostURL?.sanitized else { throw MDBXError.notFound }
+      let key = DAppRecordMetaKey(chain: _chain, url: host)
+      return try _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+  
   // MARK: - Properties
   
   public var url: URL { URL(string: self._wrapped.url)! }
@@ -71,7 +86,10 @@ extension DAppRecord {
     }
   }
   public var title: String?   { self.reference?.title }
-  public var icon: URL?       { self.reference?.icon }
+  public var icon: URL?       {
+    guard let meta = try? self.meta else { return nil }
+    return meta.icon
+  }
   public var preview: Data?   { self.reference?.preview }
   public var type: RecordType { RecordType(rawValue: self._wrapped.type) }
   public var uuid: UInt64     { self._uuid }
@@ -180,6 +198,7 @@ extension DAppRecord: Hashable {
     } else {
       hasher.combine(self.url)
       hasher.combine(self.address)
+      hasher.combine(self.icon)
     }
   }
 }

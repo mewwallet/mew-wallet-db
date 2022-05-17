@@ -22,7 +22,7 @@ public struct DAppRecordReference: Equatable {
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, url: URL, order: UInt16, title: String?, icon: URL?, preview: Data?, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, url: URL, order: UInt16, title: String?, preview: Data?, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
     self.order = order
@@ -31,7 +31,6 @@ public struct DAppRecordReference: Equatable {
       $0.reference = url.sha256
       $0.uuid = UUID().uint64uuid
       if let title = title          { $0.title = title }
-      if let icon = icon            { $0.iconURL = icon.absoluteString }
       if let preview = preview      { $0.preview = preview }
     }
   }
@@ -70,17 +69,6 @@ extension DAppRecordReference {
   // MARK: - Properties
   
   public var uuid: UInt64 { self._wrapped.uuid }
-  
-  public var icon: URL? {
-    set {
-      guard let icon = newValue else { return }
-      self._wrapped.iconURL = icon.absoluteString
-    }
-    get {
-      guard self._wrapped.hasIconURL else { return nil }
-      return URL(string: self._wrapped.iconURL)
-    }
-  }
   
   public var title: String? {
     set {
@@ -177,11 +165,6 @@ extension DAppRecordReference: MDBXObject {
       self._wrapped.title = other._wrapped.title
     } else {
       self._wrapped.clearTitle()
-    }
-    if other._wrapped.hasIconURL {
-      self._wrapped.iconURL = other._wrapped.iconURL
-    } else {
-      self._wrapped.clearIconURL()
     }
     if other._wrapped.hasPreview {
       self._wrapped.preview = other._wrapped.preview

@@ -4,6 +4,5 @@ message _DAppRecordReference {
   bytes reference           = 1;
   uint64 uuid               = 2;
   optional string title     = 3;
-  optional string icon_url  = 4;
-  optional bytes preview    = 5;
+  optional bytes preview    = 4;
 }
