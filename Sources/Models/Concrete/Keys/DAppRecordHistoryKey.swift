@@ -37,7 +37,7 @@ public final class DAppRecordHistoryKey: MDBXKey {
   }
   
   public convenience init(chain: MDBXChain, url: URL) {
-    self.init(chain: chain, hash: url.hostURL?.sanitized?.sha256 ?? url.sanitized?.sha256 ?? url.sha256)
+    self.init(chain: chain, hash: url.sanitized?.sha256 ?? url.sha256)
   }
   
   init?(data: Data) {
