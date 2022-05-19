@@ -30,7 +30,7 @@ public struct DAppRecordHistory: Equatable {
     self._hash = url.sha256
     
     self._wrapped = .with {
-      $0.url = url.hostURL?.absoluteString ?? url.absoluteString
+      $0.url = url.absoluteString
       $0.timestamp = .init(date: Date())
       if let title = title { $0.title = title }
     }
