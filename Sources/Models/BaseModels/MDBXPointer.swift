@@ -6,33 +6,42 @@
 //
 
 import Foundation
+import mdbx_ios
 
 public enum RelationshipLoadPolicy {
   case ignoreCache
   case cacheOrLoad
 }
 
-public class MDBXPointer<K: MDBXKey, T: MDBXObject> {
+// TODO: Re-do to @propertyWrapper when "Property wrappers currently cannot define an 'async' or 'throws' accessor" will be fixed
+
+public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
   private var _data: T?
-  private var _table: MDBXTable
+  private var _table: MDBXTableName
   
-  init(_ table: MDBXTable) {
+  init(_ table: MDBXTableName) {
     _table = table
   }
   
-  func getData(key: K, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) -> T? {
+  func getData(key: K, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> T {
     guard let database = database else {
-      return _data
-    }
-    if policy == .ignoreCache || _data == nil {
-      do {
-        let data: T = try database.read(key: key, table: _table)
-        _data = data
-        _data?.database = database
-      } catch {
+      guard let data = _data else {
+        throw MDBXError.notFound
       }
+      return data
     }
-    return _data
+    switch policy {
+    case .cacheOrLoad:
+      if let _data = _data {
+        return _data
+      }
+      fallthrough
+    case .ignoreCache:
+      let data: T = try database.read(key: key, table: _table)
+      _data = data
+      _data?.database = database
+      return data
+    }
   }
     
   func updateData(_ data: T?) {

@@ -7,33 +7,31 @@
 
 import Foundation
 import mdbx_ios
-
-public enum MDBXWriteAction {
-  case `break`
-  case abort
-  case commit
-  case none
-}
+import Combine
 
 public final class MEWwalletDBImpl: WalletDB {
-  var environment: MDBXEnvironment!
+  static weak var shared: MEWwalletDBImpl!
   
-  internal var tables: [MDBXTable : MDBXDatabase] = [:]
+  internal var started: Bool = false
+  internal var path: String = ""
+  internal var tableNames: [MDBXTableName] = []
+  internal var environment: MEWwalletDBEnvironment? {
+    didSet {
+      self._canWrite.send(self.environment != nil)
+    }
+  }
   
-  internal let writeWorker: BackgroundWorker = .init()
-  internal var writeTransaction: MDBXTransaction!
+  private lazy var _canWrite: CurrentValueSubject<Bool, Never> = {
+    .init(false)
+  }()
+  public var canWrite: AnyPublisher<Bool, Never> {
+    self._canWrite.eraseToAnyPublisher()
+  }
   
-  internal let readWorker: BackgroundWorker = .init()
-  internal var readTransaction: MDBXTransaction!
+  internal var cancellable = Set<AnyCancellable>()
   
-  internal let encoder: JSONEncoder
-  internal let decoder: JSONDecoder
-  
-  public init(encoder: JSONEncoder, decoder: JSONDecoder) {
-    self.encoder = encoder
-    self.decoder = decoder
-    writeWorker.name = "writer"
-    readWorker.name = "reader"
+  public init() {
+    MEWwalletDBImpl.shared = self
   }
   
   deinit {

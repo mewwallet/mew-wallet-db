@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message _DAppRecord {
+  string url                  = 1;
+  optional string address     = 2;
+  uint32 type                 = 3;
+}

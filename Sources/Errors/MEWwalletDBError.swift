@@ -8,5 +8,6 @@
 import Foundation
 
 public enum MEWwalletDBError: Error {
+  case backgroundState
   case internalError
 }

@@ -7,11 +7,11 @@
 
 import Foundation
 
-public class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
+public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
   private var _data: [T]?
-  private let _table: MDBXTable
+  private let _table: MDBXTableName
   
-  init(_ table: MDBXTable) {
+  init(_ table: MDBXTableName) {
     _table = table
   }
   
@@ -27,7 +27,7 @@ public class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     
     if policy == .ignoreCache || _data == nil {
       do {
-        let data: [T] = try database.fetchRange(startKey: startKey, endKey: endKey, table: _table)
+        let data: [T] = try database.fetchRange(startKey: startKey, endKey: endKey, from: _table)
         _data = data
       } catch {
       }

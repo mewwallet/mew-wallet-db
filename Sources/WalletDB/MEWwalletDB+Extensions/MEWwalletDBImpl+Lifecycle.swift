@@ -8,78 +8,63 @@
 import Foundation
 import mdbx_ios
 import OSLog
+import Combine
+#if canImport(UIKit)
+import UIKit
+#endif
 
 public extension MEWwalletDBImpl {
-  func start(databaseName: String, tables: [MDBXTable]) throws {
-    guard environment == nil else { return }
+  func start(path: String, tables: [MDBXTableName]) throws {
+    guard !self.started else { return }
+    self.started = true
+    self.path = path
+    self.tableNames = tables
     
-    let environment = MDBXEnvironment()
-    try environment.create()
-    try environment.setMaxReader(42)
-    try environment.setMaxDatabases(42)
+    os_log("Database path: %{private}@", log: .info(.lifecycle), type: .info, path)
     
-    let geometry = MDBXGeometry(
-      sizeLower: -1,
-      sizeNow: 1024 * 10,
-      sizeUpper: 1024 * 1024 * 50,
-      growthStep: 1024,
-      shrinkThreshold: -1,
-      pageSize: -1
-    )
-    #if DEBUG
-    try environment.setHandleSlowReaders { (env, txn, pid, tid, laggard, gap, space, retry) -> Int32 in
-      os_log("===========", log: lifecycleLogger, type: .info)
-      os_log("Slow reader", log: lifecycleLogger, type: .info)
-      os_log("===========", log: lifecycleLogger, type: .info)
-      return -1
-    }
+    self.prepareEnvironment(path: path, tables: tables)
+    
+    #if os(iOS)
+    NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
+      .sink {[weak self] _ in
+        self?.dropEnvironment()
+      }
+      .store(in: &cancellable)
+    NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+      .sink {[weak self] _ in
+        self?.prepareEnvironment(path: path, tables: tables)
+      }
+      .store(in: &cancellable)
     #endif
-    try environment.setGeometry(geometry)
-    let path = FileManager.default.temporaryDirectory.appendingPathComponent(databaseName).path
-    
-    os_log("Database path: %{private}@", log: lifecycleLogger, type: .info, path)
-    
-    try environment.open(path: path, flags: [.envDefaults, .noTLS], mode: .iOSPermission)
-    self.environment = environment
-    
-    var success = true
-    writeWorker.sync {
-      let writeTransaction = MDBXTransaction(environment)
-
-      do {
-        try self.beginTransaction(transaction: writeTransaction)
-        self.writeTransaction = writeTransaction
-      } catch {
-        os_log("Error of write transaction: %{private}@", log: lifecycleLogger, type: .error, error.localizedDescription)
-        success = false
-      }
-    }
-    
-    readWorker.sync {
-      let readTransaction = MDBXTransaction(environment)
-      self.readTransaction = readTransaction
-      do {
-        try self.readTransaction.begin(flags: [.readOnlyPrepare])
-      } catch {
-        os_log("Error of read transaction: %{private}@", log: lifecycleLogger, type: .error, error.localizedDescription)
-      }
-    }
-    
-    guard success else {
-      throw MEWwalletDBError.internalError
-    }
   }
   
   func stop() {
-    readWorker.stop()
-    writeWorker.sync {
-      do {
-        try self.writeTransaction.abort()
-      } catch {
-        os_log("Error during %{private}@: %{private}@", log: lifecycleLogger, type: .error, error.localizedDescription)
-      }
+    self.dropEnvironment()
+  }
+  
+  // MARK: - Internal
+  
+  internal func getEnvironment() throws -> MEWwalletDBEnvironment {
+    if let environment = self.environment {
+      return environment
+    } else {
+      throw MEWwalletDBError.backgroundState
     }
-    writeWorker.stop()
-    self.environment.close(false)
+  }
+  
+  // MARK: - Private
+  
+  private func prepareEnvironment(path: String, tables: [MDBXTableName]) {
+    guard self.environment == nil else { return }
+    do {
+      let environment = try MEWwalletDBEnvironment(path: path, tables: tables)
+      self.environment = environment
+    } catch {
+      os_log("Prepare environment error: %{private}@", log: .error(.lifecycle), type: .fault, error.localizedDescription)
+    }
+  }
+  
+  private func dropEnvironment() {
+    self.environment = nil
   }
 }
