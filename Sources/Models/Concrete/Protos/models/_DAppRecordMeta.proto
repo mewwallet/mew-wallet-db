@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message _DAppRecordMeta {
+  string url            = 1;
+  optional string icon  = 2;
+}

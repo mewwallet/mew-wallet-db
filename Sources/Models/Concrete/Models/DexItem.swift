@@ -1,0 +1,159 @@
+//
+//  File.swift
+//  
+//
+//  Created by Mikhail Nikanorov on 3/5/22.
+//
+
+import Foundation
+import SwiftProtobuf
+import mdbx_ios
+
+public struct DexItem: Equatable {
+  private var _restoredAlternateKey: OrderedDexItemKey?
+  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  var _wrapped: _DexItem
+  var _chain: MDBXChain
+  public var order: UInt16?
+  
+  // MARK: - Private Properties
+  
+  private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
+  private var _contract_address: String?
+  
+  // MARK: - Lifecycle
+  
+  public init(tokenMeta: TokenMeta) {
+    self._chain = tokenMeta._chain
+    self._contract_address = tokenMeta.contract_address
+    
+    self.database = tokenMeta.database
+    self._wrapped = .with {
+      $0.contractAddress = tokenMeta.contract_address
+    }
+    self._meta.updateData(tokenMeta)
+  }
+  
+  public init(chain: MDBXChain, contractAddress: String, order: UInt16?, database: WalletDB? = nil) {
+    self.database = database ?? MEWwalletDBImpl.shared
+    self._chain = chain
+    self._contract_address = contractAddress
+    self.order = order
+    self._wrapped = .with {
+      $0.contractAddress = contractAddress
+    }
+  }
+  
+  // MARK: - Private
+  
+  mutating private func tryRestoreAlternateKey(_ key: Data?) {
+    guard let key = key else { return }
+    if let alternateKey = OrderedDexItemKey(data: key) {
+      _restoredAlternateKey = alternateKey
+      order = alternateKey.order
+    }
+  }
+}
+
+// MARK: - DexItem + Properties
+
+extension DexItem {
+  // MARK: - Relations
+  
+  public var meta: TokenMeta {
+    get throws {
+      let key = TokenMetaKey(chain: _chain, contractAddress: self.contract_address)
+      return try _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+  
+  // MARK: - Properties
+  
+  public var contract_address: String { self._contract_address ?? self._wrapped.contractAddress }
+}
+
+// MARK: - DexItem + MDBXObject
+
+extension DexItem: MDBXObject {
+  public var serialized: Data {
+    get throws {
+      return try self._wrapped.serializedData()
+    }
+  }
+  
+  public var key: MDBXKey {
+    return TokenMetaKey(chain: _chain, contractAddress: contract_address)
+  }
+  
+  public var alternateKey: MDBXKey? {
+    guard let order = order else { return nil }
+    return OrderedDexItemKey(chain: _chain, order: order, contractAddress: contract_address)
+  }
+  
+  public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
+    self._chain = chain
+    self._wrapped = try _DexItem(serializedData: data)
+    self.tryRestoreAlternateKey(key)
+  }
+  
+  public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    self._chain = chain
+    self._wrapped = try _DexItem(jsonUTF8Data: jsonData, options: options)
+    self.tryRestoreAlternateKey(key)
+  }
+  
+  public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    self._chain = chain
+    self._wrapped = try _DexItem(jsonString: jsonString, options: options)
+    self.tryRestoreAlternateKey(key)
+  }
+  
+  public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    let objects = try _DexItem.array(fromJSONString: string, options: options)
+    return objects.lazy.map({ $0.wrapped(chain) })
+  }
+  
+  public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    let objects = try _DexItem.array(fromJSONUTF8Data: data, options: options)
+    return objects.lazy.map({ $0.wrapped(chain) })
+  }
+  
+  mutating public func merge(with object: MDBXObject) {
+    let other = object as! DexItem
+    
+    self._wrapped.contractAddress       = other._wrapped.contractAddress
+  }
+}
+
+// MARK: - _DexItem + ProtoWrappedMessage
+
+extension _DexItem: ProtoWrappedMessage {
+  func wrapped(_ chain: MDBXChain) -> DexItem {
+    return DexItem(self, chain: chain)
+  }
+}
+
+// MARK: - DexItem + Equitable
+
+public extension DexItem {
+  static func ==(lhs: DexItem, rhs: DexItem) -> Bool {
+    return lhs._wrapped == rhs._wrapped
+  }
+}
+
+// MARK: - DexItem + ProtoWrapper
+
+extension DexItem: ProtoWrapper {
+  init(_ wrapped: _DexItem, chain: MDBXChain) {
+    self._chain = chain
+    self._wrapped = wrapped
+  }
+}
