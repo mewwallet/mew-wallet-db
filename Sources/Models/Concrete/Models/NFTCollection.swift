@@ -77,26 +77,23 @@ extension NFTCollection: MDBXObject {
   
   public var alternateKey: MDBXKey? { return nil }
   
-  public init(serializedData data: Data, chain: MDBXChain, key: Data?, address: String?) throws {
+  public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _NFTCollection(serializedData: data)
-    self.address = address
   }
   
-  public init(jsonData: Data, chain: MDBXChain, key: Data?, address: String?) throws {
+  public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _NFTCollection(jsonUTF8Data: jsonData, options: options)
-    self.address = address
   }
   
-  public init(jsonString: String, chain: MDBXChain, key: Data?, address: String?) throws {
+  public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _NFTCollection(jsonString: jsonString, options: options)
-    self.address = address
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {

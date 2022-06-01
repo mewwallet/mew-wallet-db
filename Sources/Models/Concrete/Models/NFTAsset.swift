@@ -1,5 +1,5 @@
 //
-//  Asset.swift
+//  NFTAsset.swift
 //  
 //
 //  Created by Sergey Kolokolnikov on 05.05.2022.
@@ -11,7 +11,7 @@ import mdbx_ios
 
 public struct NFTAsset: Equatable {
   public weak var database: WalletDB?
-  var _wrapped: _Asset
+  var _wrapped: _NFTAsset
   var _chain: MDBXChain
   var address: String?
   var contract_address: String?
@@ -33,7 +33,7 @@ public struct NFTAsset: Equatable {
   }
 }
 
-// MARK: - Asset + Properties
+// MARK: - NFTAsset + Properties
 
 extension NFTAsset {
 
@@ -53,7 +53,7 @@ extension NFTAsset {
   public var openseaURL: String { self._wrapped.openseaURL }
 }
 
-// MARK: - Asset + MDBXObject
+// MARK: - NFTAsset + MDBXObject
 
 extension NFTAsset: MDBXObject {
 
@@ -71,39 +71,39 @@ extension NFTAsset: MDBXObject {
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _Asset(serializedData: data)
+    self._wrapped = try _NFTAsset(serializedData: data)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._wrapped = try _Asset(jsonUTF8Data: jsonData, options: options)
+    self._wrapped = try _NFTAsset(jsonUTF8Data: jsonData, options: options)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._wrapped = try _Asset(jsonString: jsonString, options: options)
+    self._wrapped = try _NFTAsset(jsonString: jsonString, options: options)
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    let objects = try _Asset.array(fromJSONString: string, options: options)
+    let objects = try _NFTAsset.array(fromJSONString: string, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    let objects = try _Asset.array(fromJSONUTF8Data: data, options: options)
+    let objects = try _NFTAsset.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
   mutating public func merge(with object: MDBXObject) {
-    let other = object as! Asset
+    let other = object as! NFTAsset
     self._wrapped.id                 = other._wrapped.id
     self._wrapped.name               = other._wrapped.name
     self._wrapped.description_p      = other._wrapped.description_p
@@ -112,15 +112,15 @@ extension NFTAsset: MDBXObject {
   }
 }
 
-// MARK: - _Asset + ProtoWrappedMessage
+// MARK: - _NFTAsset + ProtoWrappedMessage
 
-extension _Asset: ProtoWrappedMessage {
-  func wrapped(_ chain: MDBXChain) -> Asset {
-    return Asset(self, chain: chain)
+extension _NFTAsset: ProtoWrappedMessage {
+  func wrapped(_ chain: MDBXChain) -> NFTAsset {
+    return NFTAsset(self, chain: chain)
   }
 }
 
-// MARK: - Asset + Equitable
+// MARK: - NFTAsset + Equitable
 
 public extension NFTAsset {
   static func ==(lhs: NFTAsset, rhs: NFTAsset) -> Bool {
@@ -129,10 +129,10 @@ public extension NFTAsset {
   }
 }
 
-// MARK: - Asset + ProtoWrapper
+// MARK: - NFTAsset + ProtoWrapper
 
 extension NFTAsset: ProtoWrapper {
-  init(_ wrapped: _Asset, chain: MDBXChain) {
+  init(_ wrapped: _NFTAsset, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
   }

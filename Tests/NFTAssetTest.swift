@@ -633,7 +633,7 @@ final class nft_asset_tests: XCTestCase {
         try await db.write(table: .nftAsset, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
 
         if let first = objects.first {
-          let asset: Asset = try db.read(key: first.key, table: .nftAsset)
+          let asset: NFTAsset = try db.read(key: first.key, table: .nftAsset)
           XCTAssertEqual(first, asset)
         }
 
