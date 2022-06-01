@@ -38,7 +38,7 @@ public final class DAppRecordReferenceKey: MDBXKey {
   }
   
   init?(data: Data) {
-    guard data.count == MDBXKeyLength.dAppRecordFavorite else { return nil }
+    guard data.count == MDBXKeyLength.dAppRecordReference else { return nil }
     self.key = data
   }
 }
