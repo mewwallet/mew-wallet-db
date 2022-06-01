@@ -73,6 +73,8 @@ extension DBWriteMode {
     case .dappRecordFavorite: return .appendOverrideMerge
     case .dappRecordMeta:     return .default
     case .dappRecordHistory:  return .appendOverrideMerge
+    case .nftCollection:      return .default
+    case .asset:              return .default
     }
   }
 }

@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "_Social.proto";
+import "_Stats.proto";
+import "_NFTAsset.proto";
+
+message _NFTCollection {
+  string contract_address = 1;
+  string name = 2;
+  string symbol = 3;
+  string icon = 4;
+  string description = 5;
+  string schema_type = 6;
+  _Social social = 7;
+  _Stats stats = 8;
+  repeated _NFTAsset assets = 9;
+}

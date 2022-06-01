@@ -19,6 +19,8 @@ public enum MDBXTableName: String, CaseIterable {
   case dappRecordFavorite = "DAppRecordFavorite_1"
   case dappRecordMeta     = "DAppRecordMeta_1"
   case dappRecordHistory  = "DAppRecordHistory_1"
+  case nftCollection      = "nftCollection_0"
+  case nftAsset           = "nftAsset_0"
 }
 
 typealias MDBXTable = (name: MDBXTableName, db: MDBXDatabase)

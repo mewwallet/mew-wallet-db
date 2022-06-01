@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message _Social {
+  string website = 1;
+  string discord = 2;
+}

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
+import MEWextensions
 
 public struct DAppRecordReference: Equatable {
   private var _restoredAlternateKey: DAppRecordReferenceKey?

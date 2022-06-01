@@ -1,0 +1,12 @@
+syntax = "proto3";
+import "_URLType.proto";
+
+message _NFTAsset {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool hidden = 4;
+  bool favorite = 5;
+  repeated _URLType urls = 6;
+  string opensea_url = 7;
+}
