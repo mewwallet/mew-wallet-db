@@ -14,7 +14,8 @@ public struct NFTCollection: Equatable {
   var _wrapped: _NFTCollection
   var _chain: MDBXChain
     
-  var address: String = ""
+  // TODO: Fix me
+  public var address: String = ""
   // MARK: - LifeCycle
    
   public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: Stats, assets: [NFTAsset], address: String) {
