@@ -63,6 +63,7 @@ public struct DBWriteMode: OptionSet {
 extension DBWriteMode {
   public static func recommended(_ table: MDBXTableName) -> DBWriteMode {
     switch table {
+    case .account:            return .appendOverrideMerge
     case .dex:                return [.default, .dropTable]
     case .orderedDex:         return [.default, .dropTable]
     case .tokenMeta:          return .appendOverrideMerge

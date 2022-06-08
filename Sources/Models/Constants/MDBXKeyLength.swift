@@ -15,6 +15,7 @@ public enum MDBXKeyLength {
   public static let hash                  = 32
   public static let uuid                  = 8
   
+  public static var account:              Int { return chain + address }
   public static var tokenMeta:            Int { return chain + contractAddress }
   public static var orderedDexItem:       Int { return chain + order + contractAddress }
   public static var rawTransaction:       Int { return chain + hash }
