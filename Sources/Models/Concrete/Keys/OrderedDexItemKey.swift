@@ -17,7 +17,7 @@ public final class OrderedDexItemKey: MDBXKey {
   
   public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
   public var order: UInt16 { return self._order }
-  public var contractAddress: String { return self._contractAddress }
+  public var contractAddress: Address { return self._contractAddress }
   
   // MARK: - Private
   
@@ -33,16 +33,16 @@ public final class OrderedDexItemKey: MDBXKey {
   }()
   
   private lazy var _contractAddressRange: Range<Int> = { _orderRange.endIndex..<key.count }()
-  private lazy var _contractAddress: String = {
-    return key[_contractAddressRange].hexString
+  private lazy var _contractAddress: Address = {
+    return Address(rawValue: key[_contractAddressRange].hexString)
   }()
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, order: UInt16, contractAddress: String) {
+  public init(chain: MDBXChain, order: UInt16, contractAddress: Address) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
-    let contractAddressPart = Data(hex: contractAddress).setLengthLeft(MDBXKeyLength.contractAddress)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
     
     self.key = chainPart + orderPart + contractAddressPart
   }

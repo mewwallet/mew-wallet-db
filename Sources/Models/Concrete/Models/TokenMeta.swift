@@ -20,10 +20,10 @@ public struct TokenMeta: Equatable {
   
   // MARK: - LifeCycle
    
-  public init(chain: MDBXChain, contractAddress: String, name: String = "No Token Name", symbol: String = "MNKY", decimals: Int32 = 0, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, contractAddress: Address, name: String = "No Token Name", symbol: String = "MNKY", decimals: Int32 = 0, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
-      $0.contractAddress = contractAddress
+      $0.contractAddress = contractAddress.rawValue
       $0.name = name
       $0.symbol = symbol
       $0.decimals = decimals
@@ -46,7 +46,7 @@ extension TokenMeta {
   
   // MARK: - Properties
   
-  public var contract_address: String { self._wrapped.contractAddress }
+  public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
   public var name: String { self._wrapped.name }
   public var symbol: String { self._wrapped.symbol }
   public var decimals: Int { Int(self._wrapped.decimals) }

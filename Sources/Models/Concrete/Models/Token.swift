@@ -21,11 +21,11 @@ public struct Token: Equatable {
   
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, address: String, contractAddress: String, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, address: Address, contractAddress: Address, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
-      $0.contractAddress = contractAddress
-      $0.address = address
+      $0.contractAddress = contractAddress.rawValue
+      $0.address = address.rawValue
     }
     self._chain = chain
     self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)
@@ -45,8 +45,8 @@ extension Token {
   
   // MARK: - Properties
   
-  public var contract_address: String { self._wrapped.contractAddress }
-  public var address: String { self._wrapped.address }
+  public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
+  public var address: Address { Address(rawValue: self._wrapped.address) }
   public var amount: Decimal { Decimal(wrapped: self._wrapped.amount, hex: true) ?? .zero }
   public var lockedAmount: Decimal { Decimal(wrapped: self._wrapped.lockedAmount, hex: true) ?? .zero }
 }
@@ -69,7 +69,7 @@ extension Token: MDBXObject {
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Token(serializedData: data)
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -77,7 +77,7 @@ extension Token: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Token(jsonUTF8Data: jsonData, options: options)
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -85,7 +85,7 @@ extension Token: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Token(jsonString: jsonString, options: options)
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -135,6 +135,6 @@ extension Token: ProtoWrapper {
   init(_ wrapped: _Token, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
   }
 }

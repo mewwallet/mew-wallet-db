@@ -43,15 +43,21 @@ public struct Account: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _Account
   var _chain: MDBXChain
+  public var order: UInt16 = 0
   
   // MARK: - Private properties
   
-//  private let _meta: MDBXPointer<DAppRecordMetaKey, DAppRecordMeta> = .init(.dappRecordMeta)
+  private let _tokens: MDBXRelationship<TokenKey, Token> = .init(.token)
+  private let _primary: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _renBTC: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _stETH: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _skale: MDBXPointer<TokenKey, Token> = .init(.token)
   
   // MARK: - Lifecycle
   
   public init(chain: MDBXChain,
-              address: String,
+              order: UInt16,
+              address: Address,
               name: String,
               source: Source = .recoveryPhrase,
               type: `Type` = .`internal`,
@@ -63,8 +69,9 @@ public struct Account: Equatable {
               database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
+    self.order = order
     self._wrapped = .with {
-      $0.address = address
+      $0.address = address.rawValue
       $0.groupID = 0
       $0.source = .init(rawValue: source.rawValue) ?? .unknown
       $0.type = .init(rawValue: type.rawValue) ?? .internal
@@ -84,6 +91,15 @@ public struct Account: Equatable {
       }
     }
   }
+  
+  // MARK: - Private
+  
+  mutating private func tryRestorePrimaryKeyInfo(_ key: Data?) {
+    guard let key = key else { return }
+    if let primaryKey = AccountKey(data: key) {
+      order = primaryKey.order
+    }
+  }
 }
 
 // MARK: - Account + Properties
@@ -91,20 +107,52 @@ public struct Account: Equatable {
 extension Account {
   // MARK: - Relations
   
-//  private var meta: DAppRecordMeta {
-//    get throws {
-//      guard let host = self.url.hostURL?.sanitized else { throw MDBXError.notFound }
-//      let key = DAppRecordMetaKey(chain: _chain, url: host)
-//      return try _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
-//    }
-//  }
+  public var tokens: [Token] {
+    get throws {
+      let startKey = TokenKey(chain: .eth, address: address, lowerRange: true)
+      let endKey = TokenKey(chain: .eth, address: address, lowerRange: false)
+      return try _tokens.getRangedRelationship(startKey: startKey, endKey: endKey, policy: .ignoreCache, database: self.database)
+    }
+  }
+  
+  public var primary: Token {
+    get {
+      do {
+        let key = TokenKey(chain: .eth, address: .unknown(_wrapped.address), contractAddress: .primary)
+        return try _primary.getData(key: key, policy: .ignoreCache, database: self.database)
+      } catch {
+        return Token(chain: .eth, address: .unknown(_wrapped.address), contractAddress: .primary)
+      }
+    }
+  }
+  
+  public var renBTC: Token {
+    get throws {
+      let key = TokenKey(chain: _chain, address: .unknown(_wrapped.address), contractAddress: .renBTC)
+      return try _renBTC.getData(key: key, policy: .ignoreCache, database: self.database)
+    }
+  }
+  
+  public var stETH: Token {
+    get throws {
+      let key = TokenKey(chain: _chain, address: .unknown(_wrapped.address), contractAddress: .stEth)
+      return try _stETH.getData(key: key, policy: .ignoreCache, database: self.database)
+    }
+  }
+  
+  public var skale: Token {
+    get throws {
+      let key = TokenKey(chain: _chain, address: .unknown(_wrapped.address), contractAddress: .skale)
+      return try _skale.getData(key: key, policy: .ignoreCache, database: self.database)
+    }
+  }
   
   // MARK: - Properties
   
   // MARK: Address
   
   /// Address of account
-  public var address: String? { self._wrapped.address }
+  public var address: Address { Address(rawValue: self._wrapped.address) }
   
   // MARK: Technical
   
@@ -212,7 +260,7 @@ extension Account: MDBXObject {
   }
 
   public var key: MDBXKey {
-    return AccountKey(chain: _chain, address: self._wrapped.address)
+    return AccountKey(chain: _chain, order: order, address: address)
   }
 
   public var alternateKey: MDBXKey? {
@@ -222,6 +270,7 @@ extension Account: MDBXObject {
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Account(serializedData: data)
+    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -229,6 +278,7 @@ extension Account: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Account(jsonUTF8Data: jsonData, options: options)
+    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -236,6 +286,7 @@ extension Account: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Account(jsonString: jsonString, options: options)
+    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {

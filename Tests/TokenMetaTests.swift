@@ -28,7 +28,7 @@ private let testJson = """
       "2656.92", "2655.48", "2656.53", "2655.67", "2657.16", "2650.89", "2651.79", "2652.02", "2646.36", "2644.13",
       "2640", "2625.39", "2620.6", "2599.88", "2607.24", "2603.44", "2605.45", "2609.75", "2612.87", "2618.88",
       "2625.4", "2644", "2644.31", "2637.2", "2632.19", "2629.64", "2624.67", "2628.58", "2646.43", "2644.19",
-      "2638.41", "2635.22", "2635.09", "2639.07", "2634.42", "2626.58", "2628.29", "2617.45", "2615.83", "2622.89",
+      "2638.41", "2635.22", "2635.09", "2639.07", "2634.42", "2626.58", "2628.29", "2617.45", "2615.83", "2622.89"
     ]
   },
   {
@@ -40,6 +40,16 @@ private let testJson = """
     "icon":"https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7-eth.png",
     "decimals":6,
     "timestamp":"2022-03-05T06:07:12.814Z"
+  },
+  {
+      "contract_address":"0xeb4c2781e4eba804ce9a9803c67d0893436bb27d",
+      "price":"1.002",
+      "volume_24h":"53291079872",
+      "name":"RenBTC",
+      "symbol":"renBTC",
+      "icon":"https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7-eth.png",
+      "decimals":6,
+      "timestamp":"2022-03-05T06:07:12.814Z"
   },
   {
     "contract_address":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -100,43 +110,39 @@ final class TokenMeta_tests: XCTestCase {
     db = nil
   }
   
-  func test() {
-    let expectation = XCTestExpectation()
-    Task {
-      do {
-        let objects = try TokenMeta.array(fromJSONString: testJson, chain: .eth)
-        let keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
-          return ($0.key, $0)
-        })
-        try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
-        try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes])
-        
-        let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", order: 0)
-        let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", order: 2)
-        let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", order: 1)
-        
-        try await db.write(table: .orderedDex, keysAndObjects: [
-          (dexItem.alternateKey!, dexItem),
-          (dexItem2.alternateKey!, dexItem2),
-          (dexItem3.alternateKey!, dexItem3)
-        ], mode: .append)
-        
-        try await db.write(table: .dex, keysAndObjects: [
-          (dexItem.key, dexItem),
-          (dexItem2.key, dexItem2),
-          (dexItem3.key, dexItem3)
-        ], mode: .append)
-        
-        var dex = try dexItem.meta.dexItem.meta.dexItem
-        dex.order = 0
-      } catch {
-        debugPrint(error)
-      }
+  func testTokenMeta() async {
+    do {
+      let objects = try TokenMeta.array(fromJSONString: testJson, chain: .eth)
+      let keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
+        return ($0.key, $0)
+      })
+      try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
+      try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes])
       
-      expectation.fulfill()
+      let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", order: 0)
+      let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", order: 2)
+      let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", order: 1)
+      
+      try await db.write(table: .orderedDex, keysAndObjects: [
+        (dexItem.alternateKey!, dexItem),
+        (dexItem2.alternateKey!, dexItem2),
+        (dexItem3.alternateKey!, dexItem3)
+      ], mode: .append)
+      
+      try await db.write(table: .dex, keysAndObjects: [
+        (dexItem.key, dexItem),
+        (dexItem2.key, dexItem2),
+        (dexItem3.key, dexItem3)
+      ], mode: .append)
+      
+      var dex = try dexItem.meta.dexItem.meta.dexItem
+      dex.order = 0
+      
+      let renBTC: TokenMeta = try db.read(key: TokenMetaKey(chain: .eth, contractAddress: .renBTC), table: .tokenMeta)
+      XCTAssertEqual(renBTC.contract_address, .renBTC)
+    } catch {
+      XCTFail(error.localizedDescription)
     }
-    
-    wait(for: [expectation], timeout: 5.0)
   }
   
   func testKey() {

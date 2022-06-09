@@ -9,17 +9,16 @@ import Foundation
 
 public enum MDBXKeyLength {
   public static let chain                 = 16
-  public static let contractAddress       = 20
   public static let address               = 20
   public static let order                 = 2
   public static let hash                  = 32
   public static let uuid                  = 8
   
-  public static var account:              Int { return chain + address }
-  public static var tokenMeta:            Int { return chain + contractAddress }
-  public static var orderedDexItem:       Int { return chain + order + contractAddress }
+  public static var account:              Int { return chain + order + address }
+  public static var tokenMeta:            Int { return chain + address }
+  public static var orderedDexItem:       Int { return chain + order + address }
   public static var rawTransaction:       Int { return chain + hash }
-  public static var token:                Int { return chain + address + contractAddress }
+  public static var token:                Int { return chain + address + address }
   public static var dAppRecord:           Int { return chain + hash + uuid }
   public static var dAppRecordReference:  Int { return chain + order }
   public static var dAppRecordMeta:       Int { return chain + hash }
