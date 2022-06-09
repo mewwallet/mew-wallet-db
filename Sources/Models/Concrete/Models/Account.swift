@@ -188,6 +188,14 @@ extension Account {
     }
   }
   
+  /// Last component of derivation path
+  public var index: UInt32? {
+    guard let derivationPath = derivationPath,
+          let index = derivationPath.components(separatedBy: "/").last else { return nil }
+    guard let uint64 = UInt64(index, radix: 10) else { return nil }
+    return UInt32(clamping: uint64)
+  }
+  
   /// AnonymizedId
   /// Used for specific cases when we need to improve user's privacy
   public var anonymizedId: String? {
