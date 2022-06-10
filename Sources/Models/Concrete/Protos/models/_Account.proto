@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 message _Account {
+  // Account address
   string address                          = 1;
   // GroupID, for future purposes. Could be used if we will need to manage few recoveryPhrases in the app
   uint32 groupID                          = 2;
@@ -29,8 +30,12 @@ message _Account {
   _Keys keys                              = 5;
   // UserState describes user-related information, like 'name' of account or 'isHidden'
   message _UserState {
-    string name                             = 1;
-    bool isHidden                           = 2;
+    // Account order, used sorting of accounts
+    uint32 order                            = 1;
+    // Account name, user's name of account
+    string name                             = 2;
+    // Represent if account was hidden
+    bool isHidden                           = 3;
   }
   _UserState state                        = 6;
 }

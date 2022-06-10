@@ -43,7 +43,6 @@ public struct Account: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _Account
   var _chain: MDBXChain
-  public var order: UInt16 = 0
   
   // MARK: - Private properties
   
@@ -56,7 +55,7 @@ public struct Account: Equatable {
   // MARK: - Lifecycle
   
   public init(chain: MDBXChain,
-              order: UInt16,
+              order: UInt32,
               address: Address,
               name: String,
               source: Source = .recoveryPhrase,
@@ -69,7 +68,6 @@ public struct Account: Equatable {
               database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
-    self.order = order
     self._wrapped = .with {
       $0.address = address.rawValue
       $0.groupID = 0
@@ -86,18 +84,10 @@ public struct Account: Equatable {
       
       // User State
       $0.state = .with {
+        $0.order = order
         $0.name = name
         $0.isHidden = isHidden
       }
-    }
-  }
-  
-  // MARK: - Private
-  
-  mutating private func tryRestorePrimaryKeyInfo(_ key: Data?) {
-    guard let key = key else { return }
-    if let primaryKey = AccountKey(data: key) {
-      order = primaryKey.order
     }
   }
 }
@@ -245,6 +235,12 @@ extension Account {
   
   // MARK: UserState
   
+  /// Order of account
+  public var order: UInt32 {
+    set { self._wrapped.state.order = newValue }
+    get { self._wrapped.state.order }
+  }
+  
   /// Name of account
   public var name: String {
     set { self._wrapped.state.name = newValue }
@@ -268,7 +264,7 @@ extension Account: MDBXObject {
   }
 
   public var key: MDBXKey {
-    return AccountKey(chain: _chain, order: order, address: address)
+    return AccountKey(chain: _chain, address: address)
   }
 
   public var alternateKey: MDBXKey? {
@@ -278,7 +274,6 @@ extension Account: MDBXObject {
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Account(serializedData: data)
-    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -286,7 +281,6 @@ extension Account: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Account(jsonUTF8Data: jsonData, options: options)
-    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -294,7 +288,6 @@ extension Account: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Account(jsonString: jsonString, options: options)
-    self.tryRestorePrimaryKeyInfo(key)
   }
 
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -323,6 +316,7 @@ extension Account: MDBXObject {
     if other._wrapped.keys.hasEncryptionPublicKey { self._wrapped.keys.encryptionPublicKey = other._wrapped.keys.encryptionPublicKey }
     if other._wrapped.keys.hasWithdrawalPublicKey { self._wrapped.keys.withdrawalPublicKey = other._wrapped.keys.withdrawalPublicKey }
     // UserState
+    self._wrapped.state.order = other._wrapped.state.order
     self._wrapped.state.name = other._wrapped.state.name
     self._wrapped.state.isHidden = other._wrapped.state.isHidden
   }
@@ -353,6 +347,15 @@ extension Account: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+// MARK: - Account + Comparable
+
+extension Account: Comparable {
+  public static func < (lhs: Account, rhs: Account) -> Bool {
+    return lhs.order < rhs.order
+  }
+}
+
 //
 //// MARK: - Account + Hashable
 //

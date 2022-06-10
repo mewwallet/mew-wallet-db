@@ -25,6 +25,7 @@ struct _Account {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// Account address
   var address: String = String()
 
   /// GroupID, for future purposes. Could be used if we will need to manage few recoveryPhrases in the app
@@ -195,8 +196,13 @@ struct _Account {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
+    /// Account order, used sorting of accounts
+    var order: UInt32 = 0
+
+    /// Account name, user's name of account
     var name: String = String()
 
+    /// Represent if account was hidden
     var isHidden: Bool = false
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -375,8 +381,9 @@ extension _Account._Keys: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Account.protoMessageName + "._UserState"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "name"),
-    2: .same(proto: "isHidden"),
+    1: .same(proto: "order"),
+    2: .same(proto: "name"),
+    3: .same(proto: "isHidden"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -385,24 +392,29 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
-      case 2: try { try decoder.decodeSingularBoolField(value: &self.isHidden) }()
+      case 1: try { try decoder.decodeSingularUInt32Field(value: &self.order) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.isHidden) }()
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.order != 0 {
+      try visitor.visitSingularUInt32Field(value: self.order, fieldNumber: 1)
+    }
     if !self.name.isEmpty {
-      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
     }
     if self.isHidden != false {
-      try visitor.visitSingularBoolField(value: self.isHidden, fieldNumber: 2)
+      try visitor.visitSingularBoolField(value: self.isHidden, fieldNumber: 3)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _Account._UserState, rhs: _Account._UserState) -> Bool {
+    if lhs.order != rhs.order {return false}
     if lhs.name != rhs.name {return false}
     if lhs.isHidden != rhs.isHidden {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
