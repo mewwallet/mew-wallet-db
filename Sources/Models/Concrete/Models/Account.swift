@@ -55,6 +55,21 @@ public struct Account: Equatable {
   // MARK: - Lifecycle
   
   public init(chain: MDBXChain,
+              address: Address) {
+    self.init(chain: chain,
+              order: 0,
+              address: address,
+              name: "",
+              source: .unknown,
+              type: .internal,
+              derivationPath: nil,
+              anonymizedId: nil,
+              encryptionPublicKey: nil,
+              withdrawalPublicKey: nil,
+              isHidden: false)
+  }
+  
+  public init(chain: MDBXChain,
               order: UInt32,
               address: Address,
               name: String,
