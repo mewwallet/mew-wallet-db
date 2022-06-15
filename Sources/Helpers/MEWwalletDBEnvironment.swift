@@ -79,10 +79,6 @@ final class MEWwalletDBEnvironment {
         dbs[table] = db
         os_signpost(.event, log: .info(.table), name: "prepare", "table done: %{private}@", table.rawValue)
       }
-      // FIXME: - Remove drop table
-      try transaction.drop(database: dbs[.account]!, delete: false)
-      debugPrint("Drop accounts")
-      // ENDFIXME
       try transaction.commit()
       os_signpost(.end, log: .info(.table), name: "prepare")
     } catch {
