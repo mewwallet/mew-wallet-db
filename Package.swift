@@ -13,7 +13,7 @@ let package = Package(
              targets: ["mew-wallet-db"])
   ],
   dependencies: [
-    .package(name: "MEWextensions", url: "https://github.com/Foboz/MEWextensions.git", .upToNextMajor(from: "1.0.0")),
+    .package(name: "mew-wallet-ios-extensions", url: "https://github.com/mewwallet/mew-wallet-ios-extensions.git", .upToNextMajor(from: "1.0.0")),
     .package(name: "mdbx-ios", url: "git@github.com:mewwallet/mdbx-ios.git", .exact("1.0.9")),
     .package(name: "swift-algorithms", url: "https://github.com/apple/swift-algorithms.git", .exact("1.0.0")),
     .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", .upToNextMinor(from: "1.18.0"))
@@ -22,7 +22,7 @@ let package = Package(
     .target(name: "mew-wallet-db",
             dependencies: ["mdbx-ios",
                            .product(name: "Algorithms", package: "swift-algorithms"),
-                           "MEWextensions",
+                           "mew-wallet-ios-extensions",
                            "SwiftProtobuf"],
             path: "Sources",
             exclude: [

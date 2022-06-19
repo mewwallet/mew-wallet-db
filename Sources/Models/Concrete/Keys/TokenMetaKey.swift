@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import MEWextensions
+import mew_wallet_ios_extensions
 
 public final class TokenMetaKey: MDBXKey {
   // MARK: - Public

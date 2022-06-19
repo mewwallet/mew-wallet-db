@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import MEWextensions
+import mew_wallet_ios_extensions
 
 /// Chain + Order + ContractAddress
 public final class OrderedDexItemKey: MDBXKey {

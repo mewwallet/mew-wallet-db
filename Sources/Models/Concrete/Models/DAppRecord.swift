@@ -8,7 +8,7 @@
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
-import MEWextensions
+import mew_wallet_ios_extensions
 
 public struct DAppRecord: Equatable {
   public struct RecordType: OptionSet {
