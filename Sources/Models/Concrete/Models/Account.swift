@@ -371,17 +371,11 @@ extension Account: Comparable {
   }
 }
 
-//
-//// MARK: - Account + Hashable
-//
-//extension Account: Hashable {
-//  public func hash(into hasher: inout Hasher) {
-////    if let uuid = reference?.uuid {
-////      hasher.combine(uuid)
-////    } else {
-////      hasher.combine(self.url)
-////      hasher.combine(self.address)
-////      hasher.combine(self.icon)
-////    }
-//  }
-//}
+
+// MARK: - Account + Hashable
+
+extension Account: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    _wrapped.hash(into: &hasher)
+  }
+}
