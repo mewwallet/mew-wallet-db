@@ -22,7 +22,7 @@ public extension MEWwalletDBImpl {
     
     os_log("Database path: %{private}@", log: .info(.lifecycle), type: .info, path)
     
-    self.prepareEnvironment(path: path, tables: tables)
+    try self.prepareEnvironment(path: path, tables: tables)
     
     #if os(iOS)
     NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
@@ -32,7 +32,7 @@ public extension MEWwalletDBImpl {
       .store(in: &cancellable)
     NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
       .sink {[weak self] _ in
-        self?.prepareEnvironment(path: path, tables: tables)
+        try? self?.prepareEnvironment(path: path, tables: tables)
       }
       .store(in: &cancellable)
     #endif
@@ -54,13 +54,14 @@ public extension MEWwalletDBImpl {
   
   // MARK: - Private
   
-  private func prepareEnvironment(path: String, tables: [MDBXTableName]) {
+  private func prepareEnvironment(path: String, tables: [MDBXTableName]) throws {
     guard self.environment == nil else { return }
     do {
       let environment = try MEWwalletDBEnvironment(path: path, tables: tables)
       self.environment = environment
     } catch {
       os_log("Prepare environment error: %{private}@", log: .error(.lifecycle), type: .fault, error.localizedDescription)
+      throw error
     }
   }
   

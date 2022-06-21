@@ -21,9 +21,9 @@ final class MEWwalletDBEnvironment {
     
     let geometry = MDBXGeometry(
       sizeLower: -1,
-      sizeNow: 1024 * 10,
-      sizeUpper: 1024 * 1024 * 50,
-      growthStep: 1024,
+      sizeNow: -1,
+      sizeUpper: 1024 * 1024 * 75,
+      growthStep: 1024 * 1024,
       shrinkThreshold: -1,
       pageSize: -1
     )
