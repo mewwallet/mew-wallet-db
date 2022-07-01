@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+message _Account {
+  // Account address
+  string address                          = 1;
+  // GroupID, for future purposes. Could be used if we will need to manage few recoveryPhrases in the app
+  uint32 groupID                          = 2;
+  // Source describes account source, like 'generated/restored in the app', or plain private key (for now, private key could be read-only)
+  enum _Source {
+    UNKNOWN                                 = 0;
+    RECOVERY_PHRASE                         = 1; // Generated internally
+    PRIVATE_KEY                             = 2; // Copy-paste of watch-only address or imprort of private key
+    WALLET_CONNECT                          = 3; // External connection via WalletConnect
+  }
+  _Source source                          = 3;
+  // Type describes origin of account, like 'generated/restored in the app' or external source like 'WalletConnect'
+  enum _Type {
+    INTERNAL                                = 0; // Generated internally
+    READ_ONLY                               = 1; // Watch-only address
+    EXTERNAL                                = 2; // WalletConnect address
+  }
+  _Type type                              = 4;
+  // Keys describes related information for account, like eth_encryptionPublicKey or withdrawalPublicKey which is requires for ETH2 staking via Staked.us
+  message _Keys {
+    optional string derivationPath          = 1; // Now it's optional, since we're going to support external sources and plain private keys
+    optional string anonymizedId            = 2; // Derives from PrivateKey, we don't have an access to anonymizedId with address
+    optional string encryptionPublicKey     = 3; // Derives from PrivateKey, we don't have an access to encryptionPublicKey with address
+    optional string withdrawalPublicKey     = 4; // Derives from PrivateKey, we don't have an access to withdrawalPublicKey with address
+  }
+  _Keys keys                              = 5;
+  // UserState describes user-related information, like 'name' of account or 'isHidden'
+  message _UserState {
+    // Account order, used sorting of accounts
+    uint32 order                            = 1;
+    // Account name, user's name of account
+    string name                             = 2;
+    // Represent if account was hidden
+    bool isHidden                           = 3;
+  }
+  _UserState state                        = 6;
+}

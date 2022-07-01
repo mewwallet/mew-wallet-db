@@ -25,11 +25,11 @@ public struct DexItem: Equatable {
   
   public init(tokenMeta: TokenMeta) {
     self._chain = tokenMeta._chain
-    self._contract_address = tokenMeta.contract_address
+    self._contract_address = tokenMeta.contract_address.rawValue
     
     self.database = tokenMeta.database
     self._wrapped = .with {
-      $0.contractAddress = tokenMeta.contract_address
+      $0.contractAddress = tokenMeta.contract_address.rawValue
     }
     self._meta.updateData(tokenMeta)
   }
@@ -69,7 +69,7 @@ extension DexItem {
   
   // MARK: - Properties
   
-  public var contract_address: String { self._contract_address ?? self._wrapped.contractAddress }
+  public var contract_address: Address { Address(rawValue: self._contract_address ?? self._wrapped.contractAddress) }
 }
 
 // MARK: - DexItem + MDBXObject

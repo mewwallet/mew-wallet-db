@@ -8,7 +8,7 @@
 import Foundation
 import XCTest
 @testable import mew_wallet_db
-import MEWextensions
+import mew_wallet_ios_extensions
 import SwiftProtobuf
 
 private let testJson = """
