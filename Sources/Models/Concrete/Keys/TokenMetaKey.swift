@@ -6,15 +6,14 @@
 //
 
 import Foundation
-import MEWextensions
+import mew_wallet_ios_extensions
 
 public final class TokenMetaKey: MDBXKey {
-  
   // MARK: - Public
   
   public let key: Data
   public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
-  public var contractAddress: String { return self._contractAddress }
+  public var contractAddress: Address { return self._contractAddress }
   
   // MARK: - Private
   
@@ -24,15 +23,15 @@ public final class TokenMetaKey: MDBXKey {
   }()
   
   private lazy var _contractAddressRange: Range<Int> = { _chainRange.endIndex..<key.count }()
-  private lazy var _contractAddress: String = {
-    return key[_contractAddressRange].hexString
+  private lazy var _contractAddress: Address = {
+    return Address(rawValue: key[_contractAddressRange].hexString)
   }()
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, contractAddress: String) {
+  public init(chain: MDBXChain, contractAddress: Address) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let contractAddressPart = Data(hex: contractAddress).setLengthLeft(MDBXKeyLength.contractAddress)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
     
     self.key = chainPart + contractAddressPart
   }
