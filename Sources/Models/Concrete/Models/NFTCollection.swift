@@ -157,13 +157,13 @@ extension NFTCollection: ProtoWrapper {
 // MARK: - Array + NFTCollection
 
 extension Array where Element == NFTCollection {
-  var collectAssets: [NFTAsset] {
+  public var collectAssets: [NFTAsset] {
     get throws {
       try flatMap { try $0.assets }
     }
   }
   
-  var collectMetas: [TokenMeta] {
+  public var collectMetas: [TokenMeta] {
     get throws {
       try collectAssets.compactMap { try $0.last_sale?.meta }
     }

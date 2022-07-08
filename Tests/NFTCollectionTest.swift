@@ -113,17 +113,6 @@ private let testJson = """
             "url": "https://lh3.googleusercontent.com/J6HMVlVATeRoXyYEqZidlrAc1tb-B0lyCeWcdOHuC5mZX9j426xnitVnb48TyBBW54rVDjKEFcyukOkT05jNqP-bNwdva2FB7dSJ"
           }
         ],
-        "last_sale": {
-          "price": "11000000000000000000",
-          "token": {
-            "contract_address": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-            "symbol": "ETH",
-            "name": "ETH",
-            "icon": "",
-            "website": "",
-            "decimals": 18
-          }
-        },
         "opensea_url": "https://opensea.io/assets/ethereum/0x01234567bac6ff94d7e4f0ee23119cf848f93245/9999999"
       }
     ]
@@ -180,7 +169,7 @@ final class nft_collection_tests: XCTestCase {
       
       XCTAssertEqual(try db.countAll(from: .nftCollection), 2)
       XCTAssertEqual(try db.countAll(from: .nftAsset), 2)
-      XCTAssertEqual(try db.countAll(from: .tokenMeta), 2)
+      XCTAssertEqual(try db.countAll(from: .tokenMeta), 1)
     } catch {
       debugPrint(error.localizedDescription)
       XCTFail(error.localizedDescription)
