@@ -9,7 +9,5 @@ import Foundation
 import CryptoKit
 
 extension URL {
-  var sha256: Data {
-    return self.absoluteString.sha256
-  }
+  var sha256: Data { absoluteString.sha256 }
 }

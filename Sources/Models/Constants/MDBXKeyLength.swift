@@ -13,17 +13,19 @@ public enum MDBXKeyLength {
   public static let order                 = 2
   public static let hash                  = 32
   public static let uuid                  = 8
+  public static let name                  = 8
   
-  public static var account:              Int { return chain + address }
-  public static var tokenMeta:            Int { return chain + address }
-  public static var orderedDexItem:       Int { return chain + order + address }
-  public static var rawTransaction:       Int { return chain + hash }
-  public static var token:                Int { return chain + address + address }
-  public static var dAppRecord:           Int { return chain + hash + uuid }
-  public static var dAppRecordReference:  Int { return chain + order }
-  public static var dAppRecordMeta:       Int { return chain + hash }
-  public static var dAppRecordHistory:    Int { return chain + hash }
-  public static var nftAsset:             Int { return token + hash }
+  public static var account:              Int { return chain + address }                          // 36
+  public static var tokenMeta:            Int { return chain + address }                          // 36
+  public static var orderedDexItem:       Int { return chain + order + address }                  // 38
+  public static var rawTransaction:       Int { return chain + hash }                             // 48
+  public static var token:                Int { return chain + address + address }                // 56
+  public static var dAppRecord:           Int { return chain + hash + uuid }                      // 56
+  public static var dAppRecordReference:  Int { return chain + order }                            // 18
+  public static var dAppRecordMeta:       Int { return chain + hash }                             // 48
+  public static var dAppRecordHistory:    Int { return chain + hash }                             // 48
+  public static var nftCollection:        Int { return chain + address + address + name + hash }  // 96
+  public static var nftAsset:             Int { return nftCollection + address + hash }           // 172
   
   // TODO: Needs to be refactored in future
 

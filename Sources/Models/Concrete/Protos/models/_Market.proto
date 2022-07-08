@@ -1,6 +1,0 @@
-syntax = "proto3";
-import "_Floor.proto";
-
-message _Market {
-  _Floor floor = 1;
-}

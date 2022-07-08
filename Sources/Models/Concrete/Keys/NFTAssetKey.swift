@@ -6,47 +6,53 @@
 //
 
 import Foundation
-import MEWextensions
+import mew_wallet_ios_extensions
 
 public final class NFTAssetKey: MDBXKey {
   
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
-  public var address: String { return self._address }
-  public var contractAddress: String { return self._contractAddress }
-  public var id: String { return self._id }
+  public var chain: MDBXChain                 { _collectionKey.chain }
+  public var collectionKey: NFTCollectionKey  { _collectionKey }
+  public var contractAddress: Address         { _contractAddress }
+  public var hash: Data                       { _hash }
 
   // MARK: - Private
   
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  private lazy var _chain: Data = {
-    return key[_chainRange]
+  private lazy var _collectionKeyRange: Range<Int> = { 0..<MDBXKeyLength.nftCollection }()
+  private lazy var _collectionKey: NFTCollectionKey = {
+    return NFTCollectionKey(data: key[_collectionKeyRange])!
   }()
   
-  private lazy var _addressRange: Range<Int> = { _chainRange.startIndex..<MDBXKeyLength.address }()
-  private lazy var _contractAddressRange: Range<Int> = { MDBXKeyLength.address..<MDBXKeyLength.token }()
-  private lazy var _idRange: Range<Int> = { MDBXKeyLength.token..<key.count }()
-  private lazy var _contractAddress: String = {
-    return key[_contractAddressRange].hexString
+  private lazy var _contractAddressRange: Range<Int> = { _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.name }()
+  private lazy var _contractAddress: Address = {
+    return Address(rawValue: key[_contractAddressRange].hexString)
   }()
-  private lazy var _address: String = {
-    return key[_addressRange].hexString
-  }()
-  private lazy var _id: String = {
-    return key[_idRange].hexString
+  
+  private lazy var _hashRange: Range<Int> = { _contractAddressRange.endIndex..<key.count }()
+  private lazy var _hash: Data = {
+    return key[_hashRange]
   }()
 
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, address: String, contractAddress: String, id: String) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address).setLengthLeft(MDBXKeyLength.address)
-    let contractAddressPart = Data(hex: contractAddress).setLengthLeft(MDBXKeyLength.contractAddress)
-    let assetIdPart         = id.sha256.setLengthLeft(MDBXKeyLength.hash)
+  public init(collectionKey: NFTCollectionKey?, contractAddress: Address, id: String) {
+    let collectionKeyPart   = collectionKey?.key ?? Data(repeating: 0x00, count: MDBXKeyLength.nftCollection)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let hashPart            = id.sha256.setLengthLeft(MDBXKeyLength.hash)
     
-    self.key = chainPart + addressPart + contractAddressPart + assetIdPart
+    self.key = collectionKeyPart + contractAddressPart + hashPart
+  }
+  
+  public init(collectionKey: NFTCollectionKey?, lowerRange: Bool) {
+    let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
+    
+    let collectionKeyPart   = collectionKey?.key ?? Data(repeating: 0x00, count: MDBXKeyLength.nftCollection)
+    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.address)
+    let hashPart            = Data(repeating: rangeValue, count: MDBXKeyLength.hash)
+    
+    self.key = collectionKeyPart + contractAddressPart + hashPart
   }
   
   init?(data: Data) {

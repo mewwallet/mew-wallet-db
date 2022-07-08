@@ -11,12 +11,12 @@
         }
       },
       {
-        "package": "MEWextensions",
-        "repositoryURL": "https://github.com/Foboz/MEWextensions.git",
+        "package": "mew-wallet-ios-extensions",
+        "repositoryURL": "https://github.com/mewwallet/mew-wallet-ios-extensions.git",
         "state": {
           "branch": null,
-          "revision": "e0699b858709aaa80d79e6c6bc8baec4d6ee5d86",
-          "version": "1.0.12"
+          "revision": "ecd39ccf4ece017c7c83afd28e02edc769a8a9ef",
+          "version": "1.0.18"
         }
       },
       {

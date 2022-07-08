@@ -9,8 +9,5 @@ import Foundation
 import CryptoKit
 
 extension String {
-  var sha256: Data {
-    let data = Data(self.utf8)
-    return Data(SHA256.hash(data: data))
-  }
+  var sha256: Data { Data(self.utf8).sha256 }
 }

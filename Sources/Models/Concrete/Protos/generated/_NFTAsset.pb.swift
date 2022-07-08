@@ -25,23 +25,75 @@ struct _NFTAsset {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var id: String = String()
+  /// Token ID in the collection
+  var tokenID: String {
+    get {return _storage._tokenID}
+    set {_uniqueStorage()._tokenID = newValue}
+  }
 
-  var name: String = String()
+  /// Contract address for asset, collection might has different contract_address
+  var contractAddress: String {
+    get {return _storage._contractAddress}
+    set {_uniqueStorage()._contractAddress = newValue}
+  }
 
-  var description_p: String = String()
+  /// Name of token, like "Block #9999"
+  var name: String {
+    get {return _storage._name ?? String()}
+    set {_uniqueStorage()._name = newValue}
+  }
+  /// Returns true if `name` has been explicitly set.
+  var hasName: Bool {return _storage._name != nil}
+  /// Clears the value of `name`. Subsequent reads from it will return its default value.
+  mutating func clearName() {_uniqueStorage()._name = nil}
 
-  var hidden: Bool = false
+  /// Description of the token, like "Complete on 5/4/2020, this...."
+  var description_p: String {
+    get {return _storage._description_p ?? String()}
+    set {_uniqueStorage()._description_p = newValue}
+  }
+  /// Returns true if `description_p` has been explicitly set.
+  var hasDescription_p: Bool {return _storage._description_p != nil}
+  /// Clears the value of `description_p`. Subsequent reads from it will return its default value.
+  mutating func clearDescription_p() {_uniqueStorage()._description_p = nil}
 
-  var favorite: Bool = false
+  /// Array of traits of the token, contains information about the token
+  var traits: [_NFTAssetTrait] {
+    get {return _storage._traits}
+    set {_uniqueStorage()._traits = newValue}
+  }
 
-  var urls: [_URLType] = []
+  /// Array of URLs and types
+  var urls: [_NFTAssetUrl] {
+    get {return _storage._urls}
+    set {_uniqueStorage()._urls = newValue}
+  }
 
-  var openseaURL: String = String()
+  /// Information about last known sale of the token
+  var lastSale: _NFTAssetLastSale {
+    get {return _storage._lastSale ?? _NFTAssetLastSale()}
+    set {_uniqueStorage()._lastSale = newValue}
+  }
+  /// Returns true if `lastSale` has been explicitly set.
+  var hasLastSale: Bool {return _storage._lastSale != nil}
+  /// Clears the value of `lastSale`. Subsequent reads from it will return its default value.
+  mutating func clearLastSale() {_uniqueStorage()._lastSale = nil}
+
+  /// External link to token
+  var openseaURL: String {
+    get {return _storage._openseaURL ?? String()}
+    set {_uniqueStorage()._openseaURL = newValue}
+  }
+  /// Returns true if `openseaURL` has been explicitly set.
+  var hasOpenseaURL: Bool {return _storage._openseaURL != nil}
+  /// Clears the value of `openseaURL`. Subsequent reads from it will return its default value.
+  mutating func clearOpenseaURL() {_uniqueStorage()._openseaURL = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -49,66 +101,122 @@ struct _NFTAsset {
 extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_NFTAsset"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-    2: .same(proto: "name"),
-    3: .same(proto: "description"),
-    4: .same(proto: "hidden"),
-    5: .same(proto: "favorite"),
+    1: .standard(proto: "token_id"),
+    2: .standard(proto: "contract_address"),
+    3: .same(proto: "name"),
+    4: .same(proto: "description"),
+    5: .same(proto: "traits"),
     6: .same(proto: "urls"),
-    7: .standard(proto: "opensea_url"),
+    7: .standard(proto: "last_sale"),
+    8: .standard(proto: "opensea_url"),
   ]
 
+  fileprivate class _StorageClass {
+    var _tokenID: String = String()
+    var _contractAddress: String = String()
+    var _name: String? = nil
+    var _description_p: String? = nil
+    var _traits: [_NFTAssetTrait] = []
+    var _urls: [_NFTAssetUrl] = []
+    var _lastSale: _NFTAssetLastSale? = nil
+    var _openseaURL: String? = nil
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _tokenID = source._tokenID
+      _contractAddress = source._contractAddress
+      _name = source._name
+      _description_p = source._description_p
+      _traits = source._traits
+      _urls = source._urls
+      _lastSale = source._lastSale
+      _openseaURL = source._openseaURL
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.description_p) }()
-      case 4: try { try decoder.decodeSingularBoolField(value: &self.hidden) }()
-      case 5: try { try decoder.decodeSingularBoolField(value: &self.favorite) }()
-      case 6: try { try decoder.decodeRepeatedMessageField(value: &self.urls) }()
-      case 7: try { try decoder.decodeSingularStringField(value: &self.openseaURL) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._tokenID) }()
+        case 2: try { try decoder.decodeSingularStringField(value: &_storage._contractAddress) }()
+        case 3: try { try decoder.decodeSingularStringField(value: &_storage._name) }()
+        case 4: try { try decoder.decodeSingularStringField(value: &_storage._description_p) }()
+        case 5: try { try decoder.decodeRepeatedMessageField(value: &_storage._traits) }()
+        case 6: try { try decoder.decodeRepeatedMessageField(value: &_storage._urls) }()
+        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._lastSale) }()
+        case 8: try { try decoder.decodeSingularStringField(value: &_storage._openseaURL) }()
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
-    }
-    if !self.name.isEmpty {
-      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
-    }
-    if !self.description_p.isEmpty {
-      try visitor.visitSingularStringField(value: self.description_p, fieldNumber: 3)
-    }
-    if self.hidden != false {
-      try visitor.visitSingularBoolField(value: self.hidden, fieldNumber: 4)
-    }
-    if self.favorite != false {
-      try visitor.visitSingularBoolField(value: self.favorite, fieldNumber: 5)
-    }
-    if !self.urls.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.urls, fieldNumber: 6)
-    }
-    if !self.openseaURL.isEmpty {
-      try visitor.visitSingularStringField(value: self.openseaURL, fieldNumber: 7)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if !_storage._tokenID.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._tokenID, fieldNumber: 1)
+      }
+      if !_storage._contractAddress.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._contractAddress, fieldNumber: 2)
+      }
+      try { if let v = _storage._name {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+      } }()
+      try { if let v = _storage._description_p {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+      } }()
+      if !_storage._traits.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._traits, fieldNumber: 5)
+      }
+      if !_storage._urls.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._urls, fieldNumber: 6)
+      }
+      try { if let v = _storage._lastSale {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+      } }()
+      try { if let v = _storage._openseaURL {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 8)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _NFTAsset, rhs: _NFTAsset) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.name != rhs.name {return false}
-    if lhs.description_p != rhs.description_p {return false}
-    if lhs.hidden != rhs.hidden {return false}
-    if lhs.favorite != rhs.favorite {return false}
-    if lhs.urls != rhs.urls {return false}
-    if lhs.openseaURL != rhs.openseaURL {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._tokenID != rhs_storage._tokenID {return false}
+        if _storage._contractAddress != rhs_storage._contractAddress {return false}
+        if _storage._name != rhs_storage._name {return false}
+        if _storage._description_p != rhs_storage._description_p {return false}
+        if _storage._traits != rhs_storage._traits {return false}
+        if _storage._urls != rhs_storage._urls {return false}
+        if _storage._lastSale != rhs_storage._lastSale {return false}
+        if _storage._openseaURL != rhs_storage._openseaURL {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -371,7 +371,6 @@ extension Account: Comparable {
   }
 }
 
-
 // MARK: - Account + Hashable
 
 extension Account: Hashable {

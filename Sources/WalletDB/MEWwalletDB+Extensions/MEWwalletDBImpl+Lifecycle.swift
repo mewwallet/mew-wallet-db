@@ -7,7 +7,7 @@
 
 import Foundation
 import mdbx_ios
-import OSLog
+import os
 import Combine
 #if canImport(UIKit)
 import UIKit
@@ -20,7 +20,7 @@ public extension MEWwalletDBImpl {
     self.path = path
     self.tableNames = tables
     
-    os_log("Database path: %{private}@", log: .info(.lifecycle), type: .info, path)
+    Logger.debug(.lifecycle, "Database path: \(path)")
     
     try self.prepareEnvironment(path: path, tables: tables)
     
@@ -60,7 +60,7 @@ public extension MEWwalletDBImpl {
       let environment = try MEWwalletDBEnvironment(path: path, tables: tables)
       self.environment = environment
     } catch {
-      os_log("Prepare environment error: %{private}@", log: .error(.lifecycle), type: .fault, error.localizedDescription)
+      Logger.critical(.lifecycle, "Prepare environment error: \(error.localizedDescription)")
       throw error
     }
   }

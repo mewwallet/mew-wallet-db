@@ -11,9 +11,11 @@ public final class NFTCollectionKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
-  public var address: String { return self._address }
-  public var contractAddress: String { return self._contractAddress }
+  public var chain: MDBXChain           { MDBXChain(rawValue: self._chain) }
+  public var address: Address           { _address }
+  public var contractAddress: Address   { _contractAddress }
+  public var name: String               { _name }
+  public var hash: Data                 { _hash }
   
   // MARK: - Private
   
@@ -22,39 +24,57 @@ public final class NFTCollectionKey: MDBXKey {
     return key[_chainRange]
   }()
   
-  private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<32 }()
-  private lazy var _contractAddressRange: Range<Int> = { 32..<key.count }()
-  private lazy var _contractAddress: String = {
-    return key[_contractAddressRange].hexString
+  private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address }()
+  private lazy var _address: Address = {
+    return Address(rawValue: key[_addressRange].hexString)
   }()
-  private lazy var _address: String = {
-    return key[_addressRange].hexString
+  
+  private lazy var _contractAddressRange: Range<Int> = { _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.address }()
+  private lazy var _contractAddress: Address = {
+    return Address(rawValue: key[_contractAddressRange].hexString)
+  }()
+  
+  private lazy var _nameRange: Range<Int> = { _contractAddressRange.endIndex..<_contractAddressRange.upperBound+MDBXKeyLength.name }()
+  private lazy var _name: String = {
+    return String(data: key[_nameRange], encoding: .utf8) ?? ""
+  }()
+  
+  private lazy var _hashRange: Range<Int> = { _nameRange.endIndex..<key.count }()
+  private lazy var _hash: Data = {
+    return key[_hashRange]
   }()
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, address: String, contractAddress: String) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let contractAddressPart = Data(hex: contractAddress).setLengthLeft(MDBXKeyLength.contractAddress)
-    let addressPart         = Data(hex: address).setLengthLeft(MDBXKeyLength.address)
+  public init(chain: MDBXChain, address: Address, contractAddress: Address, name: String) {
+    var nameData = name.data(using: .utf8) ?? Data()
+    if nameData.count > MDBXKeyLength.name {
+      nameData = nameData[0..<MDBXKeyLength.name]
+    }
     
-    self.key = chainPart + addressPart + contractAddressPart
+    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let namePart            = nameData.setLengthRight(MDBXKeyLength.name)
+    let hashPart            = namePart.sha256.setLengthLeft(MDBXKeyLength.hash)
+    
+    self.key = chainPart + addressPart + contractAddressPart + namePart + hashPart
   }
   
   public init(chain: MDBXChain, address: String, lowerRange: Bool) {
+    let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
+    
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(hex: address).setLengthLeft(MDBXKeyLength.address)
-    let contractAddressPart: Data
-    if lowerRange {
-      contractAddressPart = Data().setLengthLeft(MDBXKeyLength.contractAddress)
-    } else {
-      contractAddressPart = Data(repeating: 0xFF, count: MDBXKeyLength.contractAddress)
-    }
-    self.key = chainPart + addressPart + contractAddressPart
+    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.address)
+    let namePart            = Data(repeating: rangeValue, count: MDBXKeyLength.name)
+    let hashPart            = Data(repeating: rangeValue, count: MDBXKeyLength.hash)
+    
+    self.key = chainPart + addressPart + contractAddressPart + namePart + hashPart
   }
 
   init?(data: Data) {
-    guard data.count == MDBXKeyLength.token else { return nil }
+    guard data.count == MDBXKeyLength.nftCollection else { return nil }
     self.key = data
   }
   

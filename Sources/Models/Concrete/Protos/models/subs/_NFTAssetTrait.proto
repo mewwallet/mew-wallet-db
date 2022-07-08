@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message _NFTAssetTrait {
+  // Name of trait, like "author"
+  string trait                            = 1;
+  // Total count of the same train across the collection
+  uint64 count                            = 2;
+  // Value of the trait, related to `trait`, like "0xabcd1234"
+  string value                            = 3;
+  // Percentage/uniqueness of the trait across all token in the collection
+  string percentage                       = 4;
+}

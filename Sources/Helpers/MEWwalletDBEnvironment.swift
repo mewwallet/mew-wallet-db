@@ -6,7 +6,7 @@
 //
 
 import mdbx_ios
-import OSLog
+import os.signpost
 
 final class MEWwalletDBEnvironment {
   let environment: MDBXEnvironment
@@ -29,9 +29,13 @@ final class MEWwalletDBEnvironment {
     )
     #if DEBUG
     try environment.setHandleSlowReaders { (env, txn, pid, tid, laggard, gap, space, retry) -> Int32 in
-      os_log("===========", log: .info(.lifecycle), type: .info)
-      os_log("Slow reader", log: .info(.lifecycle), type: .info)
-      os_log("===========", log: .info(.lifecycle), type: .info)
+      Logger.debug(service: .lifecycle,
+      """
+      ===========
+      Slow reader
+      ===========
+      """
+      )
       return -1
     }
     #endif
@@ -67,24 +71,24 @@ final class MEWwalletDBEnvironment {
   }
   
   private static func prepare(tables: [MDBXTableName], in environment: MDBXEnvironment) throws -> [MDBXTableName: MDBXDatabase] {
-    os_signpost(.begin, log: .info(.table), name: "prepare")
+    os_signpost(.begin, log: .signpost(.table), name: "prepare")
     let transaction = MDBXTransaction(environment)
     try transaction.begin(parent: nil, flags: [.readWrite])
     var dbs: [MDBXTableName: MDBXDatabase] = [:]
     do {
       for table in tables {
-        os_signpost(.event, log: .info(.table), name: "prepare", "table prepare: %{private}@", table.rawValue)
+        os_signpost(.event, log: .signpost(.table), name: "prepare", "table prepare: %{private}@", table.rawValue)
         let db = MDBXDatabase()
         try db.open(transaction: transaction, name: table.rawValue, flags: .create)
         dbs[table] = db
-        os_signpost(.event, log: .info(.table), name: "prepare", "table done: %{private}@", table.rawValue)
+        os_signpost(.event, log: .signpost(.table), name: "prepare", "table done: %{private}@", table.rawValue)
       }
       try transaction.commit()
-      os_signpost(.end, log: .info(.table), name: "prepare")
+      os_signpost(.end, log: .signpost(.table), name: "prepare")
     } catch {
       try transaction.abort()
-      os_signpost(.end, log: .info(.table), name: "prepare", "error: %{private}@", error.localizedDescription)
-      os_log("Prepare table error: %{private}@", log: .error(.table), type: .fault, error.localizedDescription)
+      os_signpost(.end, log: .signpost(.table), name: "prepare", "error: %{private}@", error.localizedDescription)
+      Logger.critical(.table, "Prepare table error: \(error.localizedDescription)")
       throw error
     }
     return dbs

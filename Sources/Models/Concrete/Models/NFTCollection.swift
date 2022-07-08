@@ -10,56 +10,62 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct NFTCollection: Equatable {
+  public enum Schema {
+    case unknown
+    case erc721
+    case erc1155
+    
+    init(_ rawValue: String) {
+      switch rawValue {
+      case "ERC721":        self = .erc721
+      case "ERC1155":       self = .erc1155
+      default:              self = .unknown
+      }
+    }
+  }
+  
   public weak var database: WalletDB?
   var _wrapped: _NFTCollection
   var _chain: MDBXChain
-    
-  // TODO: Fix me
-  public var address: String = ""
-  // MARK: - LifeCycle
-   
-  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, icon: String, description: String, schema_type: String, social: Social, stats: Stats, assets: [NFTAsset], address: String) {
-    self.database = database ?? MEWwalletDBImpl.shared
-    self._wrapped = .with {
-      $0.contractAddress = contractAddress
-      $0.name = name
-      $0.symbol = symbol
-      $0.icon = icon
-      $0.description_p = description
-      $0.schemaType = schema_type
-      $0.social = social._wrapped
-      $0.stats = stats._wrapped
-      $0.assets = assets.lazy.map({$0._wrapped})
-    }
-    self.address = address
-    self._chain = chain
-  }
+  
+  // MARK: - Private Properties
+  
+  private let _assets: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
 }
 
 // MARK: - NFTCollection + Properties
 
 extension NFTCollection {
-  // MARK: - Properties
-  public var contract_address: String { self._wrapped.contractAddress }
-  public var name: String { self._wrapped.name }
-  public var symbol: String { self._wrapped.symbol }
-  public var icon: String { self._wrapped.icon }
-  public var description: String { self._wrapped.description_p }
-  public var schemaType: String { self._wrapped.schemaType }
+  // MARK: - Relations
+  
   public var assets: [NFTAsset] {
-    var result = [NFTAsset]()
-    for item in self._wrapped.assets {
-      var urlsType = [URLType]()
-      for _urltype in item.urls {
-        let urltype = URLType(chain: self._chain, type: _urltype.type, url: _urltype.url, database: self.database)
-        urlsType.append(urltype)
-      }
-      let asset = NFTAsset(chain: self._chain, id: item.id, name: item.name, description: item.description_p, urls: urlsType, opensea_url: item.openseaURL, database: self.database, address: self.address, contract_address: self.contract_address)
-      result.append(asset)
+    get throws {
+      let startKey = NFTAssetKey(collectionKey: self.key as? NFTCollectionKey, lowerRange: true)
+      let endKey = NFTAssetKey(collectionKey: self.key as? NFTCollectionKey, lowerRange: false)
+      return try _assets.getRangedRelationship(startKey: startKey, endKey: endKey, policy: .cacheOrLoad, database: self.database)
     }
-    return result
   }
-  public var account_address: String { self.address }
+  
+  // MARK: - Properties
+  
+  public var name: String { self._wrapped.name }
+  public var description: String { self._wrapped.description_p }
+  public var schema: Schema { Schema(self._wrapped.schemaType) }
+  public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
+  public var contract_name: String { self._wrapped.contractName }
+  public var contract_symbol: String { self._wrapped.contractSymbol }
+  public var image: URL? {
+    guard !self._wrapped.image.isEmpty else { return nil }
+    return URL(string: self._wrapped.image)
+  }
+  public var social: NFTSocial? {
+    guard self._wrapped.hasSocial else { return nil }
+    return self._wrapped.social.wrapped(_chain)
+  }
+  public var stats: NFTStats? {
+    guard self._wrapped.hasStats else { return nil }
+    return self._wrapped.stats.wrapped(_chain)
+  }
 }
 
 // MARK: - NFTCollection + MDBXObject
@@ -73,7 +79,10 @@ extension NFTCollection: MDBXObject {
   }
   
   public var key: MDBXKey {
-    return NFTCollectionKey(chain: _chain, address: self.address, contractAddress: self.contract_address)
+    return NFTCollectionKey(chain: _chain,
+                            address: .unknown(self._wrapped.address),
+                            contractAddress: .unknown(self._wrapped.contractAddress),
+                            name: self._wrapped.name)
   }
   
   public var alternateKey: MDBXKey? { return nil }
@@ -112,7 +121,7 @@ extension NFTCollection: MDBXObject {
   }
   
   public mutating func merge(with object: MDBXObject) {
-    
+    // TODO
   }
 
 }
@@ -140,5 +149,23 @@ extension NFTCollection: ProtoWrapper {
   init(_ wrapped: _NFTCollection, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
+    let assets = _wrapped._cleanAssets().map { $0.wrapped(chain, collection: self) }
+    self._assets.updateData(assets)
+  }
+}
+
+// MARK: - Array + NFTCollection
+
+extension Array where Element == NFTCollection {
+  var collectAssets: [NFTAsset] {
+    get throws {
+      try flatMap { try $0.assets }
+    }
+  }
+  
+  var collectMetas: [TokenMeta] {
+    get throws {
+      try collectAssets.compactMap { try $0.last_sale?.meta }
+    }
   }
 }

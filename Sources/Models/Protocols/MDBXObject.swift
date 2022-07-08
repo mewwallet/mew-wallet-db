@@ -7,8 +7,11 @@
 
 import Foundation
 
-public protocol MDBXObject {
+public protocol MDBXBackedObject {
   var database: WalletDB? { get set }
+}
+
+public protocol MDBXObject: MDBXBackedObject {
   var serialized: Data { get throws }
   var key: MDBXKey { get }
   var alternateKey: MDBXKey? { get }

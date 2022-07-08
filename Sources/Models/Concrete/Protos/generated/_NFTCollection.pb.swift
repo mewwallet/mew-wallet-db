@@ -25,64 +25,60 @@ struct _NFTCollection {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var contractAddress: String {
-    get {return _storage._contractAddress}
-    set {_uniqueStorage()._contractAddress = newValue}
-  }
+  /// Account's address
+  /// Note: It's not coming from API, but should be prepopulated on time of mapping
+  var address: String = String()
 
-  var name: String {
-    get {return _storage._name}
-    set {_uniqueStorage()._name = newValue}
-  }
+  /// Name of the NFT collection
+  var name: String = String()
 
-  var symbol: String {
-    get {return _storage._symbol}
-    set {_uniqueStorage()._symbol = newValue}
-  }
+  /// Description of the NFT collection
+  var description_p: String = String()
 
-  var icon: String {
-    get {return _storage._icon}
-    set {_uniqueStorage()._icon = newValue}
-  }
+  /// Image/icon of the NFT collection
+  var image: String = String()
 
-  var description_p: String {
-    get {return _storage._description_p}
-    set {_uniqueStorage()._description_p = newValue}
-  }
+  /// Scheme of the NFT collection, might be ERC721 and ERC1155
+  var schemaType: String = String()
 
-  var schemaType: String {
-    get {return _storage._schemaType}
-    set {_uniqueStorage()._schemaType = newValue}
-  }
+  /// Contract address of the NFT collection, not unique, the same contract address might has different collections
+  var contractAddress: String = String()
 
-  var social: _Social {
-    get {return _storage._social ?? _Social()}
-    set {_uniqueStorage()._social = newValue}
+  /// Contract name of the collection, ie Rarible
+  var contractName: String = String()
+
+  /// Contract symbol of the collection, ie RARI
+  var contractSymbol: String = String()
+
+  /// Social links, like website, telegram, discord
+  var social: _NFTSocial {
+    get {return _social ?? _NFTSocial()}
+    set {_social = newValue}
   }
   /// Returns true if `social` has been explicitly set.
-  var hasSocial: Bool {return _storage._social != nil}
+  var hasSocial: Bool {return self._social != nil}
   /// Clears the value of `social`. Subsequent reads from it will return its default value.
-  mutating func clearSocial() {_uniqueStorage()._social = nil}
+  mutating func clearSocial() {self._social = nil}
 
-  var stats: _Stats {
-    get {return _storage._stats ?? _Stats()}
-    set {_uniqueStorage()._stats = newValue}
+  /// Collection stats, like count of token and number of owners
+  var stats: _NFTStats {
+    get {return _stats ?? _NFTStats()}
+    set {_stats = newValue}
   }
   /// Returns true if `stats` has been explicitly set.
-  var hasStats: Bool {return _storage._stats != nil}
+  var hasStats: Bool {return self._stats != nil}
   /// Clears the value of `stats`. Subsequent reads from it will return its default value.
-  mutating func clearStats() {_uniqueStorage()._stats = nil}
+  mutating func clearStats() {self._stats = nil}
 
-  var assets: [_NFTAsset] {
-    get {return _storage._assets}
-    set {_uniqueStorage()._assets = newValue}
-  }
+  /// Array of assets in the collection
+  var assets: [_NFTAsset] = []
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _storage = _StorageClass.defaultInstance
+  fileprivate var _social: _NFTSocial? = nil
+  fileprivate var _stats: _NFTStats? = nil
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -90,130 +86,94 @@ struct _NFTCollection {
 extension _NFTCollection: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_NFTCollection"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "contract_address"),
+    1: .same(proto: "address"),
     2: .same(proto: "name"),
-    3: .same(proto: "symbol"),
-    4: .same(proto: "icon"),
-    5: .same(proto: "description"),
-    6: .standard(proto: "schema_type"),
-    7: .same(proto: "social"),
-    8: .same(proto: "stats"),
-    9: .same(proto: "assets"),
+    3: .same(proto: "description"),
+    4: .same(proto: "image"),
+    5: .standard(proto: "schema_type"),
+    6: .standard(proto: "contract_address"),
+    7: .standard(proto: "contract_name"),
+    8: .standard(proto: "contract_symbol"),
+    9: .same(proto: "social"),
+    10: .same(proto: "stats"),
+    11: .same(proto: "assets"),
   ]
 
-  fileprivate class _StorageClass {
-    var _contractAddress: String = String()
-    var _name: String = String()
-    var _symbol: String = String()
-    var _icon: String = String()
-    var _description_p: String = String()
-    var _schemaType: String = String()
-    var _social: _Social? = nil
-    var _stats: _Stats? = nil
-    var _assets: [_NFTAsset] = []
-
-    static let defaultInstance = _StorageClass()
-
-    private init() {}
-
-    init(copying source: _StorageClass) {
-      _contractAddress = source._contractAddress
-      _name = source._name
-      _symbol = source._symbol
-      _icon = source._icon
-      _description_p = source._description_p
-      _schemaType = source._schemaType
-      _social = source._social
-      _stats = source._stats
-      _assets = source._assets
-    }
-  }
-
-  fileprivate mutating func _uniqueStorage() -> _StorageClass {
-    if !isKnownUniquelyReferenced(&_storage) {
-      _storage = _StorageClass(copying: _storage)
-    }
-    return _storage
-  }
-
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    _ = _uniqueStorage()
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      while let fieldNumber = try decoder.nextFieldNumber() {
-        // The use of inline closures is to circumvent an issue where the compiler
-        // allocates stack space for every case branch when no optimizations are
-        // enabled. https://github.com/apple/swift-protobuf/issues/1034
-        switch fieldNumber {
-        case 1: try { try decoder.decodeSingularStringField(value: &_storage._contractAddress) }()
-        case 2: try { try decoder.decodeSingularStringField(value: &_storage._name) }()
-        case 3: try { try decoder.decodeSingularStringField(value: &_storage._symbol) }()
-        case 4: try { try decoder.decodeSingularStringField(value: &_storage._icon) }()
-        case 5: try { try decoder.decodeSingularStringField(value: &_storage._description_p) }()
-        case 6: try { try decoder.decodeSingularStringField(value: &_storage._schemaType) }()
-        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._social) }()
-        case 8: try { try decoder.decodeSingularMessageField(value: &_storage._stats) }()
-        case 9: try { try decoder.decodeRepeatedMessageField(value: &_storage._assets) }()
-        default: break
-        }
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.address) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.description_p) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.image) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.schemaType) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self.contractAddress) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.contractName) }()
+      case 8: try { try decoder.decodeSingularStringField(value: &self.contractSymbol) }()
+      case 9: try { try decoder.decodeSingularMessageField(value: &self._social) }()
+      case 10: try { try decoder.decodeSingularMessageField(value: &self._stats) }()
+      case 11: try { try decoder.decodeRepeatedMessageField(value: &self.assets) }()
+      default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every if/case branch local when no optimizations
-      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-      // https://github.com/apple/swift-protobuf/issues/1182
-      if !_storage._contractAddress.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._contractAddress, fieldNumber: 1)
-      }
-      if !_storage._name.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._name, fieldNumber: 2)
-      }
-      if !_storage._symbol.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._symbol, fieldNumber: 3)
-      }
-      if !_storage._icon.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._icon, fieldNumber: 4)
-      }
-      if !_storage._description_p.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._description_p, fieldNumber: 5)
-      }
-      if !_storage._schemaType.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._schemaType, fieldNumber: 6)
-      }
-      try { if let v = _storage._social {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      } }()
-      try { if let v = _storage._stats {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
-      } }()
-      if !_storage._assets.isEmpty {
-        try visitor.visitRepeatedMessageField(value: _storage._assets, fieldNumber: 9)
-      }
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.address.isEmpty {
+      try visitor.visitSingularStringField(value: self.address, fieldNumber: 1)
+    }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
+    }
+    if !self.description_p.isEmpty {
+      try visitor.visitSingularStringField(value: self.description_p, fieldNumber: 3)
+    }
+    if !self.image.isEmpty {
+      try visitor.visitSingularStringField(value: self.image, fieldNumber: 4)
+    }
+    if !self.schemaType.isEmpty {
+      try visitor.visitSingularStringField(value: self.schemaType, fieldNumber: 5)
+    }
+    if !self.contractAddress.isEmpty {
+      try visitor.visitSingularStringField(value: self.contractAddress, fieldNumber: 6)
+    }
+    if !self.contractName.isEmpty {
+      try visitor.visitSingularStringField(value: self.contractName, fieldNumber: 7)
+    }
+    if !self.contractSymbol.isEmpty {
+      try visitor.visitSingularStringField(value: self.contractSymbol, fieldNumber: 8)
+    }
+    try { if let v = self._social {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+    } }()
+    try { if let v = self._stats {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    } }()
+    if !self.assets.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.assets, fieldNumber: 11)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _NFTCollection, rhs: _NFTCollection) -> Bool {
-    if lhs._storage !== rhs._storage {
-      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
-        let _storage = _args.0
-        let rhs_storage = _args.1
-        if _storage._contractAddress != rhs_storage._contractAddress {return false}
-        if _storage._name != rhs_storage._name {return false}
-        if _storage._symbol != rhs_storage._symbol {return false}
-        if _storage._icon != rhs_storage._icon {return false}
-        if _storage._description_p != rhs_storage._description_p {return false}
-        if _storage._schemaType != rhs_storage._schemaType {return false}
-        if _storage._social != rhs_storage._social {return false}
-        if _storage._stats != rhs_storage._stats {return false}
-        if _storage._assets != rhs_storage._assets {return false}
-        return true
-      }
-      if !storagesAreEqual {return false}
-    }
+    if lhs.address != rhs.address {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs.description_p != rhs.description_p {return false}
+    if lhs.image != rhs.image {return false}
+    if lhs.schemaType != rhs.schemaType {return false}
+    if lhs.contractAddress != rhs.contractAddress {return false}
+    if lhs.contractName != rhs.contractName {return false}
+    if lhs.contractSymbol != rhs.contractSymbol {return false}
+    if lhs._social != rhs._social {return false}
+    if lhs._stats != rhs._stats {return false}
+    if lhs.assets != rhs.assets {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

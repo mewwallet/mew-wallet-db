@@ -1,8 +1,0 @@
-syntax = "proto3";
-import "_TokenMeta.proto";
-
-message _Floor {
-  string price = 1;
-  _TokenMeta token = 2;
-}
-
