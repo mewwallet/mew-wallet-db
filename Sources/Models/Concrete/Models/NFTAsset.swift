@@ -83,6 +83,7 @@ extension NFTAsset {
     }?.url
   }
   public var preview_url: URL? {
+    // FIXME: Must be `== .preview`
     self.urls.first {
       $0.type == .image
     }?.url
