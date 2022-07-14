@@ -77,6 +77,17 @@ extension NFTAsset {
     guard self._wrapped.hasOpenseaURL else { return nil }
     return URL(string: self._wrapped.openseaURL)
   }
+  public var image_url: URL? {
+    self.urls.first {
+      $0.type == .image
+    }?.url
+  }
+  public var preview_url: URL? {
+    // FIXME: Must be `== .preview`
+    self.urls.first {
+      $0.type == .image
+    }?.url
+  }
 }
 
 // MARK: - NFTAsset + MDBXObject
@@ -164,6 +175,14 @@ public extension NFTAsset {
   }
 }
 
+// MARK: - NFTAsset + Hashable
+
+extension NFTAsset: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(_wrapped)
+  }
+}
+
 // MARK: - NFTAsset + ProtoWrapper
 
 extension NFTAsset: ProtoWrapper {
@@ -203,3 +222,4 @@ extension NFTAsset {
     __traits.database = database
   }
 }
+
