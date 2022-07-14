@@ -13,11 +13,13 @@ public struct NFTAssetURL: MDBXBackedObject, Equatable {
     case unknown
     case image
     case media
+    case preview
       
     init(_ rawValue: String) {
       switch rawValue {
       case "IMAGE":       self = .image
       case "MEDIA":       self = .media
+      case "PREVIEW":     self = .preview
       default:            self = .unknown
       }
     }
@@ -34,7 +36,8 @@ extension NFTAssetURL {
   // MARK: - Properties
   
   public var type: NFTAssetType { NFTAssetType(self._wrapped.type) }
-  public var url: URL? { URL(string: self._wrapped.url) }
+  // FIXME: remove =s256
+  public var url: URL? { URL(string: self._wrapped.url + "=s256") }
 }
 
 // MARK: - NFTAssetURL + Equatable
