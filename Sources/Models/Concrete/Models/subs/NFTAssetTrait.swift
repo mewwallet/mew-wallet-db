@@ -8,7 +8,7 @@
 import Foundation
 import mew_wallet_ios_extensions
 
-public struct NFTAssetTrait: MDBXBackedObject, Equatable {
+public struct NFTAssetTrait: MDBXBackedObject, Equatable, Hashable {
   public weak var database: WalletDB?
   var _chain: MDBXChain
   var _wrapped: _NFTAssetTrait
@@ -26,6 +26,12 @@ extension NFTAssetTrait {
   public var percentage: Decimal { Decimal(wrapped: _wrapped.percentage, hex: false) ?? .zero }
 }
 
+// MARK: - NFTStats + Hashable
+extension NFTAssetTrait {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(_wrapped)
+  }
+}
 // MARK: - NFTStats + Equatable
 
 extension NFTAssetTrait {
