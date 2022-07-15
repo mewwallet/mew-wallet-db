@@ -11,6 +11,9 @@ import mdbx_ios
 import mew_wallet_ios_extensions
 
 public struct Account: Equatable {
+  @ContextStorage public var fiatAmount: Decimal?
+  @ContextStorage public var usdFiatAmount: Decimal?
+  
   public enum Source: Int {
     case unknown          = 0
     case recoveryPhrase   = 1
@@ -116,7 +119,7 @@ extension Account {
     get throws {
       let startKey = TokenKey(chain: .eth, address: address, lowerRange: true)
       let endKey = TokenKey(chain: .eth, address: address, lowerRange: false)
-      return try _tokens.getRangedRelationship(startKey: startKey, endKey: endKey, policy: .ignoreCache, database: self.database)
+      return try _tokens.getRangedRelationship(startKey: startKey, endKey: endKey, policy: .cacheOrLoad, database: self.database)
     }
   }
   

@@ -83,9 +83,8 @@ extension NFTAsset {
     }?.url
   }
   public var preview_url: URL? {
-    // FIXME: Must be `== .preview`
     self.urls.first {
-      $0.type == .image
+      $0.type == .preview
     }?.url
   }
 }
@@ -146,6 +145,7 @@ extension NFTAsset: MDBXObject {
   
   mutating public func merge(with object: MDBXObject) {
     let other = object as! NFTAsset
+    _wrapped.urls = other._wrapped.urls
     // TODO: Fix merge
   }
 }

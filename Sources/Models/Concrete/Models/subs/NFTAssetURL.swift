@@ -36,8 +36,7 @@ extension NFTAssetURL {
   // MARK: - Properties
   
   public var type: NFTAssetType { NFTAssetType(self._wrapped.type) }
-  // FIXME: remove =s256
-  public var url: URL? { URL(string: self._wrapped.url + "=s256") }
+  public var url: URL? { URL(string: self._wrapped.url) }
 }
 
 // MARK: - NFTAssetURL + Equatable
