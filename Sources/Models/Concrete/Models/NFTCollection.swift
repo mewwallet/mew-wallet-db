@@ -10,7 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct NFTCollection: Equatable {
-  public enum Schema {
+  public enum Schema: String {
     case unknown
     case erc721
     case erc1155
