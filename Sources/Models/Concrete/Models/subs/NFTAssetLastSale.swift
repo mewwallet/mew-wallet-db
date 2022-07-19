@@ -34,7 +34,14 @@ extension NFTAssetLastSale {
   
   // MARK: - Properties
 
-  public var price: Decimal { Decimal(wrapped: _wrapped.price, hex: true) ?? .zero }
+  public var rawPrice: Decimal { Decimal(wrapped: _wrapped.price, hex: true) ?? .zero }
+  public var price: Decimal {
+    guard let exponent = try? -self.meta.decimals else {
+      return rawPrice
+    }
+    let decimals = Decimal(sign: .plus, exponent: exponent, significand: Decimal(1))
+    return rawPrice * decimals
+  }
 }
 
 // MARK: - NFTAssetLastSale + Equitable

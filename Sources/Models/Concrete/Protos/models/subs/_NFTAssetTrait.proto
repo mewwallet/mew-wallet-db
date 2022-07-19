@@ -9,4 +9,6 @@ message _NFTAssetTrait {
   string value                            = 3;
   // Percentage/uniqueness of the trait across all token in the collection
   string percentage                       = 4;
+  // Display type of trait
+  string display_type                     = 5;
 }

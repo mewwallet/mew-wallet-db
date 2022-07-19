@@ -37,6 +37,9 @@ struct _NFTAssetTrait {
   /// Percentage/uniqueness of the trait across all token in the collection
   var percentage: String = String()
 
+  /// Display type of trait
+  var displayType: String = String()
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -51,6 +54,7 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     2: .same(proto: "count"),
     3: .same(proto: "value"),
     4: .same(proto: "percentage"),
+    5: .standard(proto: "display_type"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -63,6 +67,7 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.count) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.value) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.percentage) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.displayType) }()
       default: break
       }
     }
@@ -81,6 +86,9 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if !self.percentage.isEmpty {
       try visitor.visitSingularStringField(value: self.percentage, fieldNumber: 4)
     }
+    if !self.displayType.isEmpty {
+      try visitor.visitSingularStringField(value: self.displayType, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -89,6 +97,7 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.count != rhs.count {return false}
     if lhs.value != rhs.value {return false}
     if lhs.percentage != rhs.percentage {return false}
+    if lhs.displayType != rhs.displayType {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

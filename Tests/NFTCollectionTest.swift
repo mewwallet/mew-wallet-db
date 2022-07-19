@@ -40,13 +40,15 @@ private let testJson = """
             "trait": "sequence",
             "count": 132,
             "value": "Palindrome",
-            "percentage": "0.099174"
+            "percentage": "0.099174",
+            "display_type": "STRING"
           },
           {
             "trait": "author",
             "count": 16,
             "value": "0x04668ec2f57cc15c381b461b9fedab5d451c8f7f",
-            "percentage": "0.012021"
+            "percentage": "0.012021",
+            "display_type": "STRING"
           }
         ],
         "urls": [
@@ -98,13 +100,22 @@ private let testJson = """
             "trait": "sequence",
             "count": 132,
             "value": "Palindrome",
-            "percentage": "0.099174"
+            "percentage": "0.099174",
+            "display_type": "STRING"
           },
           {
             "trait": "author",
             "count": 16,
             "value": "0x04668ec2f57cc15c381b461b9fedab5d451c8f7f",
-            "percentage": "0.012021"
+            "percentage": "0.012021",
+            "display_type": "STRING"
+          },
+          {
+            "trait": "Registration Date",
+            "display_type": "DATE",
+            "count": 4,
+            "value": "1580935689",
+            "percentage": "0.000003"
           }
         ],
         "urls": [
