@@ -9,17 +9,36 @@ import Foundation
 import mew_wallet_ios_extensions
 
 public struct NFTAssetURL: MDBXBackedObject, Equatable {
-  public enum NFTAssetType {
+  public enum DisplayType {
+    case preview(URL)
+    case image(URL)
+    case video(URL)
+    case media(URL)
+    
+    init(type: NFTAssetType, url: URL) {
+      switch type {
+      case .preview:    self = .preview(url)
+      case .image:      self = .image(url)
+      case .video:      self = .video(url)
+      case .unknown:    self = .media(url)
+      case .media:      self = .media(url)
+      }
+    }
+  }
+  
+  enum NFTAssetType {
     case unknown
-    case image
-    case media
     case preview
+    case image
+    case video
+    case media
       
     init(_ rawValue: String) {
       switch rawValue {
-      case "IMAGE":       self = .image
-      case "MEDIA":       self = .media
       case "PREVIEW":     self = .preview
+      case "IMAGE":       self = .image
+      case "VIDEO":       self = .video
+      case "MEDIA":       self = .media
       default:            self = .unknown
       }
     }
@@ -27,6 +46,10 @@ public struct NFTAssetURL: MDBXBackedObject, Equatable {
   public weak var database: WalletDB?
   var _chain: MDBXChain
   var _wrapped: _NFTAssetUrl
+  
+  // MARK: - Internal Properties
+  
+  var type: NFTAssetType { NFTAssetType(self._wrapped.type) }
 }
 
 // MARK: - NFTAssetURL + Properties
@@ -35,7 +58,10 @@ extension NFTAssetURL {
   
   // MARK: - Properties
   
-  public var type: NFTAssetType { NFTAssetType(self._wrapped.type) }
+  public var displayType: DisplayType? {
+    guard let url = url else { return nil }
+    return DisplayType(type: self.type, url: url)
+  }
   public var url: URL? { URL(string: self._wrapped.url) }
 }
 

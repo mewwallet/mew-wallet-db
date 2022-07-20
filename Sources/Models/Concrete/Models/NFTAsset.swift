@@ -77,6 +77,31 @@ extension NFTAsset {
     guard self._wrapped.hasOpenseaURL else { return nil }
     return URL(string: self._wrapped.openseaURL)
   }
+  public var displayType: NFTAssetURL.DisplayType? {
+    guard !self.urls.isEmpty else { return nil }
+    if let video = self.urls.first(where: { $0.type == .video }) {
+      return video.displayType
+    } else if let media = self.urls.first(where: { $0.type == .media }) {
+      return media.displayType
+    } else if let image = self.urls.first(where: { $0.type == .image }) {
+      return image.displayType
+    } else if let preview = self.urls.first(where: { $0.type == .preview }) {
+      return preview.displayType
+    }
+    return nil
+  }
+  public var fallbackDisplayType: NFTAssetURL.DisplayType? {
+    guard !self.urls.isEmpty else { return nil }
+    if let media = self.urls.first(where: { $0.type == .media }) {
+      return media.displayType
+    } else if let image = self.urls.first(where: { $0.type == .image }) {
+      return image.displayType
+    } else if let preview = self.urls.first(where: { $0.type == .preview }) {
+      return preview.displayType
+    }
+    return nil
+  }
+  
   public var image_url: URL? {
     self.urls.first {
       $0.type == .image
