@@ -13,7 +13,7 @@ public final class TokenMetaKey: MDBXKey {
   
   public let key: Data
   public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
-  public var contractAddress: Address { return self._contractAddress }
+  public var contractAddress: Address { _contractAddress }
   
   // MARK: - Private
   
