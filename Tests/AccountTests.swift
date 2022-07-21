@@ -38,6 +38,7 @@ final class Account_tests: XCTestCase {
   func test() async {
     do {
       var account = Account(chain: .eth,
+                            order: 0,
                             address: "0x00c17f958d2ee523a2206206994597c13d831ec7",
                             name: "My account",
                             source: .recoveryPhrase,
