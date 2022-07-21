@@ -6,12 +6,12 @@
 //
 
 import Foundation
-import OSLog
+import os
 
 extension Data: MDBXKey {
   public var chain: MDBXChain {
     guard self.count >= MDBXKeyLength.chain else {
-      os_log("Warning: invalid key", log: .error(.read), type: .fault)
+      Logger.critical(service: .read, "Warning: invalid key")
       return .invalid
     }
     return MDBXChain(rawValue: self[0..<MDBXKeyLength.chain])

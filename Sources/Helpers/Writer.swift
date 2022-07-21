@@ -7,7 +7,7 @@
 
 import Foundation
 import mdbx_ios
-import OSLog
+import os.signpost
 import Algorithms
 
 fileprivate struct WriterStatic {
@@ -37,7 +37,7 @@ actor Writer {
       throw DBWriteError.badMode
     }
     
-    os_signpost(.begin, log: .info(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+    os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
     
     let chunks = keysAndData.chunks(ofCount: WriterStatic.chunkSize)
     
@@ -63,20 +63,20 @@ actor Writer {
         }
         
         if count > 0 {
-          os_signpost(.event, log: .info(.write), name: "write", "put finished")
+          os_signpost(.event, log: .signpost(.write), name: "write", "put finished")
           try self.transaction.commit()
         } else {
-          os_signpost(.event, log: .info(.write), name: "write", "nothing to put")
+          os_signpost(.event, log: .signpost(.write), name: "write", "nothing to put")
           try self.transaction.abort()
         }
         totalCount += count
       }
       
-      os_signpost(.end, log: .info(.write), name: "write", "done")
+      os_signpost(.end, log: .signpost(.write), name: "write", "done")
       return totalCount
     } catch {
-      os_signpost(.end, log: .error(.write), name: "write", "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@", log: .error(.write), type: .error, error.localizedDescription)
+      os_signpost(.end, log: .signpost(.write), name: "write", "Error: %{private}@", error.localizedDescription)
+      Logger.error(.write, error)
       try self.transaction.abort()
       return 0
     }
@@ -88,7 +88,7 @@ actor Writer {
       throw DBWriteError.badMode
     }
     
-    os_signpost(.begin, log: .info(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+    os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
     
     let chunks = keysAndObject.chunks(ofCount: WriterStatic.chunkSize)
     
@@ -133,20 +133,20 @@ actor Writer {
         }
         
         if count > 0 {
-          os_signpost(.event, log: .info(.write), name: "write", "put finished")
+          os_signpost(.event, log: .signpost(.write), name: "write", "put finished")
           try self.transaction.commit()
         } else {
-          os_signpost(.event, log: .info(.write), name: "write", "nothing to put")
+          os_signpost(.event, log: .signpost(.write), name: "write", "nothing to put")
           try self.transaction.abort()
         }
         totalCount += count
       }
       
-      os_signpost(.end, log: .info(.write), name: "write", "done")
+      os_signpost(.end, log: .signpost(.write), name: "write", "done")
       return totalCount
     } catch {
-      os_signpost(.end, log: .error(.write), name: "write", "Error: %{private}@", error.localizedDescription)
-      os_log("Error: %{private}@", log: .error(.write), type: .error, error.localizedDescription)
+      os_signpost(.end, log: .signpost(.write), name: "write", "Error: %{private}@", error.localizedDescription)
+      Logger.error(.write, error)
       try self.transaction.abort()
       return 0
     }
@@ -155,21 +155,21 @@ actor Writer {
   // MARK: - Drop
   
   func drop(table: MDBXTable, delete: Bool) throws {
-    os_signpost(.begin, log: .info(.table), name: "drop", "table: %{private}@ (%d)", table.name.rawValue, delete)
+    os_signpost(.begin, log: .signpost(.table), name: "drop", "table: %{private}@ (%d)", table.name.rawValue, delete)
     
     do {
-      os_signpost(.event, log: .info(.table), name: "drop", "ready to drop")
+      os_signpost(.event, log: .signpost(.table), name: "drop", "ready to drop")
       try self.transaction.begin(parent: nil, flags: [.readWrite])
       try self.transaction.drop(database: table.db, delete: delete)
       try self.transaction.commit()
-      os_signpost(.end, log: .info(.table), name: "drop", "dropped")
+      os_signpost(.end, log: .signpost(.table), name: "drop", "dropped")
     } catch MDBXError.notFound {
       try? self.transaction.abort()
-      os_signpost(.end, log: .info(.table), name: "drop", "Table not found")
+      os_signpost(.end, log: .signpost(.table), name: "drop", "Table not found")
     } catch {
       try? self.transaction.abort()
-      os_signpost(.end, log: .info(.table), name: "drop", "Error: %{private}@", error.localizedDescription)
-      os_log("Drop error: %{private}@", log: .info(.table), type: .error, error.localizedDescription)
+      os_signpost(.end, log: .signpost(.table), name: "drop", "Error: %{private}@", error.localizedDescription)
+      Logger.critical(.table, "Drop error: \(error.localizedDescription)")
       throw error
     }
   }
@@ -177,24 +177,24 @@ actor Writer {
   // MARK: - Delete
   
   func delete(key: MDBXKey, in table: MDBXTable) async throws -> Int {
-    os_signpost(.begin, log: .info(.table), name: "delete", "table: %{private}@ (%d)", table.name.rawValue)
+    os_signpost(.begin, log: .signpost(.table), name: "delete", "table: %{private}@ (%d)", table.name.rawValue)
     
     do {
       var key = key.key
-      os_signpost(.event, log: .info(.table), name: "delete", "ready to delete")
+      os_signpost(.event, log: .signpost(.table), name: "delete", "ready to delete")
       try self.transaction.begin(parent: nil, flags: [.readWrite])
       try self.transaction.delete(key: &key, database: table.db)
       try self.transaction.commit()
-      os_signpost(.end, log: .info(.table), name: "delete", "dropped")
+      os_signpost(.end, log: .signpost(.table), name: "delete", "dropped")
       return 1
     } catch MDBXError.notFound {
       try? self.transaction.abort()
-      os_signpost(.end, log: .info(.table), name: "delete", "Key not found")
+      os_signpost(.end, log: .signpost(.table), name: "delete", "Key not found")
       return 0
     } catch {
       try? self.transaction.abort()
-      os_signpost(.end, log: .info(.table), name: "delete", "Error: %{private}@", error.localizedDescription)
-      os_log("Delete error: %{private}@", log: .info(.table), type: .error, error.localizedDescription)
+      os_signpost(.end, log: .signpost(.table), name: "delete", "Error: %{private}@", error.localizedDescription)
+      Logger.error(.table, "Delete error: \(error.localizedDescription)")
       throw error
     }
   }
@@ -202,20 +202,20 @@ actor Writer {
   // MARK: - Recover
   
   func recover(table: MDBXTableName) throws -> MDBXDatabase {
-    os_signpost(.begin, log: .info(.table), name: "recover")
+    os_signpost(.begin, log: .signpost(.table), name: "recover")
     try transaction.begin(parent: nil, flags: [.readWrite])
     do {
-      os_signpost(.event, log: .info(.table), name: "recover", "table prepare: %{private}@", table.rawValue)
+      os_signpost(.event, log: .signpost(.table), name: "recover", "table prepare: %{private}@", table.rawValue)
       let db = MDBXDatabase()
       try db.open(transaction: transaction, name: table.rawValue, flags: .create)
-      os_signpost(.event, log: .info(.table), name: "recover", "table done: %{private}@", table.rawValue)
+      os_signpost(.event, log: .signpost(.table), name: "recover", "table done: %{private}@", table.rawValue)
       try transaction.commit()
-      os_signpost(.end, log: .info(.table), name: "recover")
+      os_signpost(.end, log: .signpost(.table), name: "recover")
       return db
     } catch {
       try transaction.abort()
-      os_signpost(.end, log: .info(.table), name: "recover", "error: %{private}@", error.localizedDescription)
-      os_log("Prepare table error: %{private}@", log: .error(.table), type: .fault, error.localizedDescription)
+      os_signpost(.end, log: .signpost(.table), name: "recover", "error: %{private}@", error.localizedDescription)
+      Logger.error(.table, error)
       throw error
     }
   }
@@ -231,7 +231,7 @@ actor Writer {
     if !mode.contains(.override) {
       // Write new only
       guard try !self.transaction.isKeyExist(key: key, database: table.db) else {
-        os_signpost(.event, log: .info(.write), name: "write", "key exist %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
+        os_signpost(.event, log: .signpost(.write), name: "write", "key exist %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
         return false
       }
       return true
@@ -239,7 +239,7 @@ actor Writer {
       let isExist = try self.transaction.isKeyExist(key: key, database: table.db)
       if !mode.contains(.changes) {
         if !isExist {
-          os_signpost(.event, log: .info(.write), name: "write", "key not exist %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
+          os_signpost(.event, log: .signpost(.write), name: "write", "key not exist %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
         }
         return isExist
       } else {
@@ -257,13 +257,13 @@ actor Writer {
         if mode.contains(.append) {
           let result = !isExist || hasChanges
           if !result {
-            os_signpost(.event, log: .info(.write), name: "write", "key exist or no changes %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
+            os_signpost(.event, log: .signpost(.write), name: "write", "key exist or no changes %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
           }
           return result
         } else {
           let result = isExist && hasChanges
           if !result {
-            os_signpost(.event, log: .info(.write), name: "write", "key not exist or no changes %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
+            os_signpost(.event, log: .signpost(.write), name: "write", "key not exist or no changes %{private}@ in table %{private}@. Mode: %{private}d", key.key.hexString, table.name.rawValue, mode.rawValue)
           }
           return result
         }
