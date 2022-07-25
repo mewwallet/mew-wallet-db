@@ -61,3 +61,8 @@ public final class NFTAssetKey: MDBXKey {
   }
 }
 
+// MARK: - NFTAssetKey + Equatable
+
+extension NFTAssetKey: Equatable {
+  public static func == (lhs: NFTAssetKey, rhs: NFTAssetKey) -> Bool { lhs.key == rhs.key }
+}

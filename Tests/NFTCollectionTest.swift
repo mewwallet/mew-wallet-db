@@ -135,7 +135,7 @@ final class nft_collection_tests: XCTestCase {
   
   private var db: MEWwalletDBImpl!
   private let table: MDBXTableName = .nftCollection
-  private let account_address = "0xe1b90BA8ff79e34F4aA761d22E1204A093D05b3a"
+  private let account_address = "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1"
   
   lazy private var _path: String = {
     let fileManager = FileManager.default
@@ -164,6 +164,19 @@ final class nft_collection_tests: XCTestCase {
   
   func test() async {
     do {
+      var account = Account(chain: .eth,
+                            order: 0,
+                            address: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1",
+                            name: "My account",
+                            source: .recoveryPhrase,
+                            type: .internal,
+                            derivationPath: nil,
+                            anonymizedId: "anonID",
+                            encryptionPublicKey: nil,
+                            withdrawalPublicKey: nil,
+                            isHidden: true)
+      
+      try await db.write(table: .account, key: account.key, object: account, mode: .recommended(.account))
       
       let objects = try NFTCollection.array(fromJSONString: testJson, chain: .eth)
       var keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map { ($0.key, $0) }
@@ -177,6 +190,22 @@ final class nft_collection_tests: XCTestCase {
       keysAndObjects = try objects.collectMetas.lazy.map { ($0.key, $0) }
       
       try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: .recommended(.tokenMeta))
+      
+      var asset = try objects.collectAssets.last!
+      asset.database = db
+      
+      XCTAssertFalse(asset.isFavorite)
+      
+      if let accountToUpdate = asset.toggleFavorite() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      } else {
+        XCTFail("Bad update")
+      }
+      XCTAssertTrue(asset.isFavorite)
+      if let accountToUpdate = asset.toggleFavorite() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      }
+      XCTAssertFalse(asset.isFavorite)
       
       XCTAssertEqual(try db.countAll(from: .nftCollection), 2)
       XCTAssertEqual(try db.countAll(from: .nftAsset), 2)

@@ -22,6 +22,7 @@ public struct NFTAsset: Equatable {
   
   fileprivate var _collectionKey: NFTCollectionKey?
   fileprivate let _collection: MDBXPointer<NFTCollectionKey, NFTCollection> = .init(.nftCollection)
+  fileprivate let _account: MDBXPointer<AccountKey, Account> = .init(.account)
   
   // MARK: - Private
   
@@ -46,6 +47,14 @@ extension NFTAsset {
     get throws {
       guard let key = _collectionKey else { return nil }
       return try _collection.getData(key: key, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+  
+  public var account: Account? {
+    get throws {
+      guard let collectionKey = _collectionKey else { return nil }
+      let key = AccountKey(chain: _chain, address: collectionKey.address)
+      return try _account.getData(key: key, policy: .ignoreCache, database: self.database)
     }
   }
 
@@ -111,6 +120,48 @@ extension NFTAsset {
     self.urls.first {
       $0.type == .preview
     }?.url
+  }
+  public var isFavorite: Bool {
+    guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
+    return account.nftFavorite.contains(key)
+  }
+  public var isHidden: Bool {
+    guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
+    return account.nftHidden.contains(key)
+  }
+  
+  // MARK: - Methods
+  
+  func toggleFavorite() -> Account? {
+    guard var account = try? account, let key = self.key as? NFTAssetKey else { return nil }
+    
+    var favorites = account.nftFavorite
+    if let index = favorites.firstIndex(of: key) {
+      // Remove from favorites
+      favorites.remove(at: index)
+    } else {
+      // Add from favorites
+      favorites.append(key)
+    }
+    
+    account.nftFavorite = favorites
+    return account
+  }
+  
+  func toggleHidden() -> Account? {
+    guard var account = try? account, let key = self.key as? NFTAssetKey else { return nil }
+    
+    var hidden = account.nftHidden
+    if let index = hidden.firstIndex(of: key) {
+      // Remove from hidden
+      hidden.remove(at: index)
+    } else {
+      // Add to hidden
+      hidden.append(key)
+    }
+    
+    account.nftHidden = hidden
+    return account
   }
 }
 

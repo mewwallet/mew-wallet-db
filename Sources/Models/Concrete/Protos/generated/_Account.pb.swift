@@ -205,6 +205,12 @@ struct _Account {
     /// Represent if account was hidden
     var isHidden: Bool = false
 
+    /// Represents hidden NFT in account
+    var nftHidden: [String] = []
+
+    /// Represents favorite NFT in account
+    var nftFavorite: [String] = []
+
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
@@ -384,6 +390,8 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     1: .same(proto: "order"),
     2: .same(proto: "name"),
     3: .same(proto: "isHidden"),
+    4: .same(proto: "nftHidden"),
+    5: .same(proto: "nftFavorite"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -395,6 +403,8 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 1: try { try decoder.decodeSingularUInt32Field(value: &self.order) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 3: try { try decoder.decodeSingularBoolField(value: &self.isHidden) }()
+      case 4: try { try decoder.decodeRepeatedStringField(value: &self.nftHidden) }()
+      case 5: try { try decoder.decodeRepeatedStringField(value: &self.nftFavorite) }()
       default: break
       }
     }
@@ -410,6 +420,12 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if self.isHidden != false {
       try visitor.visitSingularBoolField(value: self.isHidden, fieldNumber: 3)
     }
+    if !self.nftHidden.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.nftHidden, fieldNumber: 4)
+    }
+    if !self.nftFavorite.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.nftFavorite, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -417,6 +433,8 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.order != rhs.order {return false}
     if lhs.name != rhs.name {return false}
     if lhs.isHidden != rhs.isHidden {return false}
+    if lhs.nftHidden != rhs.nftHidden {return false}
+    if lhs.nftFavorite != rhs.nftFavorite {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
