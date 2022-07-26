@@ -134,7 +134,7 @@ extension NFTAsset {
   
   /// Toggles favorite flag of NFT
   /// - Returns: Updated Account that needs to be send back to DB
-  func toggleFavorite() -> Account? {
+  public func toggleFavorite() -> Account? {
     guard var account = try? account, let key = self.key as? NFTAssetKey else { return nil }
     
     var favorites = account.nftFavorite
@@ -152,7 +152,7 @@ extension NFTAsset {
   
   /// Toggles hidden flag of NFT
   /// - Returns: Updated Account that needs to be send back to DB
-  func toggleHidden() -> Account? {
+  public func toggleHidden() -> Account? {
     guard var account = try? account, let key = self.key as? NFTAssetKey else { return nil }
     
     var hidden = account.nftHidden
