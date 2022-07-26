@@ -36,6 +36,10 @@ message _Account {
     string name                             = 2;
     // Represent if account was hidden
     bool isHidden                           = 3;
+    // Represents hidden NFT in account
+    repeated string nftHidden               = 4;
+    // Represents favorite NFT in account
+    repeated string nftFavorite             = 5;
   }
   _UserState state                        = 6;
 }

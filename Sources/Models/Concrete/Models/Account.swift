@@ -270,6 +270,18 @@ extension Account {
     set { self._wrapped.state.isHidden = newValue }
     get { self._wrapped.state.isHidden }
   }
+  
+  /// Stores list of favorite NFTs
+  public var nftFavorite: [NFTAssetKey] {
+    get { self._wrapped.state.nftFavorite.compactMap { NFTAssetKey(data: Data(hex: $0)) } }
+    set { self._wrapped.state.nftFavorite = newValue.map { $0.key.hexString } }
+  }
+  
+  /// Stores list of hidden NFTs
+  public var nftHidden: [NFTAssetKey] {
+    get { self._wrapped.state.nftHidden.compactMap { NFTAssetKey(data: Data(hex: $0)) } }
+    set { self._wrapped.state.nftHidden = newValue.map { $0.key.hexString } }
+  }
 }
 
 // MARK: - Account + MDBXObject
@@ -337,6 +349,8 @@ extension Account: MDBXObject {
     self._wrapped.state.order = other._wrapped.state.order
     self._wrapped.state.name = other._wrapped.state.name
     self._wrapped.state.isHidden = other._wrapped.state.isHidden
+    self._wrapped.state.nftFavorite = other._wrapped.state.nftFavorite
+    self._wrapped.state.nftHidden = other._wrapped.state.nftHidden
   }
 }
 
