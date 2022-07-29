@@ -64,6 +64,13 @@ extension NFTAsset {
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
   public var name: String? {
     guard _wrapped.hasName else { return nil }
+    if _wrapped.tokenID.count > 0, _wrapped.name.hasSuffix("#\(_wrapped.tokenID)") {
+      let duplicatesCount = _wrapped.tokenID.count + 1
+      guard duplicatesCount <= _wrapped.name.count else { return _wrapped.name }
+      var name = _wrapped.name
+      name.removeLast(duplicatesCount)
+      return name
+    }
     return _wrapped.name
   }
   public var description: String? {
