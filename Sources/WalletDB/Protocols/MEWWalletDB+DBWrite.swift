@@ -12,7 +12,10 @@ public enum DBWriteError: Error {
   case badMode
 }
 
-public struct DBWriteMode: OptionSet {
+public struct DBWriteMode: OptionSetAssociated {
+  public var store: [UInt8 : MDBXKeyRange?]
+  public typealias AT = MDBXKeyRange
+  
   /*
    * +----------+----------+-----------+----------+
    * |          |  APPEND  |  OVERRIDE |  CHANGES |
@@ -42,6 +45,13 @@ public struct DBWriteMode: OptionSet {
   /// Option to drop table before save
   /// - mask: 0b10000000
   public static let dropTable                           = DBWriteMode(rawValue: 1 << 7)
+  /// Option to maintain table data, it will remove old records and insert/update new records
+  /// **Note:** this option is available only for write-array methods
+  /// - mask: 0b01000000
+  static let diff                                       = DBWriteMode(rawValue: 1 << 6)
+  static func diff(range: MDBXKeyRange) -> DBWriteMode {
+    return DBWriteMode(rawValue: 1 << 6, value: range)
+  }
   
   /// Write all objects
   /// - mask: 0b00000011
@@ -57,6 +67,7 @@ public struct DBWriteMode: OptionSet {
   
   public init(rawValue: UInt8) {
     self.rawValue = rawValue
+    store = [:]
   }
 }
 

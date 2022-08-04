@@ -150,94 +150,110 @@ final class DBWrite_tests: XCTestCase {
         XCTAssertEqual(set3.count, 7)
         XCTAssertEqual(allNew.count, 5)
         
+        let mode22: DBWriteMode = [.append, .override]
+        
+        debugPrint(mode22)
+        
         // APPEND
         var count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append])
-        var fetched: [TokenMeta] = try db.fetchAll(from: .tokenMeta)
+        var fetched: [TokenMeta] = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         count = try await db.write(table: .tokenMeta, keysAndObjects: allNew, mode: [.append])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 1)
         XCTAssertEqual(fetched.count, 5)
         
         try await db.drop(table: .tokenMeta, delete: false)
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 0)
         
         // APPEND + OVERRIDE
         count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append, .override])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         count = try await db.write(table: .tokenMeta, keysAndObjects: allNew, mode: [.append, .override])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 5)
         XCTAssertEqual(fetched.count, 5)
         
         try await db.drop(table: .tokenMeta, delete: false)
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 0)
         
         // APPEND + CHANGES
         count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append, .changes])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         count = try await db.write(table: .tokenMeta, keysAndObjects: allNew, mode: [.append, .changes])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 1)
         XCTAssertEqual(fetched.count, 5)
         
         try await db.drop(table: .tokenMeta, delete: false)
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 0)
         
         // OVERRIDE
         count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.override])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 0)
         XCTAssertEqual(fetched.count, 0)
         count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         count = try await db.write(table: .tokenMeta, keysAndObjects: allNew, mode: [.override])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         
         try await db.drop(table: .tokenMeta, delete: false)
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 0)
         
         // CHANGES + OVERRIDE
         count = try await db.write(table: .tokenMeta, keysAndObjects: set0_2, mode: [.append])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 5)
         XCTAssertEqual(fetched.count, 5)
         XCTAssertEqual(set2.count, 3)
         count = try await db.write(table: .tokenMeta, keysAndObjects: set2, mode: [.override, .changes])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 1)
         XCTAssertEqual(fetched.count, 5)
         
         try await db.drop(table: .tokenMeta, delete: false)
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 0)
         
         // APPEND + CHANGES + OVERRIDE
         count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append, .changes, .override])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         XCTAssertEqual(set3.count, 7)
         count = try await db.write(table: .tokenMeta, keysAndObjects: set3, mode: [.append, .override, .changes])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 2)
         XCTAssertEqual(fetched.count, 5)
         
         try await db.drop(table: .tokenMeta, delete: false)
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
+        XCTAssertEqual(fetched.count, 0)
+        
+        // DIFF + APPEND
+        count = try await db.write(table: .tokenMeta, keysAndObjects: set2, mode: [.append, .diff(range: .all)])
+        XCTAssertEqual(count, 3)
+        count = try await db.write(table: .tokenMeta, keysAndObjects: set1, mode: [.append, .diff(range: .with(start: TokenMetaKey(chain: .eth, contractAddress: .primary), end: nil))])
+        XCTAssertEqual(count, 3)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
+        XCTAssertEqual(fetched.count, 1)
+        
+        try await db.drop(table: .tokenMeta, delete: false)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 0)
         
         // CHANGES
@@ -265,18 +281,18 @@ final class DBWrite_tests: XCTestCase {
         
         // APPEND
         var count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append])
-        var fetched: [TokenMeta] = try db.fetchAll(from: .tokenMeta)
+        var fetched: [TokenMeta] = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         
         try await db.drop(table: .tokenMeta, delete: false)
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 0)
         
         try await db.drop(table: .tokenMeta, delete: true)
         
         do {
-          fetched = try db.fetchAll(from: .tokenMeta)
+          fetched = try db.fetch(range: .all, from: .tokenMeta)
         } catch {
           func rethrow() throws {
             throw error
@@ -294,7 +310,7 @@ final class DBWrite_tests: XCTestCase {
         }
         
         count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append])
-        fetched = try db.fetchAll(from: .tokenMeta)
+        fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 4)
         XCTAssertEqual(fetched.count, 4)
         

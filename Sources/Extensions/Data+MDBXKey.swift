@@ -19,5 +19,9 @@ extension Data: MDBXKey {
   
   public var key: Data {
     return self
-  }  
+  }
+  
+  public init?(data: Data) {
+    fatalError("Not supported")
+  }
 }

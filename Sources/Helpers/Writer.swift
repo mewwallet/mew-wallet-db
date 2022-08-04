@@ -24,10 +24,16 @@ actor Writer {
   // MARK: - Write
   
   func write(table: MDBXTable, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
+    guard !mode.contains(.diff) else {
+      throw DBWriteError.badMode
+    }
     return try await self.write(table: table, keysAndData: [(key, data)], mode: mode)
   }
   
   func write(table: MDBXTable, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int {
+    guard !mode.contains(.diff) else {
+      throw DBWriteError.badMode
+    }
     return try await self.write(table: table, keysAndObject: [(key, object)], mode: mode)
   }
   
@@ -36,6 +42,17 @@ actor Writer {
     guard mode.contains(.append) || mode.contains(.override) else {
       throw DBWriteError.badMode
     }
+    
+    let deletions: [MDBXKey]
+    debugPrint(mode.store)
+    if mode.contains(.diff) {
+      
+    } else {
+      deletions = []
+    }
+    
+    // insertions
+    // deletions
     
     os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
     
@@ -89,6 +106,25 @@ actor Writer {
     }
     
     os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+    
+    let deletions: [MDBXKey]
+    debugPrint(mode.store)
+    let asd: Any? = mode[for: .diff]
+    debugPrint(asd)
+    if let range: MDBXKeyRange = mode[for: .diff] {
+      try self.transaction.begin(parent: nil, flags: [.readOnly])
+
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: table.db)
+      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db)
+      results.forEach {
+        debugPrint("key: \($0.hexString)")
+      }
+      try? self.transaction.abort()
+      cursor.close()
+    } else {
+      deletions = []
+    }
     
     let chunks = keysAndObject.chunks(ofCount: WriterStatic.chunkSize)
     
@@ -223,6 +259,10 @@ actor Writer {
   
   // MARK: - Private
   
+  /// Returns flag if data should be saved based on mode
+  /// - if `mode` contains both `.append` and `.override`, and not `.changes` - we must write anyway
+  /// - if `mode` contains `.override`, but key doesn't exist - we should skip object
+  /// - if `mode` doesn't contains `override` and contains
   private func canWrite(key: MDBXKey, data: Data, in table: MDBXTable, with mode: DBWriteMode) throws -> Bool {
     // Write all
     if mode.contains([.append, .override]), !mode.contains(.changes) {

@@ -56,7 +56,7 @@ public final class TokenKey: MDBXKey {
     self.key = chainPart + addressPart + contractAddressPart
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.token else { return nil }
     self.key = data
   }

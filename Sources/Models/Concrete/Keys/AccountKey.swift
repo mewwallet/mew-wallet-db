@@ -37,7 +37,7 @@ public final class AccountKey: MDBXKey {
     self.key = chainPart + addressPart
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.account else { return nil }
     self.key = data
   }

@@ -40,7 +40,7 @@ public final class DAppRecordMetaKey: MDBXKey {
     self.init(chain: chain, hash: url.hostURL?.sanitized?.sha256 ?? url.sanitized?.sha256 ?? url.sha256)
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.dAppRecordMeta else { return nil }
     self.key = data
   }

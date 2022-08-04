@@ -37,7 +37,7 @@ public final class RawTransactionKey: MDBXKey {
     self.key = chainPart + hashPart
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.rawTransaction else { return nil }
     self.key = data
   }

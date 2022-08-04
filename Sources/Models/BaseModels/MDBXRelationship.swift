@@ -21,7 +21,7 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     }
     
     if policy == .ignoreCache || _data == nil {
-      let data: [T] = try database.fetchRange(startKey: startKey, endKey: endKey, from: _table)
+      let data: [T] = try database.fetch(range: .with(start: startKey, end: endKey), from: _table)
       _data = data
     }
     return _data ?? []

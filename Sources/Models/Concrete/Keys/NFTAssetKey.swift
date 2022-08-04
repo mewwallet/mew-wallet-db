@@ -55,7 +55,7 @@ public final class NFTAssetKey: MDBXKey {
     self.key = collectionKeyPart + contractAddressPart + hashPart
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.nftAsset else { return nil }
     self.key = data
   }

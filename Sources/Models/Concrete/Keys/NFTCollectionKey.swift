@@ -61,11 +61,11 @@ public final class NFTCollectionKey: MDBXKey {
     self.key = chainPart + addressPart + contractAddressPart + namePart + hashPart
   }
   
-  public init(chain: MDBXChain, address: String, lowerRange: Bool) {
+  public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
     let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
     
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
     let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.address)
     let namePart            = Data(repeating: rangeValue, count: MDBXKeyLength.name)
     let hashPart            = Data(repeating: rangeValue, count: MDBXKeyLength.hash)
@@ -73,7 +73,7 @@ public final class NFTCollectionKey: MDBXKey {
     self.key = chainPart + addressPart + contractAddressPart + namePart + hashPart
   }
 
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.nftCollection else { return nil }
     self.key = data
   }
