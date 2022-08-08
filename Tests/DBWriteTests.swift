@@ -249,6 +249,8 @@ final class DBWrite_tests: XCTestCase {
         XCTAssertEqual(count, 3)
         count = try await db.write(table: .tokenMeta, keysAndObjects: set1, mode: [.append, .override, .changes, .diff(range: .all)])
         XCTAssertEqual(count, 3)
+        count = try await db.write(table: .tokenMeta, keysAndObjects: set1, mode: [.append, .diff(range: .all)])
+        XCTAssertEqual(count, 0)
         count = try db.count(range: .all, from: .tokenMeta)
         XCTAssertEqual(count, 1)
         fetched = try db.fetch(range: .all, from: .tokenMeta)
