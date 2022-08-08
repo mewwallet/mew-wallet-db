@@ -43,12 +43,46 @@ actor Writer {
       throw DBWriteError.badMode
     }
     
-    let deletions: [MDBXKey]
-    debugPrint(mode.store)
-    if mode.contains(.diff) {
+    var totalCount = 0
+    
+    // Diff logic - removes old in the range
+    if let range: MDBXKeyRange = mode[for: .diff] {
+      var keysAndData = keysAndData
+      let deletions: [MDBXKey]
+      try self.transaction.begin(parent: nil, flags: [.readWrite])
       
-    } else {
-      deletions = []
+      keysAndData.sort {
+        var lhs = $0.0.key
+        var rhs = $1.0.key
+        return transaction.compare(a: &lhs, b: &rhs, database: table.db) <= 0
+      }
+      let newKeys = keysAndData.map { $0.0.key }
+
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: table.db)
+      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db)
+      
+      let difference = newKeys.difference(from: results)
+      deletions = difference.compactMap {
+        switch $0 {
+        case .remove(_, let key, _):
+          return key
+        default:
+          return nil
+        }
+      }
+      if deletions.isEmpty {
+        try? self.transaction.abort()
+      } else {
+        try deletions.forEach {
+          var key = $0.key
+          try transaction.delete(key: &key, database: table.db)
+        }
+        try self.transaction.commit()
+        totalCount += deletions.count
+      }
+      
+      cursor.close()
     }
     
     // insertions
@@ -59,7 +93,6 @@ actor Writer {
     let chunks = keysAndData.chunks(ofCount: WriterStatic.chunkSize)
     
     do {
-      var totalCount = 0
       var dropped = !mode.contains(.dropTable)
       
       for chunk in chunks {
@@ -106,30 +139,51 @@ actor Writer {
     }
     
     os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+    var totalCount = 0
     
-    let deletions: [MDBXKey]
-    debugPrint(mode.store)
-    let asd: Any? = mode[for: .diff]
-    debugPrint(asd)
+    // Diff logic - removes old in the range
     if let range: MDBXKeyRange = mode[for: .diff] {
-      try self.transaction.begin(parent: nil, flags: [.readOnly])
+      var keysAndObject = keysAndObject
+      let deletions: [MDBXKey]
+      try self.transaction.begin(parent: nil, flags: [.readWrite])
+      
+      keysAndObject.sort {
+        var lhs = $0.0.key
+        var rhs = $1.0.key
+        return transaction.compare(a: &lhs, b: &rhs, database: table.db) <= 0
+      }
+      let newKeys = keysAndObject.map { $0.0.key }
 
       let cursor = MDBXCursor()
       try cursor.open(transaction: transaction, database: table.db)
       let results: [Data] = try cursor.fetchKeys(range: range, from: table.db)
-      results.forEach {
-        debugPrint("key: \($0.hexString)")
+      
+      let difference = newKeys.difference(from: results)
+      deletions = difference.compactMap {
+        switch $0 {
+        case .remove(_, let key, _):
+          return key
+        default:
+          return nil
+        }
       }
-      try? self.transaction.abort()
+      if deletions.isEmpty {
+        try? self.transaction.abort()
+      } else {
+        try deletions.forEach {
+          var key = $0.key
+          try transaction.delete(key: &key, database: table.db)
+        }
+        try self.transaction.commit()
+        totalCount += deletions.count
+      }
+      
       cursor.close()
-    } else {
-      deletions = []
     }
     
     let chunks = keysAndObject.chunks(ofCount: WriterStatic.chunkSize)
     
     do {
-      var totalCount = 0
       var dropped = !mode.contains(.dropTable)
       for chunk in chunks {
         try self.transaction.begin(parent: nil, flags: [.readWrite])

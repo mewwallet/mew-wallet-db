@@ -12,7 +12,7 @@ extension MDBXCursor {
   func fetch(range: MDBXKeyRange, from database: MDBXDatabase) throws -> [(Data, Data)] {
     let transaction = try self.transaction
     
-    let isRange = range.end != nil
+    let isRange = range.isRange
     
     var results: [(Data, Data)] = []
     var key = range.start?.key ?? Data()
@@ -48,8 +48,7 @@ extension MDBXCursor {
   func fetchKeys(range: MDBXKeyRange, from database: MDBXDatabase) throws -> [Data] {
     let transaction = try self.transaction
     
-    let isRange = range.end != nil
-    
+    let isRange = range.isRange
     var results: [Data] = []
     var key = range.start?.key ?? Data()
     var endKey = range.end?.key ?? Data()

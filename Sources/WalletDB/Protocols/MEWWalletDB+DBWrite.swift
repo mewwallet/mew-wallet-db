@@ -13,7 +13,7 @@ public enum DBWriteError: Error {
 }
 
 public struct DBWriteMode: OptionSetAssociated {
-  public var store: [UInt8 : MDBXKeyRange?]
+  public var store: [UInt8 : MDBXKeyRange]
   public typealias AT = MDBXKeyRange
   
   /*

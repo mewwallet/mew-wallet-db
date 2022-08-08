@@ -245,10 +245,12 @@ final class DBWrite_tests: XCTestCase {
         XCTAssertEqual(fetched.count, 0)
         
         // DIFF + APPEND
-        count = try await db.write(table: .tokenMeta, keysAndObjects: set2, mode: [.append, .diff(range: .all)])
+        count = try await db.write(table: .tokenMeta, keysAndObjects: set2, mode: [.append])
         XCTAssertEqual(count, 3)
-        count = try await db.write(table: .tokenMeta, keysAndObjects: set1, mode: [.append, .diff(range: .with(start: TokenMetaKey(chain: .eth, contractAddress: .primary), end: nil))])
+        count = try await db.write(table: .tokenMeta, keysAndObjects: set1, mode: [.append, .override, .changes, .diff(range: .all)])
         XCTAssertEqual(count, 3)
+        count = try db.count(range: .all, from: .tokenMeta)
+        XCTAssertEqual(count, 1)
         fetched = try db.fetch(range: .all, from: .tokenMeta)
         XCTAssertEqual(fetched.count, 1)
         
