@@ -49,10 +49,6 @@ public struct DBWriteMode: OptionSetAssociated {
   /// **Note:** this option is available only for write-array methods
   /// - mask: 0b01000000
   static let diff                                       = DBWriteMode(rawValue: 1 << 6)
-  static func diff(range: MDBXKeyRange) -> DBWriteMode {
-    return DBWriteMode(rawValue: 1 << 6, value: range)
-  }
-  
   /// Write all objects
   /// - mask: 0b00000011
   public static let `default`: DBWriteMode              = [.append, .override, .merge]
@@ -88,6 +84,10 @@ extension DBWriteMode {
     case .nftCollection:      return .appendOverrideMerge
     case .nftAsset:           return .appendOverrideMerge
     }
+  }
+  
+  public static func diff(range: MDBXKeyRange) -> DBWriteMode {
+    return DBWriteMode(rawValue: 1 << 6, value: range)
   }
 }
 

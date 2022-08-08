@@ -79,3 +79,13 @@ public final class NFTCollectionKey: MDBXKey {
   }
   
 }
+
+// MARK: - NFTCollectionKey + Range
+
+extension NFTCollectionKey {
+  public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
+    let start = NFTCollectionKey(chain: chain, address: address, lowerRange: true)
+    let end = NFTCollectionKey(chain: chain, address: address, lowerRange: false)
+    return MDBXKeyRange(start: start, end: end)
+  }
+}

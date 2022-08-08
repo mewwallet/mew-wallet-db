@@ -66,3 +66,13 @@ public final class NFTAssetKey: MDBXKey {
 extension NFTAssetKey: Equatable {
   public static func == (lhs: NFTAssetKey, rhs: NFTAssetKey) -> Bool { lhs.key == rhs.key }
 }
+
+// MARK: - NFTAssetKey + Range
+
+extension NFTAssetKey {
+  public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
+    let start = NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: true), lowerRange: true)
+    let end = NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: false), lowerRange: false)
+    return MDBXKeyRange(start: start, end: end)
+  }
+}

@@ -146,7 +146,7 @@ public struct OptionSetAssociatedIterator<Element: OptionSetAssociated>: Iterato
       defer { bitMask = bitMask &* 2 }
       if remainingBits & bitMask != 0 {
         remainingBits = remainingBits & ~bitMask
-        let value = self.value.store[bitMask] as? Element.AT
+        let value = self.value.store[bitMask]
         return Element(rawValue: bitMask, value: value)
       }
     }
