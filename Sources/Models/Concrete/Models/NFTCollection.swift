@@ -121,9 +121,23 @@ extension NFTCollection: MDBXObject {
   }
   
   public mutating func merge(with object: MDBXObject) {
-    // TODO
+    let other = object as! NFTCollection
+    
+    self._wrapped.address = other._wrapped.address
+    self._wrapped.name = other._wrapped.name
+    self._wrapped.description_p = other._wrapped.description_p
+    self._wrapped.image = other._wrapped.image
+    self._wrapped.schemaType = other._wrapped.schemaType
+    self._wrapped.contractAddress = other._wrapped.contractAddress
+    self._wrapped.contractName = other._wrapped.contractName
+    self._wrapped.contractSymbol = other._wrapped.contractSymbol
+    if other._wrapped.hasSocial {
+      self._wrapped.social = other._wrapped.social
+    }
+    if other._wrapped.hasStats {
+      self._wrapped.stats = other._wrapped.stats
+    }
   }
-
 }
 
 // MARK: - _NFTCollection + ProtoWrappedMessage

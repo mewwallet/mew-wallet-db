@@ -2,13 +2,16 @@
 //  File.swift
 //  
 //
-//  Created by Sergey Kolokolnikov on 28.04.2022.
+//  Created by Mikhail Nikanorov on 8/2/22.
 //
 
 import Foundation
 import XCTest
-import SwiftProtobuf
 @testable import mew_wallet_db
+import mew_wallet_ios_extensions
+import SwiftProtobuf
+
+import mdbx_ios
 
 private let testJson = """
 [
@@ -131,7 +134,7 @@ private let testJson = """
 ]
 """
 
-final class nft_collection_tests: XCTestCase {
+final class diff_tests: XCTestCase {
   
   private var db: MEWwalletDBImpl!
   private let table: MDBXTableName = .nftCollection
@@ -210,6 +213,55 @@ final class nft_collection_tests: XCTestCase {
       XCTAssertEqual(try db.count(range: .all, from: .nftCollection), 2)
       XCTAssertEqual(try db.count(range: .all, from: .nftAsset), 2)
       XCTAssertEqual(try db.count(range: .all, from: .tokenMeta), 1)
+      
+      var oldKeys: [NFTCollectionKey] = try db.fetchKeys(range: .with(start: NFTCollectionKey(chain: .eth, address: .unknown(account_address), lowerRange: true),
+                                                                      end: NFTCollectionKey(chain: .eth, address: .unknown(account_address), lowerRange: false)),
+                                                              from: .nftCollection)
+      oldKeys.forEach {
+        debugPrint($0.key.hexString)
+      }
+      
+      debugPrint("===")
+      let first = oldKeys.removeFirst()
+      oldKeys.append(first)
+      
+      oldKeys.forEach {
+        debugPrint($0.key.hexString)
+      }
+      
+      debugPrint("===")
+      let transaction = MDBXTransaction(db.environment!.environment)
+      try transaction.begin(flags: [.readOnly])
+      defer {
+        try? transaction.abort()
+      }
+      oldKeys.sort { lhs, rhs in
+        var lhsData = lhs.key
+        var rhsData = rhs.key
+        return transaction.compare(a: &lhsData, b: &rhsData, database: db.environment!.getDatabase(for: .nftCollection)!) <= 0
+      }
+      
+      oldKeys.forEach {
+        debugPrint($0.key.hexString)
+      }
+      
+      var randomKeys = [
+        Data(hex: "0x0123456789aa"),
+        Data(hex: "0xabc751934934"),
+        Data(hex: "0x0012bcabdcd4"),
+        Data(hex: "0xac85105bcd99"),
+        Data(hex: "0xac351959bdcd"),
+        Data(hex: "0x0012bcabdcd3"),
+        Data(hex: "0xabcdabcdabcd"),
+      ]
+      randomKeys.sort { lhs, rhs in
+        var lhsData = lhs
+        var rhsData = rhs
+        return transaction.compare(a: &lhsData, b: &rhsData, database: db.environment!.getDatabase(for: .nftCollection)!) <= 0
+      }
+      randomKeys.forEach {
+        debugPrint($0.hexString)
+      }
     } catch {
       debugPrint(error.localizedDescription)
       XCTFail(error.localizedDescription)

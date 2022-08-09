@@ -10,4 +10,5 @@ import Foundation
 public protocol MDBXKey {
   var key: Data { get }
   var chain: MDBXChain { get }
+  init?(data: Data)
 }

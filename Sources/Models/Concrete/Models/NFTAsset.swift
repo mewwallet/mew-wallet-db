@@ -62,17 +62,7 @@ extension NFTAsset {
   
   public var token_id: String { _wrapped.tokenID }
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
-  public var name: String? {
-    guard _wrapped.hasName else { return nil }
-    if _wrapped.tokenID.count > 0, _wrapped.name.hasSuffix("#\(_wrapped.tokenID)") {
-      let duplicatesCount = _wrapped.tokenID.count + 1
-      guard duplicatesCount <= _wrapped.name.count else { return _wrapped.name }
-      var name = _wrapped.name
-      name.removeLast(duplicatesCount)
-      return name
-    }
-    return _wrapped.name
-  }
+  public var name: String? { _wrapped.name }
   public var description: String? {
     guard _wrapped.hasDescription_p else { return nil }
     return _wrapped.description_p
@@ -232,8 +222,23 @@ extension NFTAsset: MDBXObject {
   
   mutating public func merge(with object: MDBXObject) {
     let other = object as! NFTAsset
-    _wrapped.urls = other._wrapped.urls
-    // TODO: Fix merge
+    
+    self._wrapped.tokenID = other._wrapped.tokenID
+    self._wrapped.contractAddress = other._wrapped.contractAddress
+    if other._wrapped.hasName {
+      self._wrapped.name = other._wrapped.name
+    }
+    if other._wrapped.hasDescription_p {
+      self._wrapped.description_p = other._wrapped.description_p
+    }
+    self._wrapped.traits = other._wrapped.traits
+    self._wrapped.urls = other._wrapped.urls
+    if other._wrapped.hasLastSale {
+      self._wrapped.lastSale = other._wrapped.lastSale
+    }
+    if other._wrapped.hasOpenseaURL {
+      self._wrapped.openseaURL = other._wrapped.openseaURL
+    }
   }
 }
 

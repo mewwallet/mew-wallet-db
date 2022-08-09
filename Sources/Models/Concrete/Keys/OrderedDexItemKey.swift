@@ -47,7 +47,7 @@ public final class OrderedDexItemKey: MDBXKey {
     self.key = chainPart + orderPart + contractAddressPart
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.orderedDexItem else { return nil }
     self.key = data
   }
