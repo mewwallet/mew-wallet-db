@@ -232,8 +232,23 @@ extension NFTAsset: MDBXObject {
   
   mutating public func merge(with object: MDBXObject) {
     let other = object as! NFTAsset
-    _wrapped.urls = other._wrapped.urls
-    // TODO: Fix merge
+    
+    self._wrapped.tokenID = other._wrapped.tokenID
+    self._wrapped.contractAddress = other._wrapped.contractAddress
+    if other._wrapped.hasName {
+      self._wrapped.name = other._wrapped.name
+    }
+    if other._wrapped.hasDescription_p {
+      self._wrapped.description_p = other._wrapped.description_p
+    }
+    self._wrapped.traits = other._wrapped.traits
+    self._wrapped.urls = other._wrapped.urls
+    if other._wrapped.hasLastSale {
+      self._wrapped.lastSale = other._wrapped.lastSale
+    }
+    if other._wrapped.hasOpenseaURL {
+      self._wrapped.openseaURL = other._wrapped.openseaURL
+    }
   }
 }
 
