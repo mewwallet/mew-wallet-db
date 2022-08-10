@@ -87,6 +87,8 @@ extension NFTAsset {
     guard !self.urls.isEmpty else { return nil }
     if let video = self.urls.first(where: { $0.type == .video }) {
       return video.displayType
+    } else if let audio = self.urls.first(where: { $0.type == .audio }) {
+      return audio.displayType
     } else if let media = self.urls.first(where: { $0.type == .media }) {
       return media.displayType
     } else if let image = self.urls.first(where: { $0.type == .image }) {
