@@ -205,13 +205,44 @@ struct _Account {
     /// Represent if account was hidden
     var isHidden: Bool = false
 
-    /// Represents hidden NFT in account
-    var nftHidden: [String] = []
+    /// DEPRECATED: Represents hidden NFT in account
+    var deprecatedNftHidden: [String] = []
+
+    /// DEPRECATED: Represents favorite NFT in account
+    var deprecatedNftFavorite: [String] = []
+
+    var nftHidden: [_Account._UserState._NFT] = []
 
     /// Represents favorite NFT in account
-    var nftFavorite: [String] = []
+    var nftFavorite: [_Account._UserState._NFT] = []
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    /// Represents NFT which is hidden or favorite
+    struct _NFT {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      /// Represents NFTAsset key
+      var key: String = String()
+
+      /// Represents timestamp, of last changed date
+      var timestamp: SwiftProtobuf.Google_Protobuf_Timestamp {
+        get {return _timestamp ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+        set {_timestamp = newValue}
+      }
+      /// Returns true if `timestamp` has been explicitly set.
+      var hasTimestamp: Bool {return self._timestamp != nil}
+      /// Clears the value of `timestamp`. Subsequent reads from it will return its default value.
+      mutating func clearTimestamp() {self._timestamp = nil}
+
+      var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      init() {}
+
+      fileprivate var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    }
 
     init() {}
   }
@@ -390,8 +421,10 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     1: .same(proto: "order"),
     2: .same(proto: "name"),
     3: .same(proto: "isHidden"),
-    4: .same(proto: "nftHidden"),
-    5: .same(proto: "nftFavorite"),
+    4: .standard(proto: "deprecated_nftHidden"),
+    5: .standard(proto: "deprecated_nftFavorite"),
+    6: .same(proto: "nftHidden"),
+    7: .same(proto: "nftFavorite"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -403,8 +436,10 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 1: try { try decoder.decodeSingularUInt32Field(value: &self.order) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 3: try { try decoder.decodeSingularBoolField(value: &self.isHidden) }()
-      case 4: try { try decoder.decodeRepeatedStringField(value: &self.nftHidden) }()
-      case 5: try { try decoder.decodeRepeatedStringField(value: &self.nftFavorite) }()
+      case 4: try { try decoder.decodeRepeatedStringField(value: &self.deprecatedNftHidden) }()
+      case 5: try { try decoder.decodeRepeatedStringField(value: &self.deprecatedNftFavorite) }()
+      case 6: try { try decoder.decodeRepeatedMessageField(value: &self.nftHidden) }()
+      case 7: try { try decoder.decodeRepeatedMessageField(value: &self.nftFavorite) }()
       default: break
       }
     }
@@ -420,11 +455,17 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if self.isHidden != false {
       try visitor.visitSingularBoolField(value: self.isHidden, fieldNumber: 3)
     }
+    if !self.deprecatedNftHidden.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.deprecatedNftHidden, fieldNumber: 4)
+    }
+    if !self.deprecatedNftFavorite.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.deprecatedNftFavorite, fieldNumber: 5)
+    }
     if !self.nftHidden.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.nftHidden, fieldNumber: 4)
+      try visitor.visitRepeatedMessageField(value: self.nftHidden, fieldNumber: 6)
     }
     if !self.nftFavorite.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.nftFavorite, fieldNumber: 5)
+      try visitor.visitRepeatedMessageField(value: self.nftFavorite, fieldNumber: 7)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -433,8 +474,52 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.order != rhs.order {return false}
     if lhs.name != rhs.name {return false}
     if lhs.isHidden != rhs.isHidden {return false}
+    if lhs.deprecatedNftHidden != rhs.deprecatedNftHidden {return false}
+    if lhs.deprecatedNftFavorite != rhs.deprecatedNftFavorite {return false}
     if lhs.nftHidden != rhs.nftHidden {return false}
     if lhs.nftFavorite != rhs.nftFavorite {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension _Account._UserState._NFT: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _Account._UserState.protoMessageName + "._NFT"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "key"),
+    2: .same(proto: "timestamp"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.key) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.key.isEmpty {
+      try visitor.visitSingularStringField(value: self.key, fieldNumber: 1)
+    }
+    try { if let v = self._timestamp {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: _Account._UserState._NFT, rhs: _Account._UserState._NFT) -> Bool {
+    if lhs.key != rhs.key {return false}
+    if lhs._timestamp != rhs._timestamp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

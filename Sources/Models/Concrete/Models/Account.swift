@@ -273,14 +273,58 @@ extension Account {
   
   /// Stores list of favorite NFTs
   public var nftFavorite: [NFTAssetKey] {
-    get { self._wrapped.state.nftFavorite.compactMap { NFTAssetKey(data: Data(hex: $0)) } }
-    set { self._wrapped.state.nftFavorite = newValue.map { $0.key.hexString } }
+    self._wrapped.state.nftFavorite.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
+                                   .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
   }
   
   /// Stores list of hidden NFTs
   public var nftHidden: [NFTAssetKey] {
-    get { self._wrapped.state.nftHidden.compactMap { NFTAssetKey(data: Data(hex: $0)) } }
-    set { self._wrapped.state.nftHidden = newValue.map { $0.key.hexString } }
+    self._wrapped.state.nftHidden.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
+                                 .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
+  }
+
+  mutating public func addToFavorites(_ key: NFTAssetKey) {
+    guard !self._wrapped.state.nftFavorite.contains(where: { $0.key == key.key.hexString }) else { return }
+    self._wrapped.state.nftFavorite.append(.with({
+      $0.key = key.key.hexString
+      $0.timestamp = .init(date: Date())
+    }))
+  }
+
+  mutating public func addToHidden(_ key: NFTAssetKey) {
+    guard !self._wrapped.state.nftHidden.contains(where: { $0.key == key.key.hexString }) else { return }
+    self._wrapped.state.nftHidden.append(.with({
+      $0.key = key.key.hexString
+      $0.timestamp = .init(date: Date())
+    }))
+  }
+
+  mutating public func removeFromFavorites(_ key: NFTAssetKey) {
+    self._wrapped.state.nftFavorite.removeAll(where: { $0.key == key.key.hexString })
+  }
+
+  mutating public func removeFromHidden(_ key: NFTAssetKey) {
+    self._wrapped.state.nftHidden.removeAll(where: { $0.key == key.key.hexString })
+  }
+  
+  mutating public func toggleIsFavorite(_ key: NFTAssetKey) {
+    if self._wrapped.state.nftFavorite.contains(where: { $0.key == key.key.hexString }) {
+      self.removeFromFavorites(key)
+      // We have to remove from Hidden
+    } else {
+      self.addToFavorites(key)
+      // We have to add to hidden
+    }
+  }
+  
+  mutating public func toggleIsHidden(_ key: NFTAssetKey) {
+    if self._wrapped.state.nftHidden.contains(where: { $0.key == key.key.hexString }) {
+      self.removeFromHidden(key)
+      // We have to remove from Hidden
+    } else {
+      self.addToHidden(key)
+      // We have to add to hidden
+    }
   }
 }
 

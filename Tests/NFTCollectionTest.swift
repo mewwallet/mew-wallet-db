@@ -192,9 +192,12 @@ final class nft_collection_tests: XCTestCase {
       try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: .recommended(.tokenMeta))
       
       var asset = try objects.collectAssets.last!
+      var asset2 = try objects.collectAssets.first!
       asset.database = db
+      asset2.database = db
       
       XCTAssertFalse(asset.isFavorite)
+      XCTAssertFalse(asset.isHidden)
       
       if let accountToUpdate = asset.toggleFavorite() {
         try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
@@ -202,10 +205,54 @@ final class nft_collection_tests: XCTestCase {
         XCTFail("Bad update")
       }
       XCTAssertTrue(asset.isFavorite)
+      XCTAssertFalse(asset.isHidden)
+      
+      if let accountToUpdate = asset.toggleHidden() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      }
+      XCTAssertTrue(asset.isFavorite)
+      XCTAssertTrue(asset.isHidden)
+      
       if let accountToUpdate = asset.toggleFavorite() {
         try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
       }
       XCTAssertFalse(asset.isFavorite)
+      XCTAssertTrue(asset.isHidden)
+      
+      if let accountToUpdate = asset.toggleHidden() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      }
+      XCTAssertFalse(asset.isFavorite)
+      XCTAssertFalse(asset.isHidden)
+      
+      // Check for Favorites order
+      if let accountToUpdate = asset2.toggleFavorite() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      }
+      XCTAssertFalse(asset.isFavorite)
+      XCTAssertTrue(asset2.isFavorite)
+      var freshAccount: Account = try db.read(key: AccountKey(chain: .eth, address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
+      XCTAssertEqual([asset2.key.key.hexString], freshAccount.nftFavorite.map({ $0.key.hexString }))
+      
+      if let accountToUpdate = asset.toggleFavorite() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      }
+      XCTAssertTrue(asset.isFavorite)
+      XCTAssertTrue(asset2.isFavorite)
+      freshAccount = try db.read(key: AccountKey(chain: .eth, address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
+      XCTAssertEqual([asset2.key.key.hexString, asset.key.key.hexString], freshAccount.nftFavorite.map({ $0.key.hexString }))
+      
+      if let accountToUpdate = asset2.toggleFavorite() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      }
+      if let accountToUpdate = asset2.toggleFavorite() {
+        try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
+      }
+      XCTAssertTrue(asset.isFavorite)
+      XCTAssertTrue(asset2.isFavorite)
+      freshAccount = try db.read(key: AccountKey(chain: .eth, address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
+      XCTAssertEqual([asset.key.key.hexString, asset2.key.key.hexString], freshAccount.nftFavorite.map({ $0.key.hexString }))
+      
       
       XCTAssertEqual(try db.count(range: .all, from: .nftCollection), 2)
       XCTAssertEqual(try db.count(range: .all, from: .nftAsset), 2)
