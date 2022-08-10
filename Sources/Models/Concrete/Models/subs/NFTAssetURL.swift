@@ -13,6 +13,7 @@ public struct NFTAssetURL: MDBXBackedObject, Equatable {
     case preview(URL)
     case image(URL)
     case video(URL)
+    case audio(URL)
     case media(URL)
     
     init(type: NFTAssetType, url: URL) {
@@ -20,6 +21,7 @@ public struct NFTAssetURL: MDBXBackedObject, Equatable {
       case .preview:    self = .preview(url)
       case .image:      self = .image(url)
       case .video:      self = .video(url)
+      case .audio:      self = .audio(url)
       case .unknown:    self = .media(url)
       case .media:      self = .media(url)
       }
@@ -31,6 +33,7 @@ public struct NFTAssetURL: MDBXBackedObject, Equatable {
     case preview
     case image
     case video
+    case audio
     case media
       
     init(_ rawValue: String) {
@@ -38,6 +41,7 @@ public struct NFTAssetURL: MDBXBackedObject, Equatable {
       case "PREVIEW":     self = .preview
       case "IMAGE":       self = .image
       case "VIDEO":       self = .video
+      case "AUDIO":       self = .audio
       case "MEDIA":       self = .media
       default:            self = .unknown
       }
