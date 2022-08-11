@@ -54,6 +54,7 @@ public struct Account: Equatable {
   private let _renBTC: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _stETH: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _skale: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _nft: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   private let _nftHidden: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   private let _nftFavorite: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   
@@ -156,11 +157,19 @@ extension Account {
     }
   }
   
+  /// List of all NFT
+  public var nft: [NFTAsset] {
+    get throws {
+      let range = NFTAssetKey.range(chain: .eth, address: self.address)
+      return try _nft.getRelationship(range, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+  
   /// Stores list of favorite NFTs
   public var nftFavorite: [NFTAsset] {
     get throws {
       let keys = self.nftFavoriteKeys
-      return try _nftHidden.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
+      return try _nftFavorite.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
     }
   }
 
