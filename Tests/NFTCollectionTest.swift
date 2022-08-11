@@ -232,7 +232,7 @@ final class nft_collection_tests: XCTestCase {
       XCTAssertFalse(asset.isFavorite)
       XCTAssertTrue(asset2.isFavorite)
       var freshAccount: Account = try db.read(key: AccountKey(chain: .eth, address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
-      XCTAssertEqual([asset2.key.key.hexString], freshAccount.nftFavorite.map({ $0.key.hexString }))
+      XCTAssertEqual([asset2.key.key.hexString], try freshAccount.nftFavorite.map({ $0.key.key.hexString }))
       
       if let accountToUpdate = asset.toggleFavorite() {
         try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
@@ -240,7 +240,7 @@ final class nft_collection_tests: XCTestCase {
       XCTAssertTrue(asset.isFavorite)
       XCTAssertTrue(asset2.isFavorite)
       freshAccount = try db.read(key: AccountKey(chain: .eth, address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
-      XCTAssertEqual([asset2.key.key.hexString, asset.key.key.hexString], freshAccount.nftFavorite.map({ $0.key.hexString }))
+      XCTAssertEqual([asset2.key.key.hexString, asset.key.key.hexString], try freshAccount.nftFavorite.map({ $0.key.key.hexString }))
       
       if let accountToUpdate = asset2.toggleFavorite() {
         try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
@@ -251,8 +251,9 @@ final class nft_collection_tests: XCTestCase {
       XCTAssertTrue(asset.isFavorite)
       XCTAssertTrue(asset2.isFavorite)
       freshAccount = try db.read(key: AccountKey(chain: .eth, address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
-      XCTAssertEqual([asset.key.key.hexString, asset2.key.key.hexString], freshAccount.nftFavorite.map({ $0.key.hexString }))
+      XCTAssertEqual([asset.key.key.hexString, asset2.key.key.hexString], try freshAccount.nftFavorite.map({ $0.key.key.hexString }))
       
+      debugPrint(try freshAccount.nftFavorite)
       
       XCTAssertEqual(try db.count(range: .all, from: .nftCollection), 2)
       XCTAssertEqual(try db.count(range: .all, from: .nftAsset), 2)

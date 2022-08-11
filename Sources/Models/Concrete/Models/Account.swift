@@ -54,6 +54,8 @@ public struct Account: Equatable {
   private let _renBTC: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _stETH: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _skale: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _nftHidden: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
+  private let _nftFavorite: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   
   // MARK: - Lifecycle
   
@@ -117,9 +119,8 @@ extension Account {
   
   public var tokens: [Token] {
     get throws {
-      let startKey = TokenKey(chain: .eth, address: address, lowerRange: true)
-      let endKey = TokenKey(chain: .eth, address: address, lowerRange: false)
-      return try _tokens.getRangedRelationship(startKey: startKey, endKey: endKey, policy: .cacheOrLoad, database: self.database)
+      let range = TokenKey.range(chain: .eth, address: address)
+      return try _tokens.getRelationship(range, policy: .cacheOrLoad, database: self.database)
     }
   }
   
@@ -154,6 +155,23 @@ extension Account {
       return try _skale.getData(key: key, policy: .ignoreCache, database: self.database)
     }
   }
+  
+  /// Stores list of favorite NFTs
+  public var nftFavorite: [NFTAsset] {
+    get throws {
+      let keys = self.nftFavoriteKeys
+      return try _nftHidden.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+
+  /// Stores list of favorite NFTs
+  public var nftHidden: [NFTAsset] {
+    get throws {
+      let keys = self.nftHiddenKeys
+      return try _nftHidden.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+  
   
   // MARK: - Properties
   
@@ -271,14 +289,14 @@ extension Account {
     get { self._wrapped.state.isHidden }
   }
   
-  /// Stores list of favorite NFTs
-  public var nftFavorite: [NFTAssetKey] {
+  /// Stores keys list of favorite NFTs
+  public var nftFavoriteKeys: [NFTAssetKey] {
     self._wrapped.state.nftFavorite.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
                                    .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
   }
   
-  /// Stores list of hidden NFTs
-  public var nftHidden: [NFTAssetKey] {
+  /// Stores keys list of hidden NFTs
+  public var nftHiddenKeys: [NFTAssetKey] {
     self._wrapped.state.nftHidden.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
                                  .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
   }

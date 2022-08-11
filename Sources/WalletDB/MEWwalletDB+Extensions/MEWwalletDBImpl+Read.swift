@@ -12,6 +12,56 @@ import os.signpost
 public extension MEWwalletDBImpl {
   // MARK: - Ranges
   
+  func fetch<T: MDBXObject>(keys: [MDBXKey], from table: MDBXTableName) throws -> [T] {
+    var results = [T]()
+    
+    os_signpost(.begin, log: .signpost(.read), name: "fetchArray", "from table: %{private}@", table.rawValue)
+    
+    do {
+      let environment = try self.getEnvironment()
+      guard let db = environment.getDatabase(for: table) else {
+        Logger.error(.read, "Error: No DB. Table: \(table.rawValue)")
+        os_signpost(.end, log: .signpost(.read), name: "fetchArray", "Error: %{private}@", "No DB")
+        throw MDBXError.notFound
+      }
+      let table: MDBXTable = (table, db)
+      
+      let transaction = MDBXTransaction(environment.environment)
+      try transaction.begin(flags: [.readOnly])
+      defer {
+        try? transaction.abort()
+      }
+      
+      os_signpost(.event, log: .signpost(.read), name: "fetchArray", "cursor prepared")
+      
+      results = try keys.compactMap { key in
+        do {
+          var key = key.key
+          let data = try transaction.getValue(for: &key, database: table.db)
+          var encoded = try T(serializedData: data, chain: key.chain, key: key)
+          encoded.database = self
+          return encoded
+        } catch MDBXError.notFound {
+          return nil
+        } catch {
+          throw error
+        }
+      }
+      
+      os_signpost(.end, log: .signpost(.read), name: "fetchArray", "done")
+    } catch MEWwalletDBError.backgroundState {
+      os_signpost(.end, log: .signpost(.read), name: "fetchArray", "Error: BackgroundState")
+      Logger.error(.read, "Error: Background state. Table: \(table.rawValue)")
+      throw MEWwalletDBError.backgroundState
+    } catch {
+      os_signpost(.end, log: .signpost(.read), name: "fetchArray", "Error: %{private}@", error.localizedDescription)
+      Logger.error(.read, "Error: \(error.localizedDescription). Table: \(table.rawValue)")
+      throw error
+    }
+    
+    return results
+  }
+  
   func fetch<T: MDBXObject>(range: MDBXKeyRange, from table: MDBXTableName) throws -> [T] {
     var results = [T]()
     

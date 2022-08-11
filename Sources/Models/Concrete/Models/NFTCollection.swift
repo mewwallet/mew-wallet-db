@@ -40,9 +40,9 @@ extension NFTCollection {
   
   public var assets: [NFTAsset] {
     get throws {
-      let startKey = NFTAssetKey(collectionKey: self.key as? NFTCollectionKey, lowerRange: true)
-      let endKey = NFTAssetKey(collectionKey: self.key as? NFTCollectionKey, lowerRange: false)
-      return try _assets.getRangedRelationship(startKey: startKey, endKey: endKey, policy: .cacheOrLoad, database: self.database)
+      guard let key = self.key as? NFTCollectionKey else { return [] }
+      let range = NFTAssetKey.range(collectionKey: key)
+      return try _assets.getRelationship(range, policy: .cacheOrLoad, database: self.database)
     }
   }
   

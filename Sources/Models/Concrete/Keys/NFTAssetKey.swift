@@ -75,4 +75,10 @@ extension NFTAssetKey {
     let end = NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: false), lowerRange: false)
     return MDBXKeyRange(start: start, end: end)
   }
+  
+  public static func range(collectionKey: NFTCollectionKey) -> MDBXKeyRange {
+    let start = NFTAssetKey(collectionKey: collectionKey, lowerRange: true)
+    let end = NFTAssetKey(collectionKey: collectionKey, lowerRange: false)
+    return MDBXKeyRange(start: start, end: end)
+  }
 }

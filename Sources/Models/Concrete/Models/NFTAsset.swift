@@ -122,11 +122,11 @@ extension NFTAsset {
   }
   public var isFavorite: Bool {
     guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
-    return account.nftFavorite.contains(key)
+    return account.nftFavoriteKeys.contains(key)
   }
   public var isHidden: Bool {
     guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
-    return account.nftHidden.contains(key)
+    return account.nftHiddenKeys.contains(key)
   }
   
   // MARK: - Methods

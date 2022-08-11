@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol DBRead {
+  func fetch<T: MDBXObject>(keys: [MDBXKey], from table: MDBXTableName) throws -> [T]
   func fetch<T: MDBXObject>(range: MDBXKeyRange, from table: MDBXTableName) throws -> [T]
   func fetchKeys<K: MDBXKey>(range: MDBXKeyRange, from table: MDBXTableName) throws -> [K]
   func count(range: MDBXKeyRange, from table: MDBXTableName) throws -> Int
