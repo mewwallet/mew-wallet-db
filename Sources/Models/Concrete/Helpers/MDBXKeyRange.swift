@@ -8,7 +8,7 @@
 import Foundation
 
 public struct MDBXKeyRange {
-  static var all = MDBXKeyRange(start: nil, end: nil)
+  public static var all = MDBXKeyRange(start: nil, end: nil)
   
   public let start: MDBXKey?
   public let end: MDBXKey?
