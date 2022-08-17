@@ -85,9 +85,6 @@ actor Writer {
       cursor.close()
     }
     
-    // insertions
-    // deletions
-    
     os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
     
     let chunks = keysAndData.chunks(ofCount: WriterStatic.chunkSize)

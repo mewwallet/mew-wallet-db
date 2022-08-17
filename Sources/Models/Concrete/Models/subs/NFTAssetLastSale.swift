@@ -13,8 +13,6 @@ public struct NFTAssetLastSale: MDBXBackedObject, Equatable {
   var _chain: MDBXChain
   var _wrapped: _NFTAssetLastSale
   
-//  @SubProperty<_TokenMeta, TokenMeta> var _meta: _TokenMeta?
-  
   var _metaKey: TokenMetaKey? { TokenMetaKey(data: _wrapped.metaKey) }
   let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
 }
