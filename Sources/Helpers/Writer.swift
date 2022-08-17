@@ -24,10 +24,16 @@ actor Writer {
   // MARK: - Write
   
   func write(table: MDBXTable, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
+    guard !mode.contains(.diff) else {
+      throw DBWriteError.badMode
+    }
     return try await self.write(table: table, keysAndData: [(key, data)], mode: mode)
   }
   
   func write(table: MDBXTable, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int {
+    guard !mode.contains(.diff) else {
+      throw DBWriteError.badMode
+    }
     return try await self.write(table: table, keysAndObject: [(key, object)], mode: mode)
   }
   
@@ -37,12 +43,53 @@ actor Writer {
       throw DBWriteError.badMode
     }
     
+    var totalCount = 0
+    
+    // Diff logic - removes old in the range
+    if let range: MDBXKeyRange = mode[for: .diff] {
+      var keysAndData = keysAndData
+      let deletions: [MDBXKey]
+      try self.transaction.begin(parent: nil, flags: [.readWrite])
+      
+      keysAndData.sort {
+        var lhs = $0.0.key
+        var rhs = $1.0.key
+        return transaction.compare(a: &lhs, b: &rhs, database: table.db) <= 0
+      }
+      let newKeys = keysAndData.map { $0.0.key }
+
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: table.db)
+      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db)
+      
+      let difference = newKeys.difference(from: results)
+      deletions = difference.compactMap {
+        switch $0 {
+        case .remove(_, let key, _):
+          return key
+        default:
+          return nil
+        }
+      }
+      if deletions.isEmpty {
+        try? self.transaction.abort()
+      } else {
+        try deletions.forEach {
+          var key = $0.key
+          try transaction.delete(key: &key, database: table.db)
+        }
+        try self.transaction.commit()
+        totalCount += deletions.count
+      }
+      
+      cursor.close()
+    }
+    
     os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
     
     let chunks = keysAndData.chunks(ofCount: WriterStatic.chunkSize)
     
     do {
-      var totalCount = 0
       var dropped = !mode.contains(.dropTable)
       
       for chunk in chunks {
@@ -89,11 +136,51 @@ actor Writer {
     }
     
     os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+    var totalCount = 0
+    
+    // Diff logic - removes old in the range
+    if let range: MDBXKeyRange = mode[for: .diff] {
+      var keysAndObject = keysAndObject
+      let deletions: [MDBXKey]
+      try self.transaction.begin(parent: nil, flags: [.readWrite])
+      
+      keysAndObject.sort {
+        var lhs = $0.0.key
+        var rhs = $1.0.key
+        return transaction.compare(a: &lhs, b: &rhs, database: table.db) <= 0
+      }
+      let newKeys = keysAndObject.map { $0.0.key }
+
+      let cursor = MDBXCursor()
+      try cursor.open(transaction: transaction, database: table.db)
+      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db)
+      
+      let difference = newKeys.difference(from: results)
+      deletions = difference.compactMap {
+        switch $0 {
+        case .remove(_, let key, _):
+          return key
+        default:
+          return nil
+        }
+      }
+      if deletions.isEmpty {
+        try? self.transaction.abort()
+      } else {
+        try deletions.forEach {
+          var key = $0.key
+          try transaction.delete(key: &key, database: table.db)
+        }
+        try self.transaction.commit()
+        totalCount += deletions.count
+      }
+      
+      cursor.close()
+    }
     
     let chunks = keysAndObject.chunks(ofCount: WriterStatic.chunkSize)
     
     do {
-      var totalCount = 0
       var dropped = !mode.contains(.dropTable)
       for chunk in chunks {
         try self.transaction.begin(parent: nil, flags: [.readWrite])
@@ -223,6 +310,10 @@ actor Writer {
   
   // MARK: - Private
   
+  /// Returns flag if data should be saved based on mode
+  /// - if `mode` contains both `.append` and `.override`, and not `.changes` - we must write anyway
+  /// - if `mode` contains `.override`, but key doesn't exist - we should skip object
+  /// - if `mode` doesn't contains `override` and contains
   private func canWrite(key: MDBXKey, data: Data, in table: MDBXTable, with mode: DBWriteMode) throws -> Bool {
     // Write all
     if mode.contains([.append, .override]), !mode.contains(.changes) {

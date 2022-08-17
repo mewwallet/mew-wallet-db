@@ -24,6 +24,8 @@ public enum MDBXKeyLength {
   public static var dAppRecordReference:  Int { return chain + order }                            // 18
   public static var dAppRecordMeta:       Int { return chain + hash }                             // 48
   public static var dAppRecordHistory:    Int { return chain + hash }                             // 48
+  public static var nftCollection:        Int { return chain + address + address + name + hash }  // 96
+  public static var nftAsset:             Int { return nftCollection + address + hash }           // 172
   
   // TODO: Needs to be refactored in future
 

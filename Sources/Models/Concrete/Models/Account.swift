@@ -54,6 +54,9 @@ public struct Account: Equatable {
   private let _renBTC: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _stETH: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _skale: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _nft: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
+  private let _nftHidden: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
+  private let _nftFavorite: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   
   // MARK: - Lifecycle
   
@@ -117,9 +120,8 @@ extension Account {
   
   public var tokens: [Token] {
     get throws {
-      let startKey = TokenKey(chain: .eth, address: address, lowerRange: true)
-      let endKey = TokenKey(chain: .eth, address: address, lowerRange: false)
-      return try _tokens.getRangedRelationship(startKey: startKey, endKey: endKey, policy: .cacheOrLoad, database: self.database)
+      let range = TokenKey.range(chain: .eth, address: address)
+      return try _tokens.getRelationship(range, policy: .cacheOrLoad, database: self.database)
     }
   }
   
@@ -154,6 +156,31 @@ extension Account {
       return try _skale.getData(key: key, policy: .ignoreCache, database: self.database)
     }
   }
+  
+  /// List of all NFT
+  public var nft: [NFTAsset] {
+    get throws {
+      let range = NFTAssetKey.range(chain: .eth, address: self.address)
+      return try _nft.getRelationship(range, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+  
+  /// Stores list of favorite NFTs
+  public var nftFavorite: [NFTAsset] {
+    get throws {
+      let keys = self.nftFavoriteKeys
+      return try _nftFavorite.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+
+  /// Stores list of favorite NFTs
+  public var nftHidden: [NFTAsset] {
+    get throws {
+      let keys = self.nftHiddenKeys
+      return try _nftHidden.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
+    }
+  }
+  
   
   // MARK: - Properties
   
@@ -270,6 +297,62 @@ extension Account {
     set { self._wrapped.state.isHidden = newValue }
     get { self._wrapped.state.isHidden }
   }
+  
+  /// Stores keys list of favorite NFTs
+  public var nftFavoriteKeys: [NFTAssetKey] {
+    self._wrapped.state.nftFavorite.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
+                                   .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
+  }
+  
+  /// Stores keys list of hidden NFTs
+  public var nftHiddenKeys: [NFTAssetKey] {
+    self._wrapped.state.nftHidden.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
+                                 .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
+  }
+
+  mutating public func addToFavorites(_ key: NFTAssetKey) {
+    guard !self._wrapped.state.nftFavorite.contains(where: { $0.key == key.key.hexString }) else { return }
+    self._wrapped.state.nftFavorite.append(.with({
+      $0.key = key.key.hexString
+      $0.timestamp = .init(date: Date())
+    }))
+  }
+
+  mutating public func addToHidden(_ key: NFTAssetKey) {
+    guard !self._wrapped.state.nftHidden.contains(where: { $0.key == key.key.hexString }) else { return }
+    self._wrapped.state.nftHidden.append(.with({
+      $0.key = key.key.hexString
+      $0.timestamp = .init(date: Date())
+    }))
+  }
+
+  mutating public func removeFromFavorites(_ key: NFTAssetKey) {
+    self._wrapped.state.nftFavorite.removeAll(where: { $0.key == key.key.hexString })
+  }
+
+  mutating public func removeFromHidden(_ key: NFTAssetKey) {
+    self._wrapped.state.nftHidden.removeAll(where: { $0.key == key.key.hexString })
+  }
+  
+  mutating public func toggleIsFavorite(_ key: NFTAssetKey) {
+    if self._wrapped.state.nftFavorite.contains(where: { $0.key == key.key.hexString }) {
+      self.removeFromFavorites(key)
+      // We have to remove from Hidden
+    } else {
+      self.addToFavorites(key)
+      // We have to add to hidden
+    }
+  }
+  
+  mutating public func toggleIsHidden(_ key: NFTAssetKey) {
+    if self._wrapped.state.nftHidden.contains(where: { $0.key == key.key.hexString }) {
+      self.removeFromHidden(key)
+      // We have to remove from Hidden
+    } else {
+      self.addToHidden(key)
+      // We have to add to hidden
+    }
+  }
 }
 
 // MARK: - Account + MDBXObject
@@ -337,6 +420,8 @@ extension Account: MDBXObject {
     self._wrapped.state.order = other._wrapped.state.order
     self._wrapped.state.name = other._wrapped.state.name
     self._wrapped.state.isHidden = other._wrapped.state.isHidden
+    self._wrapped.state.nftFavorite = other._wrapped.state.nftFavorite
+    self._wrapped.state.nftHidden = other._wrapped.state.nftHidden
   }
 }
 

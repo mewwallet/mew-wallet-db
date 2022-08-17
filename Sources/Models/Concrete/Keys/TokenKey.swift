@@ -56,8 +56,18 @@ public final class TokenKey: MDBXKey {
     self.key = chainPart + addressPart + contractAddressPart
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.token else { return nil }
     self.key = data
+  }
+}
+
+// MARK: - TokenKey + Range
+
+extension TokenKey {
+  public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
+    let start = TokenKey(chain: .eth, address: address, lowerRange: true)
+    let end = TokenKey(chain: .eth, address: address, lowerRange: false)
+    return MDBXKeyRange(start: start, end: end)
   }
 }

@@ -6,4 +6,4 @@ Protobuf command:
 
 `cd Sources/Models/Concrete/Protos/models`
 
-`protoc --swift_out=../generated *.proto`
+`protoc --proto_path=./ --swift_out=../generated **/*.proto`

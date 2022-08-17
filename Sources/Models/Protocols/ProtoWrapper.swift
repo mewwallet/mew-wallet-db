@@ -8,7 +8,9 @@
 import Foundation
 import SwiftProtobuf
 
-protocol ProtoWrapper {
+// MARK: - ProtoWrapper
+
+protocol ProtoWrapper: MDBXBackedObject {
   associatedtype T: SwiftProtobuf.Message
   
   var _wrapped: T { get }

@@ -1,0 +1,30 @@
+syntax = "proto3";
+import "subs/_NFTSocial.proto";
+import "subs/_NFTStats.proto";
+import "_NFTAsset.proto";
+
+message _NFTCollection {
+  // Account's address
+  // Note: It's not coming from API, but should be prepopulated on time of mapping
+  string address                          = 1;
+  // Name of the NFT collection
+  string name                             = 2;
+  // Description of the NFT collection
+  string description                      = 3;
+  // Image/icon of the NFT collection
+  string image                            = 4;
+  // Scheme of the NFT collection, might be ERC721 and ERC1155
+  string schema_type                      = 5;
+  // Contract address of the NFT collection, not unique, the same contract address might has different collections
+  string contract_address                 = 6;
+  // Contract name of the collection, ie Rarible
+  string contract_name                    = 7;
+  // Contract symbol of the collection, ie RARI
+  string contract_symbol                  = 8;
+  // Social links, like website, telegram, discord
+  optional _NFTSocial social              = 9;
+  // Collection stats, like count of token and number of owners
+  optional _NFTStats stats                = 10;
+  // Array of assets in the collection
+  repeated _NFTAsset assets               = 11;
+}
