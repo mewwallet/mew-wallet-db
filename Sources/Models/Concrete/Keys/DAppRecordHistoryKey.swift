@@ -40,7 +40,7 @@ public final class DAppRecordHistoryKey: MDBXKey {
     self.init(chain: chain, hash: url.sanitized?.sha256 ?? url.sha256)
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.dAppRecordHistory else { return nil }
     self.key = data
   }

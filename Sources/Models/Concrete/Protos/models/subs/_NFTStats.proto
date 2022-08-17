@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message _NFTStats {
+  // Total count of tokens in the NFT collection
+  string count                            = 1;
+  // Number of owner in the NFT collection
+  string owners                           = 2;
+}

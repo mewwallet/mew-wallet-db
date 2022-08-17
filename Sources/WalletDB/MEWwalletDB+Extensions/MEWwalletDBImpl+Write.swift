@@ -10,6 +10,9 @@ import mdbx_ios
 import OSLog
 
 public extension MEWwalletDBImpl {
+  
+  // MARK: - Async/await
+  
   @discardableResult
   func write(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
     let environment = try self.getEnvironment()
@@ -41,6 +44,8 @@ public extension MEWwalletDBImpl {
     let table = (table, db)
     return try await environment.writer.write(table: table, keysAndObject: keysAndObjects, mode: mode)
   }
+  
+  // MARK: - Completions
   
   func writeAsync(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void) {
     Task {

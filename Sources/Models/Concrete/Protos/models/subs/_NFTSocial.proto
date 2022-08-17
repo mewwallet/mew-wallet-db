@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+message _NFTSocial {
+  // Website of the NFT collection
+  optional string website                 = 1;
+  // Discord of the NFT collection
+  optional string discord                 = 2;
+  // Telegram channel of the NFT collection
+  optional string telegram                = 3;
+}

@@ -7,8 +7,11 @@
 
 import Foundation
 
-public protocol MDBXObject {
+public protocol MDBXBackedObject {
   var database: WalletDB? { get set }
+}
+
+public protocol MDBXObject: MDBXBackedObject {
   var serialized: Data { get throws }
   var key: MDBXKey { get }
   var alternateKey: MDBXKey? { get }
@@ -19,3 +22,4 @@ public protocol MDBXObject {
   static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self]
   mutating func merge(with object: MDBXObject)
 }
+ 

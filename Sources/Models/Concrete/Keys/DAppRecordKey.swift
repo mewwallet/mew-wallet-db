@@ -53,7 +53,7 @@ public final class DAppRecordKey: MDBXKey {
     self.init(chain: chain, hash: url.sha256, uuid: uuid)
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.dAppRecord else { return nil }
     self.key = data
   }

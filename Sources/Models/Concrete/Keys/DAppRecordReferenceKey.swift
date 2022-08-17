@@ -37,7 +37,7 @@ public final class DAppRecordReferenceKey: MDBXKey {
     self.key = chainPart + orderPart
   }
   
-  init?(data: Data) {
+  public init?(data: Data) {
     guard data.count == MDBXKeyLength.dAppRecordReference else { return nil }
     self.key = data
   }

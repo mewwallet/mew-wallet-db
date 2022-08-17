@@ -15,13 +15,40 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     _table = table
   }
   
+  @available(*, deprecated, message: "Use getRelationship(_:policy:database)")
   func getRangedRelationship(startKey: K, endKey: K, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> [T] {
     guard let database = database else {
       return _data ?? []
     }
     
     if policy == .ignoreCache || _data == nil {
-      let data: [T] = try database.fetchRange(startKey: startKey, endKey: endKey, from: _table)
+      let data: [T] = try database.fetch(range: .with(start: startKey, end: endKey), from: _table)
+      _data = data
+    }
+    return _data ?? []
+  }
+  
+  // MARK: - Load
+  
+  func getRelationship(_ range: MDBXKeyRange, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> [T] {
+    guard let database = database else {
+      return _data ?? []
+    }
+    
+    if policy == .ignoreCache || _data == nil {
+      let data: [T] = try database.fetch(range: range, from: _table)
+      _data = data
+    }
+    return _data ?? []
+  }
+  
+  func getRelationship(_ keys: [MDBXKey], policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> [T] {
+    guard let database = database else {
+      return _data ?? []
+    }
+    
+    if policy == .ignoreCache || _data == nil {
+      let data: [T] = try database.fetch(keys: keys, from: _table)
       _data = data
     }
     return _data ?? []

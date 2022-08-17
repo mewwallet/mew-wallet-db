@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "_TokenMeta.proto";
+
+message _NFTAssetLastSale {
+  // Last sale price, in wei
+  string price                            = 1;
+  // TokenMeta of last sale, might be ETH or WETH, should be saved separatelly
+  optional _TokenMeta token               = 2;
+  // TokenMetaKey of last sale
+  optional bytes metaKey                  = 3;
+}

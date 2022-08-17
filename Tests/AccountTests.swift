@@ -50,7 +50,7 @@ final class Account_tests: XCTestCase {
                             isHidden: true)
       
       try await db.write(table: .account, key: account.key, object: account, mode: .recommended(.account))
-      let accounts: [Account] = try db.fetchAll(from: .account)
+      let accounts: [Account] = try db.fetch(range: .all, from: .account)
       XCTAssertEqual(accounts.count, 1)
       XCTAssertEqual(accounts.first, account)
       

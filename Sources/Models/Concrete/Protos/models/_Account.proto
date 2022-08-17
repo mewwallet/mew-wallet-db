@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 message _Account {
   // Account address
   string address                          = 1;
@@ -30,12 +32,27 @@ message _Account {
   _Keys keys                              = 5;
   // UserState describes user-related information, like 'name' of account or 'isHidden'
   message _UserState {
+    // Represents NFT which is hidden or favorite
+    message _NFT {
+      // Represents NFTAsset key
+      string key                            = 1;
+      // Represents timestamp, of last changed date
+      google.protobuf.Timestamp timestamp   = 2;
+    }
     // Account order, used sorting of accounts
     uint32 order                            = 1;
     // Account name, user's name of account
     string name                             = 2;
     // Represent if account was hidden
     bool isHidden                           = 3;
+    // DEPRECATED: Represents hidden NFT in account
+    repeated string deprecated_nftHidden    = 4 [deprecated = true];
+    // DEPRECATED: Represents favorite NFT in account
+    repeated string deprecated_nftFavorite  = 5 [deprecated = true];
+
+    repeated _NFT nftHidden                 = 6;
+    // Represents favorite NFT in account
+    repeated _NFT nftFavorite               = 7;
   }
   _UserState state                        = 6;
 }

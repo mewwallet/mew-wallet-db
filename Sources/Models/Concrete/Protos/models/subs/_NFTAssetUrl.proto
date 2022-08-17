@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message _NFTAssetUrl {
+  // Type of the URL, could be "IMAGE" or "MEDIA"
+  string type                             = 1;
+  // External URL to the token content
+  string url                              = 2;
+}
