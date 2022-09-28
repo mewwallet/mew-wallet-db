@@ -60,7 +60,7 @@ actor Writer {
 
       let cursor = MDBXCursor()
       try cursor.open(transaction: transaction, database: table.db)
-      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db)
+      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
       
       let difference = newKeys.difference(from: results)
       deletions = difference.compactMap {
@@ -153,7 +153,7 @@ actor Writer {
 
       let cursor = MDBXCursor()
       try cursor.open(transaction: transaction, database: table.db)
-      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db)
+      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
       
       let difference = newKeys.difference(from: results)
       deletions = difference.compactMap {

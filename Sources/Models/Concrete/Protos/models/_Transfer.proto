@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "subs/_NFTTransfer.proto";
+
+message _Transfer {
+  // Hex string, 32 Bytes - hash of the transaction.
+  string hash                                 = 1;
+  // Hex string, 20 Bytes - address of the contract.
+  string contract_address                     = 2;
+  // Hex string, 20 Bytes - address of the owner.
+  string address                              = 3;
+  // Hex string, 20 Bytes - address of the sender.
+  string from                                 = 4;
+  // Hex string, 20 Bytes - address of the recipient.
+  string to                                   = 5;
+  // Block number where this transaction was in
+  uint64 block_number                         = 6;
+  // The number of transactions made by the sender prior to this one.
+  uint64 nonce                                = 7;
+  // Balance delta
+  string delta                                = 8;
+  // Timestamp of the transaction
+  google.protobuf.Timestamp timestamp         = 9;
+  // Transaction status
+//  enum _TransferStatus {
+//    PENDING                                     = 0;
+//    SUCCESS                                     = 1;
+//    FAILED                                      = 2;
+//    DROPPED                                     = 3;
+//  }
+  // Transaction status
+  string status                               = 10;
+  // Information about NFT, if transaction is NFT transfer
+  optional _NFTTransfer nft                   = 11;
+  // Flag which is indicates is tx was local
+  bool local                                  = 12;
+}
