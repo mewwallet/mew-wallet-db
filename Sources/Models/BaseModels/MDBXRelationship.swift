@@ -16,13 +16,13 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
   }
   
   @available(*, deprecated, message: "Use getRelationship(_:policy:database)")
-  func getRangedRelationship(startKey: K, endKey: K, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> [T] {
+  func getRangedRelationship(startKey: K, endKey: K, policy: RelationshipLoadPolicy = .cacheOrLoad, order: MDBXReadOrder, database: WalletDB?) throws -> [T] {
     guard let database = database else {
       return _data ?? []
     }
     
     if policy == .ignoreCache || _data == nil {
-      let data: [T] = try database.fetch(range: .with(start: startKey, end: endKey), from: _table)
+      let data: [T] = try database.fetch(range: .with(start: startKey, end: endKey), from: _table, order: order)
       _data = data
     }
     return _data ?? []
@@ -30,13 +30,13 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
   
   // MARK: - Load
   
-  func getRelationship(_ range: MDBXKeyRange, policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> [T] {
+  func getRelationship(_ range: MDBXKeyRange, policy: RelationshipLoadPolicy = .cacheOrLoad, order: MDBXReadOrder, database: WalletDB?) throws -> [T] {
     guard let database = database else {
       return _data ?? []
     }
     
     if policy == .ignoreCache || _data == nil {
-      let data: [T] = try database.fetch(range: range, from: _table)
+      let data: [T] = try database.fetch(range: range, from: _table, order: order)
       _data = data
     }
     return _data ?? []

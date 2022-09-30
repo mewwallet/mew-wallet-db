@@ -216,7 +216,8 @@ final class diff_tests: XCTestCase {
       
       var oldKeys: [NFTCollectionKey] = try db.fetchKeys(range: .with(start: NFTCollectionKey(chain: .eth, address: .unknown(account_address), lowerRange: true),
                                                                       end: NFTCollectionKey(chain: .eth, address: .unknown(account_address), lowerRange: false)),
-                                                              from: .nftCollection)
+                                                              from: .nftCollection,
+                                                         order: .asc)
       oldKeys.forEach {
         debugPrint($0.key.hexString)
       }

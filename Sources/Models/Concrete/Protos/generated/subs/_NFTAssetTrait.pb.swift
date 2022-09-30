@@ -45,6 +45,10 @@ struct _NFTAssetTrait {
   init() {}
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension _NFTAssetTrait: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

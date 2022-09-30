@@ -121,7 +121,7 @@ extension Account {
   public var tokens: [Token] {
     get throws {
       let range = TokenKey.range(chain: .eth, address: address)
-      return try _tokens.getRelationship(range, policy: .cacheOrLoad, database: self.database)
+      return try _tokens.getRelationship(range, policy: .cacheOrLoad, order: .asc, database: self.database)
     }
   }
   
@@ -161,7 +161,7 @@ extension Account {
   public var nft: [NFTAsset] {
     get throws {
       let range = NFTAssetKey.range(chain: .eth, address: self.address)
-      return try _nft.getRelationship(range, policy: .cacheOrLoad, database: self.database)
+      return try _nft.getRelationship(range, policy: .cacheOrLoad, order: .asc, database: self.database)
     }
   }
   

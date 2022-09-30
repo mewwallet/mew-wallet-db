@@ -157,3 +157,10 @@ extension DexItem: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+// MARK: - DexItem + Identifiable
+
+extension DexItem: Identifiable {
+  /// The stable identity of the entity associated with this instance.
+  public var id: String { self._wrapped.contractAddress }
+}
