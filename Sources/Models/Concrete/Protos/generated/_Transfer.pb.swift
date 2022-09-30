@@ -90,6 +90,10 @@ struct _Transfer {
   fileprivate var _nft: _NFTTransfer? = nil
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension _Transfer: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _Transfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

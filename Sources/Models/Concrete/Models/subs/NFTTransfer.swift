@@ -46,7 +46,7 @@ extension _NFTTransfer: ProtoWrappedMessage {
   }
 }
 
-// MARK: - NFTStats + ProtoWrapper
+// MARK: - NFTTransfer + ProtoWrapper
 
 extension NFTTransfer: ProtoWrapper {
   init(_ wrapped: _NFTTransfer, chain: MDBXChain) {
@@ -54,16 +54,3 @@ extension NFTTransfer: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
-
-//
-//
-//message _NFTTransfer {
-//  // NFT token ID
-//  optional string id                          = 1;
-//  // NFT name
-//  optional string name                        = 2;
-//  // NFT symbol
-//  optional string symbol                      = 3;
-//  // NFT image
-//  optional string image                       = 4;
-//}

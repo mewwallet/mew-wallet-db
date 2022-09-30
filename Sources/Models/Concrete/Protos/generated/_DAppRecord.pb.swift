@@ -45,6 +45,10 @@ struct _DAppRecord {
   fileprivate var _address: String? = nil
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension _DAppRecord: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _DAppRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

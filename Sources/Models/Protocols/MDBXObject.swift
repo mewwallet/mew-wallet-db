@@ -11,6 +11,11 @@ public protocol MDBXBackedObject {
   var database: WalletDB? { get set }
 }
 
+public protocol MDBXWrapperObject {
+  init(jsonString: String, chain: MDBXChain) throws
+  init(jsonData: Data, chain: MDBXChain) throws
+}
+
 public protocol MDBXObject: MDBXBackedObject {
   var serialized: Data { get throws }
   var key: MDBXKey { get }
