@@ -39,6 +39,15 @@ message _Account {
       // Represents timestamp, of last changed date
       google.protobuf.Timestamp timestamp   = 2;
     }
+    // Represents Token which is hidden or favorite
+    message _Token {
+      // Represents TokenMeta contractAddress
+      string contract_address               = 1;
+      // Represents locked version of token (ERC-777)
+      bool locked                           = 2;
+      // Represents timestamp, of last changed date
+      google.protobuf.Timestamp timestamp   = 3;
+    }
     // Account order, used sorting of accounts
     uint32 order                            = 1;
     // Account name, user's name of account
@@ -49,10 +58,12 @@ message _Account {
     repeated string deprecated_nftHidden    = 4 [deprecated = true];
     // DEPRECATED: Represents favorite NFT in account
     repeated string deprecated_nftFavorite  = 5 [deprecated = true];
-
+    // Represents hidden NFT in account
     repeated _NFT nftHidden                 = 6;
     // Represents favorite NFT in account
     repeated _NFT nftFavorite               = 7;
+    // Represents hidden tokens in account
+    repeated _Token tokenHidden             = 8;
   }
   _UserState state                        = 6;
 }

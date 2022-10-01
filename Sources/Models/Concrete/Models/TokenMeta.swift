@@ -17,6 +17,7 @@ public struct TokenMeta: Equatable {
   // MARK: - Private Properties
   
   private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
+  private let _token: MDBXPointer<TokenKey, Token> = .init(.token)
   
   // MARK: - LifeCycle
    
@@ -44,6 +45,11 @@ extension TokenMeta {
     }
   }
   
+  public func token(of account: Address) throws -> Token {
+    let key = TokenKey(chain: _chain, address: account, contractAddress: contract_address)
+    return try _token.getData(key: key, policy: .ignoreCache, database: self.database)
+  }
+  
   // MARK: - Properties
   
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
@@ -69,6 +75,13 @@ extension TokenMeta {
     guard self._wrapped.hasVolume24H else { return nil }
     return Decimal(wrapped: self._wrapped.volume24H, hex: false)
   }
+  
+  public var isPrimary: Bool         { self.contract_address.isPrimary }
+  public var isStarkChain: Bool      { self.contract_address.isStarkChain }
+  public var isRenBTC: Bool          { self.contract_address.isRenBTC }
+  public var isSkale: Bool           { self.contract_address.isSkale }
+  public var isStEth: Bool           { self.contract_address.isStEth }
+  public var isWrappedBitcoin: Bool  { self.contract_address.isWrappedBitcoin }
 }
 
 // MARK: - TokenMeta + MDBXObject

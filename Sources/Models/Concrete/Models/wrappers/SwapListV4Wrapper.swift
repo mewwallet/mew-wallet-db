@@ -40,10 +40,7 @@ extension SwapListV4Wrapper {
 
   public var tokens_dexItems: [DexItem] {
     self._wrapped.tokens.enumerated().map { (offset, token) in
-      let dex = _DexItem.with {
-        $0.contractAddress = token.contractAddress
-      }
-      var dexItem = DexItem(dex, chain: _chain)
+      var dexItem = DexItem(tokenMeta: token.wrapped(_chain))
       dexItem.order = UInt16(clamping: offset)
       return dexItem
     }
@@ -51,10 +48,7 @@ extension SwapListV4Wrapper {
   
   public var featured_dexItems: [DexItem] {
     self._wrapped.featured.enumerated().map { (offset, token) in
-      let dex = _DexItem.with {
-        $0.contractAddress = token.contractAddress
-      }
-      var dexItem = DexItem(dex, chain: _chain)
+      var dexItem = DexItem(tokenMeta: token.wrapped(_chain))
       dexItem.order = UInt16(clamping: offset)
       return dexItem
     }
