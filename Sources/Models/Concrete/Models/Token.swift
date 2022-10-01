@@ -18,6 +18,7 @@ public struct Token: Equatable {
   
   private let _metaKey: TokenMetaKey
   private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
+  private let _account: MDBXPointer<AccountKey, Account> = .init(.account)
   
   // MARK: - LifeCycle
     
@@ -43,12 +44,43 @@ extension Token {
     }
   }
   
+  public var account: Account? {
+    get throws {
+      let key = AccountKey(chain: _chain, address: .unknown(_wrapped.address))
+      return try _account.getData(key: key, policy: .ignoreCache, database: self.database)
+    }
+  }
+  
   // MARK: - Properties
   
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
   public var address: Address { Address(rawValue: self._wrapped.address) }
   public var amount: Decimal { Decimal(wrapped: self._wrapped.amount, hex: true) ?? .zero }
   public var lockedAmount: Decimal { Decimal(wrapped: self._wrapped.lockedAmount, hex: true) ?? .zero }
+  
+  public func isHidden(locked: Bool) -> Bool {
+    guard let account = try? account else { return false }
+    return account.tokenHiddenKeys.contains(where: {
+      $0.locked == locked && $0.contractAddress == _wrapped.contractAddress
+    })
+  }
+  
+  public var isPrimary: Bool         { self.contract_address.isPrimary }
+  public var isStarkChain: Bool      { self.contract_address.isStarkChain }
+  public var isRenBTC: Bool          { self.contract_address.isRenBTC }
+  public var isSkale: Bool           { self.contract_address.isSkale }
+  public var isStEth: Bool           { self.contract_address.isStEth }
+  public var isWrappedBitcoin: Bool  { self.contract_address.isWrappedBitcoin }
+  
+  // MARK: - Methods
+  
+  /// Toggles hidden flag of Token
+  /// - Returns: Updated Account that needs to be send back to DB
+  public func toggleHidden(locked: Bool) -> Account? {
+    guard var account = try? account, let key = self.key as? TokenKey else { return nil }
+    account.toggleTokenIsHidden(key, locked: locked)
+    return account
+  }
 }
 
 // MARK: - Token + MDBXObject
@@ -120,6 +152,16 @@ extension _Token: ProtoWrappedMessage {
   }
 }
 
+// MARK: - Token + ProtoWrapper
+
+extension Token: ProtoWrapper {
+  init(_ wrapped: _Token, chain: MDBXChain) {
+    self._chain = chain
+    self._wrapped = wrapped
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
+  }
+}
+
 // MARK: - Token + Equitable
 
 public extension Token {
@@ -129,12 +171,58 @@ public extension Token {
   }
 }
 
-// MARK: - Token + ProtoWrapper
+// MARK: - Token + Identifiable
 
-extension Token: ProtoWrapper {
-  init(_ wrapped: _Token, chain: MDBXChain) {
-    self._chain = chain
-    self._wrapped = wrapped
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
+extension Token: Identifiable {
+  /// The stable identity of the entity associated with this instance.
+  public var id: String { self._wrapped.address + self._wrapped.contractAddress }
+}
+
+// MARK: - Token + Hashable
+
+extension Token: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(self.address.rawValue)
+    hasher.combine(self.contract_address.rawValue)
+  }
+}
+
+// MARK: - Token + Comparable
+
+extension Token: Comparable {
+  public static func < (lhs: Token, rhs: Token) -> Bool {
+    var compare = Token.compareByPrimary(lhs, rhs)
+    guard compare == .orderedSame else {
+      return compare == .orderedDescending
+    }
+    compare = Token.compareByName(lhs, rhs)
+    guard compare == .orderedSame else {
+      return compare == .orderedAscending
+    }
+    return lhs == rhs
+  }
+  
+  static func compareByPrimary(_ lhs: Token, _ rhs: Token) -> ComparisonResult {
+    switch (lhs.contract_address.isPrimary, rhs.contract_address.isPrimary) {
+    case (true, true), (false, false):
+      return .orderedSame
+    case (true, false):
+      return .orderedDescending
+    case (false, true):
+      return .orderedAscending
+    }
+  }
+  
+  static func compareByName(_ lhs: Token, _ rhs: Token) -> ComparisonResult {
+    switch (try? lhs.meta.name, try? rhs.meta.name) {
+    case (.some, .none):
+      return .orderedDescending
+    case (.none, .some):
+      return .orderedAscending
+    case (.none, .none):
+      return .orderedSame
+    case (.some(let lhsName), .some(let rhsName)):
+      return lhsName.lowercased().compare(rhsName.lowercased())
+    }
   }
 }
