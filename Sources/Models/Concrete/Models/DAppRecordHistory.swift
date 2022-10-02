@@ -178,3 +178,7 @@ extension DAppRecordHistory: Comparable {
     lhs._wrapped.timestamp.seconds > rhs._wrapped.timestamp.seconds
   }
 }
+
+// MARK: - DAppRecordHistory + Sendable
+
+extension DAppRecordHistory: @unchecked Sendable {}

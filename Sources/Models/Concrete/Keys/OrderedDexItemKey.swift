@@ -52,3 +52,7 @@ public final class OrderedDexItemKey: MDBXKey {
     self.key = data
   }
 }
+
+// MARK: - OrderedDexItemKey + Sendable
+
+extension OrderedDexItemKey: @unchecked Sendable {}

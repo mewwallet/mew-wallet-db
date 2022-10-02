@@ -35,3 +35,7 @@ extension Optional: ProtoWrappedMessage {
     return nil
   }
 }
+
+// MARK: - SubProperty + Sendable
+
+extension SubProperty: @unchecked Sendable {}

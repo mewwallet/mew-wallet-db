@@ -248,6 +248,10 @@ public extension MEWwalletDBImpl {
       os_signpost(.end, log: .signpost(.read), name: signpost, "Error: BackgroundState")
       Logger.error(.read, "Error: BackgroundState. Table: \(table.name.rawValue), Key: \(key.key.hexString)")
       throw MEWwalletDBError.backgroundState
+    } catch MDBXError.notFound {
+      os_signpost(.end, log: .signpost(.read), name: signpost, "Error: %{private}@", MDBXError.notFound.localizedDescription)
+      Logger.debug(.read, "Error: \(MDBXError.notFound.localizedDescription). Table: \(table.name.rawValue), Key: \(key.key.hexString)")
+      throw MDBXError.notFound
     } catch {
       os_signpost(.end, log: .signpost(.read), name: signpost, "Error: %{private}@", error.localizedDescription)
       Logger.error(.read, "Error: \(error.localizedDescription). Table: \(table.name.rawValue), Key: \(key.key.hexString)")

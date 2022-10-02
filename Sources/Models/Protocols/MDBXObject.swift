@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol MDBXBackedObject {
+public protocol MDBXBackedObject: Sendable {
   var database: WalletDB? { get set }
 }
 

@@ -299,4 +299,3 @@ extension Transfer {
     __nftTransfer.database = database
   }
 }
-

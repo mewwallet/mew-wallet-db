@@ -90,3 +90,7 @@ extension NFTAssetTrait: ProtoWrapper {
     _wrapped = wrapped
   }
 }
+
+// MARK: - NFTAssetTrait + Sendable
+
+extension NFTAssetTrait: Sendable {}
