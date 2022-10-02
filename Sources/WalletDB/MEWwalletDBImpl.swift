@@ -38,3 +38,7 @@ public final class MEWwalletDBImpl: WalletDB {
     stop()
   }
 }
+
+// MARK: - MEWwalletDBImpl + Sendable
+
+extension MEWwalletDBImpl: @unchecked Sendable {}

@@ -8,8 +8,20 @@
 import Foundation
 
 @propertyWrapper
-public final class ContextStorage<T> {
-  public var wrappedValue: T?
+public final class ContextStorage<T> where T: Sendable {
+  private let _queue = DispatchQueue(label: "db.contextstorage.queue")
+  
+  public var _wrappedValue: T?
+  public var wrappedValue: T? {
+    set {
+      _queue.sync {
+        _wrappedValue = newValue
+      }
+    }
+    get {
+      _wrappedValue
+    }
+  }
   
   public init(wrappedValue: T?) {
     self.wrappedValue = wrappedValue
@@ -19,3 +31,5 @@ public final class ContextStorage<T> {
     self.init(wrappedValue: nil)
   }
 }
+
+extension ContextStorage: @unchecked Sendable {}

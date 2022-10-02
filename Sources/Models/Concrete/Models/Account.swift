@@ -10,7 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 import mew_wallet_ios_extensions
 
-public struct Account: Equatable {
+public struct Account {
   @ContextStorage public var fiatAmount: Decimal?
   @ContextStorage public var usdFiatAmount: Decimal?
   
@@ -468,8 +468,8 @@ extension _Account: ProtoWrappedMessage {
 
 // MARK: - Account + Equitable
 
-public extension Account {
-  static func ==(lhs: Account, rhs: Account) -> Bool {
+extension Account: Equatable {
+  public static func ==(lhs: Account, rhs: Account) -> Bool {
     return lhs._chain == rhs._chain &&
            lhs._wrapped == rhs._wrapped
   }
@@ -499,3 +499,7 @@ extension Account: Hashable {
     _wrapped.hash(into: &hasher)
   }
 }
+
+// MARK: - Account + Sendable
+
+extension Account: Sendable {}

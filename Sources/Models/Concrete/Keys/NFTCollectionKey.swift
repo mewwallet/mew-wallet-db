@@ -89,3 +89,7 @@ extension NFTCollectionKey {
     return MDBXKeyRange(start: start, end: end, limit: nil)
   }
 }
+
+// MARK: - NFTCollectionKey + Sendable
+
+extension NFTCollectionKey: @unchecked Sendable {}

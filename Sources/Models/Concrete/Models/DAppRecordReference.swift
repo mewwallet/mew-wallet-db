@@ -204,3 +204,7 @@ extension DAppRecordReference: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+// MARK: - DAppRecordReference + Sendable
+
+extension DAppRecordReference: Sendable {}

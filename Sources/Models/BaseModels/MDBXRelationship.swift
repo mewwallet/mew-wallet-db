@@ -10,6 +10,7 @@ import Foundation
 public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
   private var _data: [T]?
   private let _table: MDBXTableName
+  private let _queue = DispatchQueue(label: "db.relationship.queue")
   
   init(_ table: MDBXTableName) {
     _table = table
@@ -23,7 +24,9 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     
     if policy == .ignoreCache || _data == nil {
       let data: [T] = try database.fetch(range: .with(start: startKey, end: endKey), from: _table, order: order)
-      _data = data
+      _queue.sync {
+        _data = data
+      }
     }
     return _data ?? []
   }
@@ -37,7 +40,9 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     
     if policy == .ignoreCache || _data == nil {
       let data: [T] = try database.fetch(range: range, from: _table, order: order)
-      _data = data
+      _queue.sync {
+        _data = data
+      }
     }
     return _data ?? []
   }
@@ -49,12 +54,18 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     
     if policy == .ignoreCache || _data == nil {
       let data: [T] = try database.fetch(keys: keys, from: _table)
-      _data = data
+      _queue.sync {
+        _data = data
+      }
     }
     return _data ?? []
   }
   
   func updateData(_ data: [T]) {
-    _data = data
+    _queue.sync {
+      _data = data
+    }
   }
 }
+
+extension MDBXRelationship: @unchecked Sendable { }
