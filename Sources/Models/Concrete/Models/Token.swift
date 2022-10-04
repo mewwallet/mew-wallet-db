@@ -226,3 +226,7 @@ extension Token: Comparable {
     }
   }
 }
+
+// MARK: - Token + Sendable
+
+extension Token: Sendable {}

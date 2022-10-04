@@ -30,4 +30,5 @@ public enum MDBXKeyLength {
   public static var nftCollection:        Int { return chain + address + address + name + hash }                // 96
   public static var nftAsset:             Int { return nftCollection + address + hash }                         // 172
   public static var transfer:             Int { return chain + address + block + direction + nonce + order }    // 55
+  public static var historySwap:          Int { return chain + address + hash }                                 // 68
 }

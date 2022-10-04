@@ -85,6 +85,7 @@ extension DBWriteMode {
     case .nftCollection:      return .appendOverrideMerge
     case .nftAsset:           return .appendOverrideMerge
     case .transfer:           return .appendOverrideMerge
+    case .historySwap:        return .appendOverrideMerge
     }
   }
   
