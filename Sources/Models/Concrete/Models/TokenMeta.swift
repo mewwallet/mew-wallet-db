@@ -184,3 +184,11 @@ extension TokenMeta: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+// MARK: - TokenMeta + Static
+
+extension TokenMeta {
+  public static func primary(chain: MDBXChain) -> TokenMeta {
+    return TokenMeta(chain: chain, contractAddress: .primary, name: chain.name, symbol: chain.symbol, decimals: chain.decimals)
+  }
+}
