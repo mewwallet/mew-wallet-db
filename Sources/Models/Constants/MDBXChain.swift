@@ -40,6 +40,27 @@ public enum MDBXChain {
     }
     self = chain.chain
   }
+  
+  var name: String {
+    switch self {
+    case .eth:  return "Ethereum"
+    default:    return ""
+    }
+  }
+  
+  var symbol: String {
+    switch self {
+    case .eth:  return "ETH"
+    default:    return ""
+    }
+  }
+  
+  var decimals: Int32 {
+    switch self {
+    case .eth:  return 18
+    default:    return 18
+    }
+  }
 }
 
 extension MDBXChain: Equatable {}

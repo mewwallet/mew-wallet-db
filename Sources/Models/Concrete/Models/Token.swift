@@ -19,6 +19,7 @@ public struct Token: Equatable {
   private let _metaKey: TokenMetaKey
   private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
   private let _account: MDBXPointer<AccountKey, Account> = .init(.account)
+  private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
   
   // MARK: - LifeCycle
     
@@ -48,6 +49,13 @@ extension Token {
     get throws {
       let key = AccountKey(chain: _chain, address: .unknown(_wrapped.address))
       return try _account.getData(key: key, policy: .ignoreCache, database: self.database)
+    }
+  }
+  
+  public var dexItem: DexItem {
+    get throws {
+      let key = DexItemKey(chain: _chain, contractAddress: self.contract_address)
+      return try _dexItem.getData(key: key, policy: .cacheOrLoad, database: self.database)
     }
   }
   
