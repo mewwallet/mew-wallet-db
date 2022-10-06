@@ -14,6 +14,23 @@ public struct HistorySwap {
     case pending = "PENDING"
     case success = "SUCCESS"
     case failed  = "FAIL"
+    
+    public init(rawValue: String) {
+      switch rawValue {
+      case "PENDING":   self = .pending
+      case "SUCCESS":   self = .success
+      case "FAIL":      self = .failed
+      default:          self = .pending
+      }
+    }
+    
+    public init(_ status: History.Status) {
+      switch status {
+      case .pending:    self = .pending
+      case .success:    self = .success
+      case .failed:     self = .failed
+      }
+    }
   }
   
   public weak var database: WalletDB?
@@ -91,19 +108,31 @@ extension HistorySwap {
   
   // MARK: - Properties
   
-  public var rawFromAmount: Decimal { Decimal(wrapped: self._wrapped.fromAmount, hex: true) ?? .zero }
-  public var rawToAmount: Decimal { Decimal(wrapped: self._wrapped.toAmount, hex: true) ?? .zero }
-  public var status: History.Status { History.Status(_status) }
-  public var dex: String { return self._wrapped.dex }
-  public var hash: String {
-    // TODO: jump between hashes
-    return self._wrapped.hash
+  public var rawFromAmount: Decimal { Decimal(wrapped: _wrapped.fromAmount, hex: true) ?? .zero }
+  public var rawToAmount: Decimal { Decimal(wrapped: _wrapped.toAmount, hex: true) ?? .zero }
+  public var status: History.Status {
+    set { _wrapped.status = HistorySwap.Status(newValue).rawValue }
+    get { History.Status(_status) }
   }
-  public var timestamp: Date { return self._wrapped.timestamp.date }
+  public var dex: String { _wrapped.dex }
+  public var hash: String { _wrapped.hash }
+  public var currentHash: String {
+    var hash = self._wrapped.hash
+    while let replace = _wrapped.replaceHashes[hash] {
+      hash = replace
+    }
+    return hash
+  }
+  public var knownHashes: [String] {
+    var hashes = _wrapped.hashes
+    hashes.append(contentsOf: _wrapped.replaceHashes.values)
+    return hashes
+  }
+  public var timestamp: Date { return _wrapped.timestamp.date }
   
   // MARK: - Private
   
-  private var _status: Status { Status(rawValue: self._wrapped.status) ?? .pending}
+  private var _status: Status { Status(rawValue: _wrapped.status)}
 }
 
 // MARK: - Transfer + MDBXObject
@@ -155,29 +184,20 @@ extension HistorySwap: MDBXObject {
   }
   
   mutating public func merge(with object: MDBXObject) {
-//    let other = object as! TokenMeta
-//
-//    self._wrapped.contractAddress       = other._wrapped.contractAddress
-//    self._wrapped.name                  = other._wrapped.name
-//    self._wrapped.symbol                = other._wrapped.symbol
-//    if other._wrapped.hasDecimals {
-//      self._wrapped.decimals            = other._wrapped.decimals
-//    }
-//    if other._wrapped.hasIcon {
-//      self._wrapped.icon                = other._wrapped.icon
-//    }
-//    if other._wrapped.hasPrice {
-//      self._wrapped.price               = other._wrapped.price
-//    }
-//    if other._wrapped.hasMarketCap {
-//      self._wrapped.marketCap           = other._wrapped.marketCap
-//    }
-//    if !other._wrapped.sparkline.isEmpty {
-//      self._wrapped.sparkline           = other._wrapped.sparkline
-//    }
-//    if other._wrapped.hasVolume24H {
-//      self._wrapped.volume24H           = other._wrapped.volume24H
-//    }
+    let other = object as! HistorySwap
+    
+    self._wrapped.address         = other._wrapped.address
+    self._wrapped.fromToken       = other._wrapped.fromToken
+    self._wrapped.toToken         = other._wrapped.toToken
+    self._wrapped.fromAmount      = other._wrapped.fromAmount
+    self._wrapped.toAmount        = other._wrapped.toAmount
+    self._wrapped.toAddress       = other._wrapped.toAddress
+    self._wrapped.status          = other._wrapped.status
+    self._wrapped.dex             = other._wrapped.dex
+    self._wrapped.hash            = other._wrapped.hash
+    self._wrapped.hashes          = other._wrapped.hashes
+    self._wrapped.replaceHashes   = other._wrapped.replaceHashes
+    self._wrapped.timestamp       = other._wrapped.timestamp
   }
 }
 
