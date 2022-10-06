@@ -130,6 +130,12 @@ extension HistorySwap {
   }
   public var timestamp: Date { return _wrapped.timestamp.date }
   
+  // MARK: - Methods
+  
+  mutating public func add(hash: String, to: String) {
+    _wrapped.replaceHashes[to] = hash
+  }
+  
   // MARK: - Private
   
   private var _status: Status { Status(rawValue: _wrapped.status)}
