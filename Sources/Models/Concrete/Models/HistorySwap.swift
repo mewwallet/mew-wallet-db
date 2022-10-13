@@ -249,9 +249,23 @@ extension HistorySwap: Comparable {
   public static func < (lhs: HistorySwap, rhs: HistorySwap) -> Bool {
     // If equal statuses
     if lhs.status == rhs.status {
-      return lhs.timestamp < rhs.timestamp
+      return lhs.timestamp > rhs.timestamp
     }
     
     return lhs.status == .pending
+  }
+}
+
+// MARK: - HistorySwap + Hashable
+
+extension HistorySwap: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(_wrapped.status)
+    hasher.combine(_wrapped.fromToken)
+    hasher.combine(_wrapped.fromAmount)
+    hasher.combine(_wrapped.toToken)
+    hasher.combine(_wrapped.toAmount)
+    hasher.combine(_wrapped.address)
+    hasher.combine(_wrapped.hash)
   }
 }
