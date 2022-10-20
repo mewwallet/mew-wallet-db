@@ -73,7 +73,7 @@ extension DBWriteMode {
     case .account:            return .appendOverrideMerge
     case .dex:                return [.default, .dropTable]
     case .orderedDex:         return [.default, .dropTable]
-    case .featuredDex:        return [.default, .dropTable]
+    case .featuredDex:        return [.default, .diff]
     case .tokenMeta:          return .appendOverrideMerge
     case .token:              return .default
     case .rawTransaction:     return .default
