@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message _NFTTransfer {
+  // NFT token ID
+  optional string id                          = 1;
+  // NFT name
+  optional string name                        = 2;
+  // NFT symbol
+  optional string symbol                      = 3;
+  // NFT image
+  optional string image                       = 4;
+}

@@ -27,10 +27,18 @@ struct _DexItem {
 
   var contractAddress: String = String()
 
+  var name: String = String()
+
+  var symbol: String = String()
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 }
+
+#if swift(>=5.5) && canImport(_Concurrency)
+extension _DexItem: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
@@ -38,6 +46,8 @@ extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   static let protoMessageName: String = "_DexItem"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "contract_address"),
+    2: .same(proto: "name"),
+    3: .same(proto: "symbol"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -47,6 +57,8 @@ extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.contractAddress) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.symbol) }()
       default: break
       }
     }
@@ -56,11 +68,19 @@ extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     if !self.contractAddress.isEmpty {
       try visitor.visitSingularStringField(value: self.contractAddress, fieldNumber: 1)
     }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
+    }
+    if !self.symbol.isEmpty {
+      try visitor.visitSingularStringField(value: self.symbol, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _DexItem, rhs: _DexItem) -> Bool {
     if lhs.contractAddress != rhs.contractAddress {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs.symbol != rhs.symbol {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

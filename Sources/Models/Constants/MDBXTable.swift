@@ -12,6 +12,7 @@ public enum MDBXTableName: String, CaseIterable {
   case account            = "Account_0"
   case dex                = "Dex_0"
   case orderedDex         = "OrderedDex_0"
+  case featuredDex        = "FeaturedDex_0"
   case tokenMeta          = "TokenMeta_0"
   case token              = "Token_0"
   case rawTransaction     = "RawTransaction_0"
@@ -22,6 +23,8 @@ public enum MDBXTableName: String, CaseIterable {
   case dappRecordHistory  = "DAppRecordHistory_1"
   case nftCollection      = "nftCollection_0"
   case nftAsset           = "nftAsset_0"
+  case transfer           = "Transfer_1"
+  case historySwap        = "HistorySwap_0"
 }
 
 typealias MDBXTable = (name: MDBXTableName, db: MDBXDatabase)

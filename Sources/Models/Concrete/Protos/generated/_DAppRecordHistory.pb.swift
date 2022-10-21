@@ -53,6 +53,10 @@ struct _DAppRecordHistory {
   fileprivate var _title: String? = nil
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension _DAppRecordHistory: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _DAppRecordHistory: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

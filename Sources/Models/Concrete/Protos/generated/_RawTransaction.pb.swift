@@ -96,6 +96,10 @@ struct _RawTransaction {
   fileprivate var _maxPriorityFeePerGas: String? = nil
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension _RawTransaction: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _RawTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

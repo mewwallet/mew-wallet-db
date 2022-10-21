@@ -19,6 +19,15 @@ public enum Address: RawRepresentable, Equatable {
   case unknown(String)
   case invalid(String)
   
+  public var isStarkChain: Bool      { self == .starkChain }
+  public var isRenBTC: Bool          { self == .renBTC }
+  public var isSkale: Bool           { self == .skale }
+  public var isStEth: Bool           { self == .stEth }
+  public var isPrimary: Bool         { self == .primary }
+  public var isWBTC: Bool            { self == .wBTC }
+  
+  public var isWrappedBitcoin: Bool  { self.isRenBTC || self.isWBTC }
+  
   init() {
     self = .primary
   }

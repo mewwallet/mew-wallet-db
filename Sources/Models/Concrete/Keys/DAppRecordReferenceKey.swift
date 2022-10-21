@@ -42,3 +42,7 @@ public final class DAppRecordReferenceKey: MDBXKey {
     self.key = data
   }
 }
+
+// MARK: - DAppRecordReferenceKey + Sendable
+
+extension DAppRecordReferenceKey: @unchecked Sendable {}

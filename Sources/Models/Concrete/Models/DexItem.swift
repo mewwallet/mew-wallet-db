@@ -30,17 +30,21 @@ public struct DexItem: Equatable {
     self.database = tokenMeta.database
     self._wrapped = .with {
       $0.contractAddress = tokenMeta.contract_address.rawValue
+      $0.name = tokenMeta.name
+      $0.symbol = tokenMeta.symbol
     }
     self._meta.updateData(tokenMeta)
   }
   
-  public init(chain: MDBXChain, contractAddress: String, order: UInt16?, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, order: UInt16?, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
     self._contract_address = contractAddress
     self.order = order
     self._wrapped = .with {
       $0.contractAddress = contractAddress
+      $0.name = name
+      $0.symbol = symbol
     }
   }
   
@@ -70,6 +74,18 @@ extension DexItem {
   // MARK: - Properties
   
   public var contract_address: Address { Address(rawValue: self._contract_address ?? self._wrapped.contractAddress) }
+  public var name: String {
+    guard self._wrapped.name.isEmpty else {
+      return self._wrapped.name
+    }
+    return (try? self.meta.name) ?? ""
+  }
+  public var symbol: String {
+    guard self._wrapped.symbol.isEmpty else {
+      return self._wrapped.symbol
+    }
+    return (try? self.meta.symbol) ?? ""
+  }
 }
 
 // MARK: - DexItem + MDBXObject
@@ -130,6 +146,8 @@ extension DexItem: MDBXObject {
     let other = object as! DexItem
     
     self._wrapped.contractAddress       = other._wrapped.contractAddress
+    self._wrapped.name                  = other._wrapped.name
+    self._wrapped.symbol                = other._wrapped.symbol
   }
 }
 
@@ -157,3 +175,14 @@ extension DexItem: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+// MARK: - DexItem + Identifiable
+
+extension DexItem: Identifiable {
+  /// The stable identity of the entity associated with this instance.
+  public var id: String { self._wrapped.contractAddress }
+}
+
+// MARK: - DexItem + Sendable
+
+extension DexItem: Sendable {}

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+// Represent Historical Swap record
+message _HistorySwap {
+  // Account's address
+  string address                              = 1;
+  // From Token contract address
+  string from_token                           = 2;
+  // To Token contract address
+  string to_token                             = 3;
+  // From amount
+  string from_amount                          = 4;
+  // To amount
+  string to_amount                            = 5;
+  // Same Account's address for now
+  string to_address                           = 6;
+  // Status
+  string status                               = 7;
+  // Dex identifier
+  string dex                                  = 8;
+  // Transaction hash
+  string hash                                 = 9;
+  // All hashes
+  repeated string hashes                      = 10;
+  // Replacement hashes
+  map <string, string> replaceHashes          = 11;
+  // Timestamp of the swap
+  google.protobuf.Timestamp timestamp         = 12;
+}

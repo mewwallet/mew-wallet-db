@@ -10,6 +10,8 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct DAppRecordMeta: Equatable {
+  private let _queue = DispatchQueue(label: "db.DAppRecordMeta.queue")
+  
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecordMeta
   var _chain: MDBXChain
@@ -56,11 +58,15 @@ extension DAppRecordMeta {
   // MARK: - Functions
   
   mutating public func update(url: URL) {
-    self._hash = url.sha256
+    _queue.sync {
+      self._hash = url.sha256
+    }
   }
   
   mutating public func update(absoluteURL: String) {
-    self._hash = absoluteURL.sha256
+    _queue.sync {
+      self._hash = absoluteURL.sha256
+    }
   }
 }
 
@@ -150,3 +156,7 @@ extension DAppRecordMeta: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+// MARK: - DAppRecordMeta + Sendable
+
+extension DAppRecordMeta: @unchecked Sendable {}

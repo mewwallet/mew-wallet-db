@@ -135,7 +135,7 @@ extension NFTAsset {
   /// - Returns: Updated Account that needs to be send back to DB
   public func toggleFavorite() -> Account? {
     guard var account = try? account, let key = self.key as? NFTAssetKey else { return nil }
-    account.toggleIsFavorite(key)
+    account.toggleNFTIsFavorite(key)
     return account
   }
   
@@ -143,7 +143,7 @@ extension NFTAsset {
   /// - Returns: Updated Account that needs to be send back to DB
   public func toggleHidden() -> Account? {
     guard var account = try? account, let key = self.key as? NFTAssetKey else { return nil }
-    account.toggleIsHidden(key)
+    account.toggleNFTIsHidden(key)
     return account
   }
 }

@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "_TokenMeta.proto";
+
+message _SwapListV4Wrapper {
+  // Featured tokens
+  repeated _TokenMeta featured            = 1;
+  
+  // All tokens
+  repeated _TokenMeta tokens              = 2;
+}
