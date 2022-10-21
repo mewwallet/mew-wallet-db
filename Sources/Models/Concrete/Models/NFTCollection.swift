@@ -42,7 +42,7 @@ extension NFTCollection {
     get throws {
       guard let key = self.key as? NFTCollectionKey else { return [] }
       let range = NFTAssetKey.range(collectionKey: key)
-      return try _assets.getRelationship(range, policy: .cacheOrLoad, database: self.database)
+      return try _assets.getRelationship(range, policy: .cacheOrLoad, order: .asc, database: self.database)
     }
   }
   

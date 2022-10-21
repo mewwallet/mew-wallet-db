@@ -41,3 +41,7 @@ public final class TokenMetaKey: MDBXKey {
     self.key = data
   }
 }
+
+// MARK: - TokenMetaKey + Sendable
+
+extension TokenMetaKey: @unchecked Sendable {}

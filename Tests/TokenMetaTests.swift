@@ -119,9 +119,9 @@ final class TokenMeta_tests: XCTestCase {
       try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
       try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes])
       
-      let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", order: 0)
-      let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", order: 2)
-      let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", order: 1)
+      let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",name: "name", symbol: "symbol", order: 0)
+      let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", name: "name", symbol: "symbol", order: 2)
+      let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", name: "name", symbol: "symbol",order: 1)
       
       try await db.write(table: .orderedDex, keysAndObjects: [
         (dexItem.alternateKey!, dexItem),

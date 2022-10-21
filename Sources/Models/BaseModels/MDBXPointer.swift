@@ -18,6 +18,7 @@ public enum RelationshipLoadPolicy {
 public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
   private var _data: T?
   private var _table: MDBXTableName
+  private let _queue = DispatchQueue(label: "db.pointer.queue")
   
   init(_ table: MDBXTableName) {
     _table = table
@@ -38,13 +39,21 @@ public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
       fallthrough
     case .ignoreCache:
       let data: T = try database.read(key: key, table: _table)
-      _data = data
-      _data?.database = database
+      _queue.sync {
+        _data = data
+        _data?.database = database
+      }
       return data
     }
   }
     
   func updateData(_ data: T?) {
-    _data = data
+    _queue.sync {
+      _data = data
+    }
   }
 }
+
+// MARK: - MDBXPointer + Sendable
+
+extension MDBXPointer: @unchecked Sendable {}

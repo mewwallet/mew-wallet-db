@@ -25,7 +25,7 @@ public struct DAppRecord: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecord
   var _chain: MDBXChain
-  var _hash: Data
+  let _hash: Data
   var _uuid: UInt64 = 0
   
   public var reference: DAppRecordReference?
@@ -202,3 +202,7 @@ extension DAppRecord: Hashable {
     }
   }
 }
+
+// MARK: - DAppRecord + Sendable
+
+extension DAppRecord: @unchecked Sendable {}

@@ -62,7 +62,7 @@ public extension MEWwalletDBImpl {
     return results
   }
   
-  func fetch<T: MDBXObject>(range: MDBXKeyRange, from table: MDBXTableName) throws -> [T] {
+  func fetch<T: MDBXObject>(range: MDBXKeyRange, from table: MDBXTableName, order: MDBXReadOrder) throws -> [T] {
     var results = [T]()
     
     os_signpost(.begin, log: .signpost(.read), name: "fetchRange", "from table: %{private}@", table.rawValue)
@@ -89,7 +89,7 @@ public extension MEWwalletDBImpl {
         cursor.close()
       }
       
-      results = try cursor.fetch(range: range, from: table.db)
+      results = try cursor.fetch(range: range, from: table.db, order: order)
         .compactMap {
           var encoded = try T(serializedData: $0.1, chain: $0.0.chain, key: $0.0)
           encoded.database = self
@@ -110,7 +110,7 @@ public extension MEWwalletDBImpl {
     return results
   }
   
-  func fetchKeys<K: MDBXKey>(range: MDBXKeyRange, from table: MDBXTableName) throws -> [K] {
+  func fetchKeys<K: MDBXKey>(range: MDBXKeyRange, from table: MDBXTableName, order: MDBXReadOrder) throws -> [K] {
     var results = [K]()
 
     os_signpost(.begin, log: .signpost(.read), name: "fetchKeysRange", "from table: %{private}@", table.rawValue)
@@ -137,7 +137,7 @@ public extension MEWwalletDBImpl {
         cursor.close()
       }
 
-      results = try cursor.fetchKeys(range: range, from: table.db).compactMap { K(data: $0) }
+      results = try cursor.fetchKeys(range: range, from: table.db, order: order).compactMap { K(data: $0) }
 
       os_signpost(.end, log: .signpost(.read), name: "fetchKeysRange", "done")
     } catch MEWwalletDBError.backgroundState {
@@ -180,7 +180,7 @@ public extension MEWwalletDBImpl {
         cursor.close()
       }
       
-      results = try cursor.fetchKeys(range: range, from: table.db).count
+      results = try cursor.fetchKeys(range: range, from: table.db, order: .asc).count
       
       os_signpost(.end, log: .signpost(.read), name: "countRange", "done")
     } catch MEWwalletDBError.backgroundState {
@@ -203,7 +203,7 @@ public extension MEWwalletDBImpl {
   
   @available(*, deprecated, message: "Use fetch(range:from)")
   func fetchRange<T: MDBXObject>(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> [T] {
-    return try self.fetch(range: .with(start: startKey, end: endKey), from: table)
+    return try self.fetch(range: .with(start: startKey, end: endKey), from: table, order: .asc)
   }
   
   @available(*, deprecated, message: "Use count(range:from)")
@@ -248,6 +248,10 @@ public extension MEWwalletDBImpl {
       os_signpost(.end, log: .signpost(.read), name: signpost, "Error: BackgroundState")
       Logger.error(.read, "Error: BackgroundState. Table: \(table.name.rawValue), Key: \(key.key.hexString)")
       throw MEWwalletDBError.backgroundState
+    } catch MDBXError.notFound {
+      os_signpost(.end, log: .signpost(.read), name: signpost, "Error: %{private}@", MDBXError.notFound.localizedDescription)
+      Logger.debug(.read, "Error: \(MDBXError.notFound.localizedDescription). Table: \(table.name.rawValue), Key: \(key.key.hexString)")
+      throw MDBXError.notFound
     } catch {
       os_signpost(.end, log: .signpost(.read), name: signpost, "Error: %{private}@", error.localizedDescription)
       Logger.error(.read, "Error: \(error.localizedDescription). Table: \(table.name.rawValue), Key: \(key.key.hexString)")
