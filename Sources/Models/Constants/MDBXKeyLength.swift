@@ -17,6 +17,7 @@ public enum MDBXKeyLength {
   public static let block                 = 8
   public static let direction             = 1
   public static let nonce                 = 8
+  public static let transactionID         = 32
   
   public static var account:              Int { return chain + address }                                        // 36
   public static var tokenMeta:            Int { return chain + address }                                        // 36
@@ -31,4 +32,5 @@ public enum MDBXKeyLength {
   public static var nftAsset:             Int { return nftCollection + address + hash }                         // 172
   public static var transfer:             Int { return chain + address + block + direction + nonce + order }    // 55
   public static var historySwap:          Int { return chain + address + hash }                                 // 68
+  public static var historyPurchase:      Int { return chain + address + transactionID }                        // 68
 }

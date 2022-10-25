@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+// Represent Historical Purchase record
+message _HistoryPurchase {
+  // Account's address
+  string address                              = 1;
+  // Transaction ID on provider side
+  string transaction_id                       = 2;
+  // Fiat amount
+  string fiat_amount                          = 3;
+  // Fiat currency
+  string fiat_currency                        = 4;
+  // Crypto currency amount
+  string crypto_amount                        = 5;
+  // Token contract address
+  optional string contract_address            = 6;
+  // Status of purchase
+  string status                               = 7;
+  // Provider
+  string provider                             = 8;
+  // Timestamp of the purchase
+  google.protobuf.Timestamp timestamp         = 9;
+  // Encrypted details of the order
+  optional bytes orderDetails                 = 10;
+}
