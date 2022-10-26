@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "_HistoryPurchase.proto";
+
+message _HistoryPurchaseWrapper {
+  // Pagination token
+  optional string pagination_token            = 1;
+  
+  // History
+  repeated _HistoryPurchase results           = 2;
+}
