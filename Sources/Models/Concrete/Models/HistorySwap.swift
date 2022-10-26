@@ -207,7 +207,7 @@ extension HistorySwap: MDBXObject {
   }
 }
 
-// MARK: - _Transfer + ProtoWrappedMessage
+// MARK: - _HistorySwap + ProtoWrappedMessage
 
 extension _HistorySwap: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> HistorySwap {
@@ -248,7 +248,7 @@ extension HistorySwap: Comparable {
   /// Inside the group - by timestamp
   public static func < (lhs: HistorySwap, rhs: HistorySwap) -> Bool {
     // If equal statuses
-    if lhs.status == rhs.status {
+    if lhs.status.isFinal == rhs.status.isFinal {
       return lhs.timestamp > rhs.timestamp
     }
     
