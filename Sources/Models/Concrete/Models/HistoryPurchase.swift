@@ -62,8 +62,8 @@ extension HistoryPurchase {
   public var meta: TokenMeta {
     get throws {
       let contractAddress: Address
-      if _wrapped.hasContractAddress {
-        contractAddress = Address(rawValue: _wrapped.contractAddress)
+      if _wrapped.hasCryptoCurrency {
+        contractAddress = Address(rawValue: _wrapped.cryptoCurrency.contractAddress)
       } else {
         contractAddress = .primary
       }
@@ -85,7 +85,7 @@ extension HistoryPurchase {
   public var timestamp: Date { return _wrapped.timestamp.date }
   public var details: Data? {
     guard _wrapped.hasOrderDetails else { return nil }
-    return _wrapped.orderDetails
+    return Data(hex: _wrapped.orderDetails)
   }
   
   // MARK: - Private
@@ -149,8 +149,8 @@ extension HistoryPurchase: MDBXObject {
     self._wrapped.fiatAmount            = other._wrapped.fiatAmount
     self._wrapped.fiatCurrency          = other._wrapped.fiatCurrency
     self._wrapped.cryptoAmount          = other._wrapped.cryptoAmount
-    if other._wrapped.hasContractAddress {
-      self._wrapped.contractAddress     = other._wrapped.contractAddress
+    if other._wrapped.hasCryptoCurrency {
+      self._wrapped.cryptoCurrency      = other._wrapped.cryptoCurrency
     }
     self._wrapped.status                = other._wrapped.status
     self._wrapped.provider              = other._wrapped.provider
@@ -219,8 +219,8 @@ extension HistoryPurchase: Hashable {
     hasher.combine(_wrapped.fiatAmount)
     hasher.combine(_wrapped.fiatCurrency)
     hasher.combine(_wrapped.cryptoAmount)
-    if _wrapped.hasContractAddress {
-      hasher.combine(_wrapped.contractAddress)
+    if _wrapped.hasCryptoCurrency {
+      hasher.combine(_wrapped.cryptoCurrency)
     }
     hasher.combine(_wrapped.status)
     hasher.combine(_wrapped.provider)

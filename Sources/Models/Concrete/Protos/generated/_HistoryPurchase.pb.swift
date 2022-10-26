@@ -38,18 +38,18 @@ struct _HistoryPurchase {
   /// Fiat currency
   var fiatCurrency: String = String()
 
-  /// Crypto currency
+  /// Crypto currency amount
   var cryptoAmount: String = String()
 
   /// Token contract address
-  var contractAddress: String {
-    get {return _contractAddress ?? String()}
-    set {_contractAddress = newValue}
+  var cryptoCurrency: _ChainedContractAddress {
+    get {return _cryptoCurrency ?? _ChainedContractAddress()}
+    set {_cryptoCurrency = newValue}
   }
-  /// Returns true if `contractAddress` has been explicitly set.
-  var hasContractAddress: Bool {return self._contractAddress != nil}
-  /// Clears the value of `contractAddress`. Subsequent reads from it will return its default value.
-  mutating func clearContractAddress() {self._contractAddress = nil}
+  /// Returns true if `cryptoCurrency` has been explicitly set.
+  var hasCryptoCurrency: Bool {return self._cryptoCurrency != nil}
+  /// Clears the value of `cryptoCurrency`. Subsequent reads from it will return its default value.
+  mutating func clearCryptoCurrency() {self._cryptoCurrency = nil}
 
   /// Status of purchase
   var status: String = String()
@@ -68,8 +68,8 @@ struct _HistoryPurchase {
   mutating func clearTimestamp() {self._timestamp = nil}
 
   /// Encrypted details of the order
-  var orderDetails: Data {
-    get {return _orderDetails ?? Data()}
+  var orderDetails: String {
+    get {return _orderDetails ?? String()}
     set {_orderDetails = newValue}
   }
   /// Returns true if `orderDetails` has been explicitly set.
@@ -81,9 +81,9 @@ struct _HistoryPurchase {
 
   init() {}
 
-  fileprivate var _contractAddress: String? = nil
+  fileprivate var _cryptoCurrency: _ChainedContractAddress? = nil
   fileprivate var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
-  fileprivate var _orderDetails: Data? = nil
+  fileprivate var _orderDetails: String? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -100,11 +100,11 @@ extension _HistoryPurchase: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     3: .standard(proto: "fiat_amount"),
     4: .standard(proto: "fiat_currency"),
     5: .standard(proto: "crypto_amount"),
-    6: .standard(proto: "contract_address"),
+    6: .standard(proto: "crypto_currency"),
     7: .same(proto: "status"),
     8: .same(proto: "provider"),
     9: .same(proto: "timestamp"),
-    10: .same(proto: "orderDetails"),
+    10: .standard(proto: "order_details"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -118,11 +118,11 @@ extension _HistoryPurchase: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       case 3: try { try decoder.decodeSingularStringField(value: &self.fiatAmount) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.fiatCurrency) }()
       case 5: try { try decoder.decodeSingularStringField(value: &self.cryptoAmount) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self._contractAddress) }()
+      case 6: try { try decoder.decodeSingularMessageField(value: &self._cryptoCurrency) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self.status) }()
       case 8: try { try decoder.decodeSingularStringField(value: &self.provider) }()
       case 9: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
-      case 10: try { try decoder.decodeSingularBytesField(value: &self._orderDetails) }()
+      case 10: try { try decoder.decodeSingularStringField(value: &self._orderDetails) }()
       default: break
       }
     }
@@ -148,8 +148,8 @@ extension _HistoryPurchase: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if !self.cryptoAmount.isEmpty {
       try visitor.visitSingularStringField(value: self.cryptoAmount, fieldNumber: 5)
     }
-    try { if let v = self._contractAddress {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+    try { if let v = self._cryptoCurrency {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
     } }()
     if !self.status.isEmpty {
       try visitor.visitSingularStringField(value: self.status, fieldNumber: 7)
@@ -161,7 +161,7 @@ extension _HistoryPurchase: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
     } }()
     try { if let v = self._orderDetails {
-      try visitor.visitSingularBytesField(value: v, fieldNumber: 10)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 10)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -172,7 +172,7 @@ extension _HistoryPurchase: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if lhs.fiatAmount != rhs.fiatAmount {return false}
     if lhs.fiatCurrency != rhs.fiatCurrency {return false}
     if lhs.cryptoAmount != rhs.cryptoAmount {return false}
-    if lhs._contractAddress != rhs._contractAddress {return false}
+    if lhs._cryptoCurrency != rhs._cryptoCurrency {return false}
     if lhs.status != rhs.status {return false}
     if lhs.provider != rhs.provider {return false}
     if lhs._timestamp != rhs._timestamp {return false}
