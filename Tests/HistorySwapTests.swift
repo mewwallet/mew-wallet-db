@@ -120,9 +120,9 @@ final class HistorySwap_tests: XCTestCase {
       try await db.write(table: .historySwap, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
       let historyFetched: [HistorySwap] = try db.fetch(range: .all(limit: 10), from: .historySwap, order: .asc)
       
-      debugPrint(historyFetched.map({ "\($0.timestamp): \($0.status.rawValue)" }))
+      debugPrint(historyFetched.map({ "\($0.timestamp): \($0.status)" }))
       
-      debugPrint(historyFetched.sorted().map({ "\($0.timestamp): \($0.status.rawValue)" }))
+      debugPrint(historyFetched.sorted().map({ "\($0.timestamp): \($0.status)" }))
     } catch {
       XCTFail(error.localizedDescription)
     }
