@@ -331,6 +331,11 @@ final class Transfer_tests: XCTestCase {
       
       debugPrint(transfers.map({$0.block}))
       
+      let transfersDesc: [Transfer] = try db.fetch(range: .all, from: .transfer, order: .desc)
+      
+      debugPrint(transfersDesc.map({$0.block}))
+      
+      debugPrint("done")
 //      let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", order: 0)
 //      let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", order: 2)
 //      let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", order: 1)
