@@ -65,8 +65,13 @@ extension MDBXCursor {
       // Do first read
       var data: (Data, Data)
       do {
-        let value = try self.getValue(key: &key, operation: .set)
-        data = (key, value)
+        if range.end == nil {
+          let value = try self.getValue(key: &key, operation: .last)
+          data = (key, value)
+        } else {
+          let value = try self.getValue(key: &key, operation: .set)
+          data = (key, value)
+        }
       } catch MDBXError.notFound {
         do {
           let value = try self.getValue(key: &key, operation: .prev)
@@ -177,8 +182,13 @@ extension MDBXCursor {
       // Do first read
       var data: Data
       do {
-        _ = try self.getValue(key: &key, operation: .set)
-        data = key
+        if range.end == nil {
+          _ = try self.getValue(key: &key, operation: .last)
+          data = key
+        } else {
+          _ = try self.getValue(key: &key, operation: .set)
+          data = key
+        }
       } catch MDBXError.notFound {
         do {
           _ = try self.getValue(key: &key, operation: .prev)
