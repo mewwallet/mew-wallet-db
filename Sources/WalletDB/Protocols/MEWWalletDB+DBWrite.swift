@@ -87,6 +87,7 @@ extension DBWriteMode {
     case .transfer:           return .appendOverrideMerge
     case .historySwap:        return .appendOverrideMerge
     case .historyPurchase:    return .appendOverrideMerge
+    case .profile:            return .appendOverrideMerge
     }
   }
   

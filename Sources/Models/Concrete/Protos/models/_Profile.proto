@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+message _Profile {
+  message _Settings {
+    // Address
+    message _Address {
+      string address = 1;
+      enum _AddressFlags {
+        DISABLED                              = 0;
+        INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER   = 1;
+        INCLUDE_IN_DAILY_PORTFOLIO_TRACKER    = 3;
+      }
+      
+      uint32 flags   = 2;
+    }
+    
+    repeated _Address addresses = 1;
+    string timezone = 2;
+    
+    message _PortfolioTracker {
+      message _TrackerTime {
+        bool enabled = 1;
+        string timestamp = 2;
+      }
+      
+      _TrackerTime weekly = 1;
+      _TrackerTime daily = 2;
+    }
+    
+    _PortfolioTracker portfolio_tracker = 3;
+    
+    message _PriceAlert {
+      string id = 1;
+      string trigger = 2;
+      string contract_address = 3;
+      string type = 4;
+    }
+    
+    repeated _PriceAlert price_alerts = 4;
+    
+    int64 gmt_offset = 5;
+    string push_token = 6;
+    string platform = 7;
+    
+    enum _Notifications {
+      DISABLED    = 0;
+      OUTGOING_TX = 1;
+      INCOMING_TX = 2;
+      ANNOUNCEMENTS = 4;
+      SERCURITY = 8;
+    }
+    
+    uint32 notifications = 8;
+  }
+  
+  _Settings settings = 1;
+}

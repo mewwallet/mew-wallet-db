@@ -34,6 +34,10 @@ public enum Address: RawRepresentable, Equatable {
     self = .primary
   }
   
+  public init(_ rawValue: String) {
+    self.init(rawValue: rawValue)
+  }
+  
   public init(rawValue: String) {
     let rawValue = rawValue.stringAddHexPrefix().lowercased()
     switch rawValue {
@@ -69,5 +73,11 @@ public enum Address: RawRepresentable, Equatable {
 extension Address: ExpressibleByStringLiteral {
   public init(stringLiteral value: StringLiteralType) {
     self.init(rawValue: value)
+  }
+}
+
+extension Address: Comparable {
+  public static func ==(lhs: Address, rhs: Address) -> Bool {
+    return lhs.rawValue.lowercased() == rhs.rawValue.lowercased()
   }
 }

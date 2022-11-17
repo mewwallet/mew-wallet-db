@@ -25,10 +25,10 @@ struct _PricesListV3Wrapper {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// Featured tokens
+  /// Tokens
   var results: [_TokenMeta] = []
 
-  /// All tokens
+  /// Pagination token
   var paginationToken: String {
     get {return _paginationToken ?? String()}
     set {_paginationToken = newValue}
