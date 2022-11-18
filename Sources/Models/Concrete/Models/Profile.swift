@@ -252,6 +252,11 @@ extension Profile {
     
     self._wrapped.settings.portfolioTracker.daily.enabled = dailyPortfolioTracker
     
+    // Refresh wrapper with new wrapped value
+    __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
+    $_weeklyPortfolioTracker?._type = .daily
+    precondition(self.$_dailyPortfolioTracker?._type == .daily)
+    
     return .replace(path: keypath.stringValue, value: dailyPortfolioTracker)
   }
   
@@ -271,8 +276,11 @@ extension Profile {
     guard self._wrapped.settings.portfolioTracker.daily.timestamp != time else { throw UpdateError.nothingToUpdate }
     
     self._wrapped.settings.portfolioTracker.daily.timestamp = time
+    
     // Refresh wrapper with new wrapped value
     __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
+    $_weeklyPortfolioTracker?._type = .daily
+    precondition(self.$_dailyPortfolioTracker?._type == .daily)
     
     return .replace(path: keypath.stringValue, value: time)
   }
@@ -288,6 +296,11 @@ extension Profile {
     let keypath: KeyPath<_Profile, Bool> = \_Profile.settings.portfolioTracker.weekly.enabled
     
     self._wrapped.settings.portfolioTracker.weekly.enabled = weeklyPortfolioTracker
+    
+    // Refresh wrapper with new wrapped value
+    __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
+    $_weeklyPortfolioTracker?._type = .weekly
+    precondition(self.$_weeklyPortfolioTracker?._type == .weekly)
     
     return .replace(path: keypath.stringValue, value: weeklyPortfolioTracker)
   }
@@ -310,8 +323,11 @@ extension Profile {
     guard self._wrapped.settings.portfolioTracker.weekly.timestamp != time else { throw UpdateError.nothingToUpdate }
     
     self._wrapped.settings.portfolioTracker.weekly.timestamp = time
+    
     // Refresh wrapper with new wrapped value
     __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
+    $_weeklyPortfolioTracker?._type = .weekly
+    precondition(self.$_weeklyPortfolioTracker?._type == .weekly)
     
     return .replace(path: keypath.stringValue, value: time)
   }
@@ -367,15 +383,21 @@ extension Profile {
   
   public var dailyTracker: Profile.TrackerTime {
     guard let tracker = self.$_dailyPortfolioTracker else {
-      return Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: _chain)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: _chain)
+      tracker._type = .daily
+      return tracker
     }
+    precondition(tracker._type == .daily)
     return tracker
   }
   
   public var weeklyTracker: Profile.TrackerTime {
     guard let tracker = self.$_weeklyPortfolioTracker else {
-      return Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: _chain)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: _chain)
+      tracker._type = .weekly
+      return tracker
     }
+    precondition(tracker._type == .weekly)
     return tracker
   }
   
