@@ -22,6 +22,7 @@ public struct Profile {
     case platformNotSet
     case nothingToUpdate
     case notFound
+    case badData
     
     public var errorDescription: String? {
       switch self {
@@ -29,6 +30,7 @@ public struct Profile {
       case .platformNotSet:   return "Update error: Platform not set"
       case .nothingToUpdate:  return "Update error: Nothing to update"
       case .notFound:         return "Update error: Not found"
+      case .badData:          return "Update error: Bad data"
       }
     }
   }
@@ -80,6 +82,8 @@ public struct Profile {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _Profile
   var _chain: MDBXChain
+  @SubProperty<_Profile._Settings._PortfolioTracker._TrackerTime, Profile.TrackerTime> var _dailyPortfolioTracker: _Profile._Settings._PortfolioTracker._TrackerTime?
+  @SubProperty<_Profile._Settings._PortfolioTracker._TrackerTime, Profile.TrackerTime> var _weeklyPortfolioTracker: _Profile._Settings._PortfolioTracker._TrackerTime?
   
   // MARK: - Lifecycle
   
@@ -92,12 +96,31 @@ public struct Profile {
         $0.timezone = ""
         $0.portfolioTracker = .with {
           $0.daily = .with {
+            var preComponents = DateComponents()
+            preComponents.hour = 12
+            preComponents.minute = 0
+            let (components, formatter) = preComponents.trackerTime(includeDay: false)
+            if let date = components.date {
+              $0.timestamp = formatter.string(from: date)
+            } else {
+              $0.timestamp = "12:00+00:00"
+            }
+            
             $0.enabled = true
-            $0.timestamp = "1T9:00+00:00"
           }
           $0.weekly = .with {
+            var preComponents = DateComponents()
+            preComponents.hour = 12
+            preComponents.minute = 0
+            preComponents.day = 1
+            let (components, formatter) = preComponents.trackerTime(includeDay: false)
+            if let date = components.date {
+              $0.timestamp = formatter.string(from: date)
+            } else {
+              $0.timestamp = "1T12:00+00:00"
+            }
+            
             $0.enabled = true
-            $0.timestamp = "9:00+00:00"
           }
         }
         $0.priceAlerts = [
@@ -113,6 +136,7 @@ public struct Profile {
         $0.notifications = NotificationFlags.all.rawValue
       }
     }
+    self.commonInit(chain: _chain)
   }
 }
 
@@ -234,28 +258,21 @@ extension Profile {
   /// Prepares `PATCH` data to set daily portfolio tracker time
   /// - Parameter dailyPortfolioTracker: time (weekday and time)
   /// - Returns: `PATCH` data
-  mutating public func set(dailyPortfolioTracker: Date) throws -> Patch {
+  mutating public func set(dailyPortfolioTracker: DateComponents) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
+    guard dailyPortfolioTracker.hour != nil, dailyPortfolioTracker.minute != nil else { throw UpdateError.badData }
     
     let keypath: KeyPath<_Profile, String> = \_Profile.settings.portfolioTracker.daily.timestamp
     
-    let locale = Locale(identifier: "en_US_POSIX")
-    var calendar = Calendar(identifier: .iso8601)
-
-    calendar.timeZone = .current
-    calendar.locale = locale
-
-    let formatter = DateFormatter()
-    formatter.locale = locale
-    formatter.calendar = calendar
-    formatter.timeZone = .current
-    formatter.dateFormat = "e'T'HH:mmZ"
-
-    let time = formatter.string(from: dailyPortfolioTracker)
+    let (components, formatter) = dailyPortfolioTracker.trackerTime(includeDay: false)
+    guard let date = components.date else { throw UpdateError.badData }
+    let time = formatter.string(from: date)
     
     guard self._wrapped.settings.portfolioTracker.daily.timestamp != time else { throw UpdateError.nothingToUpdate }
     
     self._wrapped.settings.portfolioTracker.daily.timestamp = time
+    // Refresh wrapper with new wrapped value
+    __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
     
     return .replace(path: keypath.stringValue, value: time)
   }
@@ -278,28 +295,23 @@ extension Profile {
   /// Prepares `PATCH` data to set weekly portfolio tracker time
   /// - Parameter dailyPortfolioTracker: time (time)
   /// - Returns: `PATCH` data
-  mutating public func set(weeklyPortfolioTracker: Date) throws -> Patch {
+  mutating public func set(weeklyPortfolioTracker: DateComponents) throws -> Patch {
+    precondition((weeklyPortfolioTracker.day ?? 0) >= 1)
+    precondition((weeklyPortfolioTracker.day ?? 0) <= 7)
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
+    guard let day = weeklyPortfolioTracker.day, day < 8, weeklyPortfolioTracker.hour != nil, weeklyPortfolioTracker.minute != nil else { throw UpdateError.badData }
     
     let keypath: KeyPath<_Profile, String> = \_Profile.settings.portfolioTracker.weekly.timestamp
     
-    let locale = Locale(identifier: "en_US_POSIX")
-    var calendar = Calendar(identifier: .iso8601)
-
-    calendar.timeZone = .current
-    calendar.locale = locale
-
-    let formatter = DateFormatter()
-    formatter.locale = locale
-    formatter.calendar = calendar
-    formatter.timeZone = .current
-    formatter.dateFormat = "HH:mmZ"
-
-    let time = formatter.string(from: weeklyPortfolioTracker)
+    let (components, formatter) = weeklyPortfolioTracker.trackerTime(includeDay: true)
+    guard let date = components.date else { throw UpdateError.badData }
+    let time = formatter.string(from: date)
     
     guard self._wrapped.settings.portfolioTracker.weekly.timestamp != time else { throw UpdateError.nothingToUpdate }
     
     self._wrapped.settings.portfolioTracker.weekly.timestamp = time
+    // Refresh wrapper with new wrapped value
+    __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
     
     return .replace(path: keypath.stringValue, value: time)
   }
@@ -353,6 +365,31 @@ extension Profile {
   
   public var platform: Platform { return Platform(rawValue: _wrapped.settings.platform) ?? .empty }
   
+  public var dailyTracker: Profile.TrackerTime {
+    guard let tracker = self.$_dailyPortfolioTracker else {
+      return Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: _chain)
+    }
+    return tracker
+  }
+  
+  public var weeklyTracker: Profile.TrackerTime {
+    guard let tracker = self.$_weeklyPortfolioTracker else {
+      return Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: _chain)
+    }
+    return tracker
+  }
+  
+  public var addresses: [Address] {
+    return _wrapped.settings.addresses.map({ Address($0.address) })
+  }
+  
+  public var notificationsFlags: NotificationFlags {
+    return NotificationFlags(rawValue: _wrapped.settings.notifications)
+  }
+  
+  public var pushToken: String {
+    return _wrapped.settings.pushToken
+  }
 }
 
 // MARK: - Profile + MDBXObject
@@ -375,6 +412,7 @@ extension Profile: MDBXObject {
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Profile(serializedData: data)
+    self.commonInit(chain: _chain)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -382,6 +420,7 @@ extension Profile: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Profile(jsonUTF8Data: jsonData, options: options)
+    self.commonInit(chain: _chain)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -389,6 +428,7 @@ extension Profile: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Profile(jsonString: jsonString, options: options)
+    self.commonInit(chain: _chain)
   }
 
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -416,7 +456,9 @@ extension Profile: MDBXObject {
 
 extension _Profile: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> Profile {
-    return Profile(self, chain: chain)
+    var profile = Profile(self, chain: chain)
+    profile.commonInit(chain: profile._chain)
+    return profile
   }
 }
 
@@ -435,6 +477,7 @@ extension Profile: ProtoWrapper {
   init(_ wrapped: _Profile, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
+    self.commonInit(chain: chain)
   }
 }
 
@@ -493,5 +536,27 @@ extension _Profile._Settings._Address: Encodable {
     
     try container.encode(self.address, forKey: .address)
     try container.encode(self.flags, forKey: .flags)
+  }
+}
+
+// MARK: - Profile + CommonInit
+
+extension Profile {
+  mutating func commonInit(chain: MDBXChain) {
+    // Wrappers
+    __dailyPortfolioTracker.chain = chain
+    __dailyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.daily
+    __dailyPortfolioTracker.projectedValue?._type = .daily
+    
+    __weeklyPortfolioTracker.chain = chain
+    __weeklyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.weekly
+    __weeklyPortfolioTracker.projectedValue?._type = .weekly
+    
+    self.populateDB()
+  }
+  
+  func populateDB() {
+    __dailyPortfolioTracker.database = database
+    __weeklyPortfolioTracker.database = database
   }
 }
