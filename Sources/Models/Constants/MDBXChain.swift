@@ -24,7 +24,7 @@ public enum MDBXChain {
   case eth
   case custom(Data)
   
-  var rawValue: Data {
+  public var rawValue: Data {
     switch self {
     case .invalid:          return _MDBXChain.invalid.rawValue
     case .eth:              return _MDBXChain.eth.rawValue
@@ -32,7 +32,7 @@ public enum MDBXChain {
     }
   }
   
-  init(rawValue: Data) {
+  public init(rawValue: Data) {
     let data = rawValue.setLengthLeft(MDBXKeyLength.chain)
     guard let chain = _MDBXChain(rawValue: data) else {
       self = .custom(data)
