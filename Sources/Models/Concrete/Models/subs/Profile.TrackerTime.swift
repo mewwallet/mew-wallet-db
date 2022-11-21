@@ -47,8 +47,7 @@ extension Profile.TrackerTime {
     case .weekly:
       timestamp = "2022-08-" + timestamp
     case .daily:
-      timestamp = "2022-08-1" + timestamp
-      formatter.dateFormat = "yyyy-MM-d'T'HH:mmZ"
+      timestamp = "2022-08-1T" + timestamp
     case .unknown:
       return DateComponents(calendar: calendar,
                             timeZone: timeZone,
