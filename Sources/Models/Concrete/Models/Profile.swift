@@ -38,12 +38,17 @@ public struct Profile {
   public struct AddressFlags: OptionSet {
     public let rawValue: UInt32
     
+    /// Option represent all disabled flags
+    /// mask `0b0000_0000`
+    public static let disabled                            = AddressFlags(rawValue: UInt32(_Profile._Settings._Address._AddressFlags.disabled.rawValue))
+    
     /// Option to include specific address to portfolio weekly tracker
-    /// mask: 0b00000001
-    public static let includeInWeeklyPortfolio            = AddressFlags(rawValue: 1 << 0)
+    /// mask: `0b0000_0001`
+    public static let includeInWeeklyPortfolio            = AddressFlags(rawValue: UInt32(_Profile._Settings._Address._AddressFlags.includeInWeeklyPortfolioTracker.rawValue))
+    
     /// Option to include specific address to portfolio daily tracker
-    /// mask: 0b00000010
-    public static let includeInDailyPortfolio             = AddressFlags(rawValue: 1 << 1)
+    /// mask: `0b0000_0010`
+    public static let includeInDailyPortfolio             = AddressFlags(rawValue: UInt32(_Profile._Settings._Address._AddressFlags.includeInDailyPortfolioTracker.rawValue))
     
     public init(rawValue: UInt32) {
       self.rawValue = rawValue
@@ -53,18 +58,22 @@ public struct Profile {
   public struct NotificationFlags: OptionSet {
     public let rawValue: UInt32
     
+    /// Option represent all disabled flags
+    /// mask `0b0000_0000`
+    public static let disabled                            = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.disabled.rawValue))
+    
     /// Option to enable/disable outgoing notifications
-    /// mask: 0b00000001
-    public static let outgoingTx                          = NotificationFlags(rawValue: 1 << 0)
+    /// mask: `0b0000_0001`
+    public static let outgoingTx                          = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.outgoingTx.rawValue))
     /// Option to enable/disable incoming notifications
-    /// mask: 0b00000010
-    public static let incomingTx                          = NotificationFlags(rawValue: 1 << 1)
+    /// mask: `0b0000_0010`
+    public static let incomingTx                          = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.incomingTx.rawValue))
     /// Option to enable/disable announcements notifications
-    /// mask: 0b00000100
-    public static let announcements                       = NotificationFlags(rawValue: 1 << 2)
+    /// mask: `0b0000_0100`
+    public static let announcements                       = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.announcements.rawValue))
     /// Option to enable/disable security notifications
-    /// mask: 0b00001000
-    public static let security                            = NotificationFlags(rawValue: 1 << 3)
+    /// mask: `0b0000_1000`
+    public static let security                            = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.security.rawValue))
     
     public static let all: NotificationFlags              = [.outgoingTx, .incomingTx, .announcements, .security]
     
@@ -123,6 +132,10 @@ public struct Profile {
             $0.enabled = true
           }
         }
+        /*
+         Not in use yet,
+         ~Foboz
+         
         $0.priceAlerts = [
           .with {
             $0.contractAddress = Address.primary.rawValue
@@ -130,6 +143,7 @@ public struct Profile {
             $0.type = "DISABLED"
           }
         ]
+         */
         $0.gmtOffset = 0
         $0.pushToken = ""
         $0.platform = ""
@@ -252,6 +266,11 @@ extension Profile {
     
     self._wrapped.settings.portfolioTracker.daily.enabled = dailyPortfolioTracker
     
+    // Refresh wrapper with new wrapped value
+    __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
+    $_dailyPortfolioTracker?._type = .daily
+    precondition(self.$_dailyPortfolioTracker?._type == .daily)
+    
     return .replace(path: keypath.stringValue, value: dailyPortfolioTracker)
   }
   
@@ -271,8 +290,11 @@ extension Profile {
     guard self._wrapped.settings.portfolioTracker.daily.timestamp != time else { throw UpdateError.nothingToUpdate }
     
     self._wrapped.settings.portfolioTracker.daily.timestamp = time
+    
     // Refresh wrapper with new wrapped value
     __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
+    $_dailyPortfolioTracker?._type = .daily
+    precondition(self.$_dailyPortfolioTracker?._type == .daily)
     
     return .replace(path: keypath.stringValue, value: time)
   }
@@ -288,6 +310,11 @@ extension Profile {
     let keypath: KeyPath<_Profile, Bool> = \_Profile.settings.portfolioTracker.weekly.enabled
     
     self._wrapped.settings.portfolioTracker.weekly.enabled = weeklyPortfolioTracker
+    
+    // Refresh wrapper with new wrapped value
+    __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
+    $_weeklyPortfolioTracker?._type = .weekly
+    precondition(self.$_weeklyPortfolioTracker?._type == .weekly)
     
     return .replace(path: keypath.stringValue, value: weeklyPortfolioTracker)
   }
@@ -310,8 +337,11 @@ extension Profile {
     guard self._wrapped.settings.portfolioTracker.weekly.timestamp != time else { throw UpdateError.nothingToUpdate }
     
     self._wrapped.settings.portfolioTracker.weekly.timestamp = time
+    
     // Refresh wrapper with new wrapped value
     __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
+    $_weeklyPortfolioTracker?._type = .weekly
+    precondition(self.$_weeklyPortfolioTracker?._type == .weekly)
     
     return .replace(path: keypath.stringValue, value: time)
   }
@@ -367,15 +397,21 @@ extension Profile {
   
   public var dailyTracker: Profile.TrackerTime {
     guard let tracker = self.$_dailyPortfolioTracker else {
-      return Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: _chain)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: _chain)
+      tracker._type = .daily
+      return tracker
     }
+    precondition(tracker._type == .daily)
     return tracker
   }
   
   public var weeklyTracker: Profile.TrackerTime {
     guard let tracker = self.$_weeklyPortfolioTracker else {
-      return Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: _chain)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: _chain)
+      tracker._type = .weekly
+      return tracker
     }
+    precondition(tracker._type == .weekly)
     return tracker
   }
   

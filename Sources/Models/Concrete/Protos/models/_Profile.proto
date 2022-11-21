@@ -1,57 +1,89 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 message _Profile {
+  // Represents Profile settings section
   message _Settings {
-    // Address
+    // Represents Profile associated addresses
     message _Address {
-      string address = 1;
+      // Possible flags for each address
       enum _AddressFlags {
-        DISABLED                              = 0;
-        INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER   = 1;
-        INCLUDE_IN_DAILY_PORTFOLIO_TRACKER    = 3;
+        // All disabled
+        DISABLED                                  = 0;
+        // Address must be included in weekly portfolio tracker
+        INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER       = 1;
+        // Address must be included in daily portfolio tracker
+        INCLUDE_IN_DAILY_PORTFOLIO_TRACKER        = 3;
       }
+
+      // Store address
+      string address                            = 1;
       
-      uint32 flags   = 2;
+      // Stores address's flags
+      uint32 flags                              = 2;
     }
     
-    repeated _Address addresses = 1;
-    string timezone = 2;
+    // Stores array of addresses associated with profile
+    repeated _Address addresses               = 1;
+    // Stores user's timezone name
+    string timezone                           = 2;
     
+    // Represents Portfolio tracker
     message _PortfolioTracker {
+      // Represents Portfolio tracker settings (daily/weekly)
       message _TrackerTime {
-        bool enabled = 1;
-        string timestamp = 2;
+        bool enabled                            = 1;
+        string timestamp                        = 2;
       }
       
-      _TrackerTime weekly = 1;
-      _TrackerTime daily = 2;
+      // Stores Weekly Portfolio tracker settings
+      _TrackerTime weekly                     = 1;
+      // Stores Daily Portfolio tracker settings
+      _TrackerTime daily                      = 2;
     }
     
-    _PortfolioTracker portfolio_tracker = 3;
+    // Stores Portfolio tracker settings
+    _PortfolioTracker portfolio_tracker       = 3;
     
-    message _PriceAlert {
-      string id = 1;
-      string trigger = 2;
-      string contract_address = 3;
-      string type = 4;
-    }
+    // Represents Price alerts, not in use yet
+//    message _PriceAlert {
+//      string id = 1;
+//      string trigger = 2;
+//      string contract_address = 3;
+//      string type = 4;
+//    }
+//
+//    repeated _PriceAlert price_alerts = 4;
     
-    repeated _PriceAlert price_alerts = 4;
+    // Stores user's timezone gmt offset
+    int64 gmt_offset                          = 5;
+    // Stores user's push token
+    string push_token                         = 6;
+    // Stores user's platform (iOS, Android)
+    string platform                           = 7;
     
-    int64 gmt_offset = 5;
-    string push_token = 6;
-    string platform = 7;
-    
+    // Represents notifications settings
     enum _Notifications {
-      DISABLED    = 0;
-      OUTGOING_TX = 1;
-      INCOMING_TX = 2;
-      ANNOUNCEMENTS = 4;
-      SERCURITY = 8;
+      // Disable all push notifications
+      DISABLED                                  = 0;
+      // 'outgoing transaction notification' flag
+      OUTGOING_TX                               = 1;
+      // 'incoming transaction notification' flag
+      INCOMING_TX                               = 2;
+      // 'Global announcement notification' flag
+      ANNOUNCEMENTS                             = 4;
+      // 'Security updates notification' flag
+      SECURITY                                  = 8;
     }
     
-    uint32 notifications = 8;
+    // Stores notifications settings flags
+    uint32 notifications                      = 8;
+
+    // Last updated timestamp
+    google.protobuf.Timestamp timestamp       = 100;
   }
   
+  // Stores settings object
   _Settings settings = 1;
 }

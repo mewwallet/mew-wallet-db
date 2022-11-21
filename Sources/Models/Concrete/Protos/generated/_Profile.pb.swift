@@ -25,6 +25,7 @@ struct _Profile {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// Stores settings object
   var settings: _Profile._Settings {
     get {return _settings ?? _Profile._Settings()}
     set {_settings = newValue}
@@ -36,15 +37,19 @@ struct _Profile {
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
+  /// Represents Profile settings section
   struct _Settings {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
+    /// Stores array of addresses associated with profile
     var addresses: [_Profile._Settings._Address] = []
 
+    /// Stores user's timezone name
     var timezone: String = String()
 
+    /// Stores Portfolio tracker settings
     var portfolioTracker: _Profile._Settings._PortfolioTracker {
       get {return _portfolioTracker ?? _Profile._Settings._PortfolioTracker()}
       set {_portfolioTracker = newValue}
@@ -54,25 +59,48 @@ struct _Profile {
     /// Clears the value of `portfolioTracker`. Subsequent reads from it will return its default value.
     mutating func clearPortfolioTracker() {self._portfolioTracker = nil}
 
-    var priceAlerts: [_Profile._Settings._PriceAlert] = []
-
+    /// Stores user's timezone gmt offset
     var gmtOffset: Int64 = 0
 
+    /// Stores user's push token
     var pushToken: String = String()
 
+    /// Stores user's platform (iOS, Android)
     var platform: String = String()
 
+    /// Stores notifications settings flags
     var notifications: UInt32 = 0
+
+    /// Last updated timestamp
+    var timestamp: SwiftProtobuf.Google_Protobuf_Timestamp {
+      get {return _timestamp ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+      set {_timestamp = newValue}
+    }
+    /// Returns true if `timestamp` has been explicitly set.
+    var hasTimestamp: Bool {return self._timestamp != nil}
+    /// Clears the value of `timestamp`. Subsequent reads from it will return its default value.
+    mutating func clearTimestamp() {self._timestamp = nil}
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
+    /// Represents notifications settings
     enum _Notifications: SwiftProtobuf.Enum {
       typealias RawValue = Int
+
+      /// Disable all push notifications
       case disabled // = 0
+
+      /// 'outgoing transaction notification' flag
       case outgoingTx // = 1
+
+      /// 'incoming transaction notification' flag
       case incomingTx // = 2
+
+      /// 'Global announcement notification' flag
       case announcements // = 4
-      case sercurity // = 8
+
+      /// 'Security updates notification' flag
+      case security // = 8
       case UNRECOGNIZED(Int)
 
       init() {
@@ -85,7 +113,7 @@ struct _Profile {
         case 1: self = .outgoingTx
         case 2: self = .incomingTx
         case 4: self = .announcements
-        case 8: self = .sercurity
+        case 8: self = .security
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -96,29 +124,38 @@ struct _Profile {
         case .outgoingTx: return 1
         case .incomingTx: return 2
         case .announcements: return 4
-        case .sercurity: return 8
+        case .security: return 8
         case .UNRECOGNIZED(let i): return i
         }
       }
 
     }
 
-    /// Address
+    /// Represents Profile associated addresses
     struct _Address {
       // SwiftProtobuf.Message conformance is added in an extension below. See the
       // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
       // methods supported on all messages.
 
+      /// Store address
       var address: String = String()
 
+      /// Stores address's flags
       var flags: UInt32 = 0
 
       var unknownFields = SwiftProtobuf.UnknownStorage()
 
+      /// Possible flags for each address
       enum _AddressFlags: SwiftProtobuf.Enum {
         typealias RawValue = Int
+
+        /// All disabled
         case disabled // = 0
+
+        /// Address must be included in weekly portfolio tracker
         case includeInWeeklyPortfolioTracker // = 1
+
+        /// Address must be included in daily portfolio tracker
         case includeInDailyPortfolioTracker // = 3
         case UNRECOGNIZED(Int)
 
@@ -149,11 +186,13 @@ struct _Profile {
       init() {}
     }
 
+    /// Represents Portfolio tracker
     struct _PortfolioTracker {
       // SwiftProtobuf.Message conformance is added in an extension below. See the
       // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
       // methods supported on all messages.
 
+      /// Stores Weekly Portfolio tracker settings
       var weekly: _Profile._Settings._PortfolioTracker._TrackerTime {
         get {return _weekly ?? _Profile._Settings._PortfolioTracker._TrackerTime()}
         set {_weekly = newValue}
@@ -163,6 +202,7 @@ struct _Profile {
       /// Clears the value of `weekly`. Subsequent reads from it will return its default value.
       mutating func clearWeekly() {self._weekly = nil}
 
+      /// Stores Daily Portfolio tracker settings
       var daily: _Profile._Settings._PortfolioTracker._TrackerTime {
         get {return _daily ?? _Profile._Settings._PortfolioTracker._TrackerTime()}
         set {_daily = newValue}
@@ -174,6 +214,7 @@ struct _Profile {
 
       var unknownFields = SwiftProtobuf.UnknownStorage()
 
+      /// Represents Portfolio tracker settings (daily/weekly)
       struct _TrackerTime {
         // SwiftProtobuf.Message conformance is added in an extension below. See the
         // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -194,27 +235,10 @@ struct _Profile {
       fileprivate var _daily: _Profile._Settings._PortfolioTracker._TrackerTime? = nil
     }
 
-    struct _PriceAlert {
-      // SwiftProtobuf.Message conformance is added in an extension below. See the
-      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-      // methods supported on all messages.
-
-      var id: String = String()
-
-      var trigger: String = String()
-
-      var contractAddress: String = String()
-
-      var type: String = String()
-
-      var unknownFields = SwiftProtobuf.UnknownStorage()
-
-      init() {}
-    }
-
     init() {}
 
     fileprivate var _portfolioTracker: _Profile._Settings._PortfolioTracker? = nil
+    fileprivate var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
   }
 
   init() {}
@@ -231,7 +255,7 @@ extension _Profile._Settings._Notifications: CaseIterable {
     .outgoingTx,
     .incomingTx,
     .announcements,
-    .sercurity,
+    .security,
   ]
 }
 
@@ -254,7 +278,6 @@ extension _Profile._Settings._Address: @unchecked Sendable {}
 extension _Profile._Settings._Address._AddressFlags: @unchecked Sendable {}
 extension _Profile._Settings._PortfolioTracker: @unchecked Sendable {}
 extension _Profile._Settings._PortfolioTracker._TrackerTime: @unchecked Sendable {}
-extension _Profile._Settings._PriceAlert: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -301,11 +324,11 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     1: .same(proto: "addresses"),
     2: .same(proto: "timezone"),
     3: .standard(proto: "portfolio_tracker"),
-    4: .standard(proto: "price_alerts"),
     5: .standard(proto: "gmt_offset"),
     6: .standard(proto: "push_token"),
     7: .same(proto: "platform"),
     8: .same(proto: "notifications"),
+    100: .same(proto: "timestamp"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -317,11 +340,11 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       case 1: try { try decoder.decodeRepeatedMessageField(value: &self.addresses) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.timezone) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._portfolioTracker) }()
-      case 4: try { try decoder.decodeRepeatedMessageField(value: &self.priceAlerts) }()
       case 5: try { try decoder.decodeSingularInt64Field(value: &self.gmtOffset) }()
       case 6: try { try decoder.decodeSingularStringField(value: &self.pushToken) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self.platform) }()
       case 8: try { try decoder.decodeSingularUInt32Field(value: &self.notifications) }()
+      case 100: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
       default: break
       }
     }
@@ -341,9 +364,6 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     try { if let v = self._portfolioTracker {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     } }()
-    if !self.priceAlerts.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.priceAlerts, fieldNumber: 4)
-    }
     if self.gmtOffset != 0 {
       try visitor.visitSingularInt64Field(value: self.gmtOffset, fieldNumber: 5)
     }
@@ -356,6 +376,9 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if self.notifications != 0 {
       try visitor.visitSingularUInt32Field(value: self.notifications, fieldNumber: 8)
     }
+    try { if let v = self._timestamp {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 100)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -363,11 +386,11 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if lhs.addresses != rhs.addresses {return false}
     if lhs.timezone != rhs.timezone {return false}
     if lhs._portfolioTracker != rhs._portfolioTracker {return false}
-    if lhs.priceAlerts != rhs.priceAlerts {return false}
     if lhs.gmtOffset != rhs.gmtOffset {return false}
     if lhs.pushToken != rhs.pushToken {return false}
     if lhs.platform != rhs.platform {return false}
     if lhs.notifications != rhs.notifications {return false}
+    if lhs._timestamp != rhs._timestamp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -379,7 +402,7 @@ extension _Profile._Settings._Notifications: SwiftProtobuf._ProtoNameProviding {
     1: .same(proto: "OUTGOING_TX"),
     2: .same(proto: "INCOMING_TX"),
     4: .same(proto: "ANNOUNCEMENTS"),
-    8: .same(proto: "SERCURITY"),
+    8: .same(proto: "SECURITY"),
   ]
 }
 
@@ -504,56 +527,6 @@ extension _Profile._Settings._PortfolioTracker._TrackerTime: SwiftProtobuf.Messa
   static func ==(lhs: _Profile._Settings._PortfolioTracker._TrackerTime, rhs: _Profile._Settings._PortfolioTracker._TrackerTime) -> Bool {
     if lhs.enabled != rhs.enabled {return false}
     if lhs.timestamp != rhs.timestamp {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension _Profile._Settings._PriceAlert: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _Profile._Settings.protoMessageName + "._PriceAlert"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-    2: .same(proto: "trigger"),
-    3: .standard(proto: "contract_address"),
-    4: .same(proto: "type"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.trigger) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.contractAddress) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self.type) }()
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
-    }
-    if !self.trigger.isEmpty {
-      try visitor.visitSingularStringField(value: self.trigger, fieldNumber: 2)
-    }
-    if !self.contractAddress.isEmpty {
-      try visitor.visitSingularStringField(value: self.contractAddress, fieldNumber: 3)
-    }
-    if !self.type.isEmpty {
-      try visitor.visitSingularStringField(value: self.type, fieldNumber: 4)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: _Profile._Settings._PriceAlert, rhs: _Profile._Settings._PriceAlert) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.trigger != rhs.trigger {return false}
-    if lhs.contractAddress != rhs.contractAddress {return false}
-    if lhs.type != rhs.type {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
