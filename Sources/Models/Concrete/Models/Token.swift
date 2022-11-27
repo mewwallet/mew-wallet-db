@@ -14,6 +14,10 @@ public struct Token: Equatable {
   var _wrapped: _Token
   var _chain: MDBXChain
   
+  public enum Error: LocalizedError {
+    case badValue
+  }
+  
   // MARK: - Private Properties
   
   private let _metaKey: TokenMetaKey
@@ -91,7 +95,10 @@ extension Token {
   }
   
   /// Updates amount of Token
-  public mutating func update(amount: String) {
+  public mutating func update(amount: String) throws {
+    guard amount.isHex() else {
+      throw Error.badValue
+    }
     _wrapped.amount = amount
   }
 }
