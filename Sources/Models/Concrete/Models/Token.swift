@@ -89,6 +89,11 @@ extension Token {
     account.toggleTokenIsHidden(key, locked: locked)
     return account
   }
+  
+  /// Updates amount of Token
+  public mutating func update(amount: String) {
+    _wrapped.amount = amount
+  }
 }
 
 // MARK: - Token + MDBXObject
