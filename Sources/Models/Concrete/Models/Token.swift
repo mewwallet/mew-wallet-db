@@ -10,10 +10,14 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct Token: Equatable {
+  public enum Error: LocalizedError {
+    case badValue
+  }
+
   public weak var database: WalletDB?
   var _wrapped: _Token
   var _chain: MDBXChain
-  
+
   // MARK: - Private Properties
   
   private let _metaKey: TokenMetaKey
@@ -88,6 +92,12 @@ extension Token {
     guard var account = try? account, let key = self.key as? TokenKey else { return nil }
     account.toggleTokenIsHidden(key, locked: locked)
     return account
+  }
+  
+  /// Updates amount of Token
+  public mutating func update(amount: String) throws {
+    guard amount.isHex() else { throw Error.badValue }
+    _wrapped.amount = amount
   }
 }
 
