@@ -10,14 +10,14 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct Token: Equatable {
-  public weak var database: WalletDB?
-  var _wrapped: _Token
-  var _chain: MDBXChain
-  
   public enum Error: LocalizedError {
     case badValue
   }
-  
+
+  public weak var database: WalletDB?
+  var _wrapped: _Token
+  var _chain: MDBXChain
+
   // MARK: - Private Properties
   
   private let _metaKey: TokenMetaKey
@@ -96,9 +96,7 @@ extension Token {
   
   /// Updates amount of Token
   public mutating func update(amount: String) throws {
-    guard amount.isHex() else {
-      throw Error.badValue
-    }
+    guard amount.isHex() else { throw Error.badValue }
     _wrapped.amount = amount
   }
 }
