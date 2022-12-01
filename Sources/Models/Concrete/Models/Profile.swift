@@ -344,7 +344,7 @@ extension Profile {
     precondition((weeklyPortfolioTracker.day ?? 0) >= 1)
     precondition((weeklyPortfolioTracker.day ?? 0) <= 7)
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
-    guard let day = weeklyPortfolioTracker.day, day < 8, weeklyPortfolioTracker.hour != nil, weeklyPortfolioTracker.minute != nil else { throw UpdateError.badData }
+    guard weeklyPortfolioTracker.hour != nil, weeklyPortfolioTracker.minute != nil else { throw UpdateError.badData }
     
     let keypath: KeyPath<_Profile, String> = \_Profile.settings.portfolioTracker.weekly.timestamp
     
