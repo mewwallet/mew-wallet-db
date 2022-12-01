@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message _Profile {
+  // Represents Profile settings section
+  message _Settings {
+    // Represents Profile associated addresses
+    message _Address {
+      // Possible flags for each address
+      enum _AddressFlags {
+        // All disabled
+        DISABLED                                  = 0;
+        // Address must be included in weekly portfolio tracker
+        INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER       = 1;
+        // Address must be included in daily portfolio tracker
+        INCLUDE_IN_DAILY_PORTFOLIO_TRACKER        = 3;
+      }
+
+      // Store address
+      string address                            = 1;
+      
+      // Stores address's flags
+      uint32 flags                              = 2;
+    }
+    
+    // Stores array of addresses associated with profile
+    repeated _Address addresses               = 1;
+    // Stores user's timezone name
+    string timezone                           = 2;
+    
+    // Represents Portfolio tracker
+    message _PortfolioTracker {
+      // Represents Portfolio tracker settings (daily/weekly)
+      message _TrackerTime {
+        bool enabled                            = 1;
+        string timestamp                        = 2;
+      }
+      
+      // Stores Weekly Portfolio tracker settings
+      _TrackerTime weekly                     = 1;
+      // Stores Daily Portfolio tracker settings
+      _TrackerTime daily                      = 2;
+    }
+    
+    // Stores Portfolio tracker settings
+    _PortfolioTracker portfolio_tracker       = 3;
+    
+    // Represents Price alerts, not in use yet
+//    message _PriceAlert {
+//      string id = 1;
+//      string trigger = 2;
+//      string contract_address = 3;
+//      string type = 4;
+//    }
+//
+//    repeated _PriceAlert price_alerts = 4;
+    
+    // Stores user's timezone gmt offset
+    int64 gmt_offset                          = 5;
+    // Stores user's push token
+    string push_token                         = 6;
+    // Stores user's platform (iOS, Android)
+    string platform                           = 7;
+    
+    // Represents notifications settings
+    enum _Notifications {
+      // Disable all push notifications
+      DISABLED                                  = 0;
+      // 'outgoing transaction notification' flag
+      OUTGOING_TX                               = 1;
+      // 'incoming transaction notification' flag
+      INCOMING_TX                               = 2;
+      // 'Global announcement notification' flag
+      ANNOUNCEMENTS                             = 4;
+      // 'Security updates notification' flag
+      SECURITY                                  = 8;
+    }
+    
+    // Stores notifications settings flags
+    uint32 notifications                      = 8;
+
+    // Last updated timestamp
+//    google.protobuf.Timestamp timestamp       = 100;
+  }
+
+  // Represents status of Profile
+  message _Status {
+    // Represents product and trial eligibility
+    message _Product {
+      // Stores product_id
+      string product_id                           = 1;
+      // Represents trial eligibility
+      bool trial                                  = 2;
+    }
+    // Represents array of products with trial eligibility
+    repeated _Product products                  = 1;
+
+    // Stores last updated timestamp
+    google.protobuf.Timestamp last_update       = 2;
+
+    // Represents latest active product_id
+    optional string product_id                  = 3;
+    
+    // Represents latest start date
+    optional google.protobuf.Timestamp start    = 4;
+    
+    // Represents expiration date
+    optional google.protobuf.Timestamp expiration = 5;
+
+    // Represents status of subscription
+    // Enum of TRIAL | PAID | EXPIRED | INACTIVE
+    string status                               = 6;
+
+    // Checksum
+    // if subscription is inactive (EXPIRED || INACTIVE): sha3_256(last_update + status)
+    // if subscription is active (TRIAL || PAID):         sha3_256(last_update + status + product_id + expiration)
+    string checksum                             = 7;
+  }
+  
+  // Stores settings object
+  _Settings settings                          = 1;
+
+  // Stores status object
+  _Status status                              = 2;
+}

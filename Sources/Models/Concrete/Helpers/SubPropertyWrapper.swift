@@ -27,6 +27,15 @@ final class SubProperty<Value: ProtoWrappedMessage, ProjectedValue: MDBXBackedOb
   convenience init() {
     self.init(wrappedValue: nil, chain: .invalid)
   }
+  
+  // MARK: - Refreshed
+  
+  internal func refreshProjected(wrapped: Value?) {
+    wrappedValue = wrapped
+    var projected = wrappedValue?.wrapped(chain) as? ProjectedValue
+    projected?.database = self.database
+    self.projectedValue = projected
+  }
 }
 
 extension Optional: ProtoWrappedMessage {

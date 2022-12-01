@@ -181,7 +181,6 @@ extension Account {
     }
   }
   
-  
   // MARK: - Properties
   
   // MARK: Address
