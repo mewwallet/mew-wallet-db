@@ -16,6 +16,8 @@ public enum Address: RawRepresentable, Equatable {
   case skale      // "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7"
   case stEth      // "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"
   case wBTC       // "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+  case usdc       // "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+  case matic      // "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
   case unknown(String)
   case invalid(String)
   
@@ -32,6 +34,10 @@ public enum Address: RawRepresentable, Equatable {
     self = .primary
   }
   
+  public init(_ rawValue: String) {
+    self.init(rawValue: rawValue)
+  }
+  
   public init(rawValue: String) {
     let rawValue = rawValue.stringAddHexPrefix().lowercased()
     switch rawValue {
@@ -41,6 +47,8 @@ public enum Address: RawRepresentable, Equatable {
     case "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7": self = .skale
     case "0xae7ab96520de3a18e5e111b5eaab095312d7fe84": self = .stEth
     case "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": self = .wBTC
+    case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": self = .usdc
+    case "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": self = .matic
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
     }
@@ -54,6 +62,8 @@ public enum Address: RawRepresentable, Equatable {
     case .skale:                                      return "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7"
     case .stEth:                                      return "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"
     case .wBTC:                                       return "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+    case .usdc:                                       return "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
     case .unknown(let address):                       return address
     case .invalid(let address):                       return address
     }
@@ -63,5 +73,11 @@ public enum Address: RawRepresentable, Equatable {
 extension Address: ExpressibleByStringLiteral {
   public init(stringLiteral value: StringLiteralType) {
     self.init(rawValue: value)
+  }
+}
+
+extension Address: Comparable {
+  public static func ==(lhs: Address, rhs: Address) -> Bool {
+    return lhs.rawValue.lowercased() == rhs.rawValue.lowercased()
   }
 }

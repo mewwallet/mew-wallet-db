@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "_TokenMeta.proto";
+
+message _PricesListV3Wrapper {
+  // Tokens
+  repeated _TokenMeta results             = 1;
+  
+  // Pagination token
+  optional string paginationToken         = 2;
+}
