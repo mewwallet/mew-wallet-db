@@ -23,11 +23,11 @@ extension Profile {
       
       init(_ rawValue: String) {
         switch rawValue.lowercased() {
-        case "inactive": self = .inactive
-        case "trial": self = .trial
-        case "paid": self = .paid
-        case "expired": self = .expired
-        default: self = .unknown(rawValue)
+        case "inactive":            self = .inactive
+        case "trial":               self = .trial
+        case "paid":                self = .paid
+        case "expired":             self = .expired
+        default:                    self = .unknown(rawValue)
         }
       }
       

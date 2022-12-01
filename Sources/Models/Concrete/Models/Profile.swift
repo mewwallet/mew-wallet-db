@@ -501,6 +501,7 @@ extension Profile: MDBXObject {
     let other = object as! Profile
     
     self._wrapped.settings = other._wrapped.settings
+    self._wrapped.status = other._wrapped.status
   }
 }
 
