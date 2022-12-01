@@ -35,6 +35,16 @@ public struct Profile {
     }
   }
   
+  public enum Error: LocalizedError {
+    case noStatus
+    
+    public var errorDescription: String? {
+      switch self {
+      case .noStatus:         return "Profile error: no status"
+      }
+    }
+  }
+  
   public struct AddressFlags: OptionSet {
     public let rawValue: UInt32
     
@@ -93,6 +103,7 @@ public struct Profile {
   var _chain: MDBXChain
   @SubProperty<_Profile._Settings._PortfolioTracker._TrackerTime, Profile.TrackerTime> var _dailyPortfolioTracker: _Profile._Settings._PortfolioTracker._TrackerTime?
   @SubProperty<_Profile._Settings._PortfolioTracker._TrackerTime, Profile.TrackerTime> var _weeklyPortfolioTracker: _Profile._Settings._PortfolioTracker._TrackerTime?
+  @SubProperty<_Profile._Status, Profile.Status> var _status: _Profile._Status?
   
   // MARK: - Lifecycle
   
@@ -106,27 +117,27 @@ public struct Profile {
         $0.portfolioTracker = .with {
           $0.daily = .with {
             var preComponents = DateComponents()
-            preComponents.hour = 12
+            preComponents.hour = 8
             preComponents.minute = 0
             let (components, formatter) = preComponents.trackerTime(includeDay: false)
             if let date = components.date {
               $0.timestamp = formatter.string(from: date)
             } else {
-              $0.timestamp = "12:00+00:00"
+              $0.timestamp = "08:00+00:00"
             }
             
             $0.enabled = true
           }
           $0.weekly = .with {
             var preComponents = DateComponents()
-            preComponents.hour = 12
+            preComponents.hour = 8
             preComponents.minute = 0
             preComponents.day = 1
             let (components, formatter) = preComponents.trackerTime(includeDay: false)
             if let date = components.date {
               $0.timestamp = formatter.string(from: date)
             } else {
-              $0.timestamp = "1T12:00+00:00"
+              $0.timestamp = "1T08:00+00:00"
             }
             
             $0.enabled = true
@@ -148,6 +159,11 @@ public struct Profile {
         $0.pushToken = ""
         $0.platform = ""
         $0.notifications = NotificationFlags.all.rawValue
+      }
+      $0.status = .with {
+        $0.status = Profile.Status.Status.inactive.rawValue
+        $0.lastUpdate = .init()
+        $0.checksum = ($0.lastUpdate.textFormatString() + $0.status).sha256.hexString
       }
     }
     self.commonInit(chain: _chain)
@@ -211,10 +227,12 @@ extension Profile {
   /// Prepares `PATCH` data to update platform
   /// - Parameter platform: platform to be set
   /// - Returns: `PATCH` data
-  mutating public func set(platform: Platform) throws -> Patch {
+  mutating public func set(platform: Platform, force: Bool) throws -> Patch {
     let keypath: KeyPath<_Profile, String> = \_Profile.settings.platform
     
-    guard self._wrapped.settings.platform != platform.rawValue else { throw UpdateError.nothingToUpdate }
+    if !force {
+      guard self._wrapped.settings.platform != platform.rawValue else { throw UpdateError.nothingToUpdate }
+    }
     
     self._wrapped.settings.platform = platform.rawValue
     
@@ -415,16 +433,14 @@ extension Profile {
     return tracker
   }
   
-  public var addresses: [Address] {
-    return _wrapped.settings.addresses.map({ Address($0.address) })
-  }
-  
-  public var notificationsFlags: NotificationFlags {
-    return NotificationFlags(rawValue: _wrapped.settings.notifications)
-  }
-  
-  public var pushToken: String {
-    return _wrapped.settings.pushToken
+  public var addresses: [Address] { _wrapped.settings.addresses.map({ Address($0.address) }) }
+  public var notificationsFlags: NotificationFlags { NotificationFlags(rawValue: _wrapped.settings.notifications) }
+  public var pushToken: String { _wrapped.settings.pushToken }
+  public var status: Profile.Status {
+    get throws {
+      guard let status = self.$_status else { throw Error.noStatus }
+      return status
+    }
   }
 }
 
@@ -588,11 +604,15 @@ extension Profile {
     __weeklyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.weekly
     __weeklyPortfolioTracker.projectedValue?._type = .weekly
     
+    __status.chain = chain
+    __status.wrappedValue = _wrapped.status
+    
     self.populateDB()
   }
   
   func populateDB() {
     __dailyPortfolioTracker.database = database
     __weeklyPortfolioTracker.database = database
+    __status.database = database
   }
 }

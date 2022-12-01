@@ -27,13 +27,23 @@ struct _Profile {
 
   /// Stores settings object
   var settings: _Profile._Settings {
-    get {return _settings ?? _Profile._Settings()}
-    set {_settings = newValue}
+    get {return _storage._settings ?? _Profile._Settings()}
+    set {_uniqueStorage()._settings = newValue}
   }
   /// Returns true if `settings` has been explicitly set.
-  var hasSettings: Bool {return self._settings != nil}
+  var hasSettings: Bool {return _storage._settings != nil}
   /// Clears the value of `settings`. Subsequent reads from it will return its default value.
-  mutating func clearSettings() {self._settings = nil}
+  mutating func clearSettings() {_uniqueStorage()._settings = nil}
+
+  /// Stores status object
+  var status: _Profile._Status {
+    get {return _storage._status ?? _Profile._Status()}
+    set {_uniqueStorage()._status = newValue}
+  }
+  /// Returns true if `status` has been explicitly set.
+  var hasStatus: Bool {return _storage._status != nil}
+  /// Clears the value of `status`. Subsequent reads from it will return its default value.
+  mutating func clearStatus() {_uniqueStorage()._status = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -70,16 +80,6 @@ struct _Profile {
 
     /// Stores notifications settings flags
     var notifications: UInt32 = 0
-
-    /// Last updated timestamp
-    var timestamp: SwiftProtobuf.Google_Protobuf_Timestamp {
-      get {return _timestamp ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
-      set {_timestamp = newValue}
-    }
-    /// Returns true if `timestamp` has been explicitly set.
-    var hasTimestamp: Bool {return self._timestamp != nil}
-    /// Clears the value of `timestamp`. Subsequent reads from it will return its default value.
-    mutating func clearTimestamp() {self._timestamp = nil}
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -238,12 +238,96 @@ struct _Profile {
     init() {}
 
     fileprivate var _portfolioTracker: _Profile._Settings._PortfolioTracker? = nil
-    fileprivate var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+  }
+
+  /// Represents status of Profile
+  struct _Status {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    /// Represents array of products with trial eligibility
+    var products: [_Profile._Status._Product] = []
+
+    /// Stores last updated timestamp
+    var lastUpdate: SwiftProtobuf.Google_Protobuf_Timestamp {
+      get {return _lastUpdate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+      set {_lastUpdate = newValue}
+    }
+    /// Returns true if `lastUpdate` has been explicitly set.
+    var hasLastUpdate: Bool {return self._lastUpdate != nil}
+    /// Clears the value of `lastUpdate`. Subsequent reads from it will return its default value.
+    mutating func clearLastUpdate() {self._lastUpdate = nil}
+
+    /// Represents latest active product_id
+    var productID: String {
+      get {return _productID ?? String()}
+      set {_productID = newValue}
+    }
+    /// Returns true if `productID` has been explicitly set.
+    var hasProductID: Bool {return self._productID != nil}
+    /// Clears the value of `productID`. Subsequent reads from it will return its default value.
+    mutating func clearProductID() {self._productID = nil}
+
+    /// Represents latest start date
+    var start: SwiftProtobuf.Google_Protobuf_Timestamp {
+      get {return _start ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+      set {_start = newValue}
+    }
+    /// Returns true if `start` has been explicitly set.
+    var hasStart: Bool {return self._start != nil}
+    /// Clears the value of `start`. Subsequent reads from it will return its default value.
+    mutating func clearStart() {self._start = nil}
+
+    /// Represents expiration date
+    var expiration: SwiftProtobuf.Google_Protobuf_Timestamp {
+      get {return _expiration ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+      set {_expiration = newValue}
+    }
+    /// Returns true if `expiration` has been explicitly set.
+    var hasExpiration: Bool {return self._expiration != nil}
+    /// Clears the value of `expiration`. Subsequent reads from it will return its default value.
+    mutating func clearExpiration() {self._expiration = nil}
+
+    /// Represents status of subscription
+    /// Enum of TRIAL | PAID | EXPIRED | INACTIVE
+    var status: String = String()
+
+    /// Checksum
+    /// if subscription is inactive (EXPIRED || INACTIVE): sha3_256(last_update + status)
+    /// if subscription is active (TRIAL || PAID):         sha3_256(last_update + status + product_id + expiration)
+    var checksum: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    /// Represents product and trial eligibility
+    struct _Product {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      /// Stores product_id
+      var productID: String = String()
+
+      /// Represents trial eligibility
+      var trial: Bool = false
+
+      var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      init() {}
+    }
+
+    init() {}
+
+    fileprivate var _lastUpdate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    fileprivate var _productID: String? = nil
+    fileprivate var _start: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    fileprivate var _expiration: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
   }
 
   init() {}
 
-  fileprivate var _settings: _Profile._Settings? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 #if swift(>=4.2)
@@ -278,6 +362,8 @@ extension _Profile._Settings._Address: @unchecked Sendable {}
 extension _Profile._Settings._Address._AddressFlags: @unchecked Sendable {}
 extension _Profile._Settings._PortfolioTracker: @unchecked Sendable {}
 extension _Profile._Settings._PortfolioTracker._TrackerTime: @unchecked Sendable {}
+extension _Profile._Status: @unchecked Sendable {}
+extension _Profile._Status._Product: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -286,33 +372,73 @@ extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   static let protoMessageName: String = "_Profile"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "settings"),
+    2: .same(proto: "status"),
   ]
 
+  fileprivate class _StorageClass {
+    var _settings: _Profile._Settings? = nil
+    var _status: _Profile._Status? = nil
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _settings = source._settings
+      _status = source._status
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._settings) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._settings) }()
+        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._status) }()
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._settings {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._settings {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._status {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      } }()
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _Profile, rhs: _Profile) -> Bool {
-    if lhs._settings != rhs._settings {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._settings != rhs_storage._settings {return false}
+        if _storage._status != rhs_storage._status {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -328,7 +454,6 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     6: .standard(proto: "push_token"),
     7: .same(proto: "platform"),
     8: .same(proto: "notifications"),
-    100: .same(proto: "timestamp"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -344,7 +469,6 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       case 6: try { try decoder.decodeSingularStringField(value: &self.pushToken) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self.platform) }()
       case 8: try { try decoder.decodeSingularUInt32Field(value: &self.notifications) }()
-      case 100: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
       default: break
       }
     }
@@ -376,9 +500,6 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if self.notifications != 0 {
       try visitor.visitSingularUInt32Field(value: self.notifications, fieldNumber: 8)
     }
-    try { if let v = self._timestamp {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 100)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -390,7 +511,6 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if lhs.pushToken != rhs.pushToken {return false}
     if lhs.platform != rhs.platform {return false}
     if lhs.notifications != rhs.notifications {return false}
-    if lhs._timestamp != rhs._timestamp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -527,6 +647,116 @@ extension _Profile._Settings._PortfolioTracker._TrackerTime: SwiftProtobuf.Messa
   static func ==(lhs: _Profile._Settings._PortfolioTracker._TrackerTime, rhs: _Profile._Settings._PortfolioTracker._TrackerTime) -> Bool {
     if lhs.enabled != rhs.enabled {return false}
     if lhs.timestamp != rhs.timestamp {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension _Profile._Status: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _Profile.protoMessageName + "._Status"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "products"),
+    2: .standard(proto: "last_update"),
+    3: .standard(proto: "product_id"),
+    4: .same(proto: "start"),
+    5: .same(proto: "expiration"),
+    6: .same(proto: "status"),
+    7: .same(proto: "checksum"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.products) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._lastUpdate) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._productID) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._start) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._expiration) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self.status) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.checksum) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.products.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.products, fieldNumber: 1)
+    }
+    try { if let v = self._lastUpdate {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._productID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._start {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._expiration {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
+    if !self.status.isEmpty {
+      try visitor.visitSingularStringField(value: self.status, fieldNumber: 6)
+    }
+    if !self.checksum.isEmpty {
+      try visitor.visitSingularStringField(value: self.checksum, fieldNumber: 7)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: _Profile._Status, rhs: _Profile._Status) -> Bool {
+    if lhs.products != rhs.products {return false}
+    if lhs._lastUpdate != rhs._lastUpdate {return false}
+    if lhs._productID != rhs._productID {return false}
+    if lhs._start != rhs._start {return false}
+    if lhs._expiration != rhs._expiration {return false}
+    if lhs.status != rhs.status {return false}
+    if lhs.checksum != rhs.checksum {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension _Profile._Status._Product: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _Profile._Status.protoMessageName + "._Product"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "product_id"),
+    2: .same(proto: "trial"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.productID) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.trial) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.productID.isEmpty {
+      try visitor.visitSingularStringField(value: self.productID, fieldNumber: 1)
+    }
+    if self.trial != false {
+      try visitor.visitSingularBoolField(value: self.trial, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: _Profile._Status._Product, rhs: _Profile._Status._Product) -> Bool {
+    if lhs.productID != rhs.productID {return false}
+    if lhs.trial != rhs.trial {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

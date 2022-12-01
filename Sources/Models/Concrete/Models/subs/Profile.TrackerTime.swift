@@ -54,7 +54,7 @@ extension Profile.TrackerTime {
                             year: 2022,
                             month: 8,
                             day: 1,
-                            hour: 12,
+                            hour: 8,
                             minute: 0)
     }
     
@@ -64,7 +64,7 @@ extension Profile.TrackerTime {
                             year: 2022,
                             month: 8,
                             day: 1,
-                            hour: 12,
+                            hour: 8,
                             minute: 0)
     }
     

@@ -81,9 +81,46 @@ message _Profile {
     uint32 notifications                      = 8;
 
     // Last updated timestamp
-    google.protobuf.Timestamp timestamp       = 100;
+//    google.protobuf.Timestamp timestamp       = 100;
+  }
+
+  // Represents status of Profile
+  message _Status {
+    // Represents product and trial eligibility
+    message _Product {
+      // Stores product_id
+      string product_id                           = 1;
+      // Represents trial eligibility
+      bool trial                                  = 2;
+    }
+    // Represents array of products with trial eligibility
+    repeated _Product products                  = 1;
+
+    // Stores last updated timestamp
+    google.protobuf.Timestamp last_update       = 2;
+
+    // Represents latest active product_id
+    optional string product_id                  = 3;
+    
+    // Represents latest start date
+    optional google.protobuf.Timestamp start    = 4;
+    
+    // Represents expiration date
+    optional google.protobuf.Timestamp expiration = 5;
+
+    // Represents status of subscription
+    // Enum of TRIAL | PAID | EXPIRED | INACTIVE
+    string status                               = 6;
+
+    // Checksum
+    // if subscription is inactive (EXPIRED || INACTIVE): sha3_256(last_update + status)
+    // if subscription is active (TRIAL || PAID):         sha3_256(last_update + status + product_id + expiration)
+    string checksum                             = 7;
   }
   
   // Stores settings object
-  _Settings settings = 1;
+  _Settings settings                          = 1;
+
+  // Stores status object
+  _Status status                              = 2;
 }
