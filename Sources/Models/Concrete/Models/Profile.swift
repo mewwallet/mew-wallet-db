@@ -133,7 +133,7 @@ public struct Profile {
             preComponents.hour = 8
             preComponents.minute = 0
             preComponents.day = 1
-            let (components, formatter) = preComponents.trackerTime(includeDay: false)
+            let (components, formatter) = preComponents.trackerTime(includeDay: true)
             if let date = components.date {
               $0.timestamp = formatter.string(from: date)
             } else {
@@ -295,7 +295,7 @@ extension Profile {
   /// Prepares `PATCH` data to set daily portfolio tracker time
   /// - Parameter dailyPortfolioTracker: time (weekday and time)
   /// - Returns: `PATCH` data
-  mutating public func set(dailyPortfolioTracker: DateComponents) throws -> Patch {
+  mutating public func set(dailyPortfolioTracker: DateComponents, force: Bool = false) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
     guard dailyPortfolioTracker.hour != nil, dailyPortfolioTracker.minute != nil else { throw UpdateError.badData }
     
@@ -305,7 +305,9 @@ extension Profile {
     guard let date = components.date else { throw UpdateError.badData }
     let time = formatter.string(from: date)
     
-    guard self._wrapped.settings.portfolioTracker.daily.timestamp != time else { throw UpdateError.nothingToUpdate }
+    if !force {
+      guard self._wrapped.settings.portfolioTracker.daily.timestamp != time else { throw UpdateError.nothingToUpdate }
+    }
     
     self._wrapped.settings.portfolioTracker.daily.timestamp = time
     
@@ -340,7 +342,7 @@ extension Profile {
   /// Prepares `PATCH` data to set weekly portfolio tracker time
   /// - Parameter dailyPortfolioTracker: time (time)
   /// - Returns: `PATCH` data
-  mutating public func set(weeklyPortfolioTracker: DateComponents) throws -> Patch {
+  mutating public func set(weeklyPortfolioTracker: DateComponents, force: Bool = false) throws -> Patch {
     precondition((weeklyPortfolioTracker.day ?? 0) >= 1)
     precondition((weeklyPortfolioTracker.day ?? 0) <= 7)
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
@@ -352,7 +354,9 @@ extension Profile {
     guard let date = components.date else { throw UpdateError.badData }
     let time = formatter.string(from: date)
     
-    guard self._wrapped.settings.portfolioTracker.weekly.timestamp != time else { throw UpdateError.nothingToUpdate }
+    if !force {
+      guard self._wrapped.settings.portfolioTracker.weekly.timestamp != time else { throw UpdateError.nothingToUpdate }
+    }
     
     self._wrapped.settings.portfolioTracker.weekly.timestamp = time
     
