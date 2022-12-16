@@ -100,8 +100,8 @@ public final class TransferKey: MDBXKey {
 
 extension TransferKey {
   public static func range(chain: MDBXChain, address: Address, limit: UInt? = nil) -> MDBXKeyRange {
-    let start = TransferKey(chain: .eth, address: address, lowerRange: true)
-    let end = TransferKey(chain: .eth, address: address, lowerRange: false)
+    let start = TransferKey(chain: chain, address: address, lowerRange: true)
+    let end = TransferKey(chain: chain, address: address, lowerRange: false)
     return MDBXKeyRange(start: start, end: end, limit: limit)
   }
 }

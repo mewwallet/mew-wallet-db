@@ -41,13 +41,13 @@ extension TokenMeta {
   public var dexItem: DexItem {
     get throws {
       let key = DexItemKey(chain: _chain, contractAddress: self.contract_address)
-      return try _dexItem.getData(key: key, policy: .cacheOrLoad, database: self.database)
+      return try _dexItem.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public func token(of account: Address) throws -> Token {
     let key = TokenKey(chain: _chain, address: account, contractAddress: contract_address)
-    return try _token.getData(key: key, policy: .ignoreCache, database: self.database)
+    return try _token.getData(key: key, policy: .ignoreCache(chain: _chain), database: self.database)
   }
   
   // MARK: - Properties

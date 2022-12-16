@@ -55,7 +55,7 @@ extension HistoryPurchase {
   public var account: Account {
     get throws {
       let address = Address(rawValue: _wrapped.address)
-      return try _account.getData(key: AccountKey(chain: _chain, address: address), policy: .cacheOrLoad, database: self.database)
+      return try _account.getData(key: AccountKey(address: address), policy: .cacheOrLoad(chain: .universal), database: self.database)
     }
   }
 
@@ -67,7 +67,7 @@ extension HistoryPurchase {
       } else {
         contractAddress = .primary
       }
-      return try _meta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, database: self.database)
+      return try _meta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   

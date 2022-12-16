@@ -9,6 +9,7 @@ import Foundation
 
 public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
   private var _data: [T]?
+  private var _chain: MDBXChain = .invalid
   private let _table: MDBXTableName
   private let _queue = DispatchQueue(label: "db.relationship.queue")
   
@@ -16,54 +17,54 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     _table = table
   }
   
-  @available(*, deprecated, message: "Use getRelationship(_:policy:database)")
-  func getRangedRelationship(startKey: K, endKey: K, policy: RelationshipLoadPolicy = .cacheOrLoad, order: MDBXReadOrder, database: WalletDB?) throws -> [T] {
-    guard let database = database else {
-      return _data ?? []
-    }
-    
-    if policy == .ignoreCache || _data == nil {
-      let data: [T] = try database.fetch(range: .with(start: startKey, end: endKey), from: _table, order: order)
-      _queue.sync {
-        _data = data
-      }
-    }
-    return _data ?? []
-  }
-  
   // MARK: - Load
   
-  func getRelationship(_ range: MDBXKeyRange, policy: RelationshipLoadPolicy = .cacheOrLoad, order: MDBXReadOrder, database: WalletDB?) throws -> [T] {
+  func getRelationship(_ range: MDBXKeyRange, policy: RelationshipLoadPolicy, order: MDBXReadOrder, database: WalletDB?) throws -> [T] {
     guard let database = database else {
       return _data ?? []
     }
     
-    if policy == .ignoreCache || _data == nil {
+    switch policy {
+    case .cacheOrLoad(let chain):
+      if let _data, chain == _chain {
+        return _data
+      }
+      fallthrough
+    case .ignoreCache(let chain):
       let data: [T] = try database.fetch(range: range, from: _table, order: order)
       _queue.sync {
         _data = data
+        _chain = chain
       }
+      return data
     }
-    return _data ?? []
   }
   
-  func getRelationship(_ keys: [MDBXKey], policy: RelationshipLoadPolicy = .cacheOrLoad, database: WalletDB?) throws -> [T] {
+  func getRelationship(_ keys: [MDBXKey], policy: RelationshipLoadPolicy, database: WalletDB?) throws -> [T] {
     guard let database = database else {
       return _data ?? []
     }
     
-    if policy == .ignoreCache || _data == nil {
+    switch policy {
+    case .cacheOrLoad(let chain):
+      if let _data, chain == _chain {
+        return _data
+      }
+      fallthrough
+    case .ignoreCache(let chain):
       let data: [T] = try database.fetch(keys: keys, from: _table)
       _queue.sync {
         _data = data
+        _chain = chain
       }
+      return data
     }
-    return _data ?? []
   }
   
-  func updateData(_ data: [T]) {
+  func updateData(_ data: [T], chain: MDBXChain) {
     _queue.sync {
       _data = data
+      _chain = chain
     }
   }
 }

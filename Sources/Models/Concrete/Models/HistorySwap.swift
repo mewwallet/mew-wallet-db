@@ -88,21 +88,21 @@ extension HistorySwap {
   public var account: Account {
     get throws {
       let address = Address(rawValue: _wrapped.address)
-      return try _account.getData(key: AccountKey(chain: _chain, address: address), policy: .cacheOrLoad, database: self.database)
+      return try _account.getData(key: AccountKey(address: address), policy: .cacheOrLoad(chain: .universal), database: self.database)
     }
   }
 
   public var fromMeta: TokenMeta {
     get throws {
       let contractAddress = Address(rawValue: _wrapped.fromToken)
-      return try _fromMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, database: self.database)
+      return try _fromMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public var toMeta: TokenMeta {
     get throws {
       let contractAddress = Address(rawValue: _wrapped.toToken)
-      return try _toMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, database: self.database)
+      return try _toMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   

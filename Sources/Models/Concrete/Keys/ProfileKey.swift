@@ -13,16 +13,13 @@ public final class ProfileKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
+  public var chain: MDBXChain { .universal }
   public var profileID: String { return self._profileID }
   public var deviceID: String { return self._deviceID }
   
   // MARK: - Private
   
   private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  private lazy var _chain: Data = {
-    return key[_chainRange]
-  }()
   
   private lazy var _profileIDRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.chain }()
   private lazy var _profileID: String = {
@@ -36,8 +33,8 @@ public final class ProfileKey: MDBXKey {
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, profileID: String, deviceID: String) {
-    let chainPart     = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+  public init(profileID: String, deviceID: String) {
+    let chainPart     = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let profileIDPart = profileID.sha256.setLengthLeft(MDBXKeyLength.hash)
     let deviceIDPart  = deviceID.sha256.setLengthLeft(MDBXKeyLength.hash)
     

@@ -68,8 +68,8 @@ public final class HistoryPurchaseKey: MDBXKey {
 
 extension HistoryPurchaseKey {
   public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
-    let start = HistoryPurchaseKey(chain: .eth, address: address, lowerRange: true)
-    let end = HistoryPurchaseKey(chain: .eth, address: address, lowerRange: false)
+    let start = HistoryPurchaseKey(chain: chain, address: address, lowerRange: true)
+    let end = HistoryPurchaseKey(chain: chain, address: address, lowerRange: false)
     return MDBXKeyRange(start: start, end: end, limit: nil)
   }
 }

@@ -94,34 +94,34 @@ extension Transfer {
   public var meta: TokenMeta {
     get throws {
       let contractAddress = Address(rawValue: _wrapped.contractAddress)
-      return try _meta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, database: self.database)
+      return try _meta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public var primary: TokenMeta {
     get throws {
-      return try _primaryMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: .primary), policy: .cacheOrLoad, database: self.database)
+      return try _primaryMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: .primary), policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public var from: Account {
     get throws {
       let address = Address(rawValue: _wrapped.from)
-      return try _from.getData(key: AccountKey(chain: _chain, address: address), policy: .cacheOrLoad, database: self.database)
+      return try _from.getData(key: AccountKey(address: address), policy: .cacheOrLoad(chain: .universal), database: self.database)
     }
   }
   
   public var to: Account {
     get throws {
       let address = Address(rawValue: _wrapped.to)
-      return try _to.getData(key: AccountKey(chain: _chain, address: address), policy: .cacheOrLoad, database: self.database)
+      return try _to.getData(key: AccountKey(address: address), policy: .cacheOrLoad(chain: .universal), database: self.database)
     }
   }
   
   public var owner: Account {
     get throws {
       let address = Address(rawValue: _wrapped.address)
-      return try _owner.getData(key: AccountKey(chain: _chain, address: address), policy: .cacheOrLoad, database: self.database)
+      return try _owner.getData(key: AccountKey(address: address), policy: .cacheOrLoad(chain: .universal), database: self.database)
     }
   }
   

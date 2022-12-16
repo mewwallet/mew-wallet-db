@@ -45,21 +45,21 @@ extension Token {
   
   public var meta: TokenMeta {
     get throws {
-      return try _meta.getData(key: self._metaKey, policy: .cacheOrLoad, database: self.database)
+      return try _meta.getData(key: self._metaKey, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public var account: Account? {
     get throws {
-      let key = AccountKey(chain: _chain, address: .unknown(_wrapped.address))
-      return try _account.getData(key: key, policy: .ignoreCache, database: self.database)
+      let key = AccountKey(address: .unknown(_wrapped.address))
+      return try _account.getData(key: key, policy: .ignoreCache(chain: .universal), database: self.database)
     }
   }
   
   public var dexItem: DexItem {
     get throws {
       let key = DexItemKey(chain: _chain, contractAddress: self.contract_address)
-      return try _dexItem.getData(key: key, policy: .cacheOrLoad, database: self.database)
+      return try _dexItem.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   

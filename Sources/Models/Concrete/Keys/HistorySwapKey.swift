@@ -44,9 +44,18 @@ public final class HistorySwapKey: MDBXKey {
     self.key = chainPart + addressPart + hashPart
   }
   
-  public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
+  public init(chain: MDBXChain, address: Address?, lowerRange: Bool) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart: Data
+    if let address {
+      addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    } else {
+      if lowerRange {
+        addressPart         = Data().setLengthLeft(MDBXKeyLength.address)
+      } else {
+        addressPart         = Data(repeating: 0xFF, count: MDBXKeyLength.address)
+      }
+    }
     let hashPart: Data
     if lowerRange {
       hashPart              = Data().setLengthLeft(MDBXKeyLength.hash)
@@ -65,9 +74,9 @@ public final class HistorySwapKey: MDBXKey {
 // MARK: - HistorySwapKey + Range
 
 extension HistorySwapKey {
-  public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
-    let start = HistorySwapKey(chain: .eth, address: address, lowerRange: true)
-    let end = HistorySwapKey(chain: .eth, address: address, lowerRange: false)
+  public static func range(chain: MDBXChain, address: Address? = nil) -> MDBXKeyRange {
+    let start = HistorySwapKey(chain: chain, address: address, lowerRange: true)
+    let end = HistorySwapKey(chain: chain, address: address, lowerRange: false)
     return MDBXKeyRange(start: start, end: end, limit: nil)
   }
 }

@@ -36,7 +36,16 @@ public enum MDBXChain: CaseIterable {
     .zksync_v2_testnet
   ]
   
+  // MARK: - MDBXChain + Supported
+
+  public static var supported: [MDBXChain] = [
+    .eth,
+    .polygon_mainnet
+  ]
+  
   case invalid
+  /// Convenient `MDBXChain` == `.eth`
+  case universal
   case eth
   case polygon_mainnet
   case polygon_mumbai
@@ -47,6 +56,7 @@ public enum MDBXChain: CaseIterable {
   public var rawValue: Data {
     switch self {
     case .invalid:            return _MDBXChain.invalid.rawValue
+    case .universal:          return _MDBXChain.eth.rawValue
     case .eth:                return _MDBXChain.eth.rawValue
     case .polygon_mainnet:    return _MDBXChain.polygon_mainnet.rawValue
     case .polygon_mumbai:     return _MDBXChain.polygon_mumbai.rawValue
