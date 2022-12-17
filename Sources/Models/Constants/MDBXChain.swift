@@ -75,6 +75,14 @@ public enum MDBXChain: CaseIterable {
     self = chain.chain
   }
   
+  public init(rawValue: String) {
+    switch rawValue.uppercased() {
+    case "ETH":               self = .eth
+    case "MATIC":             self = .polygon_mainnet
+    default:                  self = .eth
+    }
+  }
+  
   public var name: String {
     switch self {
     case .eth:                return "Ethereum"

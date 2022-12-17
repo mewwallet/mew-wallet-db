@@ -44,6 +44,7 @@ public struct HistoryPurchase {
   // MARK: - Private Properties
   private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
   private let _account: MDBXPointer<AccountKey, Account> = .init(.account)
+  @SubProperty<_ChainedContractAddress, ChainedContractAddress> private var _crypto_currency: _ChainedContractAddress?
 }
 
 // MARK: - HistoryPurchase + Properties
@@ -61,13 +62,13 @@ extension HistoryPurchase {
 
   public var meta: TokenMeta {
     get throws {
-      let contractAddress: Address
-      if _wrapped.hasCryptoCurrency {
-        contractAddress = Address(rawValue: _wrapped.cryptoCurrency.contractAddress)
-      } else {
-        contractAddress = .primary
+      guard _wrapped.hasCryptoCurrency, let crypto_currency = $_crypto_currency else {
+        return try _meta.getData(key: TokenMetaKey(chain: .eth, contractAddress: .primary), policy: .cacheOrLoad(chain: .eth), database: self.database)
       }
-      return try _meta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad(chain: _chain), database: self.database)
+      
+      let chain = crypto_currency.chain
+      let address = crypto_currency.address
+      return try _meta.getData(key: TokenMetaKey(chain: chain, contractAddress: address), policy: .cacheOrLoad(chain: chain), database: self.database)
     }
   }
   
@@ -103,42 +104,45 @@ extension HistoryPurchase: MDBXObject {
   }
   
   public var key: MDBXKey {
-    return HistoryPurchaseKey(chain: _chain, account: .unknown(_wrapped.address), transactionID: _wrapped.transactionID)
+    return HistoryPurchaseKey(account: .unknown(_wrapped.address), transactionID: _wrapped.transactionID)
   }
   
   public var alternateKey: MDBXKey? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _HistoryPurchase(serializedData: data)
+    self.commonInit(chain: .universal)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _HistoryPurchase(jsonUTF8Data: jsonData, options: options)
+    self.commonInit(chain: .universal)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _HistoryPurchase(jsonString: jsonString, options: options)
+    self.commonInit(chain: .universal)
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _HistoryPurchase.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({ $0.wrapped(.universal) })
   }
   
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _HistoryPurchase.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({ $0.wrapped(.universal) })
   }
   
   mutating public func merge(with object: MDBXObject) {
@@ -165,7 +169,9 @@ extension HistoryPurchase: MDBXObject {
 
 extension _HistoryPurchase: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> HistoryPurchase {
-    return HistoryPurchase(self, chain: chain)
+    var purchase = HistoryPurchase(self, chain: .universal)
+    purchase.commonInit(chain: .universal)
+    return purchase
   }
 }
 
@@ -189,8 +195,9 @@ extension HistoryPurchase: Identifiable {
 
 extension HistoryPurchase: ProtoWrapper {
   init(_ wrapped: _HistoryPurchase, chain: MDBXChain) {
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = wrapped
+    self.commonInit(chain: .universal)
   }
 }
 
@@ -228,5 +235,20 @@ extension HistoryPurchase: Hashable {
     if _wrapped.hasOrderDetails {
       hasher.combine(_wrapped.orderDetails)
     }
+  }
+}
+
+// MARK: - HistoryPurchase + CommonInit
+
+extension HistoryPurchase {
+  mutating func commonInit(chain: MDBXChain) {
+    // Wrappers
+    __crypto_currency.chain = .universal
+    __crypto_currency.wrappedValue = _wrapped.cryptoCurrency
+    self.populateDB()
+  }
+
+  func populateDB() {
+    __crypto_currency.database = database
   }
 }

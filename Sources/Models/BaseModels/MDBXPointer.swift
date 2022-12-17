@@ -16,8 +16,7 @@ enum RelationshipLoadPolicy {
 // TODO: Re-do to @propertyWrapper when "Property wrappers currently cannot define an 'async' or 'throws' accessor" will be fixed
 
 public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
-  private var _data: T?
-  private var _chain: MDBXChain = .invalid
+  private var _data: (chain: MDBXChain, data: T)?
   private let _table: MDBXTableName
   private let _queue = DispatchQueue(label: "db.pointer.queue")
   
@@ -27,32 +26,28 @@ public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
   
   func getData(key: K, policy: RelationshipLoadPolicy, database: WalletDB?) throws -> T {
     guard let database = database else {
-      guard let data = _data else {
-        throw MDBXError.notFound
-      }
-      return data
+      guard let _data else { throw MDBXError.notFound }
+      return _data.data
     }
     switch policy {
     case .cacheOrLoad(let chain):
-      if let _data, chain == _chain {
-        return _data
+      if let _data, _data.chain == chain {
+        return _data.data
       }
       fallthrough
     case .ignoreCache(let chain):
       let data: T = try database.read(key: key, table: _table)
       _queue.sync {
-        _data = data
-        _data?.database = database
-        _chain = chain
+        _data = (chain, data)
+        _data?.data.database = database
       }
       return data
     }
   }
     
-  func updateData(_ data: T?, chain: MDBXChain) {
+  func updateData(_ data: T, chain: MDBXChain) {
     _queue.sync {
-      _data = data
-      _chain = chain
+      _data = (chain, data)
     }
   }
 }
