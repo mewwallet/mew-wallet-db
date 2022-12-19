@@ -15,7 +15,9 @@ extension DateComponents {
   /// - Returns: prepared tuple of `DateComponents` and `DateFormatter` for components
   func trackerTime(includeDay: Bool) -> (DateComponents, DateFormatter) {
     let locale = Locale(identifier: "en_US_POSIX")
-    let timeZone: TimeZone = .current
+    /// We have to use 'fixed timezone', otherwise formatter will lose DST
+    let currentTimeZone: TimeZone = .current
+    let timeZone = TimeZone(secondsFromGMT: currentTimeZone.secondsFromGMT())!
     
     var calendar = Calendar(identifier: .iso8601)
     calendar.timeZone = timeZone

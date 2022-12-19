@@ -29,49 +29,85 @@ extension Profile.TrackerTime {
   // MARK: - Properties
   
   public var timestamp: DateComponents {
+    /// Get current timestamp
+    let timestamp = _wrapped.timestamp
+    
+    /// Prepare locale
     let locale = Locale(identifier: "en_US_POSIX")
-    let timeZone: TimeZone = .current
     
+    /// Prepare calendar with fixed timezone
     var calendar = Calendar(identifier: .iso8601)
-    calendar.timeZone = timeZone
+    calendar.timeZone = .current
     calendar.locale = locale
-
-    let formatter = DateFormatter()
-    formatter.locale = locale
-    formatter.calendar = calendar
-    formatter.timeZone = timeZone
-    formatter.dateFormat = "yyyy-MM-d'T'HH:mmZ"
     
-    var timestamp = _wrapped.timestamp
+    /// Fallback date components
+    let fallback = DateComponents(calendar: calendar,
+                                  timeZone: .current,
+                                  year: 2022,
+                                  month: 8,
+                                  day: 1,
+                                  hour: 8,
+                                  minute: 0)
+    
+    /// Based on different type we might need day or might not
+    
+    var components: DateComponents
+    
     switch _type {
-    case .weekly:
-      timestamp = "2022-08-" + timestamp
-    case .daily:
-      timestamp = "2022-08-1T" + timestamp
-    case .unknown:
-      return DateComponents(calendar: calendar,
-                            timeZone: timeZone,
-                            year: 2022,
-                            month: 8,
-                            day: 1,
-                            hour: 8,
-                            minute: 0)
+    case .weekly where timestamp.count >= 7:
+      /// Parse string,
+      /// f.e. `3T11:30+04:00`
+      
+      /// Manually parse string ignoring timezone
+      let dayString = timestamp.prefix(1)
+      let hourString = timestamp.dropFirst(2).prefix(2)
+      let minuteString = timestamp.dropFirst(5).prefix(2)
+      
+      guard let day = Int(dayString),
+            let hour = Int(hourString),
+            var minute = Int(minuteString) else {
+        components = fallback
+        break
+      }
+      /// We can support only 15 minutes step
+      if minute % 15 != 0 {
+        minute = (minute / 15) * 15
+      }
+      components = DateComponents(calendar: calendar,
+                                  timeZone: .current,
+                                  year: 2022,
+                                  month: 8,
+                                  day: day,
+                                  hour: hour,
+                                  minute: minute)
+      
+    case .daily where timestamp.count >= 5:
+      /// Parse string,
+      /// f.e. `08:30+04:00`
+      
+      /// Manually parse string ignoring timezone
+      let hourString = timestamp.prefix(2)
+      let minuteString = timestamp.dropFirst(3).prefix(2)
+      
+      guard let hour = Int(hourString),
+            var minute = Int(minuteString) else {
+        components = fallback
+        break
+      }
+      /// We can support only 15 minutes step
+      if minute % 15 != 0 {
+        minute = (minute / 15) * 15
+      }
+      components = DateComponents(calendar: calendar,
+                                  timeZone: .current,
+                                  year: 2022,
+                                  month: 8,
+                                  day: 1,
+                                  hour: hour,
+                                  minute: minute)
+    default:
+      components = fallback
     }
-    
-    guard let dateFrom = formatter.date(from: timestamp) else {
-      return DateComponents(calendar: calendar,
-                            timeZone: timeZone,
-                            year: 2022,
-                            month: 8,
-                            day: 1,
-                            hour: 8,
-                            minute: 0)
-    }
-    
-    var components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: dateFrom)
-    components.timeZone = .current
-    components.calendar = calendar
-    
     return components
   }
   
