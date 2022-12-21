@@ -35,8 +35,6 @@ public struct Transfer: Equatable {
   private let _owner: MDBXPointer<AccountKey, Account> = .init(.account)
   @SubProperty<_NFTTransfer, NFTTransfer> var _nftTransfer: _NFTTransfer?
   
-//  private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
-  
   // MARK: - LifeCycle
    
   public init(chain: MDBXChain,
@@ -80,14 +78,6 @@ public struct Transfer: Equatable {
 // MARK: - Transfer + Properties
 
 extension Transfer {
-  // MARK: - Relations
-//
-//  public var dexItem: DexItem {
-//    get throws {
-//      let key = DexItemKey(chain: _chain, contractAddress: self.contract_address)
-//      return try _dexItem.getData(key: key, policy: .cacheOrLoad, database: self.database)
-//    }
-//  }
   
   // MARK: - Relations
   
@@ -208,6 +198,8 @@ extension Transfer: MDBXObject {
   }
   
   mutating public func merge(with object: MDBXObject) {
+    // FIXME: multichain
+    
 //    let other = object as! TokenMeta
 //
 //    self._wrapped.contractAddress       = other._wrapped.contractAddress

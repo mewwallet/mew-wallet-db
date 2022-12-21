@@ -52,6 +52,7 @@ extension TokenMeta {
   
   // MARK: - Properties
   
+  public var chain: MDBXChain { _chain }
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
   public var name: String { self._wrapped.name }
   public var symbol: String { self._wrapped.symbol }

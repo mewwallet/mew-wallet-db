@@ -150,6 +150,8 @@ extension HistorySwap: MDBXObject {
     }
   }
   
+  public var chain: MDBXChain { _chain }
+  
   public var key: MDBXKey {
     return HistorySwapKey(chain: _chain, account: .unknown(_wrapped.address), hash: _wrapped.hash)
   }
