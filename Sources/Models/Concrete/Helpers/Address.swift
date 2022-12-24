@@ -64,8 +64,8 @@ public enum Address: RawRepresentable, Equatable {
     case .wBTC:                                       return "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
     case .usdc:                                       return "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
-    case .unknown(let address):                       return address
-    case .invalid(let address):                       return address
+    case .unknown(let address):                       return address.lowercased()
+    case .invalid(let address):                       return address.lowercased()
     }
   }
 }
@@ -81,3 +81,5 @@ extension Address: Comparable {
     return lhs.rawValue.lowercased() == rhs.rawValue.lowercased()
   }
 }
+
+extension Address: Hashable {}
