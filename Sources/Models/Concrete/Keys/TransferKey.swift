@@ -17,7 +17,7 @@ public final class TransferKey: MDBXKey {
   public var block: UInt64 { _block }
   public var direction: Transfer.Direction { Transfer.Direction(rawValue: _direction) ?? .incoming }
   public var nonce: UInt64 { _nonce }
-  public var order: UInt16 { 0 }
+  public var order: UInt16 { _order }
   
   // MARK: - Private
   
@@ -39,7 +39,7 @@ public final class TransferKey: MDBXKey {
   
   private lazy var _directionRange: Range<Int> = { _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction }()
   private lazy var _direction: UInt8 = {
-    let value = key[_blockRange].withUnsafeBytes { $0.load(as: UInt8.self) }
+    let value = key[_directionRange].withUnsafeBytes { $0.load(as: UInt8.self) }
     return UInt8(bigEndian: value)
   }()
   
@@ -49,9 +49,9 @@ public final class TransferKey: MDBXKey {
     return UInt64(bigEndian: value)
   }()
   
-  private lazy var _orderRange: Range<Int> = { _directionRange.endIndex..<key.count }()
+  private lazy var _orderRange: Range<Int> = { _nonceRange.endIndex..<key.count }()
   private lazy var _order: UInt16 = {
-    let value = key[_blockRange].withUnsafeBytes { $0.load(as: UInt16.self) }
+    let value = Data(key[_orderRange]).withUnsafeBytes { $0.load(as: UInt16.self) }
     return UInt16(bigEndian: value)
   }()
   
@@ -66,6 +66,19 @@ public final class TransferKey: MDBXKey {
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
     
     self.key = chainPart + addressPart + blockPart + directionPart + noncePart + orderPart
+//    0x00000000000000000000000000000089
+//    4dd2a335d53bcd17445ebf4504c5632c13a818a1
+//    0000000005f5e0ff
+//    00
+//    0000000000000109
+//    0000
+    
+//    0x00000000000000000000000000000089
+//    4dd2a335d53bcd17445ebf4504c5632c13a818a1
+//    0000000002385481
+//    00
+//    0000000000000109
+//    0000
   }
   
   public init(chain: MDBXChain, address: Address, lowerRange: Bool) {

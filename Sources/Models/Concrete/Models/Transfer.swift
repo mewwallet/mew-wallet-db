@@ -15,11 +15,31 @@ public struct Transfer: Equatable {
     case outgoing
     case incoming
   }
+  
   public enum Status: String {
     case pending = "PENDING"
     case success = "SUCCESS"
     case failed  = "FAIL"
     case dropped = "DROPPED"
+    
+    public init(rawValue: String) {
+      switch rawValue {
+      case "PENDING":   self = .pending
+      case "SUCCESS":   self = .success
+      case "FAIL":      self = .failed
+      case "DROPPED":   self = .dropped
+      default:          self = .pending
+      }
+    }
+    
+    public init(_ status: History.Status) {
+      switch status {
+      case .pending:    self = .pending
+      case .success:    self = .success
+      case .failed:     self = .failed
+      case .dropped:    self = .dropped
+      }
+    }
   }
   
   public weak var database: WalletDB?
@@ -50,17 +70,18 @@ public struct Transfer: Equatable {
               status: Status,
               nft: NFTTransfer?,
               local: Bool,
+              order: UInt16?,
               database: WalletDB? = nil) {
 
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       
+      $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue
       $0.from = from.rawValue
       $0.to = to.rawValue
       
       $0.hash = hash
-      $0.contractAddress = address.rawValue
       $0.blockNumber = blockNumber
       $0.nonce = nonce
       $0.delta = delta.hexString
@@ -72,6 +93,7 @@ public struct Transfer: Equatable {
       }
     }
     self._chain = chain
+    self.order = order
   }
 }
 
@@ -116,15 +138,33 @@ extension Transfer {
   }
   
   // MARK: - Properties
-  
+
+  public var chain: MDBXChain { _chain }
   public var hash: String { _wrapped.hash }
   public var address: Address { Address(rawValue: self._wrapped.address) }
   public var fromAddress: Address { Address(rawValue: self._wrapped.from) }
   public var toAddress: Address { Address(rawValue: self._wrapped.to) }
-  public var block: UInt64 { self._wrapped.blockNumber }
+  public var contractAddress: Address { Address(rawValue: self._wrapped.contractAddress) }
+  public var block: UInt64 {
+    set { _wrapped.blockNumber = newValue }
+    get { self._wrapped.blockNumber }
+  }
   public var nonce: Decimal { Decimal(self._wrapped.nonce) }
-  public var delta: Decimal { Decimal(hex: self._wrapped.delta) }
-  public var status: Status { Status(rawValue: self._wrapped.status) ?? .pending}
+  public var delta: Decimal {
+    set {
+      debugPrint(">>>>> \(_wrapped.delta) -> \(newValue.hexString)")
+      _wrapped.delta = newValue.hexString
+      
+    }
+    get { Decimal(hex: _wrapped.delta) }
+  }
+
+  public var status: History.Status {
+    set { _wrapped.status = Transfer.Status(newValue).rawValue }
+    get { History.Status(_status) }
+  }
+  
+  
   public var nft: NFTTransfer? {
     guard _wrapped.hasNft else { return nil }
     return self.$_nftTransfer
@@ -144,6 +184,10 @@ extension Transfer {
     set { _wrapped.local = newValue }
     get { _wrapped.local }
   }
+  
+  // MARK: - Private
+  
+  private var _status: Status { Status(rawValue: self._wrapped.status) }
 }
 
 // MARK: - Transfer + MDBXObject
@@ -164,7 +208,7 @@ extension Transfer: MDBXObject {
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Transfer(serializedData: data)
-    commonInit(chain: chain)
+    commonInit(chain: chain, key: key)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -172,7 +216,7 @@ extension Transfer: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Transfer(jsonUTF8Data: jsonData, options: options)
-    commonInit(chain: chain)
+    commonInit(chain: chain, key: key)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -180,7 +224,7 @@ extension Transfer: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Transfer(jsonString: jsonString, options: options)
-    commonInit(chain: chain)
+    commonInit(chain: chain, key: key)
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -198,31 +242,24 @@ extension Transfer: MDBXObject {
   }
   
   mutating public func merge(with object: MDBXObject) {
-    // FIXME: multichain
+    let other = object as! Transfer
     
-//    let other = object as! TokenMeta
-//
-//    self._wrapped.contractAddress       = other._wrapped.contractAddress
-//    self._wrapped.name                  = other._wrapped.name
-//    self._wrapped.symbol                = other._wrapped.symbol
-//    if other._wrapped.hasDecimals {
-//      self._wrapped.decimals            = other._wrapped.decimals
-//    }
-//    if other._wrapped.hasIcon {
-//      self._wrapped.icon                = other._wrapped.icon
-//    }
-//    if other._wrapped.hasPrice {
-//      self._wrapped.price               = other._wrapped.price
-//    }
-//    if other._wrapped.hasMarketCap {
-//      self._wrapped.marketCap           = other._wrapped.marketCap
-//    }
-//    if !other._wrapped.sparkline.isEmpty {
-//      self._wrapped.sparkline           = other._wrapped.sparkline
-//    }
-//    if other._wrapped.hasVolume24H {
-//      self._wrapped.volume24H           = other._wrapped.volume24H
-//    }
+    _wrapped.hash               = other._wrapped.hash
+    _wrapped.contractAddress    = other._wrapped.contractAddress
+    _wrapped.address            = other._wrapped.address
+    _wrapped.from               = other._wrapped.from
+    _wrapped.to                 = other._wrapped.to
+    _wrapped.blockNumber        = other._wrapped.blockNumber
+    _wrapped.nonce              = other._wrapped.nonce
+    _wrapped.delta              = other._wrapped.delta
+    if other._wrapped.hasTimestamp {
+      _wrapped.timestamp        = other._wrapped.timestamp
+    }
+    _wrapped.status             = other._wrapped.status
+    if other._wrapped.hasNft {
+      _wrapped.nft              = other._wrapped.nft
+    }
+    _wrapped.local              = other._wrapped.local
   }
 }
 
@@ -231,7 +268,7 @@ extension Transfer: MDBXObject {
 extension _Transfer: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> Transfer {
     var transfer = Transfer(self, chain: chain)
-    transfer.commonInit(chain: chain)
+    transfer.commonInit(chain: chain, key: nil)
     return transfer
   }
 }
@@ -251,7 +288,7 @@ extension Transfer: ProtoWrapper {
   init(_ wrapped: _Transfer, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
-    commonInit(chain: chain)
+    commonInit(chain: chain, key: nil)
   }
 }
 
@@ -279,10 +316,14 @@ extension Transfer: Comparable {
 // MARK: - Transfer + CommonInit
 
 extension Transfer {
-  mutating func commonInit(chain: MDBXChain) {
+  mutating func commonInit(chain: MDBXChain, key: Data?) {
     // Wrappers
     __nftTransfer.chain = chain
     __nftTransfer.wrappedValue = _wrapped.nft
+    
+    if let key, let transferKey = TransferKey(data: key) {
+      self.order = transferKey.order
+    }
     
     self.populateDB()
   }

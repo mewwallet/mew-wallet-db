@@ -33,6 +33,7 @@ public struct HistoryPurchase {
       case .pending:    self = .waiting
       case .success:    self = .completed
       case .failed:     self = .failed
+      default:          self = .waiting
       }
     }
   }

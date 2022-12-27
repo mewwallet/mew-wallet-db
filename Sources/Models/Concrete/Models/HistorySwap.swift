@@ -29,6 +29,7 @@ public struct HistorySwap {
       case .pending:    self = .pending
       case .success:    self = .success
       case .failed:     self = .failed
+      case .dropped:    self = .pending
       }
     }
   }
