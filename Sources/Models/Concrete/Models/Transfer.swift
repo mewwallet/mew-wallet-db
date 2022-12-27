@@ -151,11 +151,7 @@ extension Transfer {
   }
   public var nonce: Decimal { Decimal(self._wrapped.nonce) }
   public var delta: Decimal {
-    set {
-      debugPrint(">>>>> \(_wrapped.delta) -> \(newValue.hexString)")
-      _wrapped.delta = newValue.hexString
-      
-    }
+    set { _wrapped.delta = newValue.hexString }
     get { Decimal(hex: _wrapped.delta) }
   }
 
