@@ -199,7 +199,9 @@ extension Transfer: MDBXObject {
     return TransferKey(chain: _chain, address: self.address, block: _wrapped.blockNumber, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: MDBXKey? {
+    return TransferStableKey(chain: _chain, address: self.address, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0)
+  }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
