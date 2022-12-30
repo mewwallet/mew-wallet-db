@@ -294,11 +294,10 @@ extension Transfer: ProtoWrapper {
 
 extension Transfer: Comparable {
   public static func < (lhs: Transfer, rhs: Transfer) -> Bool {
-    let lhsKey = lhs.key.key
-    let rhsKey = rhs.key.key
-    guard lhsKey.count == rhsKey.count else {
-      return false
-    }
+    let lhsKey = (lhs.key as! TransferKey).sortingKey.bytes
+    let rhsKey = (rhs.key as! TransferKey).sortingKey.bytes
+    
+    guard lhsKey.count == rhsKey.count else { return false }
     
     for i in 0..<lhsKey.count {
       let lhsByte = lhsKey[i]

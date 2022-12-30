@@ -12,6 +12,7 @@ public final class TransferKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
+  internal lazy var sortingKey: Data = { key[(MDBXKeyLength.chain+MDBXKeyLength.address)...] }()
   public var chain: MDBXChain { MDBXChain(rawValue: _chain) }
   public var address: Address { _address }
   public var block: UInt64 { _block }

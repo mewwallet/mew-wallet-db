@@ -111,14 +111,10 @@ extension NFTAsset {
   }
   
   public var image_url: URL? {
-    self.urls.first {
-      $0.type == .image
-    }?.url
+    self.urls.first { $0.type == .image }?.url ?? preview_url
   }
   public var preview_url: URL? {
-    self.urls.first {
-      $0.type == .preview
-    }?.url
+    self.urls.first { $0.type == .preview }?.url
   }
   public func isFavorite(chain: MDBXChain) -> Bool {
     guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
