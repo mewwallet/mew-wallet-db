@@ -115,6 +115,13 @@ public enum MDBXChain: CaseIterable {
     default:                  return 18
     }
   }
+  
+  public var primary: Address {
+    switch self {
+    case .zksync_v2_testnet:  return ._zktv2Primary
+    default:                  return ._primary
+    }
+  }
 }
 
 extension MDBXChain: Equatable {}

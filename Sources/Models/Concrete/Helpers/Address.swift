@@ -9,15 +9,19 @@ import Foundation
 
 public enum Address: RawRepresentable, Equatable {
   public typealias RawValue = String
+  case _primary       // "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+  case _zktv2Primary  // "0x0000000000000000000000000000000000000000"
   
-  case primary    // "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-  case starkChain // "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c"
-  case renBTC     // "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d"
-  case skale      // "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7"
-  case stEth      // "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"
-  case wBTC       // "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
-  case usdc       // "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-  case matic      // "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
+  case starkChain     // "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c"
+  case renBTC         // "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d"
+  case skale          // "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7"
+  case stEth          // "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"
+  case wBTC           // "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+  case usdc           // "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+  case matic          // "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
+  
+  case zktv2Buidl     // "0x4baB9ae28e0A45E3D6879190760C551c1E8d7F81"
+  
   case unknown(String)
   case invalid(String)
   
@@ -25,14 +29,10 @@ public enum Address: RawRepresentable, Equatable {
   public var isRenBTC: Bool          { self == .renBTC }
   public var isSkale: Bool           { self == .skale }
   public var isStEth: Bool           { self == .stEth }
-  public var isPrimary: Bool         { self == .primary }
+  public var isPrimary: Bool         { self == ._primary || self == ._zktv2Primary }
   public var isWBTC: Bool            { self == .wBTC }
   
   public var isWrappedBitcoin: Bool  { self.isRenBTC || self.isWBTC }
-  
-  init() {
-    self = .primary
-  }
   
   public init(_ rawValue: String) {
     self.init(rawValue: rawValue)
@@ -41,7 +41,9 @@ public enum Address: RawRepresentable, Equatable {
   public init(rawValue: String) {
     let rawValue = rawValue.stringAddHexPrefix().lowercased()
     switch rawValue {
-    case "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": self = .primary
+    case "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": self = ._primary
+    case "0x0000000000000000000000000000000000000000": self = ._zktv2Primary
+    
     case "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c": self = .starkChain
     case "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d": self = .renBTC
     case "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7": self = .skale
@@ -49,6 +51,8 @@ public enum Address: RawRepresentable, Equatable {
     case "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": self = .wBTC
     case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": self = .usdc
     case "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": self = .matic
+      
+    case "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81": self = .zktv2Buidl
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
     }
@@ -56,7 +60,9 @@ public enum Address: RawRepresentable, Equatable {
   
   public var rawValue: String {
     switch self {
-    case .primary:                                    return "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    case ._primary:                                   return "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    case ._zktv2Primary:                              return "0x0000000000000000000000000000000000000000"
+      
     case .starkChain:                                 return "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c"
     case .renBTC:                                     return "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d"
     case .skale:                                      return "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7"
@@ -64,6 +70,9 @@ public enum Address: RawRepresentable, Equatable {
     case .wBTC:                                       return "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
     case .usdc:                                       return "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
+      
+    case .zktv2Buidl:                                 return "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81"
+      
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()
     }

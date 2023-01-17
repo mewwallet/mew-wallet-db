@@ -122,10 +122,10 @@ extension Account {
   
   public func primary(chain: MDBXChain) -> Token {
     do {
-      let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .primary)
+      let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
       return try _primary.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
     } catch {
-      return Token(chain: chain, address: .unknown(_wrapped.address), contractAddress: .primary)
+      return Token(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
     }
   }
   

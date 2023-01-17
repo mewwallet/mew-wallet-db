@@ -27,11 +27,14 @@ public struct Token: Equatable {
   
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, address: Address, contractAddress: Address, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue
+      if let rawAmount {
+        $0.amount = rawAmount
+      }
     }
     self._chain = chain
     self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)

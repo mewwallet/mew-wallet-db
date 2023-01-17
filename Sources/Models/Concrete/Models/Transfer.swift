@@ -112,7 +112,7 @@ extension Transfer {
   
   public var primary: TokenMeta {
     get throws {
-      return try _primaryMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: .primary), policy: .cacheOrLoad(chain: _chain), database: self.database)
+      return try _primaryMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: _chain.primary), policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   

@@ -64,7 +64,7 @@ extension HistoryPurchase {
   public var meta: TokenMeta {
     get throws {
       guard _wrapped.hasCryptoCurrency, let crypto_currency = $_crypto_currency else {
-        return try _meta.getData(key: TokenMetaKey(chain: .eth, contractAddress: .primary), policy: .cacheOrLoad(chain: .eth), database: self.database)
+        return try _meta.getData(key: TokenMetaKey(chain: .eth, contractAddress: _chain.primary), policy: .cacheOrLoad(chain: .eth), database: self.database)
       }
       
       let chain = crypto_currency.chain
