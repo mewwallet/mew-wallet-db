@@ -89,7 +89,7 @@ public enum MDBXChain: CaseIterable {
     case .polygon_mainnet:    return "Polygon"
     case .polygon_mumbai:     return "Polygon - Mumbai"
     case .zksync_v2_mainnet:  return "zkSync mainnet"
-    case .zksync_v2_testnet:  return "zkSync alpha testnet"
+    case .zksync_v2_testnet:  return "Ethereum"
     default:    return ""
     }
   }
@@ -121,6 +121,11 @@ public enum MDBXChain: CaseIterable {
     case .zksync_v2_testnet:  return ._zktv2Primary
     default:                  return ._primary
     }
+  }
+  
+  public var isZKSync: Bool {
+    let zkChains: [MDBXChain] = [.zksync_v2_testnet, .zksync_v2_mainnet]
+    return zkChains.contains(self)
   }
 }
 

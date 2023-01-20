@@ -9,18 +9,19 @@ import Foundation
 
 public enum Address: RawRepresentable, Equatable {
   public typealias RawValue = String
-  case _primary       // "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-  case _zktv2Primary  // "0x0000000000000000000000000000000000000000"
+  case _primary             // "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+  case _zktv2Primary        // "0x0000000000000000000000000000000000000000"
   
-  case starkChain     // "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c"
-  case renBTC         // "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d"
-  case skale          // "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7"
-  case stEth          // "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"
-  case wBTC           // "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
-  case usdc           // "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-  case matic          // "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
+  case starkChain           // "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c"
+  case renBTC               // "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d"
+  case skale                // "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7"
+  case stEth                // "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"
+  case wBTC                 // "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+  case usdc                 // "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+  case matic                // "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
   
-  case zktv2Buidl     // "0x4baB9ae28e0A45E3D6879190760C551c1E8d7F81"
+  case zktv2BuidlPaymaster  // "0xAf4fFc0fd44d3844fc20E3cfc0FcDBFA93548e88"
+  case zktv2Buidl           // "0x4baB9ae28e0A45E3D6879190760C551c1E8d7F81"
   
   case unknown(String)
   case invalid(String)
@@ -31,6 +32,7 @@ public enum Address: RawRepresentable, Equatable {
   public var isStEth: Bool           { self == .stEth }
   public var isPrimary: Bool         { self == ._primary || self == ._zktv2Primary }
   public var isWBTC: Bool            { self == .wBTC }
+  public var isZK2Buidl: Bool        { self == .zktv2Buidl }
   
   public var isWrappedBitcoin: Bool  { self.isRenBTC || self.isWBTC }
   
@@ -53,6 +55,7 @@ public enum Address: RawRepresentable, Equatable {
     case "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": self = .matic
       
     case "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81": self = .zktv2Buidl
+    case "0xaf4ffc0fd44d3844fc20e3cfc0fcdbfa93548e88": self = .zktv2BuidlPaymaster
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
     }
@@ -72,6 +75,7 @@ public enum Address: RawRepresentable, Equatable {
     case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
       
     case .zktv2Buidl:                                 return "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81"
+    case .zktv2BuidlPaymaster:                        return "0xAf4fFc0fd44d3844fc20E3cfc0FcDBFA93548e88"
       
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()
