@@ -36,13 +36,6 @@ public enum MDBXChain: CaseIterable {
     .zksync_v2_testnet
   ]
   
-  // MARK: - MDBXChain + Supported
-
-  public static var supported: [MDBXChain] = [
-    .eth,
-    .polygon_mainnet
-  ]
-  
   case invalid
   /// Convenient `MDBXChain` == `.eth`
   case universal
