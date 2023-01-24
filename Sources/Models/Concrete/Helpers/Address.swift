@@ -75,7 +75,7 @@ public enum Address: RawRepresentable, Equatable {
     case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
       
     case .zktv2Buidl:                                 return "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81"
-    case .zktv2BuidlPaymaster:                        return "0xAf4fFc0fd44d3844fc20E3cfc0FcDBFA93548e88"
+    case .zktv2BuidlPaymaster:                        return "0xaf4ffc0fd44d3844fc20e3cfc0fcdbfa93548e88"
       
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()
