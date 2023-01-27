@@ -8,7 +8,10 @@ message _NFTAssetTrait {
   // Value of the trait, related to `trait`, like "0xabcd1234"
   string value                            = 3;
   // Percentage/uniqueness of the trait across all token in the collection
-  string percentage                       = 4;
+  optional string percentage              = 6;
   // Display type of trait
   string display_type                     = 5;
+
+  // Deprecated
+  string deprecated_percentage            = 4 [deprecated = true];
 }

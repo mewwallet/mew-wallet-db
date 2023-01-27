@@ -54,7 +54,10 @@ extension NFTAssetTrait {
   public var trait: String { _wrapped.trait }
   public var count: UInt64 { _wrapped.count }
   public var value: String { _wrapped.value }
-  public var percentage: Decimal { Decimal(wrapped: _wrapped.percentage, hex: false) ?? .zero }
+  public var percentage: Decimal? {
+    guard _wrapped.hasPercentage else { return nil }
+    return Decimal(wrapped: _wrapped.percentage, hex: false) ?? .zero
+  }
   public var displayValue: DisplayType { DisplayType(rawValue: _wrapped.displayType, value: _wrapped.value) }
 }
 
