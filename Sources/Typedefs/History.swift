@@ -12,6 +12,7 @@ public struct History {
     case pending
     case success
     case failed
+    case dropped
     
     init(_ swap: HistorySwap.Status) {
       switch swap {
@@ -31,8 +32,17 @@ public struct History {
       }
     }
     
-    var isFinal: Bool {
-      return self != .pending
+    init(_ transfer: Transfer.Status) {
+      switch transfer {
+      case .dropped:    self = .dropped
+      case .pending:    self = .pending
+      case .failed:     self = .failed
+      case .success:    self = .success
+      }
+    }
+    
+    public var isFinal: Bool {
+      return self != .pending && self != .dropped
     }
   }
   

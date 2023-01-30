@@ -33,7 +33,7 @@ public struct DexItem: Equatable {
       $0.name = tokenMeta.name
       $0.symbol = tokenMeta.symbol
     }
-    self._meta.updateData(tokenMeta)
+    self._meta.updateData(tokenMeta, chain: _chain)
   }
   
   public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, order: UInt16?, database: WalletDB? = nil) {
@@ -67,7 +67,7 @@ extension DexItem {
   public var meta: TokenMeta {
     get throws {
       let key = TokenMetaKey(chain: _chain, contractAddress: self.contract_address)
-      return try _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
+      return try _meta.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   

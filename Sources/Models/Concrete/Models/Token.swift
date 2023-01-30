@@ -27,14 +27,23 @@ public struct Token: Equatable {
   
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, address: Address, contractAddress: Address, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue
+      if let rawAmount {
+        $0.amount = rawAmount
+      }
     }
     self._chain = chain
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)
+    
+    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
+    if chain.isZKSync, contractAddress.isPrimary {
+      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
+    } else {
+      self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)
+    }
   }
 }
 
@@ -45,21 +54,21 @@ extension Token {
   
   public var meta: TokenMeta {
     get throws {
-      return try _meta.getData(key: self._metaKey, policy: .cacheOrLoad, database: self.database)
+      return try _meta.getData(key: self._metaKey, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public var account: Account? {
     get throws {
-      let key = AccountKey(chain: _chain, address: .unknown(_wrapped.address))
-      return try _account.getData(key: key, policy: .ignoreCache, database: self.database)
+      let key = AccountKey(address: .unknown(_wrapped.address))
+      return try _account.getData(key: key, policy: .ignoreCache(chain: .universal), database: self.database)
     }
   }
   
   public var dexItem: DexItem {
     get throws {
       let key = DexItemKey(chain: _chain, contractAddress: self.contract_address)
-      return try _dexItem.getData(key: key, policy: .cacheOrLoad, database: self.database)
+      return try _dexItem.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
@@ -83,6 +92,7 @@ extension Token {
   public var isSkale: Bool           { self.contract_address.isSkale }
   public var isStEth: Bool           { self.contract_address.isStEth }
   public var isWrappedBitcoin: Bool  { self.contract_address.isWrappedBitcoin }
+  public var isZK2Buidl: Bool        { self.contract_address.isZK2Buidl }
   
   // MARK: - Methods
   
@@ -119,7 +129,13 @@ extension Token: MDBXObject {
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Token(serializedData: data)
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
+    let address = Address(self._wrapped.contractAddress)
+    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
+    if chain.isZKSync, address.isPrimary {
+      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
+    } else {
+      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
+    }
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -127,7 +143,13 @@ extension Token: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Token(jsonUTF8Data: jsonData, options: options)
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
+    let address = Address(self._wrapped.contractAddress)
+    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
+    if chain.isZKSync, address.isPrimary {
+      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
+    } else {
+      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
+    }
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -135,7 +157,13 @@ extension Token: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Token(jsonString: jsonString, options: options)
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
+    let address = Address(self._wrapped.contractAddress)
+    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
+    if chain.isZKSync, address.isPrimary {
+      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
+    } else {
+      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
+    }
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -176,7 +204,13 @@ extension Token: ProtoWrapper {
   init(_ wrapped: _Token, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
-    self._metaKey = TokenMetaKey(chain: chain, contractAddress: Address(rawValue: self._wrapped.contractAddress))
+    let address = Address(rawValue: self._wrapped.contractAddress)
+    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
+    if chain.isZKSync, address.isPrimary {
+      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
+    } else {
+      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
+    }
   }
 }
 

@@ -60,10 +60,8 @@ public struct Account {
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain,
-              address: Address) {
-    self.init(chain: chain,
-              order: 0,
+  public init(address: Address) {
+    self.init(order: 0,
               address: address,
               name: "",
               source: .unknown,
@@ -75,8 +73,7 @@ public struct Account {
               isHidden: false)
   }
   
-  public init(chain: MDBXChain,
-              order: UInt32,
+  public init(order: UInt32,
               address: Address,
               name: String,
               source: Source = .recoveryPhrase,
@@ -88,7 +85,7 @@ public struct Account {
               isHidden: Bool = false,
               database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = .with {
       $0.address = address.rawValue
       $0.groupID = 0
@@ -118,67 +115,51 @@ public struct Account {
 extension Account {
   // MARK: - Relations
   
-  public var tokens: [Token] {
-    get throws {
-      let range = TokenKey.range(chain: .eth, address: address)
-      return try _tokens.getRelationship(range, policy: .cacheOrLoad, order: .asc, database: self.database)
+  public func tokens(chain: MDBXChain) throws -> [Token] {
+    let range = TokenKey.range(chain: chain, address: address)
+    return try _tokens.getRelationship(range, policy: .cacheOrLoad(chain: chain), order: .asc, database: self.database)
+  }
+  
+  public func primary(chain: MDBXChain) -> Token {
+    do {
+      let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
+      return try _primary.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
+    } catch {
+      return Token(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
     }
   }
   
-  public var primary: Token {
-    get {
-      do {
-        let key = TokenKey(chain: .eth, address: .unknown(_wrapped.address), contractAddress: .primary)
-        return try _primary.getData(key: key, policy: .ignoreCache, database: self.database)
-      } catch {
-        return Token(chain: .eth, address: .unknown(_wrapped.address), contractAddress: .primary)
-      }
-    }
+  public func renBTC(chain: MDBXChain) throws -> Token {
+    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .renBTC)
+    return try _renBTC.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
   }
   
-  public var renBTC: Token {
-    get throws {
-      let key = TokenKey(chain: _chain, address: .unknown(_wrapped.address), contractAddress: .renBTC)
-      return try _renBTC.getData(key: key, policy: .ignoreCache, database: self.database)
-    }
+  public func stETH(chain: MDBXChain) throws -> Token {
+    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .stEth)
+    return try _stETH.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
   }
   
-  public var stETH: Token {
-    get throws {
-      let key = TokenKey(chain: _chain, address: .unknown(_wrapped.address), contractAddress: .stEth)
-      return try _stETH.getData(key: key, policy: .ignoreCache, database: self.database)
-    }
-  }
-  
-  public var skale: Token {
-    get throws {
-      let key = TokenKey(chain: _chain, address: .unknown(_wrapped.address), contractAddress: .skale)
-      return try _skale.getData(key: key, policy: .ignoreCache, database: self.database)
-    }
+  public func skale(chain: MDBXChain) throws -> Token {
+    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .skale)
+    return try _skale.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
   }
   
   /// List of all NFT
-  public var nft: [NFTAsset] {
-    get throws {
-      let range = NFTAssetKey.range(chain: .eth, address: self.address)
-      return try _nft.getRelationship(range, policy: .cacheOrLoad, order: .asc, database: self.database)
-    }
+  public func nft(chain: MDBXChain) throws -> [NFTAsset] {
+    let range = NFTAssetKey.range(chain: chain, address: self.address)
+    return try _nft.getRelationship(range, policy: .cacheOrLoad(chain: chain), order: .asc, database: self.database)
   }
   
   /// Stores list of favorite NFTs
-  public var nftFavorite: [NFTAsset] {
-    get throws {
-      let keys = self.nftFavoriteKeys
-      return try _nftFavorite.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
-    }
+  public func nftFavorite(chain: MDBXChain) throws -> [NFTAsset] {
+    let keys = self.nftFavoriteKeys(chain: chain)
+    return try _nftFavorite.getRelationship(keys, policy: .cacheOrLoad(chain: chain), database: self.database)
   }
 
   /// Stores list of favorite NFTs
-  public var nftHidden: [NFTAsset] {
-    get throws {
-      let keys = self.nftHiddenKeys
-      return try _nftHidden.getRelationship(keys, policy: .cacheOrLoad, database: self.database)
-    }
+  public func nftHidden(chain: MDBXChain) throws -> [NFTAsset] {
+    let keys = self.nftHiddenKeys(chain: chain)
+    return try _nftHidden.getRelationship(keys, policy: .cacheOrLoad(chain: chain), database: self.database)
   }
   
   // MARK: - Properties
@@ -298,15 +279,17 @@ extension Account {
   }
   
   /// Stores keys list of favorite NFTs
-  public var nftFavoriteKeys: [NFTAssetKey] {
+  public func nftFavoriteKeys(chain: MDBXChain) -> [NFTAssetKey] {
     self._wrapped.state.nftFavorite.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
                                    .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
+                                   .filter { $0.chain == chain }
   }
   
   /// Stores keys list of hidden NFTs
-  public var nftHiddenKeys: [NFTAssetKey] {
+  public func nftHiddenKeys(chain: MDBXChain) -> [NFTAssetKey] {
     self._wrapped.state.nftHidden.sorted(by: { $0.timestamp.timeIntervalSince1970 < $1.timestamp.timeIntervalSince1970 })
                                  .compactMap { NFTAssetKey(data: Data(hex: $0.key)) }
+                                 .filter { $0.chain == chain }
   }
   
   /// Stores keys list of hidden Tokens
@@ -396,7 +379,7 @@ extension Account: MDBXObject {
   }
 
   public var key: MDBXKey {
-    return AccountKey(chain: _chain, address: address)
+    return AccountKey(address: address)
   }
 
   public var alternateKey: MDBXKey? {
@@ -404,21 +387,21 @@ extension Account: MDBXObject {
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _Account(serializedData: data)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _Account(jsonUTF8Data: jsonData, options: options)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _Account(jsonString: jsonString, options: options)
   }
 

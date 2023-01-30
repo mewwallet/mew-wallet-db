@@ -66,8 +66,8 @@ public final class TokenKey: MDBXKey {
 
 extension TokenKey {
   public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
-    let start = TokenKey(chain: .eth, address: address, lowerRange: true)
-    let end = TokenKey(chain: .eth, address: address, lowerRange: false)
+    let start = TokenKey(chain: chain, address: address, lowerRange: true)
+    let end = TokenKey(chain: chain, address: address, lowerRange: false)
     return MDBXKeyRange(start: start, end: end, limit: nil)
   }
 }

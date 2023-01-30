@@ -21,12 +21,21 @@ public struct TokenMeta: Equatable {
   
   // MARK: - LifeCycle
    
-  public init(chain: MDBXChain, contractAddress: Address, name: String = "No Token Name", symbol: String = "MNKY", decimals: Int32 = 0, database: WalletDB? = nil) {
+  public init(chain: MDBXChain,
+              contractAddress: Address,
+              name: String = "No Token Name",
+              symbol: String = "MNKY",
+              decimals: Int32 = 0,
+              price: String? = nil,
+              database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
       $0.name = name
       $0.symbol = symbol
+      if let price {
+        $0.price = price
+      }
       $0.decimals = decimals
     }
     self._chain = chain
@@ -41,17 +50,18 @@ extension TokenMeta {
   public var dexItem: DexItem {
     get throws {
       let key = DexItemKey(chain: _chain, contractAddress: self.contract_address)
-      return try _dexItem.getData(key: key, policy: .cacheOrLoad, database: self.database)
+      return try _dexItem.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public func token(of account: Address) throws -> Token {
     let key = TokenKey(chain: _chain, address: account, contractAddress: contract_address)
-    return try _token.getData(key: key, policy: .ignoreCache, database: self.database)
+    return try _token.getData(key: key, policy: .ignoreCache(chain: _chain), database: self.database)
   }
   
   // MARK: - Properties
   
+  public var chain: MDBXChain { _chain }
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
   public var name: String { self._wrapped.name }
   public var symbol: String { self._wrapped.symbol }
@@ -189,6 +199,6 @@ extension TokenMeta: ProtoWrapper {
 
 extension TokenMeta {
   public static func primary(chain: MDBXChain) -> TokenMeta {
-    return TokenMeta(chain: chain, contractAddress: .primary, name: chain.name, symbol: chain.symbol, decimals: chain.decimals)
+    return TokenMeta(chain: chain, contractAddress: chain.primary, name: chain.name, symbol: chain.symbol, decimals: chain.decimals)
   }
 }

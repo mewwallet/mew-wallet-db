@@ -15,16 +15,13 @@ public final class HistoryPurchaseKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
+  public var chain: MDBXChain { .universal }
   public var address: Address { return self._address }
   public var transactionID: String { return self._transactionID }
   
   // MARK: - Private
   
   private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  private lazy var _chain: Data = {
-    return key[_chainRange]
-  }()
   
   private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address }()
   private lazy var _address: Address = {
@@ -38,16 +35,16 @@ public final class HistoryPurchaseKey: MDBXKey {
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, account: Address, transactionID: String) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+  public init(account: Address, transactionID: String) {
+    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.address)
     let transactionIDPart   = Data(hex: transactionID).setLengthLeft(MDBXKeyLength.hash)
     
     self.key = chainPart + addressPart + transactionIDPart
   }
   
-  public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+  public init(address: Address, lowerRange: Bool) {
+    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
     let transactionIDPart: Data
     if lowerRange {
@@ -67,9 +64,9 @@ public final class HistoryPurchaseKey: MDBXKey {
 // MARK: - HistoryPurchaseKey + Range
 
 extension HistoryPurchaseKey {
-  public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
-    let start = HistoryPurchaseKey(chain: .eth, address: address, lowerRange: true)
-    let end = HistoryPurchaseKey(chain: .eth, address: address, lowerRange: false)
+  public static func range(address: Address) -> MDBXKeyRange {
+    let start = HistoryPurchaseKey(address: address, lowerRange: true)
+    let end = HistoryPurchaseKey(address: address, lowerRange: false)
     return MDBXKeyRange(start: start, end: end, limit: nil)
   }
 }

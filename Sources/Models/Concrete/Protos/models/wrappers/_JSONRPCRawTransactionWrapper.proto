@@ -1,0 +1,7 @@
+syntax = "proto3";
+import "_RawTransaction.proto";
+
+message _JSONRPCRawTransactionWrapper {
+  // RawTransaction
+  _RawTransaction result             = 1;
+}

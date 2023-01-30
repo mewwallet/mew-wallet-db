@@ -23,18 +23,16 @@ extension NFTAssetLastSale {
   
   // MARK: - Relations
   
-  public var meta: TokenMeta {
-    get throws {
-      guard let key = _metaKey else { throw MEWwalletDBError.internalError }
-      return try _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
-    }
+  public func meta(chain: MDBXChain) throws -> TokenMeta {
+    guard let key = _metaKey else { throw MEWwalletDBError.internalError }
+    return try _meta.getData(key: key, policy: .cacheOrLoad(chain: chain), database: self.database)
   }
   
   // MARK: - Properties
 
   public var rawPrice: Decimal { Decimal(wrapped: _wrapped.price, hex: true) ?? .zero }
-  public var price: Decimal {
-    guard let exponent = try? -self.meta.decimals else {
+  public func price(chain: MDBXChain) -> Decimal {
+    guard let exponent = try? -self.meta(chain: chain).decimals else {
       return rawPrice
     }
     let decimals = Decimal(sign: .plus, exponent: exponent, significand: Decimal(1))
@@ -67,7 +65,7 @@ extension NFTAssetLastSale: ProtoWrapper {
     if _wrapped.hasToken {
       let token = _wrapped.token.wrapped(chain)
       _wrapped.metaKey = token.key.key
-      _meta.updateData(token)
+      _meta.updateData(token, chain: chain)
       _wrapped.clearToken()
     }
   }

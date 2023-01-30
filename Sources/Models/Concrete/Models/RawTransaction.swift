@@ -61,28 +61,29 @@ public struct RawTransaction: Equatable {
 extension RawTransaction {
   // MARK: - Properties
   
-  public var hash: String { self._wrapped.hash }
-  public var from: String { self._wrapped.from }
+  public var chain: MDBXChain { _chain }
+  public var hash: String { _wrapped.hash }
+  public var from: String { _wrapped.from }
   public var to: String? {
-    guard self._wrapped.hasTo else { return nil }
-    return self._wrapped.to
+    guard _wrapped.hasTo else { return nil }
+    return _wrapped.to
   }
-  public var value: Decimal { Decimal(hex: self._wrapped.value) }
-  public var input: Data { Data(hex: self._wrapped.input) }
-  public var nonce: Decimal { Decimal(hex: self._wrapped.nonce) }
+  public var value: Decimal { Decimal(hex: _wrapped.value) }
+  public var input: Data { Data(hex: _wrapped.input) }
+  public var nonce: Decimal { Decimal(hex: _wrapped.nonce) }
   public var blockNumber: Decimal? {
-    guard self._wrapped.hasBlockNumber else { return nil }
-    return Decimal(hex: self._wrapped.blockNumber)
+    guard _wrapped.hasBlockNumber else { return nil }
+    return Decimal(hex: _wrapped.blockNumber)
   }
-  public var gas: Decimal { Decimal(hex: self._wrapped.gas) }
-  public var gasPrice: Decimal { Decimal(hex: self._wrapped.gasPrice) }
+  public var gas: Decimal { Decimal(hex: _wrapped.gas) }
+  public var gasPrice: Decimal { Decimal(hex: _wrapped.gasPrice) }
   public var maxFeePerGas: Decimal? {
-    guard self._wrapped.hasMaxFeePerGas else { return nil }
-    return Decimal(hex: self._wrapped.maxFeePerGas)
+    guard _wrapped.hasMaxFeePerGas else { return nil }
+    return Decimal(hex: _wrapped.maxFeePerGas)
   }
   public var maxPriorityFeePerGas: Decimal? {
-    guard self._wrapped.hasMaxPriorityFeePerGas else { return nil }
-    return Decimal(hex: self._wrapped.maxPriorityFeePerGas)
+    guard _wrapped.hasMaxPriorityFeePerGas else { return nil }
+    return Decimal(hex: _wrapped.maxPriorityFeePerGas)
   }
 }
 
@@ -91,7 +92,7 @@ extension RawTransaction {
 extension RawTransaction: MDBXObject {
   public var serialized: Data {
     get throws {
-      return try self._wrapped.serializedData()
+      return try _wrapped.serializedData()
     }
   }
   

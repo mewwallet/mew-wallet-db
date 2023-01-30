@@ -35,14 +35,26 @@ struct _NFTAssetTrait {
   var value: String = String()
 
   /// Percentage/uniqueness of the trait across all token in the collection
-  var percentage: String = String()
+  var percentage: String {
+    get {return _percentage ?? String()}
+    set {_percentage = newValue}
+  }
+  /// Returns true if `percentage` has been explicitly set.
+  var hasPercentage: Bool {return self._percentage != nil}
+  /// Clears the value of `percentage`. Subsequent reads from it will return its default value.
+  mutating func clearPercentage() {self._percentage = nil}
 
   /// Display type of trait
   var displayType: String = String()
 
+  /// Deprecated
+  var deprecatedPercentage: String = String()
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+
+  fileprivate var _percentage: String? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -57,8 +69,9 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     1: .same(proto: "trait"),
     2: .same(proto: "count"),
     3: .same(proto: "value"),
-    4: .same(proto: "percentage"),
+    6: .same(proto: "percentage"),
     5: .standard(proto: "display_type"),
+    4: .standard(proto: "deprecated_percentage"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -70,14 +83,19 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 1: try { try decoder.decodeSingularStringField(value: &self.trait) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.count) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.value) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self.percentage) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.deprecatedPercentage) }()
       case 5: try { try decoder.decodeSingularStringField(value: &self.displayType) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self._percentage) }()
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.trait.isEmpty {
       try visitor.visitSingularStringField(value: self.trait, fieldNumber: 1)
     }
@@ -87,12 +105,15 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if !self.value.isEmpty {
       try visitor.visitSingularStringField(value: self.value, fieldNumber: 3)
     }
-    if !self.percentage.isEmpty {
-      try visitor.visitSingularStringField(value: self.percentage, fieldNumber: 4)
+    if !self.deprecatedPercentage.isEmpty {
+      try visitor.visitSingularStringField(value: self.deprecatedPercentage, fieldNumber: 4)
     }
     if !self.displayType.isEmpty {
       try visitor.visitSingularStringField(value: self.displayType, fieldNumber: 5)
     }
+    try { if let v = self._percentage {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -100,8 +121,9 @@ extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.trait != rhs.trait {return false}
     if lhs.count != rhs.count {return false}
     if lhs.value != rhs.value {return false}
-    if lhs.percentage != rhs.percentage {return false}
+    if lhs._percentage != rhs._percentage {return false}
     if lhs.displayType != rhs.displayType {return false}
+    if lhs.deprecatedPercentage != rhs.deprecatedPercentage {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
