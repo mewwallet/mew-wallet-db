@@ -24,9 +24,9 @@ public struct DAppRecordHistory: Equatable {
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, url: URL, title: String?, database: WalletDB? = nil) {
+  public init(url: URL, title: String?, database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = chain
+    self._chain = .universal
     self._hash = url.sha256
     
     self._wrapped = .with {
@@ -54,8 +54,8 @@ extension DAppRecordHistory {
   private var meta: DAppRecordMeta {
     get throws {
       guard let host = self.url?.hostURL?.sanitized else { throw MDBXError.notFound }
-      let key = DAppRecordMetaKey(chain: _chain, url: host)
-      return try _meta.getData(key: key, policy: .cacheOrLoad, database: self.database)
+      let key = DAppRecordMetaKey(url: host)
+      return try _meta.getData(key: key, policy: .cacheOrLoad(chain: .universal), database: self.database)
     }
   }
   
@@ -85,7 +85,7 @@ extension DAppRecordHistory: MDBXObject {
   }
 
   public var key: MDBXKey {
-    return DAppRecordHistoryKey(chain: _chain, hash: _hash)
+    return DAppRecordHistoryKey(hash: _hash)
   }
 
   public var alternateKey: MDBXKey? {
@@ -93,7 +93,7 @@ extension DAppRecordHistory: MDBXObject {
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _DAppRecordHistory(serializedData: data)
     self.tryRestorePrimaryKeyInfo(key)
   }
@@ -101,7 +101,7 @@ extension DAppRecordHistory: MDBXObject {
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _DAppRecordHistory(jsonUTF8Data: jsonData, options: options)
     self.tryRestorePrimaryKeyInfo(key)
   }
@@ -109,7 +109,7 @@ extension DAppRecordHistory: MDBXObject {
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _DAppRecordHistory(jsonString: jsonString, options: options)
     self.tryRestorePrimaryKeyInfo(key)
   }
@@ -118,14 +118,14 @@ extension DAppRecordHistory: MDBXObject {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _DAppRecordHistory.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _DAppRecordHistory.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
   mutating public func merge(with object: MDBXObject) {
@@ -140,7 +140,7 @@ extension DAppRecordHistory: MDBXObject {
 
 extension _DAppRecordHistory: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> DAppRecordHistory {
-    return DAppRecordHistory(self, chain: chain)
+    return DAppRecordHistory(self, chain: .universal)
   }
 }
 
@@ -157,7 +157,7 @@ public extension DAppRecordHistory {
 
 extension DAppRecordHistory: ProtoWrapper {
   init(_ wrapped: _DAppRecordHistory, chain: MDBXChain) {
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = wrapped
   }
 }

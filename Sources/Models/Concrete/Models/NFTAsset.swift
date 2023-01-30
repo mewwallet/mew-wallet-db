@@ -46,15 +46,15 @@ extension NFTAsset {
   public var collection: NFTCollection? {
     get throws {
       guard let key = _collectionKey else { return nil }
-      return try _collection.getData(key: key, policy: .cacheOrLoad, database: self.database)
+      return try _collection.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
     }
   }
   
   public var account: Account? {
     get throws {
       guard let collectionKey = _collectionKey else { return nil }
-      let key = AccountKey(chain: _chain, address: collectionKey.address)
-      return try _account.getData(key: key, policy: .ignoreCache, database: self.database)
+      let key = AccountKey(address: collectionKey.address)
+      return try _account.getData(key: key, policy: .ignoreCache(chain: .universal), database: self.database)
     }
   }
 
@@ -111,22 +111,18 @@ extension NFTAsset {
   }
   
   public var image_url: URL? {
-    self.urls.first {
-      $0.type == .image
-    }?.url
+    self.urls.first { $0.type == .image }?.url ?? preview_url
   }
   public var preview_url: URL? {
-    self.urls.first {
-      $0.type == .preview
-    }?.url
+    self.urls.first { $0.type == .preview }?.url
   }
-  public var isFavorite: Bool {
+  public func isFavorite(chain: MDBXChain) -> Bool {
     guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
-    return account.nftFavoriteKeys.contains(key)
+    return account.nftFavoriteKeys(chain: chain).contains(key)
   }
-  public var isHidden: Bool {
+  public func isHidden(chain: MDBXChain) -> Bool {
     guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
-    return account.nftHiddenKeys.contains(key)
+    return account.nftHiddenKeys(chain: chain).contains(key)
   }
   
   // MARK: - Methods
@@ -234,7 +230,7 @@ extension _NFTAsset: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain, collection: NFTCollection) -> NFTAsset {
     var asset = NFTAsset(self, chain: chain)
     asset._collectionKey = collection.key as? NFTCollectionKey
-    asset._collection.updateData(collection)
+    asset._collection.updateData(collection, chain: chain)
     asset.commonInit(chain: chain, key: nil)
     return asset
   }
@@ -284,7 +280,7 @@ extension NFTAsset {
     __traits.wrappedValue = _wrapped.traits
     
     if let tokenMeta = _wrapped._cleanLastSale(chain) {
-      $_last_sale?._meta.updateData(tokenMeta.wrapped(chain))
+      $_last_sale?._meta.updateData(tokenMeta.wrapped(chain), chain: chain)
     }
     
     self.populateDB()

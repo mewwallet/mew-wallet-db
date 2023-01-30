@@ -71,9 +71,9 @@ extension DBWriteMode {
   public static func recommended(_ table: MDBXTableName) -> DBWriteMode {
     switch table {
     case .account:            return .appendOverrideMerge
-    case .dex:                return [.default, .dropTable]
-    case .orderedDex:         return [.default, .dropTable]
-    case .featuredDex:        return [.default, .diff]
+    case .dex:                return .appendOverrideMerge
+    case .orderedDex:         return .appendOverrideMerge
+    case .featuredDex:        return .appendOverrideMerge
     case .tokenMeta:          return .appendOverrideMerge
     case .token:              return .default
     case .rawTransaction:     return .default

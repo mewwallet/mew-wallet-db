@@ -42,7 +42,7 @@ extension NFTCollection {
     get throws {
       guard let key = self.key as? NFTCollectionKey else { return [] }
       let range = NFTAssetKey.range(collectionKey: key)
-      return try _assets.getRelationship(range, policy: .cacheOrLoad, order: .asc, database: self.database)
+      return try _assets.getRelationship(range, policy: .cacheOrLoad(chain: _chain), order: .asc, database: self.database)
     }
   }
   
@@ -164,7 +164,7 @@ extension NFTCollection: ProtoWrapper {
     self._chain = chain
     self._wrapped = wrapped
     let assets = _wrapped._cleanAssets().map { $0.wrapped(chain, collection: self) }
-    self._assets.updateData(assets)
+    self._assets.updateData(assets, chain: chain)
   }
 }
 
@@ -177,9 +177,7 @@ extension Array where Element == NFTCollection {
     }
   }
   
-  public var collectMetas: [TokenMeta] {
-    get throws {
-      try collectAssets.compactMap { try $0.last_sale?.meta }
-    }
+  public func collectMetas(chain: MDBXChain) throws -> [TokenMeta] {
+    try collectAssets.compactMap { try $0.last_sale?.meta(chain: chain) }
   }
 }

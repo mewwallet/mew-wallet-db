@@ -12,15 +12,12 @@ public final class DAppRecordReferenceKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
+  public var chain: MDBXChain { .universal }
   public var order: UInt16 { return self._order }
   
   // MARK: - Private
   
   private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  private lazy var _chain: Data = {
-    return key[_chainRange]
-  }()
   
   private lazy var _orderRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order }()
   private lazy var _order: UInt16 = {
@@ -30,8 +27,8 @@ public final class DAppRecordReferenceKey: MDBXKey {
   
   // MARK: - Lifecycle
   
-  public init(chain: MDBXChain, order: UInt16) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+  public init(order: UInt16) {
+    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
     
     self.key = chainPart + orderPart

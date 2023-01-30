@@ -36,6 +36,15 @@ public final class TokenMetaKey: MDBXKey {
     self.key = chainPart + contractAddressPart
   }
   
+  public init(chain: MDBXChain, lowerRange: Bool) {
+    let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
+    
+    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let addressPart         = Data(repeating: rangeValue, count: MDBXKeyLength.address)
+    
+    self.key = chainPart + addressPart
+  }
+  
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.tokenMeta else { return nil }
     self.key = data
@@ -45,3 +54,14 @@ public final class TokenMetaKey: MDBXKey {
 // MARK: - TokenMetaKey + Sendable
 
 extension TokenMetaKey: @unchecked Sendable {}
+
+// MARK: - TokenMetaKey + Range
+
+extension TokenMetaKey {
+  public static func range(chain: MDBXChain, limit: UInt? = nil) -> MDBXKeyRange {
+    let start = TokenMetaKey(chain: chain, lowerRange: true)
+    let end = TokenMetaKey(chain: chain, lowerRange: false)
+    
+    return MDBXKeyRange(start: start, end: end, limit: limit)
+  }
+}

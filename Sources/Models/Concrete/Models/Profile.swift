@@ -109,7 +109,7 @@ public struct Profile {
   
   public init() {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = .eth
+    self._chain = .universal
     self._wrapped = .with {
       $0.settings = .with {
         $0.addresses = []
@@ -166,7 +166,7 @@ public struct Profile {
         $0.checksum = ($0.lastUpdate.textFormatString() + $0.status).sha256.hexString
       }
     }
-    self.commonInit(chain: _chain)
+    self.commonInit(chain: .universal)
   }
 }
 
@@ -419,7 +419,7 @@ extension Profile {
   
   public var dailyTracker: Profile.TrackerTime {
     guard let tracker = self.$_dailyPortfolioTracker else {
-      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: _chain)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: .universal)
       tracker._type = .daily
       return tracker
     }
@@ -429,7 +429,7 @@ extension Profile {
   
   public var weeklyTracker: Profile.TrackerTime {
     guard let tracker = self.$_weeklyPortfolioTracker else {
-      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: _chain)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: .universal)
       tracker._type = .weekly
       return tracker
     }
@@ -466,39 +466,39 @@ extension Profile: MDBXObject {
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _Profile(serializedData: data)
-    self.commonInit(chain: _chain)
+    self.commonInit(chain: .universal)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _Profile(jsonUTF8Data: jsonData, options: options)
-    self.commonInit(chain: _chain)
+    self.commonInit(chain: .universal)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = try _Profile(jsonString: jsonString, options: options)
-    self.commonInit(chain: _chain)
+    self.commonInit(chain: .universal)
   }
 
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _Profile.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _Profile.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(chain) })
+    return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
   mutating public func merge(with object: MDBXObject) {
@@ -514,7 +514,7 @@ extension Profile: MDBXObject {
 extension _Profile: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> Profile {
     var profile = Profile(self, chain: chain)
-    profile.commonInit(chain: profile._chain)
+    profile.commonInit(chain: .universal)
     return profile
   }
 }
@@ -532,9 +532,9 @@ extension Profile: Equatable {
 
 extension Profile: ProtoWrapper {
   init(_ wrapped: _Profile, chain: MDBXChain) {
-    self._chain = chain
+    self._chain = .universal
     self._wrapped = wrapped
-    self.commonInit(chain: chain)
+    self.commonInit(chain: .universal)
   }
 }
 
@@ -601,15 +601,15 @@ extension _Profile._Settings._Address: Encodable {
 extension Profile {
   mutating func commonInit(chain: MDBXChain) {
     // Wrappers
-    __dailyPortfolioTracker.chain = chain
+    __dailyPortfolioTracker.chain = .universal
     __dailyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.daily
     __dailyPortfolioTracker.projectedValue?._type = .daily
     
-    __weeklyPortfolioTracker.chain = chain
+    __weeklyPortfolioTracker.chain = .universal
     __weeklyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.weekly
     __weeklyPortfolioTracker.projectedValue?._type = .weekly
     
-    __status.chain = chain
+    __status.chain = .universal
     __status.wrappedValue = _wrapped.status
     
     self.populateDB()
