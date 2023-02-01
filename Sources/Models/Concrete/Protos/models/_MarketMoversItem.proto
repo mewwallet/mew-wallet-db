@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message _MarketMoversItem {
+  optional string chain = 1;
+  optional string contractAddress = 2;
+  optional string icon = 3;
+  optional string iconPng = 4;
+  optional string name = 5;
+  optional string price = 6;
+  optional string priceChange = 7;
+  optional string symbol = 8;
+  optional google.protobuf.Timestamp timestamp = 9;
+  optional sint64 type = 10;
+}

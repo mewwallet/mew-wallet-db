@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+message _MarketCollectionItem {
+  optional string actionLocalizationKey = 1;
+  optional string actionTitle = 2;
+  optional string actionURL = 3;
+  optional string bannerBig = 4;
+  optional string bannerSmall = 5;
+  optional string chain = 6;
+  optional string descriptionLocalizationKey = 7;
+  optional string descriptionText = 8;
+  optional string entryTitle = 9;
+  sint32 rank = 10;
+  optional string shortDescriptionLocalizationKey = 11;
+  optional string shortDescriptionText = 12;
+  optional string shortTitleLocalizationKey = 13;
+  optional string shortTitleText = 14;
+  sint32 theme = 15;
+  optional string titleLocalizationKey = 16;
+  optional string titleText = 17;
+}
