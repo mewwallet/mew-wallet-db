@@ -88,14 +88,14 @@ struct _MarketTokenMeta {
   /// Clears the value of `price`. Subsequent reads from it will return its default value.
   mutating func clearPrice() {self._price = nil}
 
-  var sint32: String {
-    get {return _sint32 ?? String()}
-    set {_sint32 = newValue}
+  var rank: Int32 {
+    get {return _rank ?? 0}
+    set {_rank = newValue}
   }
-  /// Returns true if `sint32` has been explicitly set.
-  var hasSint32: Bool {return self._sint32 != nil}
-  /// Clears the value of `sint32`. Subsequent reads from it will return its default value.
-  mutating func clearSint32() {self._sint32 = nil}
+  /// Returns true if `rank` has been explicitly set.
+  var hasRank: Bool {return self._rank != nil}
+  /// Clears the value of `rank`. Subsequent reads from it will return its default value.
+  mutating func clearRank() {self._rank = nil}
 
   var timestamp: SwiftProtobuf.Google_Protobuf_Timestamp {
     get {return _timestamp ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
@@ -144,7 +144,7 @@ struct _MarketTokenMeta {
   fileprivate var _descriptionText: String? = nil
   fileprivate var _entryTitle: String? = nil
   fileprivate var _price: String? = nil
-  fileprivate var _sint32: String? = nil
+  fileprivate var _rank: Int32? = nil
   fileprivate var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
   fileprivate var _totalSupply: String? = nil
   fileprivate var _volume24H: String? = nil
@@ -167,7 +167,7 @@ extension _MarketTokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     5: .same(proto: "descriptionText"),
     6: .same(proto: "entryTitle"),
     7: .same(proto: "price"),
-    8: .same(proto: "sint32"),
+    8: .same(proto: "rank"),
     9: .same(proto: "timestamp"),
     10: .same(proto: "totalSupply"),
     11: .same(proto: "volume24h"),
@@ -187,7 +187,7 @@ extension _MarketTokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       case 5: try { try decoder.decodeSingularStringField(value: &self._descriptionText) }()
       case 6: try { try decoder.decodeSingularStringField(value: &self._entryTitle) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self._price) }()
-      case 8: try { try decoder.decodeSingularStringField(value: &self._sint32) }()
+      case 8: try { try decoder.decodeSingularSInt32Field(value: &self._rank) }()
       case 9: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
       case 10: try { try decoder.decodeSingularStringField(value: &self._totalSupply) }()
       case 11: try { try decoder.decodeSingularStringField(value: &self._volume24H) }()
@@ -223,8 +223,8 @@ extension _MarketTokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     try { if let v = self._price {
       try visitor.visitSingularStringField(value: v, fieldNumber: 7)
     } }()
-    try { if let v = self._sint32 {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 8)
+    try { if let v = self._rank {
+      try visitor.visitSingularSInt32Field(value: v, fieldNumber: 8)
     } }()
     try { if let v = self._timestamp {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
@@ -249,7 +249,7 @@ extension _MarketTokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if lhs._descriptionText != rhs._descriptionText {return false}
     if lhs._entryTitle != rhs._entryTitle {return false}
     if lhs._price != rhs._price {return false}
-    if lhs._sint32 != rhs._sint32 {return false}
+    if lhs._rank != rhs._rank {return false}
     if lhs._timestamp != rhs._timestamp {return false}
     if lhs._totalSupply != rhs._totalSupply {return false}
     if lhs._volume24H != rhs._volume24H {return false}
