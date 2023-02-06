@@ -120,9 +120,24 @@ public enum MDBXChain: CaseIterable {
     let zkChains: [MDBXChain] = [.zksync_v2_testnet, .zksync_v2_mainnet]
     return zkChains.contains(self)
   }
+  
+  internal var hexString: String {
+    switch self {
+    case .invalid:            return "0x00000000000000000000000000000000" // 0
+    case .eth:                return "0x00000000000000000000000000000001" // 1
+    case .polygon_mainnet:    return "0x00000000000000000000000000000089" // 137
+    case .polygon_mumbai:     return "0x00000000000000000000000000013881" // 80001
+    case .zksync_v2_mainnet:  return "0x00000000000000000000000000000144" // 324
+    case .zksync_v2_testnet:  return "0x00000000000000000000000000000118" // 280
+    case .universal:          return "0x00000000000000000000000000000001" // 1
+    case .custom(let chain):  return chain.hexString
+    }
+  }
 }
 
 extension MDBXChain: Equatable {}
+
+extension MDBXChain: Hashable {}
 
 extension MDBXChain: @unchecked Sendable {}
 

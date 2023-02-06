@@ -67,7 +67,7 @@ extension DexItem {
   public var meta: TokenMeta {
     get throws {
       let key = TokenMetaKey(chain: _chain, contractAddress: self.contract_address)
-      return try _meta.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
+      return try _meta.getData(key: key, policy: .cacheOrLoad, chain: _chain, database: self.database)
     }
   }
   
