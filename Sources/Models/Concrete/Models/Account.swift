@@ -54,6 +54,7 @@ public struct Account {
   private let _renBTC: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _stETH: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _skale: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _zkSyncBuidl: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _nft: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   private let _nftHidden: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   private let _nftFavorite: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
@@ -142,6 +143,12 @@ extension Account {
   public func skale(chain: MDBXChain) throws -> Token {
     let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .skale)
     return try _skale.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
+  }
+  
+  public func zkSyncBuidl() throws -> Token {
+    // TODO: Update me to zkSyncMainnet
+    let key = TokenKey(chain: .zksync_v2_testnet, address: .unknown(_wrapped.address), contractAddress: .zktv2Buidl)
+    return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache(chain: .zksync_v2_testnet), database: self.database)
   }
   
   /// List of all NFT
