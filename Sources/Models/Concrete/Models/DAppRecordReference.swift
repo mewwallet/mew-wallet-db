@@ -54,7 +54,7 @@ extension DAppRecordReference {
   public var dappRecord: DAppRecord {
     get throws {
       let key = DAppRecordKey(hash: self._wrapped.reference, uuid: self.uuid)
-      return try _dappRecord.getData(key: key, policy: .ignoreCache(chain: .universal), database: self.database)
+      return try _dappRecord.getData(key: key, policy: .ignoreCache, chain: .universal, database: self.database)
     }
   }
   

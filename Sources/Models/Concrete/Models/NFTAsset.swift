@@ -46,7 +46,7 @@ extension NFTAsset {
   public var collection: NFTCollection? {
     get throws {
       guard let key = _collectionKey else { return nil }
-      return try _collection.getData(key: key, policy: .cacheOrLoad(chain: _chain), database: self.database)
+      return try _collection.getData(key: key, policy: .cacheOrLoad, chain: _chain, database: self.database)
     }
   }
   
@@ -54,7 +54,7 @@ extension NFTAsset {
     get throws {
       guard let collectionKey = _collectionKey else { return nil }
       let key = AccountKey(address: collectionKey.address)
-      return try _account.getData(key: key, policy: .ignoreCache(chain: .universal), database: self.database)
+      return try _account.getData(key: key, policy: .ignoreCache, chain: .universal, database: self.database)
     }
   }
 
