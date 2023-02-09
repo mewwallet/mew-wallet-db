@@ -25,7 +25,7 @@ extension NFTAssetLastSale {
   
   public func meta(chain: MDBXChain) throws -> TokenMeta {
     guard let key = _metaKey else { throw MEWwalletDBError.internalError }
-    return try _meta.getData(key: key, policy: .cacheOrLoad(chain: chain), database: self.database)
+    return try _meta.getData(key: key, policy: .cacheOrLoad, chain: chain, database: self.database)
   }
   
   // MARK: - Properties

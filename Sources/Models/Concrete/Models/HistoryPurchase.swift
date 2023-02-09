@@ -57,19 +57,19 @@ extension HistoryPurchase {
   public var account: Account {
     get throws {
       let address = Address(rawValue: _wrapped.address)
-      return try _account.getData(key: AccountKey(address: address), policy: .cacheOrLoad(chain: .universal), database: self.database)
+      return try _account.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
     }
   }
 
   public var meta: TokenMeta {
     get throws {
       guard _wrapped.hasCryptoCurrency, let crypto_currency = $_crypto_currency else {
-        return try _meta.getData(key: TokenMetaKey(chain: .eth, contractAddress: _chain.primary), policy: .cacheOrLoad(chain: .eth), database: self.database)
+        return try _meta.getData(key: TokenMetaKey(chain: .eth, contractAddress: _chain.primary), policy: .cacheOrLoad, chain: .eth, database: self.database)
       }
       
       let chain = crypto_currency.chain
       let address = crypto_currency.address
-      return try _meta.getData(key: TokenMetaKey(chain: chain, contractAddress: address), policy: .cacheOrLoad(chain: chain), database: self.database)
+      return try _meta.getData(key: TokenMetaKey(chain: chain, contractAddress: address), policy: .cacheOrLoad, chain: chain, database: self.database)
     }
   }
   
