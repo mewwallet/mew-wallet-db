@@ -7,6 +7,8 @@
 
 import Foundation
 
+// chain + index(uin32)
+
 public final class MarketCollectionItemKey: MDBXKey {
   public var key: Data
   

@@ -1,11 +1,9 @@
 syntax = "proto3";
 
 message _MarketItem {
-  optional string chain = 1;
-  optional string circulatingSupply = 2;
-  optional string contract_address = 3;
-  optional sint32 index = 4;
-  optional string marketCap = 5;
-  optional string totalSupply = 6;
-  optional string volume24h = 7;
+  optional string circulatingSupply = 1;
+  optional string contract_address = 2;
+  optional string marketCap = 3;
+  optional string totalSupply = 4;
+  optional string volume24h = 5;
 }

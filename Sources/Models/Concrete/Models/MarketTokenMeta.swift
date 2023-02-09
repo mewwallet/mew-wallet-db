@@ -11,7 +11,6 @@ import SwiftProtobuf
 public struct MarketTokenMeta: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _MarketTokenMeta
-  var _chain: MDBXChain
   
   var price: Decimal {
     return Decimal(hex: _wrapped.price)
@@ -20,7 +19,6 @@ public struct MarketTokenMeta: Equatable {
   // MARK: - Lifecycle
   
   public init(
-    chain: String,
     circulatingSupply: Decimal?,
     contractAddress: String?,
     descriptionLocalizationKey: String?,
@@ -35,21 +33,17 @@ public struct MarketTokenMeta: Equatable {
     database: WalletDB? = nil
   ) {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = .init(rawValue: chain)
     
     self._wrapped = .with {
-      $0.chain = chain
       if let circulatingSupply {
         $0.circulatingSupply = circulatingSupply.hexString
       }
       if let contractAddress {
         $0.contractAddress = contractAddress
       }
-      if let descriptionLocalizationKey {
-        $0.descriptionLocalizationKey = descriptionLocalizationKey
-      }
-      if let descriptionText {
-        $0.descriptionText = descriptionText
+      $0.description_p = .with { object in
+        object.localizationKey = descriptionLocalizationKey ?? ""
+        object.text = descriptionText ?? ""
       }
       if let entryTitle {
         $0.entryTitle = entryTitle
@@ -78,7 +72,6 @@ public struct MarketTokenMeta: Equatable {
 
 public extension MarketTokenMeta {
   static func ==(lhs: MarketTokenMeta, rhs: MarketTokenMeta) -> Bool {
-    return lhs._chain == rhs._chain &&
-           lhs._wrapped == rhs._wrapped
+    return lhs._wrapped == rhs._wrapped
   }
 }

@@ -8,3 +8,5 @@
 import Foundation
 
 typealias MarketMoversItemKey = TokenMetaKey
+
+// chain + currency(utf8) + sort (sha) + index (uint32)

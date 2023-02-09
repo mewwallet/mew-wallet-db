@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-message _MarketCollectionFilter {
-  optional string chain = 1;
-  optional string localizationKey = 2;
-  optional sint32 rank = 3;
-  optional string text = 4;
-}

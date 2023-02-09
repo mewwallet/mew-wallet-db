@@ -25,78 +25,6 @@ struct _MarketCollectionItem {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var actionLocalizationKey: String {
-    get {return _storage._actionLocalizationKey ?? String()}
-    set {_uniqueStorage()._actionLocalizationKey = newValue}
-  }
-  /// Returns true if `actionLocalizationKey` has been explicitly set.
-  var hasActionLocalizationKey: Bool {return _storage._actionLocalizationKey != nil}
-  /// Clears the value of `actionLocalizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearActionLocalizationKey() {_uniqueStorage()._actionLocalizationKey = nil}
-
-  var actionTitle: String {
-    get {return _storage._actionTitle ?? String()}
-    set {_uniqueStorage()._actionTitle = newValue}
-  }
-  /// Returns true if `actionTitle` has been explicitly set.
-  var hasActionTitle: Bool {return _storage._actionTitle != nil}
-  /// Clears the value of `actionTitle`. Subsequent reads from it will return its default value.
-  mutating func clearActionTitle() {_uniqueStorage()._actionTitle = nil}
-
-  var actionURL: String {
-    get {return _storage._actionURL ?? String()}
-    set {_uniqueStorage()._actionURL = newValue}
-  }
-  /// Returns true if `actionURL` has been explicitly set.
-  var hasActionURL: Bool {return _storage._actionURL != nil}
-  /// Clears the value of `actionURL`. Subsequent reads from it will return its default value.
-  mutating func clearActionURL() {_uniqueStorage()._actionURL = nil}
-
-  var bannerBig: String {
-    get {return _storage._bannerBig ?? String()}
-    set {_uniqueStorage()._bannerBig = newValue}
-  }
-  /// Returns true if `bannerBig` has been explicitly set.
-  var hasBannerBig: Bool {return _storage._bannerBig != nil}
-  /// Clears the value of `bannerBig`. Subsequent reads from it will return its default value.
-  mutating func clearBannerBig() {_uniqueStorage()._bannerBig = nil}
-
-  var bannerSmall: String {
-    get {return _storage._bannerSmall ?? String()}
-    set {_uniqueStorage()._bannerSmall = newValue}
-  }
-  /// Returns true if `bannerSmall` has been explicitly set.
-  var hasBannerSmall: Bool {return _storage._bannerSmall != nil}
-  /// Clears the value of `bannerSmall`. Subsequent reads from it will return its default value.
-  mutating func clearBannerSmall() {_uniqueStorage()._bannerSmall = nil}
-
-  var chain: String {
-    get {return _storage._chain ?? String()}
-    set {_uniqueStorage()._chain = newValue}
-  }
-  /// Returns true if `chain` has been explicitly set.
-  var hasChain: Bool {return _storage._chain != nil}
-  /// Clears the value of `chain`. Subsequent reads from it will return its default value.
-  mutating func clearChain() {_uniqueStorage()._chain = nil}
-
-  var descriptionLocalizationKey: String {
-    get {return _storage._descriptionLocalizationKey ?? String()}
-    set {_uniqueStorage()._descriptionLocalizationKey = newValue}
-  }
-  /// Returns true if `descriptionLocalizationKey` has been explicitly set.
-  var hasDescriptionLocalizationKey: Bool {return _storage._descriptionLocalizationKey != nil}
-  /// Clears the value of `descriptionLocalizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearDescriptionLocalizationKey() {_uniqueStorage()._descriptionLocalizationKey = nil}
-
-  var descriptionText: String {
-    get {return _storage._descriptionText ?? String()}
-    set {_uniqueStorage()._descriptionText = newValue}
-  }
-  /// Returns true if `descriptionText` has been explicitly set.
-  var hasDescriptionText: Bool {return _storage._descriptionText != nil}
-  /// Clears the value of `descriptionText`. Subsequent reads from it will return its default value.
-  mutating func clearDescriptionText() {_uniqueStorage()._descriptionText = nil}
-
   var entryTitle: String {
     get {return _storage._entryTitle ?? String()}
     set {_uniqueStorage()._entryTitle = newValue}
@@ -106,69 +34,78 @@ struct _MarketCollectionItem {
   /// Clears the value of `entryTitle`. Subsequent reads from it will return its default value.
   mutating func clearEntryTitle() {_uniqueStorage()._entryTitle = nil}
 
-  var rank: Int32 {
-    get {return _storage._rank}
-    set {_uniqueStorage()._rank = newValue}
+  var title: _MarketCollectionTitle {
+    get {return _storage._title ?? _MarketCollectionTitle()}
+    set {_uniqueStorage()._title = newValue}
   }
+  /// Returns true if `title` has been explicitly set.
+  var hasTitle: Bool {return _storage._title != nil}
+  /// Clears the value of `title`. Subsequent reads from it will return its default value.
+  mutating func clearTitle() {_uniqueStorage()._title = nil}
 
-  var shortDescriptionLocalizationKey: String {
-    get {return _storage._shortDescriptionLocalizationKey ?? String()}
-    set {_uniqueStorage()._shortDescriptionLocalizationKey = newValue}
+  var description_p: _MarketCollectionTitle {
+    get {return _storage._description_p ?? _MarketCollectionTitle()}
+    set {_uniqueStorage()._description_p = newValue}
   }
-  /// Returns true if `shortDescriptionLocalizationKey` has been explicitly set.
-  var hasShortDescriptionLocalizationKey: Bool {return _storage._shortDescriptionLocalizationKey != nil}
-  /// Clears the value of `shortDescriptionLocalizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearShortDescriptionLocalizationKey() {_uniqueStorage()._shortDescriptionLocalizationKey = nil}
+  /// Returns true if `description_p` has been explicitly set.
+  var hasDescription_p: Bool {return _storage._description_p != nil}
+  /// Clears the value of `description_p`. Subsequent reads from it will return its default value.
+  mutating func clearDescription_p() {_uniqueStorage()._description_p = nil}
 
-  var shortDescriptionText: String {
-    get {return _storage._shortDescriptionText ?? String()}
-    set {_uniqueStorage()._shortDescriptionText = newValue}
+  var shortTitle: _MarketCollectionTitle {
+    get {return _storage._shortTitle ?? _MarketCollectionTitle()}
+    set {_uniqueStorage()._shortTitle = newValue}
   }
-  /// Returns true if `shortDescriptionText` has been explicitly set.
-  var hasShortDescriptionText: Bool {return _storage._shortDescriptionText != nil}
-  /// Clears the value of `shortDescriptionText`. Subsequent reads from it will return its default value.
-  mutating func clearShortDescriptionText() {_uniqueStorage()._shortDescriptionText = nil}
+  /// Returns true if `shortTitle` has been explicitly set.
+  var hasShortTitle: Bool {return _storage._shortTitle != nil}
+  /// Clears the value of `shortTitle`. Subsequent reads from it will return its default value.
+  mutating func clearShortTitle() {_uniqueStorage()._shortTitle = nil}
 
-  var shortTitleLocalizationKey: String {
-    get {return _storage._shortTitleLocalizationKey ?? String()}
-    set {_uniqueStorage()._shortTitleLocalizationKey = newValue}
+  var shortDescription: _MarketCollectionTitle {
+    get {return _storage._shortDescription ?? _MarketCollectionTitle()}
+    set {_uniqueStorage()._shortDescription = newValue}
   }
-  /// Returns true if `shortTitleLocalizationKey` has been explicitly set.
-  var hasShortTitleLocalizationKey: Bool {return _storage._shortTitleLocalizationKey != nil}
-  /// Clears the value of `shortTitleLocalizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearShortTitleLocalizationKey() {_uniqueStorage()._shortTitleLocalizationKey = nil}
+  /// Returns true if `shortDescription` has been explicitly set.
+  var hasShortDescription: Bool {return _storage._shortDescription != nil}
+  /// Clears the value of `shortDescription`. Subsequent reads from it will return its default value.
+  mutating func clearShortDescription() {_uniqueStorage()._shortDescription = nil}
 
-  var shortTitleText: String {
-    get {return _storage._shortTitleText ?? String()}
-    set {_uniqueStorage()._shortTitleText = newValue}
+  var action: _MarketCollectionAction {
+    get {return _storage._action ?? _MarketCollectionAction()}
+    set {_uniqueStorage()._action = newValue}
   }
-  /// Returns true if `shortTitleText` has been explicitly set.
-  var hasShortTitleText: Bool {return _storage._shortTitleText != nil}
-  /// Clears the value of `shortTitleText`. Subsequent reads from it will return its default value.
-  mutating func clearShortTitleText() {_uniqueStorage()._shortTitleText = nil}
+  /// Returns true if `action` has been explicitly set.
+  var hasAction: Bool {return _storage._action != nil}
+  /// Clears the value of `action`. Subsequent reads from it will return its default value.
+  mutating func clearAction() {_uniqueStorage()._action = nil}
 
-  var theme: Int32 {
-    get {return _storage._theme}
+  var theme: String {
+    get {return _storage._theme ?? String()}
     set {_uniqueStorage()._theme = newValue}
   }
+  /// Returns true if `theme` has been explicitly set.
+  var hasTheme: Bool {return _storage._theme != nil}
+  /// Clears the value of `theme`. Subsequent reads from it will return its default value.
+  mutating func clearTheme() {_uniqueStorage()._theme = nil}
 
-  var titleLocalizationKey: String {
-    get {return _storage._titleLocalizationKey ?? String()}
-    set {_uniqueStorage()._titleLocalizationKey = newValue}
+  var banner: _MarketCollectionBanner {
+    get {return _storage._banner ?? _MarketCollectionBanner()}
+    set {_uniqueStorage()._banner = newValue}
   }
-  /// Returns true if `titleLocalizationKey` has been explicitly set.
-  var hasTitleLocalizationKey: Bool {return _storage._titleLocalizationKey != nil}
-  /// Clears the value of `titleLocalizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearTitleLocalizationKey() {_uniqueStorage()._titleLocalizationKey = nil}
+  /// Returns true if `banner` has been explicitly set.
+  var hasBanner: Bool {return _storage._banner != nil}
+  /// Clears the value of `banner`. Subsequent reads from it will return its default value.
+  mutating func clearBanner() {_uniqueStorage()._banner = nil}
 
-  var titleText: String {
-    get {return _storage._titleText ?? String()}
-    set {_uniqueStorage()._titleText = newValue}
+  var tokens: [_MarketTokenMeta] {
+    get {return _storage._tokens}
+    set {_uniqueStorage()._tokens = newValue}
   }
-  /// Returns true if `titleText` has been explicitly set.
-  var hasTitleText: Bool {return _storage._titleText != nil}
-  /// Clears the value of `titleText`. Subsequent reads from it will return its default value.
-  mutating func clearTitleText() {_uniqueStorage()._titleText = nil}
+
+  var filters: [_MarketCollectionFilter] {
+    get {return _storage._filters}
+    set {_uniqueStorage()._filters = newValue}
+  }
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -186,66 +123,45 @@ extension _MarketCollectionItem: @unchecked Sendable {}
 extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketCollectionItem"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "actionLocalizationKey"),
-    2: .same(proto: "actionTitle"),
-    3: .same(proto: "actionURL"),
-    4: .same(proto: "bannerBig"),
-    5: .same(proto: "bannerSmall"),
-    6: .same(proto: "chain"),
-    7: .same(proto: "descriptionLocalizationKey"),
-    8: .same(proto: "descriptionText"),
-    9: .same(proto: "entryTitle"),
-    10: .same(proto: "rank"),
-    11: .same(proto: "shortDescriptionLocalizationKey"),
-    12: .same(proto: "shortDescriptionText"),
-    13: .same(proto: "shortTitleLocalizationKey"),
-    14: .same(proto: "shortTitleText"),
-    15: .same(proto: "theme"),
-    16: .same(proto: "titleLocalizationKey"),
-    17: .same(proto: "titleText"),
+    1: .same(proto: "entryTitle"),
+    2: .same(proto: "title"),
+    3: .same(proto: "description"),
+    4: .same(proto: "shortTitle"),
+    5: .same(proto: "shortDescription"),
+    6: .same(proto: "action"),
+    7: .same(proto: "theme"),
+    8: .same(proto: "banner"),
+    9: .same(proto: "tokens"),
+    10: .same(proto: "filters"),
   ]
 
   fileprivate class _StorageClass {
-    var _actionLocalizationKey: String? = nil
-    var _actionTitle: String? = nil
-    var _actionURL: String? = nil
-    var _bannerBig: String? = nil
-    var _bannerSmall: String? = nil
-    var _chain: String? = nil
-    var _descriptionLocalizationKey: String? = nil
-    var _descriptionText: String? = nil
     var _entryTitle: String? = nil
-    var _rank: Int32 = 0
-    var _shortDescriptionLocalizationKey: String? = nil
-    var _shortDescriptionText: String? = nil
-    var _shortTitleLocalizationKey: String? = nil
-    var _shortTitleText: String? = nil
-    var _theme: Int32 = 0
-    var _titleLocalizationKey: String? = nil
-    var _titleText: String? = nil
+    var _title: _MarketCollectionTitle? = nil
+    var _description_p: _MarketCollectionTitle? = nil
+    var _shortTitle: _MarketCollectionTitle? = nil
+    var _shortDescription: _MarketCollectionTitle? = nil
+    var _action: _MarketCollectionAction? = nil
+    var _theme: String? = nil
+    var _banner: _MarketCollectionBanner? = nil
+    var _tokens: [_MarketTokenMeta] = []
+    var _filters: [_MarketCollectionFilter] = []
 
     static let defaultInstance = _StorageClass()
 
     private init() {}
 
     init(copying source: _StorageClass) {
-      _actionLocalizationKey = source._actionLocalizationKey
-      _actionTitle = source._actionTitle
-      _actionURL = source._actionURL
-      _bannerBig = source._bannerBig
-      _bannerSmall = source._bannerSmall
-      _chain = source._chain
-      _descriptionLocalizationKey = source._descriptionLocalizationKey
-      _descriptionText = source._descriptionText
       _entryTitle = source._entryTitle
-      _rank = source._rank
-      _shortDescriptionLocalizationKey = source._shortDescriptionLocalizationKey
-      _shortDescriptionText = source._shortDescriptionText
-      _shortTitleLocalizationKey = source._shortTitleLocalizationKey
-      _shortTitleText = source._shortTitleText
+      _title = source._title
+      _description_p = source._description_p
+      _shortTitle = source._shortTitle
+      _shortDescription = source._shortDescription
+      _action = source._action
       _theme = source._theme
-      _titleLocalizationKey = source._titleLocalizationKey
-      _titleText = source._titleText
+      _banner = source._banner
+      _tokens = source._tokens
+      _filters = source._filters
     }
   }
 
@@ -264,23 +180,16 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         // allocates stack space for every case branch when no optimizations are
         // enabled. https://github.com/apple/swift-protobuf/issues/1034
         switch fieldNumber {
-        case 1: try { try decoder.decodeSingularStringField(value: &_storage._actionLocalizationKey) }()
-        case 2: try { try decoder.decodeSingularStringField(value: &_storage._actionTitle) }()
-        case 3: try { try decoder.decodeSingularStringField(value: &_storage._actionURL) }()
-        case 4: try { try decoder.decodeSingularStringField(value: &_storage._bannerBig) }()
-        case 5: try { try decoder.decodeSingularStringField(value: &_storage._bannerSmall) }()
-        case 6: try { try decoder.decodeSingularStringField(value: &_storage._chain) }()
-        case 7: try { try decoder.decodeSingularStringField(value: &_storage._descriptionLocalizationKey) }()
-        case 8: try { try decoder.decodeSingularStringField(value: &_storage._descriptionText) }()
-        case 9: try { try decoder.decodeSingularStringField(value: &_storage._entryTitle) }()
-        case 10: try { try decoder.decodeSingularSInt32Field(value: &_storage._rank) }()
-        case 11: try { try decoder.decodeSingularStringField(value: &_storage._shortDescriptionLocalizationKey) }()
-        case 12: try { try decoder.decodeSingularStringField(value: &_storage._shortDescriptionText) }()
-        case 13: try { try decoder.decodeSingularStringField(value: &_storage._shortTitleLocalizationKey) }()
-        case 14: try { try decoder.decodeSingularStringField(value: &_storage._shortTitleText) }()
-        case 15: try { try decoder.decodeSingularSInt32Field(value: &_storage._theme) }()
-        case 16: try { try decoder.decodeSingularStringField(value: &_storage._titleLocalizationKey) }()
-        case 17: try { try decoder.decodeSingularStringField(value: &_storage._titleText) }()
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._entryTitle) }()
+        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._title) }()
+        case 3: try { try decoder.decodeSingularMessageField(value: &_storage._description_p) }()
+        case 4: try { try decoder.decodeSingularMessageField(value: &_storage._shortTitle) }()
+        case 5: try { try decoder.decodeSingularMessageField(value: &_storage._shortDescription) }()
+        case 6: try { try decoder.decodeSingularMessageField(value: &_storage._action) }()
+        case 7: try { try decoder.decodeSingularStringField(value: &_storage._theme) }()
+        case 8: try { try decoder.decodeSingularMessageField(value: &_storage._banner) }()
+        case 9: try { try decoder.decodeRepeatedMessageField(value: &_storage._tokens) }()
+        case 10: try { try decoder.decodeRepeatedMessageField(value: &_storage._filters) }()
         default: break
         }
       }
@@ -293,57 +202,36 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // allocates stack space for every if/case branch local when no optimizations
       // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
       // https://github.com/apple/swift-protobuf/issues/1182
-      try { if let v = _storage._actionLocalizationKey {
+      try { if let v = _storage._entryTitle {
         try visitor.visitSingularStringField(value: v, fieldNumber: 1)
       } }()
-      try { if let v = _storage._actionTitle {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+      try { if let v = _storage._title {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
       } }()
-      try { if let v = _storage._actionURL {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+      try { if let v = _storage._description_p {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
       } }()
-      try { if let v = _storage._bannerBig {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+      try { if let v = _storage._shortTitle {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
       } }()
-      try { if let v = _storage._bannerSmall {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 5)
+      try { if let v = _storage._shortDescription {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
       } }()
-      try { if let v = _storage._chain {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+      try { if let v = _storage._action {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
       } }()
-      try { if let v = _storage._descriptionLocalizationKey {
+      try { if let v = _storage._theme {
         try visitor.visitSingularStringField(value: v, fieldNumber: 7)
       } }()
-      try { if let v = _storage._descriptionText {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 8)
+      try { if let v = _storage._banner {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
       } }()
-      try { if let v = _storage._entryTitle {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 9)
-      } }()
-      if _storage._rank != 0 {
-        try visitor.visitSingularSInt32Field(value: _storage._rank, fieldNumber: 10)
+      if !_storage._tokens.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._tokens, fieldNumber: 9)
       }
-      try { if let v = _storage._shortDescriptionLocalizationKey {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 11)
-      } }()
-      try { if let v = _storage._shortDescriptionText {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 12)
-      } }()
-      try { if let v = _storage._shortTitleLocalizationKey {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 13)
-      } }()
-      try { if let v = _storage._shortTitleText {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 14)
-      } }()
-      if _storage._theme != 0 {
-        try visitor.visitSingularSInt32Field(value: _storage._theme, fieldNumber: 15)
+      if !_storage._filters.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._filters, fieldNumber: 10)
       }
-      try { if let v = _storage._titleLocalizationKey {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 16)
-      } }()
-      try { if let v = _storage._titleText {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 17)
-      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -353,23 +241,16 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
         let rhs_storage = _args.1
-        if _storage._actionLocalizationKey != rhs_storage._actionLocalizationKey {return false}
-        if _storage._actionTitle != rhs_storage._actionTitle {return false}
-        if _storage._actionURL != rhs_storage._actionURL {return false}
-        if _storage._bannerBig != rhs_storage._bannerBig {return false}
-        if _storage._bannerSmall != rhs_storage._bannerSmall {return false}
-        if _storage._chain != rhs_storage._chain {return false}
-        if _storage._descriptionLocalizationKey != rhs_storage._descriptionLocalizationKey {return false}
-        if _storage._descriptionText != rhs_storage._descriptionText {return false}
         if _storage._entryTitle != rhs_storage._entryTitle {return false}
-        if _storage._rank != rhs_storage._rank {return false}
-        if _storage._shortDescriptionLocalizationKey != rhs_storage._shortDescriptionLocalizationKey {return false}
-        if _storage._shortDescriptionText != rhs_storage._shortDescriptionText {return false}
-        if _storage._shortTitleLocalizationKey != rhs_storage._shortTitleLocalizationKey {return false}
-        if _storage._shortTitleText != rhs_storage._shortTitleText {return false}
+        if _storage._title != rhs_storage._title {return false}
+        if _storage._description_p != rhs_storage._description_p {return false}
+        if _storage._shortTitle != rhs_storage._shortTitle {return false}
+        if _storage._shortDescription != rhs_storage._shortDescription {return false}
+        if _storage._action != rhs_storage._action {return false}
         if _storage._theme != rhs_storage._theme {return false}
-        if _storage._titleLocalizationKey != rhs_storage._titleLocalizationKey {return false}
-        if _storage._titleText != rhs_storage._titleText {return false}
+        if _storage._banner != rhs_storage._banner {return false}
+        if _storage._tokens != rhs_storage._tokens {return false}
+        if _storage._filters != rhs_storage._filters {return false}
         return true
       }
       if !storagesAreEqual {return false}

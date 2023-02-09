@@ -10,12 +10,10 @@ import Foundation
 public struct MarketCollectionItem: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _MarketCollectionItem
-  var _chain: MDBXChain
 
   // MARK: - Lifecycle
   
   public init(
-    chain: String,
     actionLocalizationKey: String?,
     actionTitle: String?,
     actionURL: String?,
@@ -29,59 +27,44 @@ public struct MarketCollectionItem: Equatable {
     shortDescriptionText: String?,
     shortTitleLocalizationKey: String?,
     shortTitleText: String?,
-    theme: Int32,
+    theme: String?,
     titleLocalizationKey: String?,
     titleText: String?,
     database: WalletDB? = nil
   ) {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = .init(rawValue: chain)
     
     self._wrapped = .with {
-      $0.chain = chain
-      if let actionLocalizationKey {
-        $0.actionLocalizationKey = actionLocalizationKey
+      $0.action = .with {
+        $0.localizationKey = actionLocalizationKey ?? ""
+        $0.text = actionTitle ?? ""
+        $0.url = actionURL ?? ""
       }
-      if let actionTitle {
-        $0.actionTitle = actionTitle
+      $0.banner = .with {
+        $0.big = bannerBig ?? ""
+        $0.small = bannerSmall ?? ""
       }
-      if let actionURL {
-        $0.actionURL = actionURL
+      
+      $0.description_p = .with {
+        $0.localizationKey = descriptionLocalizationKey ?? ""
+        $0.text = descriptionText ?? ""
       }
-      if let bannerBig {
-        $0.bannerBig = bannerBig
-      }
-      if let bannerSmall {
-        $0.bannerSmall = bannerSmall
-      }
-      if let descriptionLocalizationKey {
-        $0.descriptionLocalizationKey = descriptionLocalizationKey
-      }
-      if let descriptionText {
-        $0.descriptionText = descriptionText
-      }
+      
       if let entryTitle {
         $0.entryTitle = entryTitle
       }
-      $0.rank = rank
-      if let shortDescriptionLocalizationKey {
-        $0.shortDescriptionLocalizationKey = shortDescriptionLocalizationKey
+      $0.shortDescription = .with {
+        $0.localizationKey = shortDescriptionLocalizationKey ?? ""
+        $0.text = shortDescriptionText ?? ""
       }
-      if let shortDescriptionText {
-        $0.shortDescriptionText = shortDescriptionText
+      $0.shortTitle = .with {
+        $0.localizationKey = shortTitleLocalizationKey ?? ""
+        $0.text = shortTitleText ?? ""
       }
-      if let shortTitleLocalizationKey {
-        $0.shortTitleLocalizationKey = shortTitleLocalizationKey
-      }
-      if let shortTitleText {
-        $0.shortTitleText = shortTitleText
-      }
-      $0.theme = theme
-      if let titleLocalizationKey {
-        $0.titleLocalizationKey = titleLocalizationKey
-      }
-      if let titleText {
-        $0.titleText = titleText
+      $0.theme = theme ?? ""
+      $0.title = .with {
+        $0.localizationKey = titleLocalizationKey ?? ""
+        $0.text = titleText ?? ""
       }
     }
   }
@@ -91,7 +74,6 @@ public struct MarketCollectionItem: Equatable {
 
 public extension MarketCollectionItem {
   static func ==(lhs: MarketCollectionItem, rhs: MarketCollectionItem) -> Bool {
-    return lhs._chain == rhs._chain &&
-           lhs._wrapped == rhs._wrapped
+    return lhs._wrapped == rhs._wrapped
   }
 }

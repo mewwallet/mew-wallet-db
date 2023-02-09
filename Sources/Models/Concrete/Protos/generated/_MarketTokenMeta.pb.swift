@@ -25,14 +25,7 @@ struct _MarketTokenMeta {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var chain: String {
-    get {return _chain ?? String()}
-    set {_chain = newValue}
-  }
-  /// Returns true if `chain` has been explicitly set.
-  var hasChain: Bool {return self._chain != nil}
-  /// Clears the value of `chain`. Subsequent reads from it will return its default value.
-  mutating func clearChain() {self._chain = nil}
+  var tags: [_MarketCollectionTag] = []
 
   var circulatingSupply: String {
     get {return _circulatingSupply ?? String()}
@@ -52,23 +45,14 @@ struct _MarketTokenMeta {
   /// Clears the value of `contractAddress`. Subsequent reads from it will return its default value.
   mutating func clearContractAddress() {self._contractAddress = nil}
 
-  var descriptionLocalizationKey: String {
-    get {return _descriptionLocalizationKey ?? String()}
-    set {_descriptionLocalizationKey = newValue}
+  var description_p: _MarketCollectionTitle {
+    get {return _description_p ?? _MarketCollectionTitle()}
+    set {_description_p = newValue}
   }
-  /// Returns true if `descriptionLocalizationKey` has been explicitly set.
-  var hasDescriptionLocalizationKey: Bool {return self._descriptionLocalizationKey != nil}
-  /// Clears the value of `descriptionLocalizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearDescriptionLocalizationKey() {self._descriptionLocalizationKey = nil}
-
-  var descriptionText: String {
-    get {return _descriptionText ?? String()}
-    set {_descriptionText = newValue}
-  }
-  /// Returns true if `descriptionText` has been explicitly set.
-  var hasDescriptionText: Bool {return self._descriptionText != nil}
-  /// Clears the value of `descriptionText`. Subsequent reads from it will return its default value.
-  mutating func clearDescriptionText() {self._descriptionText = nil}
+  /// Returns true if `description_p` has been explicitly set.
+  var hasDescription_p: Bool {return self._description_p != nil}
+  /// Clears the value of `description_p`. Subsequent reads from it will return its default value.
+  mutating func clearDescription_p() {self._description_p = nil}
 
   var entryTitle: String {
     get {return _entryTitle ?? String()}
@@ -137,11 +121,9 @@ struct _MarketTokenMeta {
 
   init() {}
 
-  fileprivate var _chain: String? = nil
   fileprivate var _circulatingSupply: String? = nil
   fileprivate var _contractAddress: String? = nil
-  fileprivate var _descriptionLocalizationKey: String? = nil
-  fileprivate var _descriptionText: String? = nil
+  fileprivate var _description_p: _MarketCollectionTitle? = nil
   fileprivate var _entryTitle: String? = nil
   fileprivate var _price: String? = nil
   fileprivate var _rank: Int32? = nil
@@ -160,18 +142,17 @@ extension _MarketTokenMeta: @unchecked Sendable {}
 extension _MarketTokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketTokenMeta"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "chain"),
+    1: .same(proto: "tags"),
     2: .same(proto: "circulatingSupply"),
     3: .same(proto: "contractAddress"),
-    4: .same(proto: "descriptionLocalizationKey"),
-    5: .same(proto: "descriptionText"),
-    6: .same(proto: "entryTitle"),
-    7: .same(proto: "price"),
-    8: .same(proto: "rank"),
-    9: .same(proto: "timestamp"),
-    10: .same(proto: "totalSupply"),
-    11: .same(proto: "volume24h"),
-    12: .same(proto: "website"),
+    4: .same(proto: "description"),
+    5: .same(proto: "entryTitle"),
+    6: .same(proto: "price"),
+    7: .same(proto: "rank"),
+    8: .same(proto: "timestamp"),
+    9: .same(proto: "totalSupply"),
+    10: .same(proto: "volume24h"),
+    11: .same(proto: "website"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -180,18 +161,17 @@ extension _MarketTokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self._chain) }()
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.tags) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self._circulatingSupply) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self._contractAddress) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self._descriptionLocalizationKey) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self._descriptionText) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self._entryTitle) }()
-      case 7: try { try decoder.decodeSingularStringField(value: &self._price) }()
-      case 8: try { try decoder.decodeSingularSInt32Field(value: &self._rank) }()
-      case 9: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
-      case 10: try { try decoder.decodeSingularStringField(value: &self._totalSupply) }()
-      case 11: try { try decoder.decodeSingularStringField(value: &self._volume24H) }()
-      case 12: try { try decoder.decodeSingularStringField(value: &self._website) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._description_p) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self._entryTitle) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self._price) }()
+      case 7: try { try decoder.decodeSingularSInt32Field(value: &self._rank) }()
+      case 8: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
+      case 9: try { try decoder.decodeSingularStringField(value: &self._totalSupply) }()
+      case 10: try { try decoder.decodeSingularStringField(value: &self._volume24H) }()
+      case 11: try { try decoder.decodeSingularStringField(value: &self._website) }()
       default: break
       }
     }
@@ -202,51 +182,47 @@ extension _MarketTokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._chain {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
-    } }()
+    if !self.tags.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.tags, fieldNumber: 1)
+    }
     try { if let v = self._circulatingSupply {
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     } }()
     try { if let v = self._contractAddress {
       try visitor.visitSingularStringField(value: v, fieldNumber: 3)
     } }()
-    try { if let v = self._descriptionLocalizationKey {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
-    } }()
-    try { if let v = self._descriptionText {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
+    try { if let v = self._description_p {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     } }()
     try { if let v = self._entryTitle {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
     } }()
     try { if let v = self._price {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 7)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
     } }()
     try { if let v = self._rank {
-      try visitor.visitSingularSInt32Field(value: v, fieldNumber: 8)
+      try visitor.visitSingularSInt32Field(value: v, fieldNumber: 7)
     } }()
     try { if let v = self._timestamp {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
     } }()
     try { if let v = self._totalSupply {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 10)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 9)
     } }()
     try { if let v = self._volume24H {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 11)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 10)
     } }()
     try { if let v = self._website {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 12)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 11)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _MarketTokenMeta, rhs: _MarketTokenMeta) -> Bool {
-    if lhs._chain != rhs._chain {return false}
+    if lhs.tags != rhs.tags {return false}
     if lhs._circulatingSupply != rhs._circulatingSupply {return false}
     if lhs._contractAddress != rhs._contractAddress {return false}
-    if lhs._descriptionLocalizationKey != rhs._descriptionLocalizationKey {return false}
-    if lhs._descriptionText != rhs._descriptionText {return false}
+    if lhs._description_p != rhs._description_p {return false}
     if lhs._entryTitle != rhs._entryTitle {return false}
     if lhs._price != rhs._price {return false}
     if lhs._rank != rhs._rank {return false}

@@ -3,10 +3,9 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
 message _MarketTopItem {
-  optional string chain = 1;
-  optional string contractAddress = 2;
-  optional string period = 3;
-  optional string price = 4;
-  optional string priceChange = 5;
-  optional google.protobuf.Timestamp timestamp = 6;
+  optional string contractAddress = 1;
+  optional string period = 2;
+  optional string price = 3;
+  optional string priceChange = 4;
+  optional google.protobuf.Timestamp timestamp = 5;
 }

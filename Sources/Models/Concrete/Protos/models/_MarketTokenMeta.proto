@@ -1,18 +1,19 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "subs/_MarketCollectionTag.proto";
+import "subs/_MarketCollectionTitle.proto";
 
 message _MarketTokenMeta {
-  optional string chain = 1;
+  repeated _MarketCollectionTag tags = 1;
   optional string circulatingSupply = 2;
   optional string contractAddress = 3;
-  optional string descriptionLocalizationKey = 4;
-  optional string descriptionText = 5;
-  optional string entryTitle = 6;
-  optional string price = 7;
-  optional sint32 rank = 8;
-  optional google.protobuf.Timestamp timestamp = 9;
-  optional string totalSupply = 10;
-  optional string volume24h = 11;
-  optional string website = 12;
+  optional _MarketCollectionTitle description = 4;
+  optional string entryTitle = 5;
+  optional string price = 6;
+  optional sint32 rank = 7;
+  optional google.protobuf.Timestamp timestamp = 8;
+  optional string totalSupply = 9;
+  optional string volume24h = 10;
+  optional string website = 11;
 }

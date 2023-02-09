@@ -11,12 +11,10 @@ import SwiftProtobuf
 public struct MarketTopItem: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _MarketTopItem
-  var _chain: MDBXChain
 
   // MARK: - Lifecycle
   
   public init(
-    chain: String,
     contractAddress: String?,
     period: String?,
     price: Decimal?,
@@ -25,10 +23,8 @@ public struct MarketTopItem: Equatable {
     database: WalletDB? = nil
   ) {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = .init(rawValue: chain)
     
     self._wrapped = .with {
-      $0.chain = chain
       if let address = contractAddress {
         $0.contractAddress = address
       }
@@ -52,7 +48,6 @@ public struct MarketTopItem: Equatable {
 
 public extension MarketTopItem {
   static func ==(lhs: MarketTopItem, rhs: MarketTopItem) -> Bool {
-    return lhs._chain == rhs._chain &&
-           lhs._wrapped == rhs._wrapped
+    return lhs._wrapped == rhs._wrapped
   }
 }

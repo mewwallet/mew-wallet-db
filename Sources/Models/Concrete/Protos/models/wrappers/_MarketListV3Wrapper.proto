@@ -1,0 +1,12 @@
+syntax = "proto3";
+import "_MarketItem.proto";
+
+message _MarketListV3Wrapper {
+  // Tokens
+  repeated _MarketItem results = 1;
+  
+  // Pagination token
+  optional string paginationToken = 2;
+  optional string currency = 3;
+  optional string sort = 4;
+}

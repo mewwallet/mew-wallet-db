@@ -25,15 +25,6 @@ struct _MarketTopItem {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var chain: String {
-    get {return _chain ?? String()}
-    set {_chain = newValue}
-  }
-  /// Returns true if `chain` has been explicitly set.
-  var hasChain: Bool {return self._chain != nil}
-  /// Clears the value of `chain`. Subsequent reads from it will return its default value.
-  mutating func clearChain() {self._chain = nil}
-
   var contractAddress: String {
     get {return _contractAddress ?? String()}
     set {_contractAddress = newValue}
@@ -83,7 +74,6 @@ struct _MarketTopItem {
 
   init() {}
 
-  fileprivate var _chain: String? = nil
   fileprivate var _contractAddress: String? = nil
   fileprivate var _period: String? = nil
   fileprivate var _price: String? = nil
@@ -100,12 +90,11 @@ extension _MarketTopItem: @unchecked Sendable {}
 extension _MarketTopItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketTopItem"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "chain"),
-    2: .same(proto: "contractAddress"),
-    3: .same(proto: "period"),
-    4: .same(proto: "price"),
-    5: .same(proto: "priceChange"),
-    6: .same(proto: "timestamp"),
+    1: .same(proto: "contractAddress"),
+    2: .same(proto: "period"),
+    3: .same(proto: "price"),
+    4: .same(proto: "priceChange"),
+    5: .same(proto: "timestamp"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -114,12 +103,11 @@ extension _MarketTopItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self._chain) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self._contractAddress) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self._period) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self._price) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self._priceChange) }()
-      case 6: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self._contractAddress) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._period) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._price) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self._priceChange) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
       default: break
       }
     }
@@ -130,29 +118,25 @@ extension _MarketTopItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._chain {
+    try { if let v = self._contractAddress {
       try visitor.visitSingularStringField(value: v, fieldNumber: 1)
     } }()
-    try { if let v = self._contractAddress {
+    try { if let v = self._period {
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     } }()
-    try { if let v = self._period {
+    try { if let v = self._price {
       try visitor.visitSingularStringField(value: v, fieldNumber: 3)
     } }()
-    try { if let v = self._price {
+    try { if let v = self._priceChange {
       try visitor.visitSingularStringField(value: v, fieldNumber: 4)
     } }()
-    try { if let v = self._priceChange {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
-    } }()
     try { if let v = self._timestamp {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _MarketTopItem, rhs: _MarketTopItem) -> Bool {
-    if lhs._chain != rhs._chain {return false}
     if lhs._contractAddress != rhs._contractAddress {return false}
     if lhs._period != rhs._period {return false}
     if lhs._price != rhs._price {return false}

@@ -25,15 +25,6 @@ struct _MarketItem {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var chain: String {
-    get {return _chain ?? String()}
-    set {_chain = newValue}
-  }
-  /// Returns true if `chain` has been explicitly set.
-  var hasChain: Bool {return self._chain != nil}
-  /// Clears the value of `chain`. Subsequent reads from it will return its default value.
-  mutating func clearChain() {self._chain = nil}
-
   var circulatingSupply: String {
     get {return _circulatingSupply ?? String()}
     set {_circulatingSupply = newValue}
@@ -51,15 +42,6 @@ struct _MarketItem {
   var hasContractAddress: Bool {return self._contractAddress != nil}
   /// Clears the value of `contractAddress`. Subsequent reads from it will return its default value.
   mutating func clearContractAddress() {self._contractAddress = nil}
-
-  var index: Int32 {
-    get {return _index ?? 0}
-    set {_index = newValue}
-  }
-  /// Returns true if `index` has been explicitly set.
-  var hasIndex: Bool {return self._index != nil}
-  /// Clears the value of `index`. Subsequent reads from it will return its default value.
-  mutating func clearIndex() {self._index = nil}
 
   var marketCap: String {
     get {return _marketCap ?? String()}
@@ -92,10 +74,8 @@ struct _MarketItem {
 
   init() {}
 
-  fileprivate var _chain: String? = nil
   fileprivate var _circulatingSupply: String? = nil
   fileprivate var _contractAddress: String? = nil
-  fileprivate var _index: Int32? = nil
   fileprivate var _marketCap: String? = nil
   fileprivate var _totalSupply: String? = nil
   fileprivate var _volume24H: String? = nil
@@ -110,13 +90,11 @@ extension _MarketItem: @unchecked Sendable {}
 extension _MarketItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketItem"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "chain"),
-    2: .same(proto: "circulatingSupply"),
-    3: .standard(proto: "contract_address"),
-    4: .same(proto: "index"),
-    5: .same(proto: "marketCap"),
-    6: .same(proto: "totalSupply"),
-    7: .same(proto: "volume24h"),
+    1: .same(proto: "circulatingSupply"),
+    2: .standard(proto: "contract_address"),
+    3: .same(proto: "marketCap"),
+    4: .same(proto: "totalSupply"),
+    5: .same(proto: "volume24h"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -125,13 +103,11 @@ extension _MarketItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self._chain) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self._circulatingSupply) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self._contractAddress) }()
-      case 4: try { try decoder.decodeSingularSInt32Field(value: &self._index) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self._marketCap) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self._totalSupply) }()
-      case 7: try { try decoder.decodeSingularStringField(value: &self._volume24H) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self._circulatingSupply) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._contractAddress) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._marketCap) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self._totalSupply) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self._volume24H) }()
       default: break
       }
     }
@@ -142,35 +118,27 @@ extension _MarketItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._chain {
+    try { if let v = self._circulatingSupply {
       try visitor.visitSingularStringField(value: v, fieldNumber: 1)
     } }()
-    try { if let v = self._circulatingSupply {
+    try { if let v = self._contractAddress {
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     } }()
-    try { if let v = self._contractAddress {
+    try { if let v = self._marketCap {
       try visitor.visitSingularStringField(value: v, fieldNumber: 3)
     } }()
-    try { if let v = self._index {
-      try visitor.visitSingularSInt32Field(value: v, fieldNumber: 4)
-    } }()
-    try { if let v = self._marketCap {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
-    } }()
     try { if let v = self._totalSupply {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
     } }()
     try { if let v = self._volume24H {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 7)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _MarketItem, rhs: _MarketItem) -> Bool {
-    if lhs._chain != rhs._chain {return false}
     if lhs._circulatingSupply != rhs._circulatingSupply {return false}
     if lhs._contractAddress != rhs._contractAddress {return false}
-    if lhs._index != rhs._index {return false}
     if lhs._marketCap != rhs._marketCap {return false}
     if lhs._totalSupply != rhs._totalSupply {return false}
     if lhs._volume24H != rhs._volume24H {return false}

@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "subs/_MarketCollectionTag.proto";
+
+message _MarketCollectionFilter {
+  optional string localizationKey = 1;
+  optional sint32 rank = 2;
+  optional string text = 3;
+  repeated _MarketCollectionTag tags = 4;
+}
