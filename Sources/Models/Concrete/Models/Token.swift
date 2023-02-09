@@ -14,7 +14,13 @@ public struct Token: Equatable {
     case badValue
   }
 
-  public weak var database: WalletDB?
+  // Note: TCA or Result resets weak var, probably on copy or something...didn't investigate yet, but looks like it's a good time to switch to property wrapper
+  // which will hold database...and also, we have single db which is static, means we can optimise that moment
+  // ~Foboz
+  public var database: WalletDB? {
+    get { MEWwalletDBImpl.shared }
+    set {}
+  }
   var _wrapped: _Token
   var _chain: MDBXChain
 
@@ -28,7 +34,6 @@ public struct Token: Equatable {
   // MARK: - LifeCycle
     
   public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, database: WalletDB? = nil) {
-    self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue

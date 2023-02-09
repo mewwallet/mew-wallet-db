@@ -20,8 +20,8 @@ public enum Address: RawRepresentable, Equatable {
   case usdc                 // "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
   case matic                // "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
   
-  case zktv2BuidlPaymaster  // "0xAf4fFc0fd44d3844fc20E3cfc0FcDBFA93548e88"
-  case zktv2Buidl           // "0x4baB9ae28e0A45E3D6879190760C551c1E8d7F81"
+  case zktv2BuidlPaymaster  // "0x138C0596ba3fDff274c127c3CD4d40646861B4C0"
+  case zktv2Buidl           // "0x350cFA64EB8418aC090c8586E2eBC6F6E869435c"
   
   case unknown(String)
   case invalid(String)
@@ -54,8 +54,8 @@ public enum Address: RawRepresentable, Equatable {
     case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": self = .usdc
     case "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": self = .matic
       
-    case "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81": self = .zktv2Buidl
-    case "0xaf4ffc0fd44d3844fc20e3cfc0fcdbfa93548e88": self = .zktv2BuidlPaymaster
+    case "0x350cFA64EB8418aC090c8586E2eBC6F6E869435c": self = .zktv2Buidl
+    case "0x138C0596ba3fDff274c127c3CD4d40646861B4C0": self = .zktv2BuidlPaymaster
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
     }
@@ -74,8 +74,8 @@ public enum Address: RawRepresentable, Equatable {
     case .usdc:                                       return "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
       
-    case .zktv2Buidl:                                 return "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81"
-    case .zktv2BuidlPaymaster:                        return "0xaf4ffc0fd44d3844fc20e3cfc0fcdbfa93548e88"
+    case .zktv2Buidl:                                 return "0x350cFA64EB8418aC090c8586E2eBC6F6E869435c"
+    case .zktv2BuidlPaymaster:                        return "0x138C0596ba3fDff274c127c3CD4d40646861B4C0"
       
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()
