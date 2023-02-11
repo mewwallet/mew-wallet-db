@@ -7,18 +7,5 @@
 
 import Foundation
 
-// chain + currency(utf8) (000..) + sort (sha)(000) + index (uint32)
-
+// chain + currency(utf8) (000..) + sort (sha)(000) + index (uint64)
 typealias MarketTopItemKey = MarketMoversItemKey
-
-//public final class MarketTopItemKey: MDBXKey {
-//  public var key: Data
-//
-//  public var chain: MDBXChain
-//
-//  // TODO: discuss the keys
-//  public init?(data: Data) {
-//    self.chain = .universal
-//    self.key = data
-//  }
-//}
