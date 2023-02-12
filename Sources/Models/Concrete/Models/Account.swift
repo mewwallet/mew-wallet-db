@@ -116,15 +116,15 @@ public struct Account {
 extension Account {
   // MARK: - Relations
   
-  public func tokens(chain: MDBXChain) throws -> [Token] {
+  public func tokens(chain: MDBXChain, ignoreCache: Bool) throws -> [Token] {
     let range = TokenKey.range(chain: chain, address: address)
-    return try _tokens.getRelationship(range, policy: .cacheOrLoad(chain: chain), order: .asc, database: self.database)
+    return try _tokens.getRelationship(range, policy: ignoreCache ? .ignoreCache : .cacheOrLoad, order: .asc, chain: chain, database: self.database)
   }
   
   public func primary(chain: MDBXChain) -> Token {
     do {
       let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
-      return try _primary.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
+      return try _primary.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
     } catch {
       return Token(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
     }
@@ -132,17 +132,17 @@ extension Account {
   
   public func renBTC(chain: MDBXChain) throws -> Token {
     let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .renBTC)
-    return try _renBTC.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
+    return try _renBTC.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   public func stETH(chain: MDBXChain) throws -> Token {
     let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .stEth)
-    return try _stETH.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
+    return try _stETH.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   public func skale(chain: MDBXChain) throws -> Token {
     let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .skale)
-    return try _skale.getData(key: key, policy: .ignoreCache(chain: chain), database: self.database)
+    return try _skale.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   public func zkSyncBuidl() throws -> Token {
@@ -152,21 +152,21 @@ extension Account {
   }
   
   /// List of all NFT
-  public func nft(chain: MDBXChain) throws -> [NFTAsset] {
+  public func nft(chain: MDBXChain, ignoreCache: Bool) throws -> [NFTAsset] {
     let range = NFTAssetKey.range(chain: chain, address: self.address)
-    return try _nft.getRelationship(range, policy: .cacheOrLoad(chain: chain), order: .asc, database: self.database)
+    return try _nft.getRelationship(range, policy: ignoreCache ? .ignoreCache : .cacheOrLoad, order: .asc, chain: chain, database: self.database)
   }
   
   /// Stores list of favorite NFTs
   public func nftFavorite(chain: MDBXChain) throws -> [NFTAsset] {
     let keys = self.nftFavoriteKeys(chain: chain)
-    return try _nftFavorite.getRelationship(keys, policy: .cacheOrLoad(chain: chain), database: self.database)
+    return try _nftFavorite.getRelationship(keys, policy: .ignoreCache, chain: chain, database: self.database)
   }
 
   /// Stores list of favorite NFTs
   public func nftHidden(chain: MDBXChain) throws -> [NFTAsset] {
     let keys = self.nftHiddenKeys(chain: chain)
-    return try _nftHidden.getRelationship(keys, policy: .cacheOrLoad(chain: chain), database: self.database)
+    return try _nftHidden.getRelationship(keys, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   // MARK: - Properties
