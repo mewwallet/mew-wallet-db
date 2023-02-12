@@ -148,7 +148,7 @@ extension Account {
   public func zkSyncBuidl() throws -> Token {
     // TODO: Update me to zkSyncMainnet
     let key = TokenKey(chain: .zksync_v2_testnet, address: .unknown(_wrapped.address), contractAddress: .zktv2Buidl)
-    return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache(chain: .zksync_v2_testnet), database: self.database)
+    return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache, chain: .zksync_v2_testnet, database: self.database)
   }
   
   /// List of all NFT
