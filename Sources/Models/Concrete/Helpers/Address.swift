@@ -55,7 +55,7 @@ public enum Address: RawRepresentable, Equatable {
     case "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": self = .matic
       
     case "0xf551954D449eA3Ae4D6A2656a42d9B9081B137b4": self = .zktv2Buidl
-    case "0x7F904e350F27aF4D4A70994AE1f3bBC1dAfEe665": self = .zktv2BuidlPaymaster
+    case "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665": self = .zktv2BuidlPaymaster
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
     }
@@ -74,8 +74,8 @@ public enum Address: RawRepresentable, Equatable {
     case .usdc:                                       return "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
       
-    case .zktv2Buidl:                                 return "0xf551954D449eA3Ae4D6A2656a42d9B9081B137b4"
-    case .zktv2BuidlPaymaster:                        return "0x7F904e350F27aF4D4A70994AE1f3bBC1dAfEe665"
+    case .zktv2Buidl:                                 return "0xf551954d449ea3ae4d6a2656a42d9b9081b137b4"
+    case .zktv2BuidlPaymaster:                        return "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665"
       
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()

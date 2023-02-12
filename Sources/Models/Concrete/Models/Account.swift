@@ -43,7 +43,10 @@ public struct Account {
     }
   }
   
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  public var database: WalletDB? {
+    get { MEWwalletDBImpl.shared }
+    set {}
+  }
   var _wrapped: _Account
   var _chain: MDBXChain
   
@@ -85,7 +88,6 @@ public struct Account {
               withdrawalPublicKey: String?,
               isHidden: Bool = false,
               database: WalletDB? = nil) {
-    self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .universal
     self._wrapped = .with {
       $0.address = address.rawValue
