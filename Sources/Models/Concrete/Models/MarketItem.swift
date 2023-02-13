@@ -49,6 +49,10 @@ public struct MarketItem: Equatable {
       }
     }
   }
+  
+  init(database: WalletDB? = nil, _wrapped: _MarketItem) {
+    self._wrapped = _wrapped
+  }
 }
 
 // MARK: - MarketMoversItem + Equitable

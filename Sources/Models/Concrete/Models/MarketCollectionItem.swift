@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftProtobuf
 
 public struct MarketCollectionItem: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
@@ -68,6 +69,11 @@ public struct MarketCollectionItem: Equatable {
       }
     }
   }
+  
+  init(database: WalletDB? = nil, _wrapped: _MarketCollectionItem) {
+    self.database = database ?? MEWwalletDBImpl.shared
+    self._wrapped = _wrapped
+  }
 }
 
 // MARK: - MarketCollectionItem + Equitable
@@ -75,5 +81,133 @@ public struct MarketCollectionItem: Equatable {
 public extension MarketCollectionItem {
   static func ==(lhs: MarketCollectionItem, rhs: MarketCollectionItem) -> Bool {
     return lhs._wrapped == rhs._wrapped
+  }
+}
+
+extension MarketCollectionItem {
+  var description: MarketCollectionTitle {
+    return .init(
+      database: database,
+      _wrapped: _wrapped.description_p
+    )
+  }
+  
+  var shortDescription: MarketCollectionTitle {
+    return .init(
+      database: database,
+      _wrapped: _wrapped.shortDescription
+    )
+  }
+  
+  var title: MarketCollectionTitle {
+    return .init(
+      database: database,
+      _wrapped: _wrapped.title
+    )
+  }
+  
+  var shortTitle: MarketCollectionTitle {
+    return .init(
+      database: database,
+      _wrapped: _wrapped.shortTitle
+    )
+  }
+  
+  var banner: MarketCollectionBanner {
+    return .init(
+      database: database,
+      _wrapped: _wrapped.banner
+    )
+  }
+  
+  var action: MarketCollectionAction {
+    return .init(
+      database: database,
+      _wrapped: _wrapped.action
+    )
+  }
+  
+  var filters: [MarketCollectionFilter] {
+    return _wrapped.filters.map {
+      MarketCollectionFilter(database: database, _wrapped: $0)
+    }
+  }
+  
+  var tokens: [MarketTokenMeta] {
+    return _wrapped.tokens.map {
+      MarketTokenMeta(database: database, _wrapped: $0)
+    }
+  }
+}
+
+extension MarketCollectionItem: MDBXObject {
+  public var serialized: Data {
+    get throws {
+      try _wrapped.serializedData()
+    }
+  }
+  
+  public var key: MDBXKey {
+    assertionFailure("not implemented")
+    return MarketCollectionItemKey(chain: .universal, index: 0)
+  }
+  
+  public var alternateKey: MDBXKey? {
+    nil
+  }
+  
+  public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
+    self._wrapped = try _MarketCollectionItem(serializedData: data)
+  }
+  
+  public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    self._wrapped = try _MarketCollectionItem(jsonUTF8Data: jsonData, options: options)
+  }
+  
+  public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    self._wrapped = try _MarketCollectionItem(jsonString: jsonString, options: options)
+  }
+  
+  public mutating func merge(with object: MDBXObject) {
+    guard let other = object as? MarketCollectionItem else {
+      return
+    }
+    
+    self._wrapped.title = other._wrapped.title
+    self._wrapped.shortTitle = other._wrapped.shortTitle
+    if other._wrapped.hasShortDescription {
+      self._wrapped.shortDescription = other._wrapped.shortDescription
+    }
+    if other._wrapped.hasDescription_p {
+      self._wrapped.description_p = other._wrapped.description_p
+    }
+    self._wrapped.action = other._wrapped.action
+    self._wrapped.filters = other._wrapped.filters
+    self._wrapped.banner = other._wrapped.banner
+    self._wrapped.tokens = other._wrapped.tokens
+  }
+}
+
+extension MarketCollectionItem {
+  public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    let objects = try _MarketCollectionItem.array(fromJSONString: string, options: options)
+    return objects.lazy.map({
+      MarketCollectionItem(_wrapped: $0)
+    })
+  }
+  
+  public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
+    var options = JSONDecodingOptions()
+    options.ignoreUnknownFields = true
+    let objects = try _MarketCollectionItem.array(fromJSONUTF8Data: data, options: options)
+    return objects.lazy.map({
+      MarketCollectionItem(_wrapped: $0)
+    })
   }
 }

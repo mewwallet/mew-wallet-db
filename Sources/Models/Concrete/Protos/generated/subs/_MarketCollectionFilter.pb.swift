@@ -25,32 +25,14 @@ struct _MarketCollectionFilter {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var localizationKey: String {
-    get {return _localizationKey ?? String()}
-    set {_localizationKey = newValue}
+  var title: _MarketCollectionTitle {
+    get {return _title ?? _MarketCollectionTitle()}
+    set {_title = newValue}
   }
-  /// Returns true if `localizationKey` has been explicitly set.
-  var hasLocalizationKey: Bool {return self._localizationKey != nil}
-  /// Clears the value of `localizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearLocalizationKey() {self._localizationKey = nil}
-
-  var rank: Int32 {
-    get {return _rank ?? 0}
-    set {_rank = newValue}
-  }
-  /// Returns true if `rank` has been explicitly set.
-  var hasRank: Bool {return self._rank != nil}
-  /// Clears the value of `rank`. Subsequent reads from it will return its default value.
-  mutating func clearRank() {self._rank = nil}
-
-  var text: String {
-    get {return _text ?? String()}
-    set {_text = newValue}
-  }
-  /// Returns true if `text` has been explicitly set.
-  var hasText: Bool {return self._text != nil}
-  /// Clears the value of `text`. Subsequent reads from it will return its default value.
-  mutating func clearText() {self._text = nil}
+  /// Returns true if `title` has been explicitly set.
+  var hasTitle: Bool {return self._title != nil}
+  /// Clears the value of `title`. Subsequent reads from it will return its default value.
+  mutating func clearTitle() {self._title = nil}
 
   var tags: [_MarketCollectionTag] = []
 
@@ -58,9 +40,7 @@ struct _MarketCollectionFilter {
 
   init() {}
 
-  fileprivate var _localizationKey: String? = nil
-  fileprivate var _rank: Int32? = nil
-  fileprivate var _text: String? = nil
+  fileprivate var _title: _MarketCollectionTitle? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -72,10 +52,8 @@ extension _MarketCollectionFilter: @unchecked Sendable {}
 extension _MarketCollectionFilter: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketCollectionFilter"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "localizationKey"),
-    2: .same(proto: "rank"),
-    3: .same(proto: "text"),
-    4: .same(proto: "tags"),
+    1: .same(proto: "title"),
+    2: .same(proto: "tags"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -84,10 +62,8 @@ extension _MarketCollectionFilter: SwiftProtobuf.Message, SwiftProtobuf._Message
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self._localizationKey) }()
-      case 2: try { try decoder.decodeSingularSInt32Field(value: &self._rank) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self._text) }()
-      case 4: try { try decoder.decodeRepeatedMessageField(value: &self.tags) }()
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._title) }()
+      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.tags) }()
       default: break
       }
     }
@@ -98,25 +74,17 @@ extension _MarketCollectionFilter: SwiftProtobuf.Message, SwiftProtobuf._Message
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._localizationKey {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
-    } }()
-    try { if let v = self._rank {
-      try visitor.visitSingularSInt32Field(value: v, fieldNumber: 2)
-    } }()
-    try { if let v = self._text {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    try { if let v = self._title {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
     if !self.tags.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.tags, fieldNumber: 4)
+      try visitor.visitRepeatedMessageField(value: self.tags, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _MarketCollectionFilter, rhs: _MarketCollectionFilter) -> Bool {
-    if lhs._localizationKey != rhs._localizationKey {return false}
-    if lhs._rank != rhs._rank {return false}
-    if lhs._text != rhs._text {return false}
+    if lhs._title != rhs._title {return false}
     if lhs.tags != rhs.tags {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

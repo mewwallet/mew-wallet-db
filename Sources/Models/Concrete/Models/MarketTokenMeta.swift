@@ -66,6 +66,29 @@ public struct MarketTokenMeta: Equatable {
       }
     }
   }
+  
+  init(
+    database: WalletDB? = nil,
+    _wrapped: _MarketTokenMeta
+  ) {
+    self.database = database ?? MEWwalletDBImpl.shared
+    self._wrapped = _wrapped
+  }
+}
+
+extension MarketTokenMeta {
+  var tags: [MarketCollectionTag] {
+    self._wrapped.tags.map {
+      MarketCollectionTag(database: database, _wrapped: $0)
+    }
+  }
+  
+  var description: MarketCollectionTitle {
+    return .init(
+      database: database,
+      _wrapped: _wrapped.description_p
+    )
+  }
 }
 
 // MARK: - MarketTopItem + Equitable
