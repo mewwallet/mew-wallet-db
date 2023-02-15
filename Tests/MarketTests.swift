@@ -228,7 +228,7 @@ private let testMarketCollectionJson = """
         "entry_title": "AAVE",
         "contract_address": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
         "description": {
-          "text": "Aave (from the Finnish word for \"ghost\") is an open source non-custodial protocol on Ethereum for decentralized lending and borrowing. For lenders, the protocol mints ERC20-compliant aTokens at a 1:1 ratio to supplied assets. Interest immediately starts compounding continuously, represented by a steady increase in the amount of aTokens held by the lender. This interest stream may be redirected to any address, separate from the aTokens that represent the underlying principal.",
+          "text": "Aave (from the Finnish word for \\"ghost\\") is an open source non-custodial protocol on Ethereum for decentralized lending and borrowing. For lenders, the protocol mints ERC20-compliant aTokens at a 1:1 ratio to supplied assets. Interest immediately starts compounding continuously, represented by a steady increase in the amount of aTokens held by the lender. This interest stream may be redirected to any address, separate from the aTokens that represent the underlying principal.",
           "localization_key": "market_tokens_aave_description"
         },
         "tags": [
@@ -3300,10 +3300,23 @@ final class market_collection_tests: XCTestCase {
         )
       }
       
-      let keyIndex5 = MarketCollectionItemKey(chain: chain, index: 5)
-      let item5 = items[5]
-      let marketCollectionItem5: MarketCollectionItem = try db.read(key: keyIndex5, table: .marketCollection)
-      XCTAssertEqual(item5, marketCollectionItem5)
+      // read key with 1
+      let keyIndex1 = MarketCollectionItemKey(chain: chain, index: 1)
+      let item1 = items[1]
+      let marketCollectionItem1: MarketCollectionItem = try db.read(key: keyIndex1, table: .marketCollection)
+      XCTAssertEqual(item1, marketCollectionItem1)
+      XCTAssertFalse(marketCollectionItem1.filters.isEmpty)
+      XCTAssertFalse(marketCollectionItem1.tokens.isEmpty)
+
+      // lowest range
+      let startKey = MarketCollectionItemKey(chain: .universal, lowerRange: true)
+      let endKey = MarketCollectionItemKey(chain: .universal, lowerRange: false)
+
+      let marketItems: [MarketCollectionItem] = try db.fetch(range: .with(start: startKey, end: endKey), from: .marketCollection, order: .asc)
+      for (index, value) in marketItems.enumerated() {
+        XCTAssertEqual(items[index], value)
+      }
+      XCTAssertTrue(marketItems.count == 3)
     } catch {
       XCTFail(error.localizedDescription)
     }
