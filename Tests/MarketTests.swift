@@ -3354,6 +3354,17 @@ final class market_collection_tests: XCTestCase {
       let item1 = response.items[1]
       let marketMoversItem1: MarketMoversItem = try db.read(key: keyIndex1, table: .marketMovers)
       XCTAssertEqual(item1, marketMoversItem1)
+      
+      // lowest range
+      let startKey = MarketMoversItemKey(chain: .universal, currency: "USD", sort: "custom", lowerRange: true)
+      let endKey = MarketMoversItemKey(chain: .universal, currency: "USD", sort: "custom", lowerRange: false)
+
+      let moversItem: [MarketMoversItem] = try db.fetch(range: .with(start: startKey, end: endKey), from: .marketMovers, order: .asc)
+      XCTAssertEqual(moversItem.count, response.items.count)
+      for (index, value) in moversItem.enumerated() {
+        XCTAssertEqual(response.items[index], value)
+      }
+
     } catch {
       XCTFail(error.localizedDescription)
     }
