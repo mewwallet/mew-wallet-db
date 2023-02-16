@@ -29,8 +29,13 @@ let package = Package(
               "Models/Concrete/Protos/models"
             ]),
     
-    .testTarget(name: "mew-wallet-db-tests",
-            dependencies: ["mew-wallet-db"],
-            path: "Tests")
+    .testTarget(
+      name: "mew-wallet-db-tests",
+      dependencies: ["mew-wallet-db"],
+      path: "Tests",
+      exclude: [],
+      resources: [
+        .copy("json")
+      ])
   ]
 )

@@ -7,4 +7,4 @@
 
 import Foundation
 
-typealias MarketItemKey = TokenMetaKey
+typealias MarketItemKey = MarketMoversItemKey

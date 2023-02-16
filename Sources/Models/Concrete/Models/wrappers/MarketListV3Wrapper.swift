@@ -32,6 +32,14 @@ extension MarketListV3Wrapper {
     self._wrapped.results.map({ MarketItem(database: database, _wrapped: $0) })
   }
   
+  public var currency: String {
+    _wrapped.currency
+  }
+  
+  public var sort: String {
+    _wrapped.sort
+  }
+  
   public var paginationToken: String? {
     guard self._wrapped.hasPaginationToken else { return nil }
     return self._wrapped.paginationToken

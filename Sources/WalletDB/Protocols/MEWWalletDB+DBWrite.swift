@@ -90,6 +90,7 @@ extension DBWriteMode {
     case .profile:            return .appendOverrideMerge
     case .marketCollection:   return .appendOverrideMerge
     case .marketMovers:       return .appendOverrideMerge
+    case .marketList:         return .appendOverrideMerge
     }
   }
   

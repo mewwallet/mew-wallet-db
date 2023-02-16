@@ -29,6 +29,7 @@ public enum MDBXTableName: String, CaseIterable {
   case profile            = "Profile_0"
   case marketCollection   = "MarketCollection_0"
   case marketMovers       = "MarketMovers_0"
+  case marketList         = "MarketList_0"
 }
 
 typealias MDBXTable = (name: MDBXTableName, db: MDBXDatabase)
