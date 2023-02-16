@@ -68,7 +68,7 @@ extension DAppRecord {
     get throws {
       guard let host = self.url.hostURL?.sanitized else { throw MDBXError.notFound }
       let key = DAppRecordMetaKey(url: host)
-      return try _meta.getData(key: key, policy: .cacheOrLoad(chain: .universal), database: self.database)
+      return try _meta.getData(key: key, policy: .cacheOrLoad, chain: .universal, database: self.database)
     }
   }
   

@@ -9,46 +9,41 @@ import Foundation
 import mdbx_ios
 
 enum RelationshipLoadPolicy {
-  case ignoreCache(chain: MDBXChain)
-  case cacheOrLoad(chain: MDBXChain)
+  case ignoreCache
+  case cacheOrLoad
 }
 
 // TODO: Re-do to @propertyWrapper when "Property wrappers currently cannot define an 'async' or 'throws' accessor" will be fixed
 
 public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
-  private var _data: (chain: MDBXChain, data: T)?
+  private let _uuid = UUID().uuidString
   private let _table: MDBXTableName
-  private let _queue = DispatchQueue(label: "db.pointer.queue")
   
   init(_ table: MDBXTableName) {
     _table = table
   }
   
-  func getData(key: K, policy: RelationshipLoadPolicy, database: WalletDB?) throws -> T {
+  func getData(key: K, policy: RelationshipLoadPolicy, chain: MDBXChain, database: WalletDB?) throws -> T {
     guard let database = database else {
-      guard let _data else { throw MDBXError.notFound }
-      return _data.data
+      guard let data: T = LRU.cache.value(forKey: _uuid + chain.hexString) else { throw MDBXError.notFound }
+      return data
     }
     switch policy {
-    case .cacheOrLoad(let chain):
-      if let _data, _data.chain == chain {
-        return _data.data
+    case .cacheOrLoad:
+      if let data: T = LRU.cache.value(forKey: _uuid + chain.hexString) {
+        return data
       }
       fallthrough
-    case .ignoreCache(let chain):
-      let data: T = try database.read(key: key, table: _table)
-      _queue.sync {
-        _data = (chain, data)
-        _data?.data.database = database
-      }
+    case .ignoreCache:
+      var data: T = try database.read(key: key, table: _table)
+      data.database = database
+      LRU.cache.setValue(data, forKey: _uuid + chain.hexString)
       return data
     }
   }
     
   func updateData(_ data: T, chain: MDBXChain) {
-    _queue.sync {
-      _data = (chain, data)
-    }
+    LRU.cache.setValue(data, forKey: _uuid + chain.hexString)
   }
 }
 

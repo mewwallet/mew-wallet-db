@@ -93,6 +93,14 @@ extension Address: Comparable {
   public static func ==(lhs: Address, rhs: Address) -> Bool {
     return lhs.rawValue.lowercased() == rhs.rawValue.lowercased()
   }
+  
+  public static func ==(lhs: Address, rhs: String) -> Bool {
+    return lhs == .unknown(rhs)
+  }
+  
+  public static func ==(lhs: String, rhs: Address) -> Bool {
+    return .unknown(lhs) == rhs
+  }
 }
 
 extension Address: Hashable {}
