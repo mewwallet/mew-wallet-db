@@ -26,6 +26,7 @@ public struct TokenMeta: Equatable {
               name: String = "No Token Name",
               symbol: String = "MNKY",
               decimals: Int32 = 0,
+              icon: String? = nil,
               price: String? = nil,
               database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
@@ -33,6 +34,9 @@ public struct TokenMeta: Equatable {
       $0.contractAddress = contractAddress.rawValue
       $0.name = name
       $0.symbol = symbol
+      if let icon {
+        $0.icon = icon
+      }
       if let price {
         $0.price = price
       }
