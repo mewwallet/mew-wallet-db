@@ -23,6 +23,9 @@ public enum Address: RawRepresentable, Equatable {
   case zktv2BuidlPaymaster  // "0x7F904e350F27aF4D4A70994AE1f3bBC1dAfEe665"
   case zktv2Buidl           // "0xf551954D449eA3Ae4D6A2656a42d9B9081B137b4"
   
+  case zkv2BuidlPaymaster   // "0xfC5B07a5dd1b80cf271D35642f75cC0500fF1e2C"
+  case zkv2Buidl            // "0xEd0994232328B470d44a88485B430b8bA965D434"
+  
   case unknown(String)
   case invalid(String)
   
@@ -32,7 +35,7 @@ public enum Address: RawRepresentable, Equatable {
   public var isStEth: Bool           { self == .stEth }
   public var isPrimary: Bool         { self == ._primary || self == ._zktv2Primary }
   public var isWBTC: Bool            { self == .wBTC }
-  public var isZK2Buidl: Bool        { self == .zktv2Buidl }
+  public var isZK2Buidl: Bool        { self == .zktv2Buidl || self == .zkv2Buidl }
   
   public var isWrappedBitcoin: Bool  { self.isRenBTC || self.isWBTC }
   
@@ -54,8 +57,12 @@ public enum Address: RawRepresentable, Equatable {
     case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": self = .usdc
     case "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": self = .matic
       
-    case "0xf551954D449eA3Ae4D6A2656a42d9B9081B137b4": self = .zktv2Buidl
+    case "0xf551954d449ea3ae4d6a2656a42d9b9081b137b4": self = .zktv2Buidl
     case "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665": self = .zktv2BuidlPaymaster
+      
+    case "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c": self = .zkv2BuidlPaymaster
+    case "0xed0994232328b470d44a88485b430b8ba965d434": self = .zkv2Buidl
+      
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
     }
@@ -76,6 +83,9 @@ public enum Address: RawRepresentable, Equatable {
       
     case .zktv2Buidl:                                 return "0xf551954d449ea3ae4d6a2656a42d9b9081b137b4"
     case .zktv2BuidlPaymaster:                        return "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665"
+      
+    case .zkv2BuidlPaymaster:                         return "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c"
+    case .zkv2Buidl:                                  return "0xed0994232328b470d44a88485b430b8ba965d434"
       
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()
