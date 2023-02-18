@@ -25,7 +25,7 @@ public struct TokenMeta: Equatable {
               contractAddress: Address,
               name: String = "No Token Name",
               symbol: String = "MNKY",
-              decimals: Int32 = 0,
+              decimals: Int32 = 0, // FIXME: optional decimals?
               icon: String? = nil,
               price: String? = nil,
               database: WalletDB? = nil) {
