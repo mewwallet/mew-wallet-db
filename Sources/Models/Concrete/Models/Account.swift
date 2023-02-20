@@ -147,10 +147,9 @@ extension Account {
     return try _skale.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
-  public func zkSyncBuidl() throws -> Token {
-    // TODO: Update me to zkSyncMainnet
-    let key = TokenKey(chain: .zksync_v2_testnet, address: .unknown(_wrapped.address), contractAddress: .zktv2Buidl)
-    return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache, chain: .zksync_v2_testnet, database: self.database)
+  public func zkSyncBuidl(chain: MDBXChain) throws -> Token {
+    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .buidl(for: chain))
+    return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   /// List of all NFT

@@ -73,6 +73,8 @@ public enum MDBXChain: CaseIterable {
     self = chain.chain
   }
   
+  /// Uses to recover chain for HistoryPurchase
+  /// - Parameter rawValue: raw chain name from API
   public init(rawValue: String) {
     switch rawValue.uppercased() {
     case "ETH":               self = .eth
@@ -86,10 +88,10 @@ public enum MDBXChain: CaseIterable {
     switch self {
     case .eth:                return "Ethereum"
     case .polygon_mainnet:    return "Polygon"
-    case .polygon_mumbai:     return "Polygon - Mumbai"
-    case .zksync_v2_mainnet:  return "zkSync mainnet"
+    case .polygon_mumbai:     return "Polygon"
+    case .zksync_v2_mainnet:  return "zkSync Era"
     case .zksync_v2_testnet:  return "Ethereum"
-    case .canto:              return "Canto"
+    case .canto:              return "CANTO"
     default:    return ""
     }
   }
@@ -121,6 +123,7 @@ public enum MDBXChain: CaseIterable {
   public var primary: Address {
     switch self {
     case .zksync_v2_testnet:  return ._zktv2Primary
+    case .zksync_v2_mainnet:  return ._zktv2Primary
     default:                  return ._primary
     }
   }
