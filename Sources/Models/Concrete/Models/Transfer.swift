@@ -48,6 +48,7 @@ public struct Transfer: Equatable {
   public var order: UInt16?
   
   // MARK: - Private Properties
+  private let _metaKey: TokenMetaKey
   private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
   private let _primaryMeta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
   private let _from: MDBXPointer<AccountKey, Account> = .init(.account)
@@ -94,6 +95,7 @@ public struct Transfer: Equatable {
     }
     self._chain = chain
     self.order = order
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)
   }
 }
 
@@ -105,8 +107,7 @@ extension Transfer {
   
   public var meta: TokenMeta {
     get throws {
-      let contractAddress = Address(rawValue: _wrapped.contractAddress)
-      return try _meta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, chain: _chain, database: self.database)
+      return try _meta.getData(key: self._metaKey, policy: .cacheOrLoad, chain: _chain, database: self.database)
     }
   }
   
@@ -206,6 +207,8 @@ extension Transfer: MDBXObject {
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Transfer(serializedData: data)
+    let address = Address(rawValue: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: key)
   }
   
@@ -214,6 +217,8 @@ extension Transfer: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Transfer(jsonUTF8Data: jsonData, options: options)
+    let address = Address(rawValue: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: key)
   }
   
@@ -222,6 +227,8 @@ extension Transfer: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _Transfer(jsonString: jsonString, options: options)
+    let address = Address(rawValue: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: key)
   }
   
@@ -286,6 +293,8 @@ extension Transfer: ProtoWrapper {
   init(_ wrapped: _Transfer, chain: MDBXChain) {
     self._chain = chain
     self._wrapped = wrapped
+    let address = Address(rawValue: self._wrapped.contractAddress)
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: nil)
   }
 }

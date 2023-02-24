@@ -33,7 +33,6 @@ public struct DexItem: Equatable {
       $0.name = tokenMeta.name
       $0.symbol = tokenMeta.symbol
     }
-    self._meta.updateData(tokenMeta, chain: _chain)
   }
   
   public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, order: UInt16?, database: WalletDB? = nil) {
