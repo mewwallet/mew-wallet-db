@@ -24,7 +24,7 @@ public enum Address: RawRepresentable, Equatable {
   case _zktv2Buidl           // "0xf551954D449eA3Ae4D6A2656a42d9B9081B137b4"
   
   case _zkv2BuidlPaymaster   // "0xfC5B07a5dd1b80cf271D35642f75cC0500fF1e2C"
-  case _zkv2Buidl            // "0xEd0994232328B470d44a88485B430b8bA965D434"
+  case _zkv2Buidl            // "0xEd0994232328B470d44a88485B430b8bA965D434" // super production - 0x1bba25233556a7c3b41913f35a035916dbed1664
   
   public static func buidl(for chain: MDBXChain) -> Address {
     switch chain {

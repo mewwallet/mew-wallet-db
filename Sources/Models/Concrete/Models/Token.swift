@@ -42,13 +42,7 @@ public struct Token: Equatable {
       }
     }
     self._chain = chain
-    
-    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
-    if chain.isZKSync, contractAddress.isPrimary {
-      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
-    } else {
-      self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)
-    }
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)
   }
 }
 
@@ -135,12 +129,7 @@ extension Token: MDBXObject {
     self._chain = chain
     self._wrapped = try _Token(serializedData: data)
     let address = Address(self._wrapped.contractAddress)
-    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
-    if chain.isZKSync, address.isPrimary {
-      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
-    } else {
-      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
-    }
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -149,12 +138,7 @@ extension Token: MDBXObject {
     self._chain = chain
     self._wrapped = try _Token(jsonUTF8Data: jsonData, options: options)
     let address = Address(self._wrapped.contractAddress)
-    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
-    if chain.isZKSync, address.isPrimary {
-      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
-    } else {
-      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
-    }
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -164,11 +148,7 @@ extension Token: MDBXObject {
     self._wrapped = try _Token(jsonString: jsonString, options: options)
     let address = Address(self._wrapped.contractAddress)
     /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
-    if chain.isZKSync, address.isPrimary {
-      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
-    } else {
-      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
-    }
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -210,12 +190,7 @@ extension Token: ProtoWrapper {
     self._chain = chain
     self._wrapped = wrapped
     let address = Address(rawValue: self._wrapped.contractAddress)
-    /// Replace primary contract address to `eth`/`0xeee...eee` for zksync only
-    if chain.isZKSync, address.isPrimary {
-      self._metaKey = TokenMetaKey(chain: .eth, contractAddress: ._primary)
-    } else {
-      self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
-    }
+    self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
   }
 }
 
