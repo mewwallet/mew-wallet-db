@@ -108,8 +108,6 @@ extension Transfer {
   public var meta: TokenMeta {
     get throws {
       return try _meta.getData(key: self._metaKey, policy: .cacheOrLoad, chain: _chain, database: self.database)
-//      let contractAddress = Address(rawValue: _wrapped.contractAddress)
-//      return try _meta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, chain: _chain, database: self.database)
     }
   }
   
