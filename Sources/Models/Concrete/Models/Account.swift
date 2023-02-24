@@ -43,7 +43,10 @@ public struct Account {
     }
   }
   
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  public var database: WalletDB? {
+    get { MEWwalletDBImpl.shared }
+    set {}
+  }
   var _wrapped: _Account
   var _chain: MDBXChain
   
@@ -54,6 +57,7 @@ public struct Account {
   private let _renBTC: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _stETH: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _skale: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _zkSyncBuidl: MDBXPointer<TokenKey, Token> = .init(.token)
   private let _nft: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   private let _nftHidden: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
   private let _nftFavorite: MDBXRelationship<NFTAssetKey, NFTAsset> = .init(.nftAsset)
@@ -84,7 +88,6 @@ public struct Account {
               withdrawalPublicKey: String?,
               isHidden: Bool = false,
               database: WalletDB? = nil) {
-    self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .universal
     self._wrapped = .with {
       $0.address = address.rawValue
@@ -142,6 +145,11 @@ extension Account {
   public func skale(chain: MDBXChain) throws -> Token {
     let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .skale)
     return try _skale.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
+  }
+  
+  public func zkSyncBuidl(chain: MDBXChain) throws -> Token {
+    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .buidl(for: chain))
+    return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   /// List of all NFT
