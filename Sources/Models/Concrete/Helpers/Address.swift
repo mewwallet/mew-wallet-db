@@ -23,8 +23,8 @@ public enum Address: RawRepresentable, Equatable {
   case _zktv2BuidlPaymaster  // "0x7F904e350F27aF4D4A70994AE1f3bBC1dAfEe665"
   case _zktv2Buidl           // "0xf551954D449eA3Ae4D6A2656a42d9B9081B137b4"
   
-  case _zkv2BuidlPaymaster   // "0xfC5B07a5dd1b80cf271D35642f75cC0500fF1e2C"
-  case _zkv2Buidl            // "0xEd0994232328B470d44a88485B430b8bA965D434" // super production - 0x1bba25233556a7c3b41913f35a035916dbed1664
+  case _zkv2BuidlPaymaster   // "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c"
+  case _zkv2Buidl            // "0x1bba25233556a7c3b41913f35a035916dbed1664"
   
   public static func buidl(for chain: MDBXChain) -> Address {
     switch chain {
@@ -77,7 +77,7 @@ public enum Address: RawRepresentable, Equatable {
     case "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665": self = ._zktv2BuidlPaymaster
       
     case "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c": self = ._zkv2BuidlPaymaster
-    case "0xed0994232328b470d44a88485b430b8ba965d434": self = ._zkv2Buidl
+    case "0x1bba25233556a7c3b41913f35a035916dbed1664": self = ._zkv2Buidl
       
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
@@ -101,7 +101,7 @@ public enum Address: RawRepresentable, Equatable {
     case ._zktv2BuidlPaymaster:                       return "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665"
       
     case ._zkv2BuidlPaymaster:                        return "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c"
-    case ._zkv2Buidl:                                 return "0xed0994232328b470d44a88485b430b8ba965d434"
+    case ._zkv2Buidl:                                 return "0x1bba25233556a7c3b41913f35a035916dbed1664"
       
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()
