@@ -20,8 +20,27 @@ public enum Address: RawRepresentable, Equatable {
   case usdc                 // "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
   case matic                // "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
   
-  case zktv2BuidlPaymaster  // "0xAf4fFc0fd44d3844fc20E3cfc0FcDBFA93548e88"
-  case zktv2Buidl           // "0x4baB9ae28e0A45E3D6879190760C551c1E8d7F81"
+  case _zktv2BuidlPaymaster  // "0x7F904e350F27aF4D4A70994AE1f3bBC1dAfEe665"
+  case _zktv2Buidl           // "0xf551954D449eA3Ae4D6A2656a42d9B9081B137b4"
+  
+  case _zkv2BuidlPaymaster   // "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c"
+  case _zkv2Buidl            // "0x1bba25233556a7c3b41913f35a035916dbed1664"
+  
+  public static func buidl(for chain: MDBXChain) -> Address {
+    switch chain {
+    case .zksync_v2_testnet:    return ._zktv2Buidl
+    case .zksync_v2_mainnet:    return ._zkv2Buidl
+    default:                    return ._zkv2Buidl
+    }
+  }
+  
+  public static func buidlPaymaster(for chain: MDBXChain) -> Address {
+    switch chain {
+    case .zksync_v2_testnet:    return ._zktv2BuidlPaymaster
+    case .zksync_v2_mainnet:    return ._zkv2BuidlPaymaster
+    default:                    return ._zkv2BuidlPaymaster
+    }
+  }
   
   case unknown(String)
   case invalid(String)
@@ -32,7 +51,7 @@ public enum Address: RawRepresentable, Equatable {
   public var isStEth: Bool           { self == .stEth }
   public var isPrimary: Bool         { self == ._primary || self == ._zktv2Primary }
   public var isWBTC: Bool            { self == .wBTC }
-  public var isZK2Buidl: Bool        { self == .zktv2Buidl }
+  public var isZK2Buidl: Bool        { self == ._zktv2Buidl || self == ._zkv2Buidl }
   
   public var isWrappedBitcoin: Bool  { self.isRenBTC || self.isWBTC }
   
@@ -54,8 +73,12 @@ public enum Address: RawRepresentable, Equatable {
     case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": self = .usdc
     case "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": self = .matic
       
-    case "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81": self = .zktv2Buidl
-    case "0xaf4ffc0fd44d3844fc20e3cfc0fcdbfa93548e88": self = .zktv2BuidlPaymaster
+    case "0xf551954d449ea3ae4d6a2656a42d9b9081b137b4": self = ._zktv2Buidl
+    case "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665": self = ._zktv2BuidlPaymaster
+      
+    case "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c": self = ._zkv2BuidlPaymaster
+    case "0x1bba25233556a7c3b41913f35a035916dbed1664": self = ._zkv2Buidl
+      
     case _ where rawValue.count == 42:                 self = .unknown(rawValue)
     default:                                           self = .invalid(rawValue)
     }
@@ -74,8 +97,11 @@ public enum Address: RawRepresentable, Equatable {
     case .usdc:                                       return "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     case .matic:                                      return "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
       
-    case .zktv2Buidl:                                 return "0x4bab9ae28e0a45e3d6879190760c551c1e8d7f81"
-    case .zktv2BuidlPaymaster:                        return "0xaf4ffc0fd44d3844fc20e3cfc0fcdbfa93548e88"
+    case ._zktv2Buidl:                                return "0xf551954d449ea3ae4d6a2656a42d9b9081b137b4"
+    case ._zktv2BuidlPaymaster:                       return "0x7f904e350f27af4d4a70994ae1f3bbc1dafee665"
+      
+    case ._zkv2BuidlPaymaster:                        return "0xfc5b07a5dd1b80cf271d35642f75cc0500ff1e2c"
+    case ._zkv2Buidl:                                 return "0x1bba25233556a7c3b41913f35a035916dbed1664"
       
     case .unknown(let address):                       return address.lowercased()
     case .invalid(let address):                       return address.lowercased()

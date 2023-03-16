@@ -14,6 +14,7 @@ private enum _MDBXChain: Data {
   case polygon_mumbai     = "0x00000000000000000000000000013881" // 80001
   case zksync_v2_mainnet  = "0x00000000000000000000000000000144" // 324
   case zksync_v2_testnet  = "0x00000000000000000000000000000118" // 280
+  case canto              = "0x00000000000000000000000000001e14" // 7700
   
   var chain: MDBXChain {
     switch self {
@@ -23,6 +24,7 @@ private enum _MDBXChain: Data {
     case .polygon_mumbai:     return .polygon_mumbai
     case .zksync_v2_mainnet:  return .zksync_v2_mainnet
     case .zksync_v2_testnet:  return .zksync_v2_testnet
+    case .canto:              return .canto
     }
   }
 }
@@ -33,7 +35,8 @@ public enum MDBXChain: CaseIterable {
     .polygon_mainnet,
     .polygon_mumbai,
     .zksync_v2_mainnet,
-    .zksync_v2_testnet
+    .zksync_v2_testnet,
+    .canto
   ]
   
   case invalid
@@ -44,6 +47,7 @@ public enum MDBXChain: CaseIterable {
   case polygon_mumbai
   case zksync_v2_mainnet
   case zksync_v2_testnet
+  case canto
   case custom(Data)
   
   public var rawValue: Data {
@@ -55,6 +59,7 @@ public enum MDBXChain: CaseIterable {
     case .polygon_mumbai:     return _MDBXChain.polygon_mumbai.rawValue
     case .zksync_v2_mainnet:  return _MDBXChain.zksync_v2_mainnet.rawValue
     case .zksync_v2_testnet:  return _MDBXChain.zksync_v2_testnet.rawValue
+    case .canto:              return _MDBXChain.canto.rawValue
     case .custom(let data): return data
     }
   }
@@ -68,10 +73,13 @@ public enum MDBXChain: CaseIterable {
     self = chain.chain
   }
   
+  /// Uses to recover chain for HistoryPurchase
+  /// - Parameter rawValue: raw chain name from API
   public init(rawValue: String) {
     switch rawValue.uppercased() {
     case "ETH":               self = .eth
     case "MATIC":             self = .polygon_mainnet
+    case "CANTO":             self = .canto
     default:                  self = .eth
     }
   }
@@ -80,9 +88,10 @@ public enum MDBXChain: CaseIterable {
     switch self {
     case .eth:                return "Ethereum"
     case .polygon_mainnet:    return "Polygon"
-    case .polygon_mumbai:     return "Polygon - Mumbai"
-    case .zksync_v2_mainnet:  return "zkSync mainnet"
+    case .polygon_mumbai:     return "Polygon"
+    case .zksync_v2_mainnet:  return "zkSync Era"
     case .zksync_v2_testnet:  return "Ethereum"
+    case .canto:              return "CANTO"
     default:    return ""
     }
   }
@@ -94,6 +103,7 @@ public enum MDBXChain: CaseIterable {
     case .polygon_mumbai:     return "MATIC"
     case .zksync_v2_mainnet:  return "ETH"
     case .zksync_v2_testnet:  return "ETH"
+    case .canto:              return "CANTO"
     default:    return ""
     }
   }
@@ -105,6 +115,7 @@ public enum MDBXChain: CaseIterable {
     case .polygon_mumbai:     return 18
     case .zksync_v2_mainnet:  return 18
     case .zksync_v2_testnet:  return 18
+    case .canto:              return 18
     default:                  return 18
     }
   }
@@ -112,6 +123,7 @@ public enum MDBXChain: CaseIterable {
   public var primary: Address {
     switch self {
     case .zksync_v2_testnet:  return ._zktv2Primary
+    case .zksync_v2_mainnet:  return ._zktv2Primary
     default:                  return ._primary
     }
   }
@@ -130,6 +142,7 @@ public enum MDBXChain: CaseIterable {
     case .zksync_v2_mainnet:  return "0x00000000000000000000000000000144" // 324
     case .zksync_v2_testnet:  return "0x00000000000000000000000000000118" // 280
     case .universal:          return "0x00000000000000000000000000000001" // 1
+    case .canto:              return "0x00000000000000000000000000001e14" // 7700
     case .custom(let chain):  return chain.hexString
     }
   }
