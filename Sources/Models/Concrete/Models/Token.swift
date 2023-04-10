@@ -75,7 +75,10 @@ extension Token {
   
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
   public var address: Address { Address(rawValue: self._wrapped.address) }
-  public var amount: Decimal { Decimal(wrapped: self._wrapped.amount, hex: true) ?? .zero }
+  public var amount: Decimal {
+    Decimal(string: "110000000000000000000") ?? .zero
+//    Decimal(wrapped: self._wrapped.amount, hex: true) ?? .zero
+  }
   public var lockedAmount: Decimal { Decimal(wrapped: self._wrapped.lockedAmount, hex: true) ?? .zero }
   
   public func isHidden(locked: Bool) -> Bool {

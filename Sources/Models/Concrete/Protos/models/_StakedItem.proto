@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "subs/_StakedItemQueue.proto";
+
+message _StakedItem {
+  // User's address
+  string address                              = 1;
+  // Provisioning request UUID
+  string provisioning_request_uuid            = 2;
+  
+  // Staking status
+//  enum _TransferStatus {
+//    CREATED                                     = 0;
+//    SUBMITTED                                   = 1;
+//    SUCCESS                                     = 2;
+//    FAIL                                        = 3;
+//    DEPOSITED                                   = 4;
+//    PENDING                                     = 5;
+//    ACTIVE                                      = 6;
+//    EXITED                                      = 7;
+//  }
+  string status                               = 3;
+  
+  // Staking amount
+  string eth_two_staked                       = 4;
+  
+  // Staking balance
+  string eth_two_balance                      = 5;
+  
+  // Staking earned
+  string eth_two_earned                       = 6;
+  
+  // Validators addresses
+  repeated string eth_two_addresses           = 7;
+  
+  // Staking exited
+  string eth_two_exited                       = 8;
+  
+  // Staking exited addresses
+  repeated string eth_two_addresses_exited    = 9;
+  
+  // Transaction hash
+  optional string hash                        = 10;
+  
+  // Stake needs to be upgraded
+  bool requires_upgrade                       = 11;
+  
+  // APR
+  optional string apr                         = 12;
+  
+  // Average apr
+  optional string average_apr                 = 13;
+  
+  // Timestamp
+  google.protobuf.Timestamp timestamp         = 14;
+  
+  // Activation queue, optional
+  optional _StakedItemQueue queue                 = 15;
+}
+
+//{
+//xx address: "0x90942cc724a12aa02cbb2c87991644d6dae3ea3b",
+//xx provisioning_request_uuid: "afded5eb-cad5-4016-bc22-4a67a3b911a2",
+//   timestamp: "2022-05-19T15:04:58.000Z",
+//   price: "1881.6",
+//xx status: "ACTIVE",
+//xx eth_two_staked: "0x1dcd650000",  //128000000000
+//xx eth_two_balance: "0x1edbb9528e", //132535374478
+//xx eth_two_earned: "0x10e549877",        //  4535392375
+//xx eth_two_addresses: [
+//"0xaea20705a0b488d320fb856c1bbe3155f0523bc241ea458b6685f6d3a31f8d07a5c4df65ebd98b2bdd804c889f17c7f7",
+//"0xaf04937322870d1f68e60bb3f9ef66cf126d27d9a0ed5f3449a55dfeccd3d251b30f338b7fbfdd8e9eb90af31f8b8b15",
+//"0xb8d918893d3713dabd0654d6aef33507fa5adfa990bf09f95f4c263293056af8a8c396a3bfe41d6fb2e742bc22bf9bf8",
+//"0x8bf87c30dd62ff6466266ca617fde93afed17c2795cf56713458c04eef079a85abd4bae1c7e093357f48012d34fd2214"
+//],
+//xx eth_two_exited: "0x0",
+//xx eth_two_addresses_exited: [ ],
+//hash: "0x5f36f50728508f4169ff4f9e79aff092b3ac1d0cc02eafeaa2f598c4ea6bb3a9",
+//xx requiresUpgrade: true,
+//xx apr: "0.0440475343643935",
+//   current_apr: "0.05237",
+//xx average_apr: "0.05237"
+//},
