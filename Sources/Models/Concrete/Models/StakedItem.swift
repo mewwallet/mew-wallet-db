@@ -168,6 +168,7 @@ extension StakedItem {
     ]
     return requests.contains(self.requestUUID)
   }
+  public var requiresUpgrade: Bool { _wrapped.requiresUpgrade }
 //  public var fromAddress: Address { Address(rawValue: self._wrapped.from) }
 //  public var toAddress: Address { Address(rawValue: self._wrapped.to) }
 //  public var contractAddress: Address { Address(rawValue: self._wrapped.contractAddress) }
@@ -321,6 +322,12 @@ extension StakedItem: Comparable {
   public static func < (lhs: StakedItem, rhs: StakedItem) -> Bool {
     return (lhs.key as! StakedItem.Key).timestamp < (rhs.key as! StakedItem.Key).timestamp
   }
+}
+
+// MARK: - StakedItem + Identifiable
+
+extension StakedItem: Identifiable {
+  public var id: String { _wrapped.provisioningRequestUuid }
 }
 
 // MARK: - StakedItem + CommonInit
