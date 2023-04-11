@@ -330,6 +330,14 @@ extension StakedItem: Identifiable {
   public var id: String { _wrapped.provisioningRequestUuid }
 }
 
+// MARK: - StakedItem + Hashable {
+
+extension StakedItem: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(_wrapped)
+  }
+}
+
 // MARK: - StakedItem + CommonInit
 
 extension StakedItem {
