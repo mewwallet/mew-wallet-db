@@ -37,8 +37,6 @@ public enum MDBXKeyLength {
   public static var historySwap:          Int { return chain + address + hash }                                 // 68
   public static var historyPurchase:      Int { return chain + address + transactionID }                        // 68
   public static var profile:              Int { return chain + hash + hash }                                    // 80
-  public static var marketCollectionItem: Int {
-      return chain + index }
-  public static var marketMoversItem: Int {
-      return chain + currency + hash + index }
+  public static var orderedCollectionTokenMeta: Int { return chain + order + address + hash }                                          // 70
+  public static var marketMoversItem:     Int { return chain + currency + hash + index }                        // 64
 }

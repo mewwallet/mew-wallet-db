@@ -26,7 +26,7 @@ struct _MarketListV3Wrapper {
   // methods supported on all messages.
 
   /// Tokens
-  var results: [_MarketItem] = []
+  var results: [_TokenMeta] = []
 
   /// Pagination token
   var paginationToken: String {

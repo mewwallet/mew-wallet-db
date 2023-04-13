@@ -71,7 +71,7 @@ extension _MarketCollectionAction: SwiftProtobuf.Message, SwiftProtobuf._Message
   static let protoMessageName: String = "_MarketCollectionAction"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "text"),
-    2: .same(proto: "localizationKey"),
+    2: .standard(proto: "localization_key"),
     3: .same(proto: "url"),
   ]
 

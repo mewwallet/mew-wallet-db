@@ -90,10 +90,10 @@ extension _MarketTopItem: @unchecked Sendable {}
 extension _MarketTopItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketTopItem"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "contractAddress"),
+    1: .standard(proto: "contract_address"),
     2: .same(proto: "period"),
     3: .same(proto: "price"),
-    4: .same(proto: "priceChange"),
+    4: .standard(proto: "price_change"),
     5: .same(proto: "timestamp"),
   ]
 

@@ -11,10 +11,14 @@ import SwiftProtobuf
 public struct MarketCollectionItem: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _MarketCollectionItem
+  var _chain: MDBXChain
+
+  @SubProperty<[_TokenMeta], [TokenMeta]> var _tokens: [_TokenMeta]?
 
   // MARK: - Lifecycle
   
   public init(
+    chain: MDBXChain,
     actionLocalizationKey: String?,
     actionTitle: String?,
     actionURL: String?,
@@ -34,7 +38,7 @@ public struct MarketCollectionItem: Equatable {
     database: WalletDB? = nil
   ) {
     self.database = database ?? MEWwalletDBImpl.shared
-    
+    self._chain = chain
     self._wrapped = .with {
       $0.action = .with {
         $0.localizationKey = actionLocalizationKey ?? ""
@@ -68,11 +72,14 @@ public struct MarketCollectionItem: Equatable {
         $0.text = titleText ?? ""
       }
     }
+    commonInit(chain: chain, key: nil)
   }
   
-  init(database: WalletDB? = nil, _wrapped: _MarketCollectionItem) {
+  init(database: WalletDB? = nil, _wrapped: _MarketCollectionItem, chain: MDBXChain) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = _wrapped
+    self._chain = chain
+    commonInit(chain: chain, key: nil)
   }
 }
 
@@ -133,10 +140,11 @@ extension MarketCollectionItem {
     }
   }
   
-  var tokens: [MarketTokenMeta] {
-    return _wrapped.tokens.map {
-      MarketTokenMeta(database: database, _wrapped: $0)
+  var tokens: [TokenMeta] {
+    guard !_wrapped.tokens.isEmpty else {
+      return []
     }
+    return $_tokens ?? []
   }
 }
 
@@ -147,6 +155,8 @@ extension MarketCollectionItem: MDBXObject {
     }
   }
   
+  public var chain: MDBXChain { _chain }
+
   public var key: MDBXKey {
     assertionFailure("not implemented")
     return MarketCollectionItemKey(chain: .universal, index: 0)
@@ -158,18 +168,24 @@ extension MarketCollectionItem: MDBXObject {
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._wrapped = try _MarketCollectionItem(serializedData: data)
+    self._chain = chain
+    commonInit(chain: chain, key: key)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._wrapped = try _MarketCollectionItem(jsonUTF8Data: jsonData, options: options)
+    self._chain = chain
+    commonInit(chain: chain, key: key)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._wrapped = try _MarketCollectionItem(jsonString: jsonString, options: options)
+    self._chain = chain
+    commonInit(chain: chain, key: key)
   }
   
   public mutating func merge(with object: MDBXObject) {
@@ -198,7 +214,7 @@ extension MarketCollectionItem {
     options.ignoreUnknownFields = true
     let objects = try _MarketCollectionItem.array(fromJSONString: string, options: options)
     return objects.lazy.map({
-      MarketCollectionItem(_wrapped: $0)
+      MarketCollectionItem(_wrapped: $0, chain: chain)
     })
   }
   
@@ -207,7 +223,25 @@ extension MarketCollectionItem {
     options.ignoreUnknownFields = true
     let objects = try _MarketCollectionItem.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({
-      MarketCollectionItem(_wrapped: $0)
+      MarketCollectionItem(_wrapped: $0, chain: chain)
     })
+  }
+}
+
+// MARK: - MarketCollectionItem + CommonInit
+
+private extension MarketCollectionItem {
+  mutating func commonInit(chain: MDBXChain, key: Data?) {
+    //tryRestoreCollectionKey(key) ??
+    
+    // Wrappers
+    __tokens.chain = chain
+    __tokens.wrappedValue = _wrapped.tokens
+        
+    self.populateDB()
+  }
+  
+  func populateDB() {
+    __tokens.database = database
   }
 }

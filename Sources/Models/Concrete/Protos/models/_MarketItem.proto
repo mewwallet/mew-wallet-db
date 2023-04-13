@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-message _MarketItem {
-  optional string circulatingSupply = 1;
-  optional string contract_address = 2;
-  optional string marketCap = 3;
-  optional string totalSupply = 4;
-  optional string volume24h = 5;
-}

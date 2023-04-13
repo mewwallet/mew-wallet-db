@@ -7,6 +7,8 @@
 
 import Foundation
 
+// TODO:
+// chain + timestamp + index
 public final class MarketMoversItemKey: MDBXKey {
   // MARK: - Public
   

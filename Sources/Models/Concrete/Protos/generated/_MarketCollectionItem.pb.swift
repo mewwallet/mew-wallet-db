@@ -25,6 +25,7 @@ struct _MarketCollectionItem {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// title of the market collection.
   var entryTitle: String {
     get {return _storage._entryTitle ?? String()}
     set {_uniqueStorage()._entryTitle = newValue}
@@ -34,6 +35,7 @@ struct _MarketCollectionItem {
   /// Clears the value of `entryTitle`. Subsequent reads from it will return its default value.
   mutating func clearEntryTitle() {_uniqueStorage()._entryTitle = nil}
 
+  /// full title of the market collection.
   var title: _MarketCollectionTitle {
     get {return _storage._title ?? _MarketCollectionTitle()}
     set {_uniqueStorage()._title = newValue}
@@ -43,6 +45,7 @@ struct _MarketCollectionItem {
   /// Clears the value of `title`. Subsequent reads from it will return its default value.
   mutating func clearTitle() {_uniqueStorage()._title = nil}
 
+  /// longer description about the market collection.
   var description_p: _MarketCollectionTitle {
     get {return _storage._description_p ?? _MarketCollectionTitle()}
     set {_uniqueStorage()._description_p = newValue}
@@ -52,6 +55,7 @@ struct _MarketCollectionItem {
   /// Clears the value of `description_p`. Subsequent reads from it will return its default value.
   mutating func clearDescription_p() {_uniqueStorage()._description_p = nil}
 
+  /// shorter version of the title of the market collection.
   var shortTitle: _MarketCollectionTitle {
     get {return _storage._shortTitle ?? _MarketCollectionTitle()}
     set {_uniqueStorage()._shortTitle = newValue}
@@ -61,6 +65,7 @@ struct _MarketCollectionItem {
   /// Clears the value of `shortTitle`. Subsequent reads from it will return its default value.
   mutating func clearShortTitle() {_uniqueStorage()._shortTitle = nil}
 
+  /// shorter version of the description of the market collection.
   var shortDescription: _MarketCollectionTitle {
     get {return _storage._shortDescription ?? _MarketCollectionTitle()}
     set {_uniqueStorage()._shortDescription = newValue}
@@ -70,6 +75,7 @@ struct _MarketCollectionItem {
   /// Clears the value of `shortDescription`. Subsequent reads from it will return its default value.
   mutating func clearShortDescription() {_uniqueStorage()._shortDescription = nil}
 
+  /// information about an associated action, such as a link to an article or a tutorial.
   var action: _MarketCollectionAction {
     get {return _storage._action ?? _MarketCollectionAction()}
     set {_uniqueStorage()._action = newValue}
@@ -79,15 +85,7 @@ struct _MarketCollectionItem {
   /// Clears the value of `action`. Subsequent reads from it will return its default value.
   mutating func clearAction() {_uniqueStorage()._action = nil}
 
-  var theme: String {
-    get {return _storage._theme ?? String()}
-    set {_uniqueStorage()._theme = newValue}
-  }
-  /// Returns true if `theme` has been explicitly set.
-  var hasTheme: Bool {return _storage._theme != nil}
-  /// Clears the value of `theme`. Subsequent reads from it will return its default value.
-  mutating func clearTheme() {_uniqueStorage()._theme = nil}
-
+  /// URLs for small and big banner images associated with the market collection.
   var banner: _MarketCollectionBanner {
     get {return _storage._banner ?? _MarketCollectionBanner()}
     set {_uniqueStorage()._banner = newValue}
@@ -97,11 +95,23 @@ struct _MarketCollectionItem {
   /// Clears the value of `banner`. Subsequent reads from it will return its default value.
   mutating func clearBanner() {_uniqueStorage()._banner = nil}
 
-  var tokens: [_MarketTokenMeta] {
+  /// visual theme of the market collection (e.g., "DARK").
+  var theme: String {
+    get {return _storage._theme ?? String()}
+    set {_uniqueStorage()._theme = newValue}
+  }
+  /// Returns true if `theme` has been explicitly set.
+  var hasTheme: Bool {return _storage._theme != nil}
+  /// Clears the value of `theme`. Subsequent reads from it will return its default value.
+  mutating func clearTheme() {_uniqueStorage()._theme = nil}
+
+  /// list of tokens associated with the market collection.
+  var tokens: [_TokenMeta] {
     get {return _storage._tokens}
     set {_uniqueStorage()._tokens = newValue}
   }
 
+  /// list of filters available for the market collection.
   var filters: [_MarketCollectionFilter] {
     get {return _storage._filters}
     set {_uniqueStorage()._filters = newValue}
@@ -123,16 +133,16 @@ extension _MarketCollectionItem: @unchecked Sendable {}
 extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketCollectionItem"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "entryTitle"),
+    1: .standard(proto: "entry_title"),
     2: .same(proto: "title"),
     3: .same(proto: "description"),
-    4: .same(proto: "shortTitle"),
-    5: .same(proto: "shortDescription"),
+    4: .standard(proto: "short_title"),
+    5: .standard(proto: "short_description"),
     6: .same(proto: "action"),
-    7: .same(proto: "theme"),
     8: .same(proto: "banner"),
-    9: .same(proto: "tokens"),
-    10: .same(proto: "filters"),
+    9: .same(proto: "theme"),
+    10: .same(proto: "tokens"),
+    11: .same(proto: "filters"),
   ]
 
   fileprivate class _StorageClass {
@@ -142,9 +152,9 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _shortTitle: _MarketCollectionTitle? = nil
     var _shortDescription: _MarketCollectionTitle? = nil
     var _action: _MarketCollectionAction? = nil
-    var _theme: String? = nil
     var _banner: _MarketCollectionBanner? = nil
-    var _tokens: [_MarketTokenMeta] = []
+    var _theme: String? = nil
+    var _tokens: [_TokenMeta] = []
     var _filters: [_MarketCollectionFilter] = []
 
     static let defaultInstance = _StorageClass()
@@ -158,8 +168,8 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _shortTitle = source._shortTitle
       _shortDescription = source._shortDescription
       _action = source._action
-      _theme = source._theme
       _banner = source._banner
+      _theme = source._theme
       _tokens = source._tokens
       _filters = source._filters
     }
@@ -186,10 +196,10 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 4: try { try decoder.decodeSingularMessageField(value: &_storage._shortTitle) }()
         case 5: try { try decoder.decodeSingularMessageField(value: &_storage._shortDescription) }()
         case 6: try { try decoder.decodeSingularMessageField(value: &_storage._action) }()
-        case 7: try { try decoder.decodeSingularStringField(value: &_storage._theme) }()
         case 8: try { try decoder.decodeSingularMessageField(value: &_storage._banner) }()
-        case 9: try { try decoder.decodeRepeatedMessageField(value: &_storage._tokens) }()
-        case 10: try { try decoder.decodeRepeatedMessageField(value: &_storage._filters) }()
+        case 9: try { try decoder.decodeSingularStringField(value: &_storage._theme) }()
+        case 10: try { try decoder.decodeRepeatedMessageField(value: &_storage._tokens) }()
+        case 11: try { try decoder.decodeRepeatedMessageField(value: &_storage._filters) }()
         default: break
         }
       }
@@ -220,17 +230,17 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._action {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
       } }()
-      try { if let v = _storage._theme {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 7)
-      } }()
       try { if let v = _storage._banner {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
       } }()
+      try { if let v = _storage._theme {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 9)
+      } }()
       if !_storage._tokens.isEmpty {
-        try visitor.visitRepeatedMessageField(value: _storage._tokens, fieldNumber: 9)
+        try visitor.visitRepeatedMessageField(value: _storage._tokens, fieldNumber: 10)
       }
       if !_storage._filters.isEmpty {
-        try visitor.visitRepeatedMessageField(value: _storage._filters, fieldNumber: 10)
+        try visitor.visitRepeatedMessageField(value: _storage._filters, fieldNumber: 11)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -247,8 +257,8 @@ extension _MarketCollectionItem: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._shortTitle != rhs_storage._shortTitle {return false}
         if _storage._shortDescription != rhs_storage._shortDescription {return false}
         if _storage._action != rhs_storage._action {return false}
-        if _storage._theme != rhs_storage._theme {return false}
         if _storage._banner != rhs_storage._banner {return false}
+        if _storage._theme != rhs_storage._theme {return false}
         if _storage._tokens != rhs_storage._tokens {return false}
         if _storage._filters != rhs_storage._filters {return false}
         return true

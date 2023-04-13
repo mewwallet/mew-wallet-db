@@ -25,15 +25,6 @@ struct _MarketCollectionTag {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var localizationKey: String {
-    get {return _localizationKey ?? String()}
-    set {_localizationKey = newValue}
-  }
-  /// Returns true if `localizationKey` has been explicitly set.
-  var hasLocalizationKey: Bool {return self._localizationKey != nil}
-  /// Clears the value of `localizationKey`. Subsequent reads from it will return its default value.
-  mutating func clearLocalizationKey() {self._localizationKey = nil}
-
   var title: String {
     get {return _title ?? String()}
     set {_title = newValue}
@@ -43,12 +34,21 @@ struct _MarketCollectionTag {
   /// Clears the value of `title`. Subsequent reads from it will return its default value.
   mutating func clearTitle() {self._title = nil}
 
+  var localizationKey: String {
+    get {return _localizationKey ?? String()}
+    set {_localizationKey = newValue}
+  }
+  /// Returns true if `localizationKey` has been explicitly set.
+  var hasLocalizationKey: Bool {return self._localizationKey != nil}
+  /// Clears the value of `localizationKey`. Subsequent reads from it will return its default value.
+  mutating func clearLocalizationKey() {self._localizationKey = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _localizationKey: String? = nil
   fileprivate var _title: String? = nil
+  fileprivate var _localizationKey: String? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -60,8 +60,8 @@ extension _MarketCollectionTag: @unchecked Sendable {}
 extension _MarketCollectionTag: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_MarketCollectionTag"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "localizationKey"),
-    2: .same(proto: "title"),
+    1: .same(proto: "title"),
+    2: .standard(proto: "localization_key"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -70,8 +70,8 @@ extension _MarketCollectionTag: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self._localizationKey) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self._title) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self._title) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._localizationKey) }()
       default: break
       }
     }
@@ -82,18 +82,18 @@ extension _MarketCollectionTag: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._localizationKey {
+    try { if let v = self._title {
       try visitor.visitSingularStringField(value: v, fieldNumber: 1)
     } }()
-    try { if let v = self._title {
+    try { if let v = self._localizationKey {
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _MarketCollectionTag, rhs: _MarketCollectionTag) -> Bool {
-    if lhs._localizationKey != rhs._localizationKey {return false}
     if lhs._title != rhs._title {return false}
+    if lhs._localizationKey != rhs._localizationKey {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

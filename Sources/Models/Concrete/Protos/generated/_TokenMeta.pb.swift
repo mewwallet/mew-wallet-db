@@ -25,12 +25,16 @@ struct _TokenMeta {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// Contract address
   var contractAddress: String = String()
 
+  /// Full name.
   var name: String = String()
 
+  /// Ticker symbol.
   var symbol: String = String()
 
+  /// Decimal places.
   var decimals: Int32 {
     get {return _decimals ?? 0}
     set {_decimals = newValue}
@@ -40,6 +44,7 @@ struct _TokenMeta {
   /// Clears the value of `decimals`. Subsequent reads from it will return its default value.
   mutating func clearDecimals() {self._decimals = nil}
 
+  /// Icon URL.
   var icon: String {
     get {return _icon ?? String()}
     set {_icon = newValue}
@@ -49,6 +54,7 @@ struct _TokenMeta {
   /// Clears the value of `icon`. Subsequent reads from it will return its default value.
   mutating func clearIcon() {self._icon = nil}
 
+  /// Current price.
   var price: String {
     get {return _price ?? String()}
     set {_price = newValue}
@@ -58,6 +64,7 @@ struct _TokenMeta {
   /// Clears the value of `price`. Subsequent reads from it will return its default value.
   mutating func clearPrice() {self._price = nil}
 
+  /// Market capitalization.
   var marketCap: String {
     get {return _marketCap ?? String()}
     set {_marketCap = newValue}
@@ -67,8 +74,10 @@ struct _TokenMeta {
   /// Clears the value of `marketCap`. Subsequent reads from it will return its default value.
   mutating func clearMarketCap() {self._marketCap = nil}
 
+  /// Price chart data.
   var sparkline: [String] = []
 
+  /// Trading volume in the last 24 hours.
   var volume24H: String {
     get {return _volume24H ?? String()}
     set {_volume24H = newValue}
@@ -77,6 +86,49 @@ struct _TokenMeta {
   var hasVolume24H: Bool {return self._volume24H != nil}
   /// Clears the value of `volume24H`. Subsequent reads from it will return its default value.
   mutating func clearVolume24H() {self._volume24H = nil}
+
+  /// Circulating supply.
+  var circulatingSupply: String {
+    get {return _circulatingSupply ?? String()}
+    set {_circulatingSupply = newValue}
+  }
+  /// Returns true if `circulatingSupply` has been explicitly set.
+  var hasCirculatingSupply: Bool {return self._circulatingSupply != nil}
+  /// Clears the value of `circulatingSupply`. Subsequent reads from it will return its default value.
+  mutating func clearCirculatingSupply() {self._circulatingSupply = nil}
+
+  /// Detailed description.
+  var description_p: _MarketCollectionTitle {
+    get {return _description_p ?? _MarketCollectionTitle()}
+    set {_description_p = newValue}
+  }
+  /// Returns true if `description_p` has been explicitly set.
+  var hasDescription_p: Bool {return self._description_p != nil}
+  /// Clears the value of `description_p`. Subsequent reads from it will return its default value.
+  mutating func clearDescription_p() {self._description_p = nil}
+
+  /// Total supply.
+  var totalSupply: String {
+    get {return _totalSupply ?? String()}
+    set {_totalSupply = newValue}
+  }
+  /// Returns true if `totalSupply` has been explicitly set.
+  var hasTotalSupply: Bool {return self._totalSupply != nil}
+  /// Clears the value of `totalSupply`. Subsequent reads from it will return its default value.
+  mutating func clearTotalSupply() {self._totalSupply = nil}
+
+  /// Official website URL.
+  var website: String {
+    get {return _website ?? String()}
+    set {_website = newValue}
+  }
+  /// Returns true if `website` has been explicitly set.
+  var hasWebsite: Bool {return self._website != nil}
+  /// Clears the value of `website`. Subsequent reads from it will return its default value.
+  mutating func clearWebsite() {self._website = nil}
+
+  /// Associated tags.
+  var tags: [_MarketCollectionTag] = []
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -87,6 +139,10 @@ struct _TokenMeta {
   fileprivate var _price: String? = nil
   fileprivate var _marketCap: String? = nil
   fileprivate var _volume24H: String? = nil
+  fileprivate var _circulatingSupply: String? = nil
+  fileprivate var _description_p: _MarketCollectionTitle? = nil
+  fileprivate var _totalSupply: String? = nil
+  fileprivate var _website: String? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -107,6 +163,11 @@ extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     7: .standard(proto: "market_cap"),
     8: .same(proto: "sparkline"),
     9: .standard(proto: "volume_24h"),
+    10: .standard(proto: "circulating_supply"),
+    11: .same(proto: "description"),
+    12: .standard(proto: "total_supply"),
+    13: .same(proto: "website"),
+    14: .same(proto: "tags"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -124,6 +185,11 @@ extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
       case 7: try { try decoder.decodeSingularStringField(value: &self._marketCap) }()
       case 8: try { try decoder.decodeRepeatedStringField(value: &self.sparkline) }()
       case 9: try { try decoder.decodeSingularStringField(value: &self._volume24H) }()
+      case 10: try { try decoder.decodeSingularStringField(value: &self._circulatingSupply) }()
+      case 11: try { try decoder.decodeSingularMessageField(value: &self._description_p) }()
+      case 12: try { try decoder.decodeSingularStringField(value: &self._totalSupply) }()
+      case 13: try { try decoder.decodeSingularStringField(value: &self._website) }()
+      case 14: try { try decoder.decodeRepeatedMessageField(value: &self.tags) }()
       default: break
       }
     }
@@ -161,6 +227,21 @@ extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     try { if let v = self._volume24H {
       try visitor.visitSingularStringField(value: v, fieldNumber: 9)
     } }()
+    try { if let v = self._circulatingSupply {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 10)
+    } }()
+    try { if let v = self._description_p {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+    } }()
+    try { if let v = self._totalSupply {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 12)
+    } }()
+    try { if let v = self._website {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 13)
+    } }()
+    if !self.tags.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.tags, fieldNumber: 14)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -174,6 +255,11 @@ extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if lhs._marketCap != rhs._marketCap {return false}
     if lhs.sparkline != rhs.sparkline {return false}
     if lhs._volume24H != rhs._volume24H {return false}
+    if lhs._circulatingSupply != rhs._circulatingSupply {return false}
+    if lhs._description_p != rhs._description_p {return false}
+    if lhs._totalSupply != rhs._totalSupply {return false}
+    if lhs._website != rhs._website {return false}
+    if lhs.tags != rhs.tags {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

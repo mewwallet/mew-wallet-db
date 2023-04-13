@@ -1,8 +1,9 @@
 syntax = "proto3";
+
 import "subs/_MarketCollectionTag.proto";
 import "subs/_MarketCollectionTitle.proto";
 
 message _MarketCollectionFilter {
   optional _MarketCollectionTitle title = 1;
-  repeated _MarketCollectionTag tags = 2;
+  repeated _MarketCollectionTag tags    = 2;
 }

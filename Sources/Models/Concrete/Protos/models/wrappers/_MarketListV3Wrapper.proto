@@ -1,12 +1,15 @@
 syntax = "proto3";
-import "_MarketItem.proto";
+
+import "_TokenMeta.proto";
 
 message _MarketListV3Wrapper {
   // Tokens
-  repeated _MarketItem results = 1;
+  repeated _TokenMeta results     = 1;
   
   // Pagination token
   optional string paginationToken = 2;
-  optional string currency = 3;
-  optional string sort = 4;
+  // Currency
+  optional string currency        = 3;
+  // Sort query Available values: marketCap, volume24, gainer, loser
+  optional string sort            = 4;
 }

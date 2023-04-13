@@ -11,15 +11,17 @@ import SwiftProtobuf
 public struct MarketMoversItem: Equatable {
   public weak var database: WalletDB? = MEWwalletDBImpl.shared
   var _wrapped: _MarketMoversItem
+  var _chain: MDBXChain
 
   // MARK: - Lifecycle
   
   public init(
+    chain: MDBXChain,
     contractAddress: String?,
     database: WalletDB? = nil
   ) {
     self.database = database ?? MEWwalletDBImpl.shared
-    
+    self._chain = chain
     self._wrapped = .with {
       if let contractAddress {
         $0.contractAddress = contractAddress
@@ -29,10 +31,12 @@ public struct MarketMoversItem: Equatable {
   
   init(
     database: WalletDB? = nil,
-    _wrapped: _MarketMoversItem
+    _wrapped: _MarketMoversItem,
+    chain: MDBXChain
   ) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = _wrapped
+    self._chain = chain
   }
 }
 
@@ -45,6 +49,7 @@ public extension MarketMoversItem {
 }
 
 extension MarketMoversItem: MDBXObject {
+  public var chain: MDBXChain { _chain }
   public var serialized: Data {
     get throws {
       try _wrapped.serializedData()
@@ -62,18 +67,21 @@ extension MarketMoversItem: MDBXObject {
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._wrapped = try _MarketMoversItem(serializedData: data)
+    self._chain = chain
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._wrapped = try _MarketMoversItem(jsonUTF8Data: jsonData, options: options)
+    self._chain = chain
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._wrapped = try _MarketMoversItem(jsonString: jsonString, options: options)
+    self._chain = chain
   }
   
   public mutating func merge(with object: MDBXObject) {
@@ -89,7 +97,7 @@ extension MarketMoversItem: MDBXObject {
     options.ignoreUnknownFields = true
     let objects = try _MarketMoversItem.array(fromJSONString: string, options: options)
     return objects.lazy.map({
-      MarketMoversItem(_wrapped: $0)
+      MarketMoversItem(_wrapped: $0, chain: chain)
     })
   }
   
@@ -98,7 +106,7 @@ extension MarketMoversItem: MDBXObject {
     options.ignoreUnknownFields = true
     let objects = try _MarketMoversItem.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({
-      MarketMoversItem(_wrapped: $0)
+      MarketMoversItem(_wrapped: $0, chain: chain)
     })
   }
 }

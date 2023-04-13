@@ -206,14 +206,14 @@ final class market_collection_tests: XCTestCase {
       XCTAssertEqual(keyIndex1.sort, "marketCap".sha256.setLengthLeft(MDBXKeyLength.hash))
       
       let item1 = response.items[1]
-      let marketItem1: MarketItem = try db.read(key: keyIndex1, table: .marketList)
+      let marketItem1: TokenMeta = try db.read(key: keyIndex1, table: .marketList)
       XCTAssertEqual(item1, marketItem1)
 
       // lowest range
       let startKey = MarketMoversItemKey(chain: chain, currency: "USD", sort: "marketCap", lowerRange: true)
       let endKey = MarketMoversItemKey(chain: chain, currency: "USD", sort: "marketCap", lowerRange: false)
 
-      let moversItem: [MarketItem] = try db.fetch(range: .with(start: startKey, end: endKey), from: .marketList, order: .asc)
+      let moversItem: [TokenMeta] = try db.fetch(range: .with(start: startKey, end: endKey), from: .marketList, order: .asc)
       XCTAssertEqual(moversItem.count, response.items.count)
       for (index, value) in moversItem.enumerated() {
         XCTAssertEqual(response.items[index], value)

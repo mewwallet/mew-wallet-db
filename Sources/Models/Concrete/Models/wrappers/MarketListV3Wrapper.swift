@@ -28,8 +28,8 @@ extension MarketListV3Wrapper {
   
   // MARK: - Properties
   
-  public var items: [MarketItem] {
-    self._wrapped.results.map({ MarketItem(database: database, _wrapped: $0) })
+  public var items: [TokenMeta] {
+      _wrapped.results.map({ $0.wrapped(_chain) })
   }
   
   public var currency: String {

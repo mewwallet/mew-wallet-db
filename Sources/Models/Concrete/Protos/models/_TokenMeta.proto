@@ -1,13 +1,35 @@
 syntax = "proto3";
 
+import "subs/_MarketCollectionTag.proto";
+import "subs/_MarketCollectionTitle.proto";
+
 message _TokenMeta {
-  string contract_address     = 1;
-  string name                 = 2;
-  string symbol               = 3;
-  optional int32 decimals     = 4;
-  optional string icon        = 5;
-  optional string price       = 6;
-  optional string market_cap  = 7;
-  repeated string sparkline   = 8;
-  optional string volume_24h  = 9;
+  // Contract address
+  string contract_address                     = 1;
+  // Full name.
+  string name                                 = 2;
+  // Ticker symbol.
+  string symbol                               = 3;
+  // Decimal places.
+  optional int32 decimals                     = 4;
+  // Icon URL.
+  optional string icon                        = 5;
+  // Current price.
+  optional string price                       = 6;
+  // Market capitalization.
+  optional string market_cap                  = 7;
+  // Price chart data.
+  repeated string sparkline                   = 8;
+  // Trading volume in the last 24 hours.
+  optional string volume_24h                  = 9;
+  // Circulating supply.
+  optional string circulating_supply          = 10;
+  // Detailed description.
+  optional _MarketCollectionTitle description = 11;
+  // Total supply.
+  optional string total_supply                = 12;
+  // Official website URL.
+  optional string website                     = 13;
+  // Associated tags.
+  repeated _MarketCollectionTag tags          = 14;
 }
