@@ -465,6 +465,12 @@ extension Account: Equatable {
   }
 }
 
+// MARK: - Account + Identifiable
+
+extension Account: Identifiable {
+  public var id: String { _wrapped.address }
+}
+
 // MARK: - Account + ProtoWrapper
 
 extension Account: ProtoWrapper {
