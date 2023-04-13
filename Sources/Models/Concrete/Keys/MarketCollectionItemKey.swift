@@ -28,7 +28,12 @@ public final class MarketCollectionItemKey: MDBXKey {
   
   private lazy var _indexRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.index }()
   private lazy var _index: UInt64 = {
-    return  key[_indexRange].withUnsafeBytes { $0.load(as: UInt64.self) }
+    let value = key[_indexRange].bytes.withUnsafeBufferPointer {
+      $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
+        $0.pointee
+      })
+    }
+    return UInt64(bigEndian: value)
   }()
   
   // MARK: - Lifecycle

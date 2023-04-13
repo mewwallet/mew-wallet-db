@@ -59,7 +59,7 @@ public struct MarketMoversItem: Equatable {
 extension MarketMoversItem {
   public var timestamp: Date { self._wrapped.timestamp.date }
   public var name: String { self._wrapped.name }
-  public var price: Decimal { Decimal(hex: self._wrapped.price) }
+  public var price: Decimal { Decimal(wrapped: self._wrapped.price, hex: false) ?? 0 }
   public var priceChangePercentage: Decimal { Decimal(hex: self._wrapped.priceChangePercentage) }
 }
 
@@ -81,7 +81,7 @@ extension MarketMoversItem: MDBXObject {
   
   public var key: MDBXKey {
     assertionFailure("not implemented")
-    return MarketMoversItemKey(chain: chain, timestamp: 0, index: 0)
+    return MarketMoversItemKey(chain: chain, timestamp: Date(), index: 0)
   }
   
   public var alternateKey: MDBXKey? {
