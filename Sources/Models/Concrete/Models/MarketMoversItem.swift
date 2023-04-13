@@ -18,13 +18,29 @@ public struct MarketMoversItem: Equatable {
   public init(
     chain: MDBXChain,
     contractAddress: String?,
-    database: WalletDB? = nil
+    name: String?,
+    database: WalletDB? = nil,
+    price: Decimal?,
+    priceChangePercentage: Decimal?,
+    timestamp: Date?
   ) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
     self._wrapped = .with {
       if let contractAddress {
         $0.contractAddress = contractAddress
+      }
+      if let name {
+        $0.name = name
+      }
+      if let price {
+        $0.price = price.hexString
+      }
+      if let priceChangePercentage {
+        $0.priceChangePercentage = priceChangePercentage.hexString
+      }
+      if let timestamp {
+        $0.timestamp = .init(date: timestamp)
       }
     }
   }
@@ -38,6 +54,13 @@ public struct MarketMoversItem: Equatable {
     self._wrapped = _wrapped
     self._chain = chain
   }
+}
+
+extension MarketMoversItem {
+  public var timestamp: Date { self._wrapped.timestamp.date }
+  public var name: String { self._wrapped.name }
+  public var price: Decimal { Decimal(hex: self._wrapped.price) }
+  public var priceChangePercentage: Decimal { Decimal(hex: self._wrapped.priceChangePercentage) }
 }
 
 // MARK: - MarketMoversItem + Equitable
@@ -58,7 +81,7 @@ extension MarketMoversItem: MDBXObject {
   
   public var key: MDBXKey {
     assertionFailure("not implemented")
-    return MarketMoversItemKey(chain: .universal, currency: "", sort: "", index: 0)
+    return MarketMoversItemKey(chain: chain, timestamp: 0, index: 0)
   }
   
   public var alternateKey: MDBXKey? {
@@ -90,6 +113,13 @@ extension MarketMoversItem: MDBXObject {
     }
     
     self._wrapped.contractAddress = other._wrapped.contractAddress
+    self._wrapped.name = other._wrapped.name
+    self._wrapped.price = other._wrapped.price
+    self._wrapped.priceChangePercentage = other._wrapped.priceChangePercentage
+    self._wrapped.symbol = other._wrapped.symbol
+    self._wrapped.website = other._wrapped.website
+    self._wrapped.timestamp = other._wrapped.timestamp
+    self._wrapped.type = other._wrapped.type
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [MarketMoversItem] {

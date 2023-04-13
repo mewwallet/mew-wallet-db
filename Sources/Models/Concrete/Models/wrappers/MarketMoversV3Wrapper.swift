@@ -29,7 +29,7 @@ extension MarketMoversV3Wrapper {
   // MARK: - Properties
   
   public var items: [MarketMoversItem] {
-    self._wrapped.results.map({ MarketMoversItem(database: database, _wrapped: $0) })
+    self._wrapped.results.map({ MarketMoversItem(database: database, _wrapped: $0, chain: _chain) })
   }
   
   public var currency: String {
