@@ -82,6 +82,7 @@ public struct StakedItem: Equatable {
 //  private let _to: MDBXPointer<AccountKey, Account> = .init(.account)
   private let _account: MDBXPointer<AccountKey, Account> = .init(.account)
   @SubProperty<_StakedItemQueue, StakedItem.Queue> var _queue: _StakedItemQueue?
+  @SubProperty<_StakedItemDetailedInfo, StakedItem.DetailedInfo> var _detailedInfo: _StakedItemDetailedInfo?
   
   // MARK: - LifeCycle
    
@@ -190,6 +191,8 @@ extension StakedItem {
     return self.$_queue
   }
   
+  public var detailedInfo: StakedItem.DetailedInfo? { self.$_detailedInfo }
+  
 //
 //  public var direction: Direction {
 //    if self._wrapped.from == self._wrapped.to {
@@ -284,6 +287,7 @@ extension StakedItem: MDBXObject {
     } else if _wrapped.hasQueue {
       _wrapped.clearQueue()
     }
+    _wrapped.detailedInfo             = other._wrapped.detailedInfo
   }
 }
 
@@ -345,6 +349,9 @@ extension StakedItem {
     // Wrappers
     __queue.chain = chain
     __queue.wrappedValue = _wrapped.queue
+    
+    __detailedInfo.chain = chain
+    __detailedInfo.wrappedValue = _wrapped.detailedInfo
     
     self.populateDB()
   }

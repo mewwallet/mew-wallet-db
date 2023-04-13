@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 import "subs/_StakedItemQueue.proto";
+import "subs/_StakedItemDetailedInfo.proto";
 
 message _StakedItem {
   // User's address
@@ -56,7 +57,10 @@ message _StakedItem {
   google.protobuf.Timestamp timestamp         = 14;
   
   // Activation queue, optional
-  optional _StakedItemQueue queue                 = 15;
+  optional _StakedItemQueue queue             = 15;
+
+  // Detailed information about balance
+  _StakedItemDetailedInfo detailed_info       = 16;
 }
 
 //{

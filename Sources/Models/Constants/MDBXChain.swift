@@ -10,6 +10,7 @@ import Foundation
 private enum _MDBXChain: Data {
   case invalid            = "0x00000000000000000000000000000000" // 0
   case eth                = "0x00000000000000000000000000000001" // 1
+  case goerli             = "0x00000000000000000000000000000005" // 5
   case polygon_mainnet    = "0x00000000000000000000000000000089" // 137
   case polygon_mumbai     = "0x00000000000000000000000000013881" // 80001
   case zksync_v2_mainnet  = "0x00000000000000000000000000000144" // 324
@@ -20,6 +21,7 @@ private enum _MDBXChain: Data {
     switch self {
     case .invalid:            return .invalid
     case .eth:                return .eth
+    case .goerli:             return .goerli
     case .polygon_mainnet:    return .polygon_mainnet
     case .polygon_mumbai:     return .polygon_mumbai
     case .zksync_v2_mainnet:  return .zksync_v2_mainnet
@@ -32,6 +34,7 @@ private enum _MDBXChain: Data {
 public enum MDBXChain: CaseIterable {
   public static var allCases: [MDBXChain] = [
     .eth,
+    .goerli,
     .polygon_mainnet,
     .polygon_mumbai,
     .zksync_v2_mainnet,
@@ -43,6 +46,7 @@ public enum MDBXChain: CaseIterable {
   /// Convenient `MDBXChain` == `.eth`
   case universal
   case eth
+  case goerli
   case polygon_mainnet
   case polygon_mumbai
   case zksync_v2_mainnet
@@ -55,6 +59,7 @@ public enum MDBXChain: CaseIterable {
     case .invalid:            return _MDBXChain.invalid.rawValue
     case .universal:          return _MDBXChain.eth.rawValue
     case .eth:                return _MDBXChain.eth.rawValue
+    case .goerli:             return _MDBXChain.goerli.rawValue
     case .polygon_mainnet:    return _MDBXChain.polygon_mainnet.rawValue
     case .polygon_mumbai:     return _MDBXChain.polygon_mumbai.rawValue
     case .zksync_v2_mainnet:  return _MDBXChain.zksync_v2_mainnet.rawValue
@@ -87,6 +92,7 @@ public enum MDBXChain: CaseIterable {
   public var name: String {
     switch self {
     case .eth:                return "Ethereum"
+    case .goerli:             return "Goerli"
     case .polygon_mainnet:    return "Polygon"
     case .polygon_mumbai:     return "Polygon"
     case .zksync_v2_mainnet:  return "zkSync Era"
@@ -99,6 +105,7 @@ public enum MDBXChain: CaseIterable {
   public var symbol: String {
     switch self {
     case .eth:                return "ETH"
+    case .goerli:             return "ETH"
     case .polygon_mainnet:    return "MATIC"
     case .polygon_mumbai:     return "MATIC"
     case .zksync_v2_mainnet:  return "ETH"
@@ -111,6 +118,7 @@ public enum MDBXChain: CaseIterable {
   public var decimals: Int32 {
     switch self {
     case .eth:                return 18
+    case .goerli:             return 18
     case .polygon_mainnet:    return 18
     case .polygon_mumbai:     return 18
     case .zksync_v2_mainnet:  return 18
@@ -137,6 +145,7 @@ public enum MDBXChain: CaseIterable {
     switch self {
     case .invalid:            return "0x00000000000000000000000000000000" // 0
     case .eth:                return "0x00000000000000000000000000000001" // 1
+    case .goerli:             return "0x00000000000000000000000000000005" // 5
     case .polygon_mainnet:    return "0x00000000000000000000000000000089" // 137
     case .polygon_mumbai:     return "0x00000000000000000000000000013881" // 80001
     case .zksync_v2_mainnet:  return "0x00000000000000000000000000000144" // 324

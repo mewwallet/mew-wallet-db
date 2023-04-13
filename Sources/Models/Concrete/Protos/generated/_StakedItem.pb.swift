@@ -145,6 +145,16 @@ struct _StakedItem {
   /// Clears the value of `queue`. Subsequent reads from it will return its default value.
   mutating func clearQueue() {_uniqueStorage()._queue = nil}
 
+  /// Detailed information about balance
+  var detailedInfo: _StakedItemDetailedInfo {
+    get {return _storage._detailedInfo ?? _StakedItemDetailedInfo()}
+    set {_uniqueStorage()._detailedInfo = newValue}
+  }
+  /// Returns true if `detailedInfo` has been explicitly set.
+  var hasDetailedInfo: Bool {return _storage._detailedInfo != nil}
+  /// Clears the value of `detailedInfo`. Subsequent reads from it will return its default value.
+  mutating func clearDetailedInfo() {_uniqueStorage()._detailedInfo = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -176,6 +186,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     13: .standard(proto: "average_apr"),
     14: .same(proto: "timestamp"),
     15: .same(proto: "queue"),
+    16: .standard(proto: "detailed_info"),
   ]
 
   fileprivate class _StorageClass {
@@ -194,6 +205,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     var _averageApr: String? = nil
     var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _queue: _StakedItemQueue? = nil
+    var _detailedInfo: _StakedItemDetailedInfo? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -215,6 +227,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       _averageApr = source._averageApr
       _timestamp = source._timestamp
       _queue = source._queue
+      _detailedInfo = source._detailedInfo
     }
   }
 
@@ -248,6 +261,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
         case 13: try { try decoder.decodeSingularStringField(value: &_storage._averageApr) }()
         case 14: try { try decoder.decodeSingularMessageField(value: &_storage._timestamp) }()
         case 15: try { try decoder.decodeSingularMessageField(value: &_storage._queue) }()
+        case 16: try { try decoder.decodeSingularMessageField(value: &_storage._detailedInfo) }()
         default: break
         }
       }
@@ -305,6 +319,9 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       try { if let v = _storage._queue {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
       } }()
+      try { if let v = _storage._detailedInfo {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -329,6 +346,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
         if _storage._averageApr != rhs_storage._averageApr {return false}
         if _storage._timestamp != rhs_storage._timestamp {return false}
         if _storage._queue != rhs_storage._queue {return false}
+        if _storage._detailedInfo != rhs_storage._detailedInfo {return false}
         return true
       }
       if !storagesAreEqual {return false}
