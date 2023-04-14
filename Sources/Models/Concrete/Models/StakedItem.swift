@@ -27,7 +27,8 @@ public struct StakedItem: Equatable {
     case pending    = "PENDING"
     case active     = "ACTIVE"
     case exited     = "EXITED"
-//    case orphan     = "ORPHAN" // == EXITED
+    case orphan     = "ORPHAN" // == EXITED
+    case upgrading  = "UPGRADING"
     
     public init(rawValue: String) {
       switch rawValue {
@@ -39,7 +40,8 @@ public struct StakedItem: Equatable {
       case "PENDING":   self = .pending
       case "ACTIVE":    self = .active
       case "EXITED":    self = .exited
-      case "ORPHAN":    self = .exited
+      case "ORPHAN":    self = .orphan
+      case "UPGRADING": self = .upgrading
       default:          self = .pending
       }
     }
@@ -60,6 +62,10 @@ public struct StakedItem: Equatable {
         return .processing
       case .active:
         return .complete
+      case .upgrading:
+        return .complete
+      case .orphan:
+        return .exited
       case .exited:
         return .exited
       }
@@ -170,6 +176,7 @@ extension StakedItem {
     return requests.contains(self.requestUUID)
   }
   public var requiresUpgrade: Bool { _wrapped.requiresUpgrade }
+  public var validatorIndexes: [UInt64] { _wrapped.validatorIndexes }
 //  public var fromAddress: Address { Address(rawValue: self._wrapped.from) }
 //  public var toAddress: Address { Address(rawValue: self._wrapped.to) }
 //  public var contractAddress: Address { Address(rawValue: self._wrapped.contractAddress) }

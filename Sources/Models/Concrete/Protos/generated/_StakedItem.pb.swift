@@ -155,6 +155,12 @@ struct _StakedItem {
   /// Clears the value of `detailedInfo`. Subsequent reads from it will return its default value.
   mutating func clearDetailedInfo() {_uniqueStorage()._detailedInfo = nil}
 
+  /// Validator indexes
+  var validatorIndexes: [UInt64] {
+    get {return _storage._validatorIndexes}
+    set {_uniqueStorage()._validatorIndexes = newValue}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -187,6 +193,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     14: .same(proto: "timestamp"),
     15: .same(proto: "queue"),
     16: .standard(proto: "detailed_info"),
+    17: .standard(proto: "validator_indexes"),
   ]
 
   fileprivate class _StorageClass {
@@ -206,6 +213,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _queue: _StakedItemQueue? = nil
     var _detailedInfo: _StakedItemDetailedInfo? = nil
+    var _validatorIndexes: [UInt64] = []
 
     static let defaultInstance = _StorageClass()
 
@@ -228,6 +236,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       _timestamp = source._timestamp
       _queue = source._queue
       _detailedInfo = source._detailedInfo
+      _validatorIndexes = source._validatorIndexes
     }
   }
 
@@ -262,6 +271,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
         case 14: try { try decoder.decodeSingularMessageField(value: &_storage._timestamp) }()
         case 15: try { try decoder.decodeSingularMessageField(value: &_storage._queue) }()
         case 16: try { try decoder.decodeSingularMessageField(value: &_storage._detailedInfo) }()
+        case 17: try { try decoder.decodeRepeatedUInt64Field(value: &_storage._validatorIndexes) }()
         default: break
         }
       }
@@ -322,6 +332,9 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       try { if let v = _storage._detailedInfo {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
       } }()
+      if !_storage._validatorIndexes.isEmpty {
+        try visitor.visitPackedUInt64Field(value: _storage._validatorIndexes, fieldNumber: 17)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -347,6 +360,7 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
         if _storage._timestamp != rhs_storage._timestamp {return false}
         if _storage._queue != rhs_storage._queue {return false}
         if _storage._detailedInfo != rhs_storage._detailedInfo {return false}
+        if _storage._validatorIndexes != rhs_storage._validatorIndexes {return false}
         return true
       }
       if !storagesAreEqual {return false}
