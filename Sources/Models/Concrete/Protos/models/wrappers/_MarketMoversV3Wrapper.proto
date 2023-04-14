@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "_MarketMoversItem.proto";
+
+message _MarketMoversV3Wrapper {
+  // Market Movers list
+  repeated _MarketMoversItem results = 1;
+  // Currency
+  optional string currency           = 2;
+}

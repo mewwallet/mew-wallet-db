@@ -18,7 +18,10 @@ public enum MDBXKeyLength {
   public static let direction             = 1
   public static let nonce                 = 8
   public static let transactionID         = 32
-  
+  public static let index                 = 8
+  public static let currency              = 8
+  public static let timestamp             = 8
+
   public static var account:              Int { return chain + address }                                        // 36
   public static var tokenMeta:            Int { return chain + address }                                        // 36
   public static var orderedDexItem:       Int { return chain + order + address }                                // 38
@@ -35,4 +38,8 @@ public enum MDBXKeyLength {
   public static var historySwap:          Int { return chain + address + hash }                                 // 68
   public static var historyPurchase:      Int { return chain + address + transactionID }                        // 68
   public static var profile:              Int { return chain + hash + hash }                                    // 80
+  public static var marketCollectionItem: Int { return chain + index }                                          // 24
+  public static var orderedCollectionTokenMeta: Int { return chain + order + address + hash }                                          // 70
+  public static var marketMoversItem:     Int { return chain + timestamp + index }                              // 32
+  public static var marketTopItem:     Int { return chain + currency + hash + index }                            // 64
 }

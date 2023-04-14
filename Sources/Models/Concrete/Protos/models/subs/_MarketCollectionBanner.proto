@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message _MarketCollectionBanner {
+  optional string small = 1;
+  optional string big   = 2;
+}

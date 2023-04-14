@@ -1,0 +1,1586 @@
+{
+  "currency": "USD",
+  "results": [
+    {
+      "contract_address": "0x177d39ac676ed1c67a2b268ad7f1e58826e5b0af",
+      "type": 300,
+      "name": "Blox",
+      "symbol": "CDT",
+      "price": "0.241079",
+      "timestamp": "2023-02-15T19:10:42.448Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CDT-0x177d39AC676ED1C67A2b268AD7F1E58826E5B0af-eth.png",
+      "price_change_percentage": "-21.441791482525495"
+    },
+    {
+      "contract_address": "0xf3dcbc6d72a4e1892f7917b7c43b74131df8480e",
+      "type": 3600,
+      "name": "Big Data Protocol",
+      "symbol": "BDP",
+      "price": "0.321531",
+      "timestamp": "2023-02-15T19:10:42.448Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BDP-0xf3dcbc6D72a4E1892f7917b7C43b74131Df8480e-eth.png",
+      "price_change_percentage": "5.781320111425564"
+    },
+    {
+      "contract_address": "0x4123a133ae3c521fd134d7b13a2dec35b56c2463",
+      "type": 86400,
+      "name": "Qredo",
+      "symbol": "QRDO",
+      "price": "0.181795",
+      "timestamp": "2023-02-15T19:10:42.448Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/QRDO-0x4123a133ae3c521FD134D7b13A2dEC35b56c2463.png",
+      "price_change_percentage": "14.2015915801608"
+    },
+    {
+      "contract_address": "0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+      "type": 300,
+      "name": "Onyxcoin",
+      "symbol": "XCN",
+      "price": "0.01601692",
+      "timestamp": "2023-02-15T19:05:42.592Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XCN-0xA2cd3D43c775978A96BdBf12d733D5A1ED94fb18.png",
+      "price_change_percentage": "3.5863101987398593"
+    },
+    {
+      "contract_address": "0xf920e4f3fbef5b3ad0a25017514b769bdc4ac135",
+      "type": 3600,
+      "name": "BABB",
+      "symbol": "BAX",
+      "price": "0.00031204",
+      "timestamp": "2023-02-15T19:05:42.592Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BAX-0xf920e4F3FBEF5B3aD0A25017514B769bDc4Ac135.png",
+      "price_change_percentage": "7.800499849774294"
+    },
+    {
+      "contract_address": "0x767fe9edc9e0df98e07454847909b5e959d7ca0e",
+      "type": 86400,
+      "name": "Illuvium",
+      "symbol": "ILV",
+      "price": "84.75",
+      "timestamp": "2023-02-15T19:05:42.592Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ILV-0x767FE9EDC9E0dF98E07454847909b5E959D7ca0E-eth.png",
+      "price_change_percentage": "10.22106266922294"
+    },
+    {
+      "contract_address": "0x69af81e73a73b40adf4f3d4223cd9b1ece623074",
+      "type": 86400,
+      "name": "Mask Network",
+      "symbol": "MASK",
+      "price": "3.99",
+      "timestamp": "2023-02-15T19:05:42.592Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/MASK-0x69af81e73A73B40adF4f3d4223Cd9b1ECE623074-eth.png",
+      "price_change_percentage": "10.7003662308875"
+    },
+    {
+      "contract_address": "0xed04915c23f00a313a544955524eb7dbd823143d",
+      "type": 86400,
+      "name": "Alchemy Pay",
+      "symbol": "ACH",
+      "price": "0.01762239",
+      "timestamp": "2023-02-15T19:05:42.592Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ACH-0xEd04915c23f00A313a544955524EB7DBD823143d-eth.png",
+      "price_change_percentage": "10.634629016709694"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000170768",
+      "timestamp": "2023-02-15T19:00:42.710Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-11.509638788274577"
+    },
+    {
+      "contract_address": "0x38c87aa89b2b8cd9b95b736e1fa7b612ea972169",
+      "type": 86400,
+      "name": "AMO Coin",
+      "symbol": "AMO",
+      "price": "0.00079934",
+      "timestamp": "2023-02-15T19:00:42.710Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/AMO-0x38c87AA89B2B8cD9B95b736e1Fa7b612EA972169-eth.png",
+      "price_change_percentage": "15.196764802149328"
+    },
+    {
+      "contract_address": "0xb1f871ae9462f1b2c6826e88a7827e76f86751d4",
+      "type": 604800,
+      "name": "GNY",
+      "symbol": "GNYerc20",
+      "price": "0.184042",
+      "timestamp": "2023-02-15T19:00:42.710Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GNYerc20-0xb1f871Ae9462F1b2C6826E88A7827e76f86751d4-eth.png",
+      "price_change_percentage": "94.2743302892154"
+    },
+    {
+      "contract_address": "0xb1f871ae9462f1b2c6826e88a7827e76f86751d4",
+      "type": 2592000,
+      "name": "GNY",
+      "symbol": "GNYerc20",
+      "price": "0.184042",
+      "timestamp": "2023-02-15T19:00:42.710Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GNYerc20-0xb1f871Ae9462F1b2C6826E88A7827e76f86751d4-eth.png",
+      "price_change_percentage": "646.6124755588226"
+    },
+    {
+      "contract_address": "0x2e85ae1c47602f7927bcabc2ff99c40aa222ae15",
+      "type": 300,
+      "name": "Katana Inu",
+      "symbol": "KATA",
+      "price": "0.00130086",
+      "timestamp": "2023-02-15T18:55:42.333Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/KATA-0x2e85ae1C47602f7927bCabc2Ff99C40aA222aE15.png",
+      "price_change_percentage": "2.392562582071962"
+    },
+    {
+      "contract_address": "0xcf0c122c6b73ff809c693db761e7baebe62b6a2e",
+      "type": 300,
+      "name": "FLOKI",
+      "symbol": "FLOKI",
+      "price": "0.00003574",
+      "timestamp": "2023-02-15T18:55:42.333Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/FLOKI-0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E.png",
+      "price_change_percentage": "2.5813923420315397"
+    },
+    {
+      "contract_address": "0xde5ed76e7c05ec5e4572cfc88d1acea165109e44",
+      "type": 3600,
+      "name": "DEUS Finance",
+      "symbol": "DEUS",
+      "price": "80.38",
+      "timestamp": "2023-02-15T18:55:42.333Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DEUS-0xDE5ed76E7c05eC5e4572CfC88d1ACEA165109E44.png",
+      "price_change_percentage": "-4.375652043300294"
+    },
+    {
+      "contract_address": "0x3c4b6e6e1ea3d4863700d7f76b36b7f3d3f13e3d",
+      "type": 86400,
+      "name": "Voyager VGX",
+      "symbol": "VGX",
+      "price": "0.53992",
+      "timestamp": "2023-02-15T18:55:42.333Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/VGX-0x3C4B6E6e1eA3D4863700D7F76b36B7f3D3f13E3d.png",
+      "price_change_percentage": "11.593543332723094"
+    },
+    {
+      "contract_address": "0xf920e4f3fbef5b3ad0a25017514b769bdc4ac135",
+      "type": 300,
+      "name": "BABB",
+      "symbol": "BAX",
+      "price": "0.00030829",
+      "timestamp": "2023-02-15T18:50:42.695Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BAX-0xf920e4F3FBEF5B3aD0A25017514B769bDc4Ac135.png",
+      "price_change_percentage": "6.947725049496678"
+    },
+    {
+      "contract_address": "0x5283d291dbcf85356a21ba090e6db59121208b44",
+      "type": 86400,
+      "name": "Blur",
+      "symbol": "BLUR",
+      "price": "0.903937",
+      "timestamp": "2023-02-15T18:50:42.695Z",
+      "icon": "",
+      "price_change_percentage": "22.806388080512523"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000169159",
+      "timestamp": "2023-02-15T18:45:44.357Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-11.223582877458806"
+    },
+    {
+      "contract_address": "0xed04915c23f00a313a544955524eb7dbd823143d",
+      "type": 3600,
+      "name": "Alchemy Pay",
+      "symbol": "ACH",
+      "price": "0.01764555",
+      "timestamp": "2023-02-15T18:45:44.357Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ACH-0xEd04915c23f00A313a544955524EB7DBD823143d-eth.png",
+      "price_change_percentage": "4.504633230108802"
+    },
+    {
+      "contract_address": "0x6dea81c8171d0ba574754ef6f8b412f2ed88c54d",
+      "type": 3600,
+      "name": "Liquity",
+      "symbol": "LQTY",
+      "price": "0.789503",
+      "timestamp": "2023-02-15T18:45:44.357Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LQTY-0x6DEA81C8171D0bA574754EF6F8b412F2Ed88c54D-eth.png",
+      "price_change_percentage": "-4.529173789023646"
+    },
+    {
+      "contract_address": "0xb59490ab09a0f526cc7305822ac65f2ab12f9723",
+      "type": 3600,
+      "name": "Litentry",
+      "symbol": "LIT",
+      "price": "1.36",
+      "timestamp": "2023-02-15T18:40:42.667Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LIT-0xb59490aB09A0f526Cc7305822aC65f2Ab12f9723-bsc.png",
+      "price_change_percentage": "4.712065111726857"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000195792",
+      "timestamp": "2023-02-15T18:35:42.600Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "8.05017834943432"
+    },
+    {
+      "contract_address": "0x0f2d719407fdbeff09d87557abb7232601fd9f29",
+      "type": 3600,
+      "name": "Synapse",
+      "symbol": "SYN",
+      "price": "1.52",
+      "timestamp": "2023-02-15T18:35:42.600Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SYN-0x0f2D719407FdBeFF09D87557AbB7232601FD9F29.png",
+      "price_change_percentage": "4.112946318916461"
+    },
+    {
+      "contract_address": "0xe28b3b32b6c345a34ff64674606124dd5aceca30",
+      "type": 86400,
+      "name": "Injective",
+      "symbol": "INJ",
+      "price": "3.86",
+      "timestamp": "2023-02-15T18:35:42.600Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/INJ-0xe28b3B32B6c345A34Ff64674606124Dd5Aceca30-eth.png",
+      "price_change_percentage": "11.557456874614374"
+    },
+    {
+      "contract_address": "0x940a2db1b7008b6c776d4faaca729d6d4a4aa551",
+      "type": 86400,
+      "name": "DUSK Network",
+      "symbol": "DUSK",
+      "price": "0.256755",
+      "timestamp": "2023-02-15T18:35:42.600Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DUSK-0x940a2dB1B7008B6C776d4faaCa729d6d4A4AA551-eth.png",
+      "price_change_percentage": "11.523846429891519"
+    },
+    {
+      "contract_address": "0x6dea81c8171d0ba574754ef6f8b412f2ed88c54d",
+      "type": 300,
+      "name": "Liquity",
+      "symbol": "LQTY",
+      "price": "0.788712",
+      "timestamp": "2023-02-15T18:30:42.585Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LQTY-0x6DEA81C8171D0bA574754EF6F8b412F2Ed88c54D-eth.png",
+      "price_change_percentage": "-4.406963381838803"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 3600,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000167113",
+      "timestamp": "2023-02-15T18:30:42.585Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-7.77629265011732"
+    },
+    {
+      "contract_address": "0x1e4ede388cbc9f4b5c79681b7f94d36a11abebc9",
+      "type": 86400,
+      "name": "X2Y2",
+      "symbol": "X2Y2",
+      "price": "0.169659",
+      "timestamp": "2023-02-15T18:30:42.585Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/X2Y2-0x1E4EDE388cbc9F4b5c79681B7f94d36a11ABEBC9.png",
+      "price_change_percentage": "-14.38766762084157"
+    },
+    {
+      "contract_address": "0xb1f871ae9462f1b2c6826e88a7827e76f86751d4",
+      "type": 300,
+      "name": "GNY",
+      "symbol": "GNYerc20",
+      "price": "0.16953",
+      "timestamp": "2023-02-15T18:25:42.528Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GNYerc20-0xb1f871Ae9462F1b2C6826E88A7827e76f86751d4-eth.png",
+      "price_change_percentage": "12.695569358464684"
+    },
+    {
+      "contract_address": "0x6368e1e18c4c419ddfc608a0bed1ccb87b9250fc",
+      "type": 3600,
+      "name": "Tap",
+      "symbol": "XTP",
+      "price": "0.01438743",
+      "timestamp": "2023-02-15T18:25:42.528Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XTP-0x6368e1E18c4C419DDFC608A0BEd1ccb87b9250fc-eth.png",
+      "price_change_percentage": "-5.09794407570068"
+    },
+    {
+      "contract_address": "0x8290333cef9e6d528dd5618fb97a76f268f3edd4",
+      "type": 86400,
+      "name": "Ankr Network",
+      "symbol": "ANKR",
+      "price": "0.03223186",
+      "timestamp": "2023-02-15T18:25:42.528Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ANKR-0x8290333ceF9e6D528dD5618Fb97a76f268f3EDD4-eth.png",
+      "price_change_percentage": "13.63990293216682"
+    },
+    {
+      "contract_address": "0x925206b8a707096ed26ae47c84747fe0bb734f59",
+      "type": 86400,
+      "name": "WhiteBIT Token",
+      "symbol": "WBT",
+      "price": "4.04",
+      "timestamp": "2023-02-15T18:25:42.528Z",
+      "icon": "",
+      "price_change_percentage": "13.380415588525956"
+    },
+    {
+      "contract_address": "0x95b3497bbcccc46a8f45f5cf54b0878b39f8d96c",
+      "type": 300,
+      "name": "UniDex",
+      "symbol": "UNIDX",
+      "price": "6.74",
+      "timestamp": "2023-02-15T18:20:42.339Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UNIDX-0x95b3497bBcCcc46a8F45F5Cf54b0878b39f8D96C.png",
+      "price_change_percentage": "8.38221193382848"
+    },
+    {
+      "contract_address": "0x77777feddddffc19ff86db637967013e6c6a116c",
+      "type": 300,
+      "name": "Tornado Cash",
+      "symbol": "TORN",
+      "price": "10.45",
+      "timestamp": "2023-02-15T18:20:42.339Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/TORN-0x77777FeDdddFfC19Ff86DB637967013e6C6A116C-eth.png",
+      "price_change_percentage": "-8.168996438988806"
+    },
+    {
+      "contract_address": "0x51cb253744189f11241becb29bedd3f1b5384fdb",
+      "type": 3600,
+      "name": "Dimitra",
+      "symbol": "DMTR",
+      "price": "0.04489556",
+      "timestamp": "2023-02-15T18:20:42.339Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DMTR-0x51cB253744189f11241becb29BeDd3F1b5384fdB.png",
+      "price_change_percentage": "7.199543044675781"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000168717",
+      "timestamp": "2023-02-15T18:15:42.713Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-6.584870831390721"
+    },
+    {
+      "contract_address": "0x95b3497bbcccc46a8f45f5cf54b0878b39f8d96c",
+      "type": 3600,
+      "name": "UniDex",
+      "symbol": "UNIDX",
+      "price": "6.95",
+      "timestamp": "2023-02-15T18:15:42.713Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UNIDX-0x95b3497bBcCcc46a8F45F5Cf54b0878b39f8D96C.png",
+      "price_change_percentage": "13.617727469678249"
+    },
+    {
+      "contract_address": "0x95b3497bbcccc46a8f45f5cf54b0878b39f8d96c",
+      "type": 0,
+      "name": "UniDex",
+      "symbol": "UNIDX",
+      "price": "6.76",
+      "timestamp": "2023-02-15T18:10:42.440Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UNIDX-0x95b3497bBcCcc46a8F45F5Cf54b0878b39f8D96C.png",
+      "ath": "6.96"
+    },
+    {
+      "contract_address": "0x7778360f035c589fce2f4ea5786cbd8b36e5396b",
+      "type": 300,
+      "name": "OpenOcean",
+      "symbol": "OOE",
+      "price": "0.03270823",
+      "timestamp": "2023-02-15T18:10:42.440Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/OOE-0x7778360F035C589fCE2f4eA5786CbD8B36e5396B.png",
+      "price_change_percentage": "29.490332018559478"
+    },
+    {
+      "contract_address": "0xb1f871ae9462f1b2c6826e88a7827e76f86751d4",
+      "type": 3600,
+      "name": "GNY",
+      "symbol": "GNYerc20",
+      "price": "0.161497",
+      "timestamp": "2023-02-15T18:10:42.440Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GNYerc20-0xb1f871Ae9462F1b2C6826E88A7827e76f86751d4-eth.png",
+      "price_change_percentage": "8.33687486408261"
+    },
+    {
+      "contract_address": "0xc2544a32872a91f4a553b404c6950e89de901fdb",
+      "type": 86400,
+      "name": "Frax Price Index Share",
+      "symbol": "FPIS",
+      "price": "2.52",
+      "timestamp": "2023-02-15T18:10:42.440Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/FPIS-0xc2544A32872A91F4A553b404C6950e89De901fdb.png",
+      "price_change_percentage": "35.36305145754427"
+    },
+    {
+      "contract_address": "0x08389495d7456e1951ddf7c3a1314a4bfb646d8b",
+      "type": 3600,
+      "name": "Crypterium",
+      "symbol": "CRPT",
+      "price": "0.134166",
+      "timestamp": "2023-02-15T18:05:42.522Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CRPT-0x08389495D7456E1951ddF7c3a1314A4bfb646d8B-eth.png",
+      "price_change_percentage": "6.085918151359137"
+    },
+    {
+      "contract_address": "0x77777feddddffc19ff86db637967013e6c6a116c",
+      "type": 3600,
+      "name": "Tornado Cash",
+      "symbol": "TORN",
+      "price": "10.82",
+      "timestamp": "2023-02-15T18:05:42.522Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/TORN-0x77777FeDdddFfC19Ff86DB637967013e6C6A116C-eth.png",
+      "price_change_percentage": "-6.052539118365962"
+    },
+    {
+      "contract_address": "0x6de037ef9ad2725eb40118bb1702ebb27e4aeb24",
+      "type": 86400,
+      "name": "Render",
+      "symbol": "RNDR",
+      "price": "1.97",
+      "timestamp": "2023-02-15T18:05:42.522Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/RNDR-0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24-eth.png",
+      "price_change_percentage": "12.203275710890829"
+    },
+    {
+      "contract_address": "0x2f32b39023da7d6a6486a85d12b346eb9c2a0d19",
+      "type": 300,
+      "name": "Ferro",
+      "symbol": "FER",
+      "price": "0.03016207",
+      "timestamp": "2023-02-15T18:00:42.324Z",
+      "icon": "",
+      "price_change_percentage": "1.5517957475632302"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000179741",
+      "timestamp": "2023-02-15T18:00:42.324Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "7.380880327531525"
+    },
+    {
+      "contract_address": "0x678e840c640f619e17848045d23072844224dd37",
+      "type": 300,
+      "name": "Cratos",
+      "symbol": "CRTS",
+      "price": "0.0007",
+      "timestamp": "2023-02-15T18:00:42.324Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CRTS-0x678e840C640F619E17848045D23072844224dD37.png",
+      "price_change_percentage": "-2.795187507997024"
+    },
+    {
+      "contract_address": "0x8290333cef9e6d528dd5618fb97a76f268f3edd4",
+      "type": 3600,
+      "name": "Ankr Network",
+      "symbol": "ANKR",
+      "price": "0.03136598",
+      "timestamp": "2023-02-15T18:00:42.324Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ANKR-0x8290333ceF9e6D528dD5618Fb97a76f268f3EDD4-eth.png",
+      "price_change_percentage": "6.400887070636217"
+    },
+    {
+      "contract_address": "0xde5ed76e7c05ec5e4572cfc88d1acea165109e44",
+      "type": 86400,
+      "name": "DEUS Finance",
+      "symbol": "DEUS",
+      "price": "84.05",
+      "timestamp": "2023-02-15T18:00:42.324Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DEUS-0xDE5ed76E7c05eC5e4572CfC88d1ACEA165109E44.png",
+      "price_change_percentage": "20.584856081236158"
+    },
+    {
+      "contract_address": "0x3affcca64c2a6f4e3b6bd9c64cd2c969efd1ecbe",
+      "type": 604800,
+      "name": "DSLA Protocol",
+      "symbol": "DSLA",
+      "price": "0.00150436",
+      "timestamp": "2023-02-15T18:00:42.324Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DSLA-0x3aFfCCa64c2A6f4e3B6Bd9c64CD2C969EFd1ECBe-eth.png",
+      "price_change_percentage": "105.78427006925561"
+    },
+    {
+      "contract_address": "0x51cb253744189f11241becb29bedd3f1b5384fdb",
+      "type": 2592000,
+      "name": "Dimitra",
+      "symbol": "DMTR",
+      "price": "0.04413464",
+      "timestamp": "2023-02-15T18:00:42.324Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DMTR-0x51cB253744189f11241becb29BeDd3F1b5384fdB.png",
+      "price_change_percentage": "924.9436064145132"
+    },
+    {
+      "contract_address": "0xb1f871ae9462f1b2c6826e88a7827e76f86751d4",
+      "type": 300,
+      "name": "GNY",
+      "symbol": "GNYerc20",
+      "price": "0.161852",
+      "timestamp": "2023-02-15T17:55:42.435Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GNYerc20-0xb1f871Ae9462F1b2C6826E88A7827e76f86751d4-eth.png",
+      "price_change_percentage": "8.700834548629723"
+    },
+    {
+      "contract_address": "0x5283d291dbcf85356a21ba090e6db59121208b44",
+      "type": 3600,
+      "name": "Blur",
+      "symbol": "BLUR",
+      "price": "0.94827",
+      "timestamp": "2023-02-15T17:55:42.435Z",
+      "icon": "",
+      "price_change_percentage": "4.400804958485359"
+    },
+    {
+      "contract_address": "0x2be5e8c109e2197d077d13a82daead6a9b3433c5",
+      "type": 86400,
+      "name": "Tokamak Network",
+      "symbol": "TON",
+      "price": "1.85",
+      "timestamp": "2023-02-15T17:55:42.435Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/TON-0x2be5e8c109e2197D077D13A82dAead6a9b3433C5-eth.png",
+      "price_change_percentage": "12.91213789116278"
+    },
+    {
+      "contract_address": "0x88aa4a6c5050b9a1b2aa7e34d0582025ca6ab745",
+      "type": 300,
+      "name": "Vela Exchange",
+      "symbol": "DXP",
+      "price": "6",
+      "timestamp": "2023-02-15T17:50:42.564Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DXP-0x88aa4a6C5050b9A1b2Aa7e34D0582025cA6AB745.png",
+      "price_change_percentage": "-2.915454956477899"
+    },
+    {
+      "contract_address": "0x7778360f035c589fce2f4ea5786cbd8b36e5396b",
+      "type": 3600,
+      "name": "OpenOcean",
+      "symbol": "OOE",
+      "price": "0.02713542",
+      "timestamp": "2023-02-15T17:50:42.564Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/OOE-0x7778360F035C589fCE2f4eA5786CbD8B36e5396B.png",
+      "price_change_percentage": "7.758621118257379"
+    },
+    {
+      "contract_address": "0x95b3497bbcccc46a8f45f5cf54b0878b39f8d96c",
+      "type": 86400,
+      "name": "UniDex",
+      "symbol": "UNIDX",
+      "price": "6.83",
+      "timestamp": "2023-02-15T17:50:42.564Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UNIDX-0x95b3497bBcCcc46a8F45F5Cf54b0878b39f8D96C.png",
+      "price_change_percentage": "27.03849672778999"
+    },
+    {
+      "contract_address": "0x95b3497bbcccc46a8f45f5cf54b0878b39f8d96c",
+      "type": 300,
+      "name": "UniDex",
+      "symbol": "UNIDX",
+      "price": "6.74",
+      "timestamp": "2023-02-15T17:45:42.241Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UNIDX-0x95b3497bBcCcc46a8F45F5Cf54b0878b39f8D96C.png",
+      "price_change_percentage": "7.807245114260778"
+    },
+    {
+      "contract_address": "0x3aada3e213abf8529606924d8d1c55cbdc70bf74",
+      "type": 3600,
+      "name": "XMON",
+      "symbol": "XMON",
+      "price": "17995.56",
+      "timestamp": "2023-02-15T17:45:42.241Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XMON-0x3aaDA3e213aBf8529606924d8D1c55CbDc70Bf74-eth.png",
+      "price_change_percentage": "7.63680792501938"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000168544",
+      "timestamp": "2023-02-15T17:40:42.408Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-1.4170167546534085"
+    },
+    {
+      "contract_address": "0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+      "type": 3600,
+      "name": "Onyxcoin",
+      "symbol": "XCN",
+      "price": "0.01495512",
+      "timestamp": "2023-02-15T17:40:42.408Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XCN-0xA2cd3D43c775978A96BdBf12d733D5A1ED94fb18.png",
+      "price_change_percentage": "-5.276062861205325"
+    },
+    {
+      "contract_address": "0x7778360f035c589fce2f4ea5786cbd8b36e5396b",
+      "type": 300,
+      "name": "OpenOcean",
+      "symbol": "OOE",
+      "price": "0.02717907",
+      "timestamp": "2023-02-15T17:35:42.656Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/OOE-0x7778360F035C589fCE2f4eA5786CbD8B36e5396B.png",
+      "price_change_percentage": "7.504828009625411"
+    },
+    {
+      "contract_address": "0x217ddead61a42369a266f1fb754eb5d3ebadc88a",
+      "type": 3600,
+      "name": "Don-key",
+      "symbol": "DON",
+      "price": "0.01363552",
+      "timestamp": "2023-02-15T17:35:42.656Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DON-0x217ddEad61a42369A266F1Fb754EB5d3EBadc88a.png",
+      "price_change_percentage": "-11.135915347883499"
+    },
+    {
+      "contract_address": "0x7778360f035c589fce2f4ea5786cbd8b36e5396b",
+      "type": 86400,
+      "name": "OpenOcean",
+      "symbol": "OOE",
+      "price": "0.02717907",
+      "timestamp": "2023-02-15T17:35:42.656Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/OOE-0x7778360F035C589fCE2f4eA5786CbD8B36e5396B.png",
+      "price_change_percentage": "13.911329331108178"
+    },
+    {
+      "contract_address": "0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+      "type": 86400,
+      "name": "Onyxcoin",
+      "symbol": "XCN",
+      "price": "0.01498745",
+      "timestamp": "2023-02-15T17:35:42.656Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XCN-0xA2cd3D43c775978A96BdBf12d733D5A1ED94fb18.png",
+      "price_change_percentage": "-13.556612712620497"
+    },
+    {
+      "contract_address": "0x1e4ede388cbc9f4b5c79681b7f94d36a11abebc9",
+      "type": 300,
+      "name": "X2Y2",
+      "symbol": "X2Y2",
+      "price": "0.168773",
+      "timestamp": "2023-02-15T17:30:42.310Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/X2Y2-0x1E4EDE388cbc9F4b5c79681B7f94d36a11ABEBC9.png",
+      "price_change_percentage": "-4.038391826622995"
+    },
+    {
+      "contract_address": "0x177d39ac676ed1c67a2b268ad7f1e58826e5b0af",
+      "type": 3600,
+      "name": "Blox",
+      "symbol": "CDT",
+      "price": "0.22781",
+      "timestamp": "2023-02-15T17:30:42.310Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CDT-0x177d39AC676ED1C67A2b268AD7F1E58826E5B0af-eth.png",
+      "price_change_percentage": "-30.362927321060734"
+    },
+    {
+      "contract_address": "0xcb86c6a22cb56b6cf40cafedb06ba0df188a416e",
+      "type": 86400,
+      "name": "inSure DeFi",
+      "symbol": "SURE",
+      "price": "0.00236718",
+      "timestamp": "2023-02-15T17:30:42.310Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SURE-0xcb86c6A22CB56B6cf40CaFEDb06BA0DF188a416E.png",
+      "price_change_percentage": "27.42158919631835"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000187206",
+      "timestamp": "2023-02-15T17:25:42.717Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "9.264224925153835"
+    },
+    {
+      "contract_address": "0x77777feddddffc19ff86db637967013e6c6a116c",
+      "type": 300,
+      "name": "Tornado Cash",
+      "symbol": "TORN",
+      "price": "11.02",
+      "timestamp": "2023-02-15T17:25:42.717Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/TORN-0x77777FeDdddFfC19Ff86DB637967013e6C6A116C-eth.png",
+      "price_change_percentage": "-3.9983777969213437"
+    },
+    {
+      "contract_address": "0xf17e65822b568b3903685a7c9f496cf7656cc6c2",
+      "type": 3600,
+      "name": "Biconomy",
+      "symbol": "BICO",
+      "price": "0.379987",
+      "timestamp": "2023-02-15T17:25:42.717Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BICO-0xF17e65822b568B3903685a7c9F496CF7656Cc6C2.png",
+      "price_change_percentage": "4.725344450471575"
+    },
+    {
+      "contract_address": "0x4b520c812e8430659fc9f12f6d0c39026c83588d",
+      "type": 3600,
+      "name": "Decentral Games",
+      "symbol": "DG",
+      "price": "0.04393188",
+      "timestamp": "2023-02-15T17:25:42.717Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DG-0x4b520c812E8430659FC9f12f6d0c39026C83588D.png",
+      "price_change_percentage": "4.8374157867910705"
+    },
+    {
+      "contract_address": "0x4b520c812e8430659fc9f12f6d0c39026c83588d",
+      "type": 86400,
+      "name": "Decentral Games",
+      "symbol": "DG",
+      "price": "0.04393188",
+      "timestamp": "2023-02-15T17:25:42.717Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DG-0x4b520c812E8430659FC9f12f6d0c39026C83588D.png",
+      "price_change_percentage": "35.39929706051982"
+    },
+    {
+      "contract_address": "0x217ddead61a42369a266f1fb754eb5d3ebadc88a",
+      "type": 300,
+      "name": "Don-key",
+      "symbol": "DON",
+      "price": "0.01604475",
+      "timestamp": "2023-02-15T17:20:42.519Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DON-0x217ddEad61a42369A266F1Fb754EB5d3EBadc88a.png",
+      "price_change_percentage": "3.09692021344223"
+    },
+    {
+      "contract_address": "0xabe580e7ee158da464b51ee1a83ac0289622e6be",
+      "type": 3600,
+      "name": "Offshift",
+      "symbol": "XFT",
+      "price": "3.28",
+      "timestamp": "2023-02-15T17:20:42.519Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XFT-0xABe580E7ee158dA464b51ee1a83Ac0289622e6be-eth.png",
+      "price_change_percentage": "-5.1972089518412"
+    },
+    {
+      "contract_address": "0x177d39ac676ed1c67a2b268ad7f1e58826e5b0af",
+      "type": 300,
+      "name": "Blox",
+      "symbol": "CDT",
+      "price": "0.286169",
+      "timestamp": "2023-02-15T17:15:42.233Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CDT-0x177d39AC676ED1C67A2b268AD7F1E58826E5B0af-eth.png",
+      "price_change_percentage": "-12.121075609934454"
+    },
+    {
+      "contract_address": "0x14da230d6726c50f759bc1838717f8ce6373509c",
+      "type": 3600,
+      "name": "Kambria",
+      "symbol": "KAT",
+      "price": "0.00805854",
+      "timestamp": "2023-02-15T17:15:42.233Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/KAT-0x14da230d6726C50F759Bc1838717F8CE6373509C-eth.png",
+      "price_change_percentage": "-4.778311109741003"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000186777",
+      "timestamp": "2023-02-15T17:10:42.703Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "16.297472211029532"
+    },
+    {
+      "contract_address": "0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f",
+      "type": 3600,
+      "name": "OriginTrail",
+      "symbol": "TRAC",
+      "price": "0.446728",
+      "timestamp": "2023-02-15T17:10:42.703Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/TRAC-0xaA7a9CA87d3694B5755f213B5D04094b8d0F0A6F-eth.png",
+      "price_change_percentage": "-4.7563145281124966"
+    },
+    {
+      "contract_address": "0xc98d64da73a6616c42117b582e832812e7b8d57f",
+      "type": 3600,
+      "name": "RSS3",
+      "symbol": "RSS3",
+      "price": "0.179183",
+      "timestamp": "2023-02-15T17:10:42.703Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/RSS3-0xc98D64DA73a6616c42117b582e832812e7B8D57F.png",
+      "price_change_percentage": "4.797678131259941"
+    },
+    {
+      "contract_address": "0x3affcca64c2a6f4e3b6bd9c64cd2c969efd1ecbe",
+      "type": 3600,
+      "name": "DSLA Protocol",
+      "symbol": "DSLA",
+      "price": "0.00146827",
+      "timestamp": "2023-02-15T17:10:42.703Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DSLA-0x3aFfCCa64c2A6f4e3B6Bd9c64CD2C969EFd1ECBe-eth.png",
+      "price_change_percentage": "4.819306055551667"
+    },
+    {
+      "contract_address": "0x221657776846890989a759ba2973e427dff5c9bb",
+      "type": 86400,
+      "name": "Augur",
+      "symbol": "REPv2",
+      "price": "9.77",
+      "timestamp": "2023-02-15T17:10:42.703Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/REP-0x221657776846890989a759BA2973e427DfF5C9bB-eth.png",
+      "price_change_percentage": "11.225626536857565"
+    },
+    {
+      "contract_address": "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7",
+      "type": 86400,
+      "name": "SKALE",
+      "symbol": "SKL",
+      "price": "0.057528",
+      "timestamp": "2023-02-15T17:10:42.703Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SKL-0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7-eth.png",
+      "price_change_percentage": "11.093492235285028"
+    },
+    {
+      "contract_address": "0x69af81e73a73b40adf4f3d4223cd9b1ece623074",
+      "type": 3600,
+      "name": "Mask Network",
+      "symbol": "MASK",
+      "price": "4.01",
+      "timestamp": "2023-02-15T17:05:42.486Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/MASK-0x69af81e73A73B40adF4f3d4223Cd9b1ECE623074-eth.png",
+      "price_change_percentage": "5.578360807298669"
+    },
+    {
+      "contract_address": "0x08389495d7456e1951ddf7c3a1314a4bfb646d8b",
+      "type": 86400,
+      "name": "Crypterium",
+      "symbol": "CRPT",
+      "price": "0.126195",
+      "timestamp": "2023-02-15T17:05:42.486Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CRPT-0x08389495D7456E1951ddF7c3a1314A4bfb646d8B-eth.png",
+      "price_change_percentage": "-17.62629621874922"
+    },
+    {
+      "contract_address": "0x95b3497bbcccc46a8f45f5cf54b0878b39f8d96c",
+      "type": 300,
+      "name": "UniDex",
+      "symbol": "UNIDX",
+      "price": "6.35",
+      "timestamp": "2023-02-15T17:00:42.485Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UNIDX-0x95b3497bBcCcc46a8F45F5Cf54b0878b39f8D96C.png",
+      "price_change_percentage": "6.906492935689772"
+    },
+    {
+      "contract_address": "0x4cc19356f2d37338b9802aa8e8fc58b0373296e7",
+      "type": 3600,
+      "name": "SelfKey",
+      "symbol": "KEY",
+      "price": "0.0042466",
+      "timestamp": "2023-02-15T17:00:42.485Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/KEY-0x4CC19356f2D37338b9802aa8E8fc58B0373296E7-eth.png",
+      "price_change_percentage": "6.561083828949019"
+    },
+    {
+      "contract_address": "0xb59490ab09a0f526cc7305822ac65f2ab12f9723",
+      "type": 86400,
+      "name": "Litentry",
+      "symbol": "LIT",
+      "price": "1.3",
+      "timestamp": "2023-02-15T17:00:42.485Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LIT-0xb59490aB09A0f526Cc7305822aC65f2Ab12f9723-bsc.png",
+      "price_change_percentage": "13.96418906818448"
+    },
+    {
+      "contract_address": "0xc2544a32872a91f4a553b404c6950e89de901fdb",
+      "type": 604800,
+      "name": "Frax Price Index Share",
+      "symbol": "FPIS",
+      "price": "2.49",
+      "timestamp": "2023-02-15T17:00:42.485Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/FPIS-0xc2544A32872A91F4A553b404C6950e89De901fdb.png",
+      "price_change_percentage": "62.89535360146083"
+    },
+    {
+      "contract_address": "0x6de037ef9ad2725eb40118bb1702ebb27e4aeb24",
+      "type": 2592000,
+      "name": "Render",
+      "symbol": "RNDR",
+      "price": "1.9",
+      "timestamp": "2023-02-15T17:00:42.485Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/RNDR-0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24-eth.png",
+      "price_change_percentage": "234.4284504886711"
+    },
+    {
+      "contract_address": "0x2d787d4f5005bd66ac910c2e821241625c406ed5",
+      "type": 2592000,
+      "name": "Berry",
+      "symbol": "BERRY",
+      "price": "0.00212157",
+      "timestamp": "2023-02-15T17:00:42.485Z",
+      "icon": "",
+      "price_change_percentage": "231.65211851251266"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000196346",
+      "timestamp": "2023-02-15T16:55:42.660Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "20.375239421687493"
+    },
+    {
+      "contract_address": "0x32353a6c91143bfd6c7d363b546e62a9a2489a20",
+      "type": 3600,
+      "name": "Adventure Gold",
+      "symbol": "AGLD",
+      "price": "0.522605",
+      "timestamp": "2023-02-15T16:55:42.660Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/AGLD-0x32353A6C91143bfd6C7d363B546e62a9A2489A20.png",
+      "price_change_percentage": "7.649704101710605"
+    },
+    {
+      "contract_address": "0x05fb86775fd5c16290f1e838f5caaa7342bd9a63",
+      "type": 86400,
+      "name": "Hacken HAI",
+      "symbol": "HAI",
+      "price": "0.03176803",
+      "timestamp": "2023-02-15T16:55:42.660Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/HAI-0x05Fb86775Fd5c16290f1E838F5caaa7342bD9a63.png",
+      "price_change_percentage": "18.391592951519442"
+    },
+    {
+      "contract_address": "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7",
+      "type": 3600,
+      "name": "SKALE",
+      "symbol": "SKL",
+      "price": "0.055354",
+      "timestamp": "2023-02-15T16:50:42.537Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SKL-0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7-eth.png",
+      "price_change_percentage": "5.431339972315682"
+    },
+    {
+      "contract_address": "0x5732046a883704404f284ce41ffadd5b007fd668",
+      "type": 86400,
+      "name": "Bluzelle",
+      "symbol": "BLZ",
+      "price": "0.098953",
+      "timestamp": "2023-02-15T16:50:42.537Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BLZ-0x5732046A883704404F284Ce41FfADd5b007FD668-eth.png",
+      "price_change_percentage": "15.708400887740536"
+    },
+    {
+      "contract_address": "0x1e4ede388cbc9f4b5c79681b7f94d36a11abebc9",
+      "type": 300,
+      "name": "X2Y2",
+      "symbol": "X2Y2",
+      "price": "0.169625",
+      "timestamp": "2023-02-15T16:45:42.491Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/X2Y2-0x1E4EDE388cbc9F4b5c79681B7f94d36a11ABEBC9.png",
+      "price_change_percentage": "-0.12757657494431562"
+    },
+    {
+      "contract_address": "0x6de037ef9ad2725eb40118bb1702ebb27e4aeb24",
+      "type": 3600,
+      "name": "Render",
+      "symbol": "RNDR",
+      "price": "1.9",
+      "timestamp": "2023-02-15T16:45:42.491Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/RNDR-0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24-eth.png",
+      "price_change_percentage": "4.131276375617539"
+    },
+    {
+      "contract_address": "0x32353a6c91143bfd6c7d363b546e62a9a2489a20",
+      "type": 300,
+      "name": "Adventure Gold",
+      "symbol": "AGLD",
+      "price": "0.509363",
+      "timestamp": "2023-02-15T16:40:42.469Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/AGLD-0x32353A6C91143bfd6C7d363B546e62a9A2489A20.png",
+      "price_change_percentage": "4.581286273283717"
+    },
+    {
+      "contract_address": "0xcf0c122c6b73ff809c693db761e7baebe62b6a2e",
+      "type": 3600,
+      "name": "FLOKI",
+      "symbol": "FLOKI",
+      "price": "0.00003539",
+      "timestamp": "2023-02-15T16:40:42.469Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/FLOKI-0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E.png",
+      "price_change_percentage": "-5.052033836883955"
+    },
+    {
+      "contract_address": "0x53c8395465a84955c95159814461466053dedede",
+      "type": 300,
+      "name": "DeGate",
+      "symbol": "DG",
+      "price": "0.137362",
+      "timestamp": "2023-02-15T16:35:42.539Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DG-0x53C8395465A84955c95159814461466053DedEDE.png",
+      "price_change_percentage": "7.386793037948018"
+    },
+    {
+      "contract_address": "0x30d20208d987713f46dfd34ef128bb16c404d10f",
+      "type": 3600,
+      "name": "Stader",
+      "symbol": "SD",
+      "price": "1.27",
+      "timestamp": "2023-02-15T16:35:42.539Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SD-0x30D20208d987713f46DFD34EF128Bb16C404D10f.png",
+      "price_change_percentage": "6.037711629749955"
+    },
+    {
+      "contract_address": "0x177d39ac676ed1c67a2b268ad7f1e58826e5b0af",
+      "type": 86400,
+      "name": "Blox",
+      "symbol": "CDT",
+      "price": "0.327122",
+      "timestamp": "2023-02-15T16:35:42.539Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CDT-0x177d39AC676ED1C67A2b268AD7F1E58826E5B0af-eth.png",
+      "price_change_percentage": "38.25885323123514"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000171333",
+      "timestamp": "2023-02-15T16:30:42.545Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-5.03791694592609"
+    },
+    {
+      "contract_address": "0x5732046a883704404f284ce41ffadd5b007fd668",
+      "type": 3600,
+      "name": "Bluzelle",
+      "symbol": "BLZ",
+      "price": "0.100384",
+      "timestamp": "2023-02-15T16:30:42.545Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BLZ-0x5732046A883704404F284Ce41FfADd5b007FD668-eth.png",
+      "price_change_percentage": "8.153546099435557"
+    },
+    {
+      "contract_address": "0x6368e1e18c4c419ddfc608a0bed1ccb87b9250fc",
+      "type": 86400,
+      "name": "Tap",
+      "symbol": "XTP",
+      "price": "0.01520809",
+      "timestamp": "2023-02-15T16:30:42.545Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XTP-0x6368e1E18c4C419DDFC608A0BEd1ccb87b9250fc-eth.png",
+      "price_change_percentage": "27.772690870178373"
+    },
+    {
+      "contract_address": "0xf0d33beda4d734c72684b5f9abbebf715d0a7935",
+      "type": 300,
+      "name": "NuNet",
+      "symbol": "NTX",
+      "price": "0.084725",
+      "timestamp": "2023-02-15T16:25:42.342Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/NTX-0xF0d33BeDa4d734C72684b5f9abBEbf715D0a7935.png",
+      "price_change_percentage": "-1.4568381465270737"
+    },
+    {
+      "contract_address": "0x243cacb4d5ff6814ad668c3e225246efa886ad5a",
+      "type": 3600,
+      "name": "Shina Inu",
+      "symbol": "SHI",
+      "price": "0.00000246",
+      "timestamp": "2023-02-15T16:25:42.342Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SHI-0x243cACb4D5fF6814AD668C3e225246efA886AD5a.png",
+      "price_change_percentage": "5.890310307704538"
+    },
+    {
+      "contract_address": "0xf920e4f3fbef5b3ad0a25017514b769bdc4ac135",
+      "type": 86400,
+      "name": "BABB",
+      "symbol": "BAX",
+      "price": "0.0002898",
+      "timestamp": "2023-02-15T16:25:42.342Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BAX-0xf920e4F3FBEF5B3aD0A25017514B769bDc4Ac135.png",
+      "price_change_percentage": "26.106265048158907"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000171591",
+      "timestamp": "2023-02-15T16:20:42.572Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-10.737257491646806"
+    },
+    {
+      "contract_address": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+      "type": 3600,
+      "name": "Loopring",
+      "symbol": "LRC",
+      "price": "0.433174",
+      "timestamp": "2023-02-15T16:20:42.572Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LRC-0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD-eth.png",
+      "price_change_percentage": "5.836356161580289"
+    },
+    {
+      "contract_address": "0x5732046a883704404f284ce41ffadd5b007fd668",
+      "type": 300,
+      "name": "Bluzelle",
+      "symbol": "BLZ",
+      "price": "0.101564",
+      "timestamp": "2023-02-15T16:15:42.237Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BLZ-0x5732046A883704404F284Ce41FfADd5b007FD668-eth.png",
+      "price_change_percentage": "9.816232806545903"
+    },
+    {
+      "contract_address": "0x0f2d719407fdbeff09d87557abb7232601fd9f29",
+      "type": 3600,
+      "name": "Synapse",
+      "symbol": "SYN",
+      "price": "1.47",
+      "timestamp": "2023-02-15T16:15:42.237Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SYN-0x0f2D719407FdBeFF09D87557AbB7232601FD9F29.png",
+      "price_change_percentage": "-5.974692491062903"
+    },
+    {
+      "contract_address": "0xc86d054809623432210c107af2e3f619dcfbf652",
+      "type": 300,
+      "name": "Sentinel Protocol",
+      "symbol": "UPP",
+      "price": "0.069431",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UPP-0xC86D054809623432210c107af2e3F619DcFbf652-eth.png",
+      "price_change_percentage": "5.0971735913714715"
+    },
+    {
+      "contract_address": "0x970b9bb2c0444f5e81e9d0efb84c8ccdcdcaf84d",
+      "type": 300,
+      "name": "Fuse",
+      "symbol": "FUSE",
+      "price": "0.07823",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/FUSE-0x970B9bB2C0444F5E81e9d0eFb84C8ccdcdcAf84d-eth.png",
+      "price_change_percentage": "-1.3125525473152493"
+    },
+    {
+      "contract_address": "0xf920e4f3fbef5b3ad0a25017514b769bdc4ac135",
+      "type": 300,
+      "name": "BABB",
+      "symbol": "BAX",
+      "price": "0.00029045",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BAX-0xf920e4F3FBEF5B3aD0A25017514B769bDc4Ac135.png",
+      "price_change_percentage": "3.2724305054020517"
+    },
+    {
+      "contract_address": "0xb49fa25978abf9a248b8212ab4b87277682301c0",
+      "type": 300,
+      "name": "RAI Finance",
+      "symbol": "SOFI",
+      "price": "0.096594",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SOFI-0xB49fa25978abf9a248b8212Ab4b87277682301c0.png",
+      "price_change_percentage": "2.2813666878876018"
+    },
+    {
+      "contract_address": "0xf3dcbc6d72a4e1892f7917b7c43b74131df8480e",
+      "type": 300,
+      "name": "Big Data Protocol",
+      "symbol": "BDP",
+      "price": "0.305306",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BDP-0xf3dcbc6D72a4E1892f7917b7C43b74131Df8480e-eth.png",
+      "price_change_percentage": "-1.6817190161633317"
+    },
+    {
+      "contract_address": "0x95b3497bbcccc46a8f45f5cf54b0878b39f8d96c",
+      "type": 3600,
+      "name": "UniDex",
+      "symbol": "UNIDX",
+      "price": "5.94",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UNIDX-0x95b3497bBcCcc46a8F45F5Cf54b0878b39f8D96C.png",
+      "price_change_percentage": "4.339305386813865"
+    },
+    {
+      "contract_address": "0x51cb253744189f11241becb29bedd3f1b5384fdb",
+      "type": 3600,
+      "name": "Dimitra",
+      "symbol": "DMTR",
+      "price": "0.04294543",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/DMTR-0x51cB253744189f11241becb29BeDd3F1b5384fdB.png",
+      "price_change_percentage": "4.2464553006667725"
+    },
+    {
+      "contract_address": "0xf4d2888d29d722226fafa5d9b24f9164c092421e",
+      "type": 86400,
+      "name": "LooksRare",
+      "symbol": "LOOKS",
+      "price": "0.290502",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LOOKS-0xf4d2888d29D722226FafA5d9B24F9164c092421E.png",
+      "price_change_percentage": "-10.721661520543368"
+    },
+    {
+      "contract_address": "0xc944e90c64b2c07662a292be6244bdf05cda44a7",
+      "type": 86400,
+      "name": "The Graph",
+      "symbol": "GRT",
+      "price": "0.180796",
+      "timestamp": "2023-02-15T16:10:42.454Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GRT-0xc944E90C64B2c07662A292be6244BDf05Cda44a7-eth.png",
+      "price_change_percentage": "10.475988003755974"
+    },
+    {
+      "contract_address": "0x979aca85ba37c675e78322ed5d97fa980b9bdf00",
+      "type": 300,
+      "name": "FUSION",
+      "symbol": "anyFSN",
+      "price": "0.291925",
+      "timestamp": "2023-02-15T16:05:42.239Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ANYFSN-0x979aCA85bA37c675e78322ed5d97fa980B9Bdf00.png",
+      "price_change_percentage": "-2.0019744674454447"
+    },
+    {
+      "contract_address": "0x5283d291dbcf85356a21ba090e6db59121208b44",
+      "type": 300,
+      "name": "Blur",
+      "symbol": "BLUR",
+      "price": "0.916573",
+      "timestamp": "2023-02-15T16:05:42.239Z",
+      "icon": "",
+      "price_change_percentage": "12.408352564185092"
+    },
+    {
+      "contract_address": "0x1e4ede388cbc9f4b5c79681b7f94d36a11abebc9",
+      "type": 3600,
+      "name": "X2Y2",
+      "symbol": "X2Y2",
+      "price": "0.170696",
+      "timestamp": "2023-02-15T16:05:42.239Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/X2Y2-0x1E4EDE388cbc9F4b5c79681B7f94d36a11ABEBC9.png",
+      "price_change_percentage": "4.5311968124552555"
+    },
+    {
+      "contract_address": "0x19de6b897ed14a376dda0fe53a5420d2ac828a28",
+      "type": 86400,
+      "name": "Bitget Token",
+      "symbol": "BGB",
+      "price": "0.472385",
+      "timestamp": "2023-02-15T16:05:42.239Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BGB-0x19de6b897Ed14A376Dda0Fe53a5420D2aC828a28.png",
+      "price_change_percentage": "14.001582884963554"
+    },
+    {
+      "contract_address": "0xd0929d411954c47438dc1d871dd6081f5c5e149c",
+      "type": 86400,
+      "name": "Refereum",
+      "symbol": "RFR",
+      "price": "0.00674513",
+      "timestamp": "2023-02-15T16:05:42.239Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/RFR-0xd0929d411954c47438dc1d871dd6081F5C5e149c-eth.png",
+      "price_change_percentage": "14.097570241777913"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000174644",
+      "timestamp": "2023-02-15T16:00:42.736Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-4.4200167909278365"
+    },
+    {
+      "contract_address": "0xc944e90c64b2c07662a292be6244bdf05cda44a7",
+      "type": 3600,
+      "name": "The Graph",
+      "symbol": "GRT",
+      "price": "0.181688",
+      "timestamp": "2023-02-15T16:00:42.736Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GRT-0xc944E90C64B2c07662A292be6244BDf05Cda44a7-eth.png",
+      "price_change_percentage": "4.14861382511542"
+    },
+    {
+      "contract_address": "0x0d02755a5700414b26ff040e1de35d337df56218",
+      "type": 3600,
+      "name": "BendDAO",
+      "symbol": "BEND",
+      "price": "0.02466018",
+      "timestamp": "2023-02-15T16:00:42.736Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BEND-0x0d02755a5700414B26FF040e1dE35D337DF56218.png",
+      "price_change_percentage": "4.0715265355817944"
+    },
+    {
+      "contract_address": "0xf418588522d5dd018b425e472991e52ebbeeeeee",
+      "type": 86400,
+      "name": "Push Protocol",
+      "symbol": "PUSH",
+      "price": "0.447367",
+      "timestamp": "2023-02-15T16:00:42.736Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/PUSH-0xf418588522d5dd018b425E472991E52EBBeEEEEE.png",
+      "price_change_percentage": "38.80275155677689"
+    },
+    {
+      "contract_address": "0x19de6b897ed14a376dda0fe53a5420d2ac828a28",
+      "type": 604800,
+      "name": "Bitget Token",
+      "symbol": "BGB",
+      "price": "0.472482",
+      "timestamp": "2023-02-15T16:00:42.736Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BGB-0x19de6b897Ed14A376Dda0Fe53a5420D2aC828a28.png",
+      "price_change_percentage": "114.17210690523527"
+    },
+    {
+      "contract_address": "0xfcf8eda095e37a41e002e266daad7efc1579bc0a",
+      "type": 2592000,
+      "name": "FLEX Coin",
+      "symbol": "FLEX",
+      "price": "1.13",
+      "timestamp": "2023-02-15T16:00:42.736Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/FLEX-0xFcF8eda095e37A41e002E266DaAD7efC1579bc0A.png",
+      "price_change_percentage": "1998.6233257392275"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 3600,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000164407",
+      "timestamp": "2023-02-15T15:55:42.714Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "-13.848490258494634"
+    },
+    {
+      "contract_address": "0xcf0c122c6b73ff809c693db761e7baebe62b6a2e",
+      "type": 86400,
+      "name": "FLOKI",
+      "symbol": "FLOKI",
+      "price": "0.0000368",
+      "timestamp": "2023-02-15T15:55:42.714Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/FLOKI-0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E.png",
+      "price_change_percentage": "63.27221098551513"
+    },
+    {
+      "contract_address": "0x2be5e8c109e2197d077d13a82daead6a9b3433c5",
+      "type": 300,
+      "name": "Tokamak Network",
+      "symbol": "TON",
+      "price": "2.04",
+      "timestamp": "2023-02-15T15:50:42.536Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/TON-0x2be5e8c109e2197D077D13A82dAead6a9b3433C5-eth.png",
+      "price_change_percentage": "11.160690239857272"
+    },
+    {
+      "contract_address": "0xe5597f0723eeaba1b26948e06f008bf0fc1e37e6",
+      "type": 3600,
+      "name": "GM",
+      "symbol": "gm",
+      "price": "0.0000106",
+      "timestamp": "2023-02-15T15:50:42.536Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GM-0xe5597f0723EeaBa1B26948e06f008Bf0fc1e37e6.png",
+      "price_change_percentage": "8.528703758657327"
+    },
+    {
+      "contract_address": "0x6b0b3a982b4634ac68dd83a4dbf02311ce324181",
+      "type": 86400,
+      "name": "Artificial Liquid Intelligence",
+      "symbol": "ALI",
+      "price": "0.069819",
+      "timestamp": "2023-02-15T15:50:42.536Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ALI-0x6B0b3a982b4634aC68dD83a4DBF02311cE324181.png",
+      "price_change_percentage": "22.75812059112375"
+    },
+    {
+      "contract_address": "0x678e840c640f619e17848045d23072844224dd37",
+      "type": 300,
+      "name": "Cratos",
+      "symbol": "CRTS",
+      "price": "0.00073501",
+      "timestamp": "2023-02-15T15:45:42.500Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/CRTS-0x678e840C640F619E17848045D23072844224dD37.png",
+      "price_change_percentage": "6.377881063454492"
+    },
+    {
+      "contract_address": "0x2be5e8c109e2197d077d13a82daead6a9b3433c5",
+      "type": 3600,
+      "name": "Tokamak Network",
+      "symbol": "TON",
+      "price": "1.95",
+      "timestamp": "2023-02-15T15:45:42.500Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/TON-0x2be5e8c109e2197D077D13A82dAead6a9b3433C5-eth.png",
+      "price_change_percentage": "6.745770861089505"
+    },
+    {
+      "contract_address": "0x4123a133ae3c521fd134d7b13a2dec35b56c2463",
+      "type": 3600,
+      "name": "Qredo",
+      "symbol": "QRDO",
+      "price": "0.177259",
+      "timestamp": "2023-02-15T15:45:42.500Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/QRDO-0x4123a133ae3c521FD134D7b13A2dEC35b56c2463.png",
+      "price_change_percentage": "6.7833287739055255"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000168884",
+      "timestamp": "2023-02-15T15:40:42.348Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "1.9416481405980082"
+    },
+    {
+      "contract_address": "0x549020a9cb845220d66d3e9c6d9f9ef61c981102",
+      "type": 3600,
+      "name": "Sidus",
+      "symbol": "SIDUS",
+      "price": "0.00194456",
+      "timestamp": "2023-02-15T15:40:42.348Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SIDUS-0x549020a9Cb845220D66d3E9c6D9F9eF61C981102.png",
+      "price_change_percentage": "7.140235550949114"
+    },
+    {
+      "contract_address": "0xe5597f0723eeaba1b26948e06f008bf0fc1e37e6",
+      "type": 300,
+      "name": "GM",
+      "symbol": "gm",
+      "price": "0.00001087",
+      "timestamp": "2023-02-15T15:35:42.384Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GM-0xe5597f0723EeaBa1B26948e06f008Bf0fc1e37e6.png",
+      "price_change_percentage": "11.336391597162086"
+    },
+    {
+      "contract_address": "0x3aada3e213abf8529606924d8d1c55cbdc70bf74",
+      "type": 3600,
+      "name": "XMON",
+      "symbol": "XMON",
+      "price": "16548.69",
+      "timestamp": "2023-02-15T15:35:42.384Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XMON-0x3aaDA3e213aBf8529606924d8D1c55CbDc70Bf74-eth.png",
+      "price_change_percentage": "-10.02888010752072"
+    },
+    {
+      "contract_address": "0x9c354503c38481a7a7a51629142963f98ecc12d0",
+      "type": 86400,
+      "name": "Origin Dollar Governance",
+      "symbol": "OGV",
+      "price": "0.00797613",
+      "timestamp": "2023-02-15T15:35:42.384Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/OGV-0x9c354503C38481a7A7a51629142963F98eCC12D0.png",
+      "price_change_percentage": "33.74822464267704"
+    },
+    {
+      "contract_address": "0xd0929d411954c47438dc1d871dd6081f5c5e149c",
+      "type": 3600,
+      "name": "Refereum",
+      "symbol": "RFR",
+      "price": "0.00657515",
+      "timestamp": "2023-02-15T15:30:42.477Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/RFR-0xd0929d411954c47438dc1d871dd6081F5C5e149c-eth.png",
+      "price_change_percentage": "6.453329376605706"
+    },
+    {
+      "contract_address": "0x243cacb4d5ff6814ad668c3e225246efa886ad5a",
+      "type": 86400,
+      "name": "Shina Inu",
+      "symbol": "SHI",
+      "price": "0.00000233",
+      "timestamp": "2023-02-15T15:30:42.477Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/SHI-0x243cACb4D5fF6814AD668C3e225246efA886AD5a.png",
+      "price_change_percentage": "-16.694673638757727"
+    },
+    {
+      "contract_address": "0xb1f871ae9462f1b2c6826e88a7827e76f86751d4",
+      "type": 86400,
+      "name": "GNY",
+      "symbol": "GNYerc20",
+      "price": "0.150381",
+      "timestamp": "2023-02-15T15:30:42.477Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/GNYerc20-0xb1f871Ae9462F1b2C6826E88A7827e76f86751d4-eth.png",
+      "price_change_percentage": "16.491767501883096"
+    },
+    {
+      "contract_address": "0xaf5191b0de278c7286d6c7cc6ab6bb8a73ba2cd6",
+      "type": 86400,
+      "name": "Stargate Finance",
+      "symbol": "STG",
+      "price": "0.91898",
+      "timestamp": "2023-02-15T15:30:42.477Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/STG-0xAf5191B0De278C7286d6C7CC6ab6BB8A73bA2Cd6.png",
+      "price_change_percentage": "16.62968562193784"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000192225",
+      "timestamp": "2023-02-15T15:25:42.688Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "18.68356417573787"
+    },
+    {
+      "contract_address": "0x04fa0d235c4abf4bcf4787af4cf447de572ef828",
+      "type": 3600,
+      "name": "UMA",
+      "symbol": "UMA",
+      "price": "2.08",
+      "timestamp": "2023-02-15T15:25:42.688Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/UMA-0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828-eth.png",
+      "price_change_percentage": "5.703343964771817"
+    },
+    {
+      "contract_address": "0x3aada3e213abf8529606924d8d1c55cbdc70bf74",
+      "type": 86400,
+      "name": "XMON",
+      "symbol": "XMON",
+      "price": "15898.34",
+      "timestamp": "2023-02-15T15:25:42.688Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XMON-0x3aaDA3e213aBf8529606924d8D1c55CbDc70Bf74-eth.png",
+      "price_change_percentage": "-22.848739335873674"
+    },
+    {
+      "contract_address": "0x3aada3e213abf8529606924d8d1c55cbdc70bf74",
+      "type": 300,
+      "name": "XMON",
+      "symbol": "XMON",
+      "price": "16600.9",
+      "timestamp": "2023-02-15T15:20:42.415Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XMON-0x3aaDA3e213aBf8529606924d8D1c55CbDc70Bf74-eth.png",
+      "price_change_percentage": "-9.694855933010095"
+    },
+    {
+      "contract_address": "0xf920e4f3fbef5b3ad0a25017514b769bdc4ac135",
+      "type": 3600,
+      "name": "BABB",
+      "symbol": "BAX",
+      "price": "0.00028521",
+      "timestamp": "2023-02-15T15:20:42.415Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/BAX-0xf920e4F3FBEF5B3aD0A25017514B769bDc4Ac135.png",
+      "price_change_percentage": "9.869907140215597"
+    },
+    {
+      "contract_address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
+      "type": 300,
+      "name": "Luffy",
+      "symbol": "LUFFY",
+      "price": "0.000000000169891",
+      "timestamp": "2023-02-15T15:15:42.473Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/LUFFY-0x7121D00b4fA18F13Da6c2e30d19C04844E6AfDC8.png",
+      "price_change_percentage": "3.839466179484302"
+    },
+    {
+      "contract_address": "0xabe580e7ee158da464b51ee1a83ac0289622e6be",
+      "type": 3600,
+      "name": "Offshift",
+      "symbol": "XFT",
+      "price": "3.31",
+      "timestamp": "2023-02-15T15:15:42.473Z",
+      "icon": "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/XFT-0xABe580E7ee158dA464b51ee1a83Ac0289622e6be-eth.png",
+      "price_change_percentage": "8.775314384402881"
+    }
+  ]
+}
+

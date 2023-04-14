@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message _MarketCollectionTitle {
+  optional string text             = 1;
+  optional string localization_key = 2;
+}

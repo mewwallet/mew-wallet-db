@@ -37,8 +37,7 @@ final class Account_tests: XCTestCase {
   
   func test() async {
     do {
-      var account = Account(chain: .eth,
-                            order: 0,
+      var account = Account(order: 0,
                             address: "0x00c17f958d2ee523a2206206994597c13d831ec7",
                             name: "My account",
                             source: .recoveryPhrase,
@@ -54,7 +53,7 @@ final class Account_tests: XCTestCase {
       XCTAssertEqual(accounts.count, 1)
       XCTAssertEqual(accounts.first, account)
       
-      let key = AccountKey(chain: .eth, address: "0x00c17f958d2ee523a2206206994597c13d831ec7")
+      let key = AccountKey(address: "0x00c17f958d2ee523a2206206994597c13d831ec7")
       var dbAccount: Account = try db.read(key: key, table: .account)
       XCTAssertEqual(account, dbAccount)
       

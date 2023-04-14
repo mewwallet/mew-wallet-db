@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "subs/_MarketCollectionTitle.proto";
+import "subs/_MarketCollectionAction.proto";
+import "subs/_MarketCollectionBanner.proto";
+import "subs/_MarketCollectionFilter.proto";
+
+import "_TokenMeta.proto";
+
+message _MarketCollectionItem {
+  // title of the market collection.
+  optional string entry_title                       = 1;
+  // full title of the market collection.
+  optional _MarketCollectionTitle title             = 2;
+  // longer description about the market collection.
+  optional _MarketCollectionTitle description       = 3;
+  // shorter version of the title of the market collection.
+  optional _MarketCollectionTitle short_title       = 4;
+  // shorter version of the description of the market collection.
+  optional _MarketCollectionTitle short_description = 5;
+  // information about an associated action, such as a link to an article or a tutorial.
+  optional _MarketCollectionAction action           = 6;
+  // URLs for small and big banner images associated with the market collection.
+  optional _MarketCollectionBanner banner           = 8;
+  // visual theme of the market collection (e.g., "DARK").
+  optional string theme                             = 9;
+  // list of tokens associated with the market collection.
+  repeated _TokenMeta tokens                        = 10;
+  // list of filters available for the market collection.
+  repeated _MarketCollectionFilter filters          = 11;
+}

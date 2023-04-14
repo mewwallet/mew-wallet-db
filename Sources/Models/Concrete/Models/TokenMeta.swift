@@ -14,11 +14,14 @@ public struct TokenMeta: Equatable {
   var _wrapped: _TokenMeta
   var _chain: MDBXChain
   
+  public var order: UInt16?
+
   // MARK: - Private Properties
   
   private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
   private let _token: MDBXPointer<TokenKey, Token> = .init(.token)
-  
+  private var _restoredAlternateKey: OrderedCollectionTokenMetaKey?
+
   // MARK: - LifeCycle
    
   public init(chain: MDBXChain,
@@ -111,11 +114,20 @@ extension TokenMeta: MDBXObject {
     return TokenMetaKey(chain: _chain, contractAddress: self.contract_address)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: MDBXKey? {
+    guard let order = order, let hash = _restoredAlternateKey?.hash else { return nil }
+    return OrderedCollectionTokenMetaKey(
+      chain: _chain,
+      order: order,
+      contractAddress: contract_address,
+      hash: hash
+    )
+  }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _TokenMeta(serializedData: data)
+    tryRestoreAlternateKey(key)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -123,6 +135,7 @@ extension TokenMeta: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _TokenMeta(jsonUTF8Data: jsonData, options: options)
+    tryRestoreAlternateKey(key)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
@@ -130,6 +143,7 @@ extension TokenMeta: MDBXObject {
     options.ignoreUnknownFields = true
     self._chain = chain
     self._wrapped = try _TokenMeta(jsonString: jsonString, options: options)
+    tryRestoreAlternateKey(key)
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
@@ -204,5 +218,17 @@ extension TokenMeta: ProtoWrapper {
 extension TokenMeta {
   public static func primary(chain: MDBXChain) -> TokenMeta {
     return TokenMeta(chain: chain, contractAddress: chain.primary, name: chain.name, symbol: chain.symbol, decimals: chain.decimals)
+  }
+}
+
+// MARK: - Private
+
+extension TokenMeta {
+  mutating private func tryRestoreAlternateKey(_ key: Data?) {
+    guard let key = key else { return }
+    if let alternateKey = OrderedCollectionTokenMetaKey(data: key) {
+      _restoredAlternateKey = alternateKey
+      order = alternateKey.order
+    }
   }
 }
