@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "subs/_StakedItemQueue.proto";
+import "subs/_StakedItemDetailedInfo.proto";
+
+message _StakedItem {
+  // User's address
+  string address                              = 1;
+  // Provisioning request UUID
+  string provisioning_request_uuid            = 2;
+  
+  // Staking status
+//  enum _TransferStatus {
+//    CREATED                                     = 0;
+//    SUBMITTED                                   = 1;
+//    SUCCESS                                     = 2;
+//    FAIL                                        = 3;
+//    DEPOSITED                                   = 4;
+//    PENDING                                     = 5;
+//    ACTIVE                                      = 6;
+//    EXITED                                      = 7;
+//  }
+  string status                               = 3;
+  
+  // Staking amount
+  string eth_two_staked                       = 4;
+  
+  // Staking balance
+  string eth_two_balance                      = 5;
+  
+  // Staking earned
+  string eth_two_earned                       = 6;
+  
+  // Validators addresses
+  repeated string eth_two_addresses           = 7;
+  
+  // Staking exited
+  string eth_two_exited                       = 8;
+  
+  // Staking exited addresses
+  repeated string eth_two_addresses_exited    = 9;
+  
+  // Transaction hash
+  optional string hash                        = 10;
+  
+  // Stake needs to be upgraded
+  bool requires_upgrade                       = 11;
+  
+  // APR
+  optional string apr                         = 12;
+  
+  // Average apr
+  optional string average_apr                 = 13;
+  
+  // Timestamp
+  google.protobuf.Timestamp timestamp         = 14;
+  
+  // Activation queue, optional
+  optional _StakedItemQueue queue             = 15;
+
+  // Detailed information about balance
+  _StakedItemDetailedInfo detailed_info       = 16;
+
+  // Validator indexes
+  repeated uint64 validator_indexes           = 17;
+}

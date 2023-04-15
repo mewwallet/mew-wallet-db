@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+message _StakedItemQueue {
+  // Current position in queue for activation
+  uint32 position                                             = 1;
+  // Total length of queue
+  uint32 total                                                = 2;
+  // Estimated activation time, based on 900 validators per day
+  google.protobuf.Timestamp estimated_activation_timestamp    = 3;
+}

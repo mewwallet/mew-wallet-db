@@ -18,6 +18,7 @@ public enum MDBXKeyLength {
   public static let direction             = 1
   public static let nonce                 = 8
   public static let transactionID         = 32
+  public static let timestamp             = 4
   
   public static var account:              Int { return chain + address }                                        // 36
   public static var tokenMeta:            Int { return chain + address }                                        // 36
@@ -35,4 +36,5 @@ public enum MDBXKeyLength {
   public static var historySwap:          Int { return chain + address + hash }                                 // 68
   public static var historyPurchase:      Int { return chain + address + transactionID }                        // 68
   public static var profile:              Int { return chain + hash + hash }                                    // 80
+  public static var staked:               Int { return chain + address + timestamp }                            // 40
 }
