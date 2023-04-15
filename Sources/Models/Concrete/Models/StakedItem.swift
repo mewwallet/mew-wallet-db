@@ -29,6 +29,7 @@ public struct StakedItem: Equatable {
     case exited     = "EXITED"
     case orphan     = "ORPHAN" // == EXITED
     case upgrading  = "UPGRADING"
+    case exiting    = "EXITING"
     
     public init(rawValue: String) {
       switch rawValue {
@@ -42,6 +43,7 @@ public struct StakedItem: Equatable {
       case "EXITED":    self = .exited
       case "ORPHAN":    self = .orphan
       case "UPGRADING": self = .upgrading
+      case "EXITING":   self = .exiting
       default:          self = .pending
       }
     }
@@ -68,6 +70,8 @@ public struct StakedItem: Equatable {
         return .exited
       case .exited:
         return .exited
+      case .exiting:
+        return .complete
       }
     }
   }
@@ -81,56 +85,17 @@ public struct StakedItem: Equatable {
   var _chain: MDBXChain
   
   // MARK: - Private Properties
-//  private let _metaKey: TokenMetaKey
   private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
-//  private let _primaryMeta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
-//  private let _from: MDBXPointer<AccountKey, Account> = .init(.account)
-//  private let _to: MDBXPointer<AccountKey, Account> = .init(.account)
   private let _account: MDBXPointer<AccountKey, Account> = .init(.account)
   @SubProperty<_StakedItemQueue, StakedItem.Queue> var _queue: _StakedItemQueue?
   @SubProperty<_StakedItemDetailedInfo, StakedItem.DetailedInfo> var _detailedInfo: _StakedItemDetailedInfo?
   
   // MARK: - LifeCycle
    
-//  public init(chain: MDBXChain,
-//              address: Address,
-//              hash: String,
-//              contractAddress: Address,
-//              from: Address,
-//              to: Address,
-//              blockNumber: UInt64,
-//              nonce: UInt64,
-//              delta: Decimal,
-//              timestamp: Date,
-//              status: Status,
-//              nft: NFTTransfer?,
-//              local: Bool,
-//              order: UInt16?,
-//              database: WalletDB? = nil) {
-//
-//    self.database = database ?? MEWwalletDBImpl.shared
-//    self._wrapped = .with {
-//
-//      $0.contractAddress = contractAddress.rawValue
-//      $0.address = address.rawValue
-//      $0.from = from.rawValue
-//      $0.to = to.rawValue
-//
-//      $0.hash = hash
-//      $0.blockNumber = blockNumber
-//      $0.nonce = nonce
-//      $0.delta = delta.hexString
-//      $0.timestamp = .init(date: timestamp)
-//      $0.status = status.rawValue
-//      $0.local = local
-//      if let nft = nft {
-//        $0.nft = nft._wrapped
-//      }
-//    }
-//    self._chain = chain
-//    self.order = order
-//    self._metaKey = TokenMetaKey(chain: chain, contractAddress: contractAddress)
-//  }
+  public init() {
+    self._chain = .eth
+    self._wrapped = .with({ _ in })
+  }
 }
 
 // MARK: - StakedItem + Properties
@@ -156,7 +121,6 @@ extension StakedItem {
   // MARK: - Properties
 
   public var chain: MDBXChain { _chain }
-//  public var hash: String { _wrapped.hash }
   public var address: Address { Address(rawValue: _wrapped.address) }
   public var requestUUID: String { _wrapped.provisioningRequestUuid }
   public var txHash: String? { _wrapped.hasHash ? _wrapped.hash : nil }
@@ -177,39 +141,13 @@ extension StakedItem {
   }
   public var requiresUpgrade: Bool { _wrapped.requiresUpgrade }
   public var validatorIndexes: [UInt64] { _wrapped.validatorIndexes }
-//  public var fromAddress: Address { Address(rawValue: self._wrapped.from) }
-//  public var toAddress: Address { Address(rawValue: self._wrapped.to) }
-//  public var contractAddress: Address { Address(rawValue: self._wrapped.contractAddress) }
-//  public var block: UInt64 {
-//    set { _wrapped.blockNumber = newValue }
-//    get { self._wrapped.blockNumber }
-//  }
-//  public var nonce: Decimal { Decimal(self._wrapped.nonce) }
-//  public var delta: Decimal {
-//    set { _wrapped.delta = newValue.hexString }
-//    get { Decimal(hex: _wrapped.delta) }
-//  }
-//
   public var status: Status { Status(rawValue: _wrapped.status) }
-//
-//
   public var queue: StakedItem.Queue? {
     guard _wrapped.hasQueue else { return nil }
     return self.$_queue
   }
   
   public var detailedInfo: StakedItem.DetailedInfo? { self.$_detailedInfo }
-  
-//
-//  public var direction: Direction {
-//    if self._wrapped.from == self._wrapped.to {
-//      return .`self`
-//    } else if self._wrapped.address == self._wrapped.from {
-//      return .outgoing
-//    } else {
-//      return .incoming
-//    }
-//  }
   public var timestamp: Date { self._wrapped.timestamp.date }
 }
 

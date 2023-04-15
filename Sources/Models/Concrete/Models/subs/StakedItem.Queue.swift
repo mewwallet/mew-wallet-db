@@ -23,7 +23,12 @@ extension StakedItem.Queue {
   
   public var position: UInt32 { _wrapped.position }
   public var total: UInt32 { _wrapped.total }
+  public var behind: UInt32 { _wrapped.total > _wrapped.position ? _wrapped.total - _wrapped.position : 0 }
   public var activationTimestamp: Date { _wrapped.estimatedActivationTimestamp.date }
+  public var activationComponents: DateComponents {
+    let calenadar = Calendar(identifier: .gregorian)
+    return calenadar.dateComponents([.day, .hour, .minute], from: Date(), to: activationTimestamp)
+  }
 }
 
 // MARK: - StakedItem.Queue + Equatable
