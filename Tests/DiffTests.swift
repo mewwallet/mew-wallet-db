@@ -167,8 +167,7 @@ final class diff_tests: XCTestCase {
   
   func test() async {
     do {
-      var account = Account(chain: .eth,
-                            order: 0,
+      let account = Account(order: 0,
                             address: "0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1",
                             name: "My account",
                             source: .recoveryPhrase,
@@ -190,25 +189,25 @@ final class diff_tests: XCTestCase {
       
       try await db.write(table: .nftAsset, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
       
-      keysAndObjects = try objects.collectMetas.lazy.map { ($0.key, $0) }
+      keysAndObjects = try objects.collectMetas(chain: .eth).lazy.map { ($0.key, $0) }
       
       try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: .recommended(.tokenMeta))
       
       var asset = try objects.collectAssets.last!
       asset.database = db
       
-      XCTAssertFalse(asset.isFavorite)
+      XCTAssertFalse(asset.isFavorite(chain: .eth))
       
       if let accountToUpdate = asset.toggleFavorite() {
         try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
       } else {
         XCTFail("Bad update")
       }
-      XCTAssertTrue(asset.isFavorite)
+      XCTAssertTrue(asset.isFavorite(chain: .eth))
       if let accountToUpdate = asset.toggleFavorite() {
         try await db.write(table: .account, key: accountToUpdate.key, object: accountToUpdate, mode: .recommended(.account))
       }
-      XCTAssertFalse(asset.isFavorite)
+      XCTAssertFalse(asset.isFavorite(chain: .eth))
       
       XCTAssertEqual(try db.count(range: .all, from: .nftCollection), 2)
       XCTAssertEqual(try db.count(range: .all, from: .nftAsset), 2)

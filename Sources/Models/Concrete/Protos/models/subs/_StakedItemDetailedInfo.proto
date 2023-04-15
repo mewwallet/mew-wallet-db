@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message _StakedItemDetailedInfo {
+  // Current balance
+  string eth_two_balance                      = 1;
+  // Rewards and fees
+  string eth_two_rewards_and_fees             = 2;
+  // Only rewards
+  string eth_two_rewards                      = 3;
+  // Only fees
+  string eth_two_fees                         = 4;
+}
