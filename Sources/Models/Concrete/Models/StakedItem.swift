@@ -127,6 +127,7 @@ extension StakedItem {
   public var apr: Decimal { _wrapped.hasApr ? (Decimal(string: _wrapped.apr) ?? .zero) : .zero }
   public var averageApr: Decimal { _wrapped.hasAverageApr ? (Decimal(string: _wrapped.averageApr) ?? .zero) : .zero }
   public var balance: Decimal { Decimal(hex: _wrapped.ethTwoBalance) }
+  public var stakedBalance: Decimal { Decimal(hex: _wrapped.ethTwoStaked) }
   public var eth2addresses: [String] { _wrapped.ethTwoAddresses + _wrapped.ethTwoAddressesExited }
   public var hasSlashed: Bool {
     let requests = [
