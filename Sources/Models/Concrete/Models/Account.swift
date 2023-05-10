@@ -152,6 +152,12 @@ extension Account {
     return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
+  public func token(with contractAddress: Address, chain: MDBXChain) throws -> Token {
+    guard let database else { throw MDBXError.notFound }
+    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: contractAddress)
+    return try database.read(key: key, table: .token)
+  }
+  
   /// List of all NFT
   public func nft(chain: MDBXChain, ignoreCache: Bool) throws -> [NFTAsset] {
     let range = NFTAssetKey.range(chain: chain, address: self.address)
