@@ -77,6 +77,7 @@ extension DBWriteMode {
     case .tokenMeta:          return .appendOverrideMerge
     case .token:              return .default
     case .rawTransaction:     return .default
+    case .dappLists:          return .appendOverrideMerge
     case .dappRecord:         return .appendOverrideMerge
     case .dappRecordRecent:   return .appendOverrideMerge
     case .dappRecordFavorite: return .appendOverrideMerge
