@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message _DAppLists {
+  repeated string denylist      = 1;
+  repeated string fuzzylist     = 2;
+  repeated string allowlist     = 3;
+}

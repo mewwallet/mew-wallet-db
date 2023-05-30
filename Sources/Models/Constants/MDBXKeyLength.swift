@@ -25,6 +25,7 @@ public enum MDBXKeyLength {
   public static var orderedDexItem:       Int { return chain + order + address }                                // 38
   public static var rawTransaction:       Int { return chain + hash }                                           // 48
   public static var token:                Int { return chain + address + address }                              // 56
+  public static var dAppLists:            Int { return chain + 5 }                                              // 21; 5 - static value
   public static var dAppRecord:           Int { return chain + hash + uuid }                                    // 56
   public static var dAppRecordReference:  Int { return chain + order }                                          // 18
   public static var dAppRecordMeta:       Int { return chain + hash }                                           // 48
