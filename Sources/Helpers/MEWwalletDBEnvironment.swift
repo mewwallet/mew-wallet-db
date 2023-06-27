@@ -13,7 +13,7 @@ final class MEWwalletDBEnvironment {
   let writer: Writer
   private var tables: [MDBXTableName: MDBXDatabase]
   
-  init(path: String, tables: [MDBXTableName]) throws {
+  init(path: String, tables: [MDBXTableName], readOnly: Bool) throws {
     let environment = MDBXEnvironment()
     try environment.create()
     try environment.setMaxReader(42)
@@ -40,8 +40,8 @@ final class MEWwalletDBEnvironment {
     }
     #endif
     try environment.setGeometry(geometry)
-    try environment.open(path: path, flags: [.envDefaults, .noTLS], mode: .iOSPermission)
-    let tables = try MEWwalletDBEnvironment.prepare(tables: tables, in: environment)
+    try environment.open(path: path, flags: [.envDefaults, .noTLS], mode: readOnly ? .readOnlyPermission : .iOSPermission)
+    let tables = try MEWwalletDBEnvironment.prepare(tables: tables, in: environment, readonly: readOnly)
     let writer = Writer(environment: environment)
     
     self.environment = environment
@@ -70,16 +70,16 @@ final class MEWwalletDBEnvironment {
     return self.tables[key]
   }
   
-  private static func prepare(tables: [MDBXTableName], in environment: MDBXEnvironment) throws -> [MDBXTableName: MDBXDatabase] {
+  private static func prepare(tables: [MDBXTableName], in environment: MDBXEnvironment, readonly: Bool) throws -> [MDBXTableName: MDBXDatabase] {
     os_signpost(.begin, log: .signpost(.table), name: "prepare")
     let transaction = MDBXTransaction(environment)
-    try transaction.begin(parent: nil, flags: [.readWrite])
+    try transaction.begin(parent: nil, flags: [readonly ? .readOnly : .readWrite])
     var dbs: [MDBXTableName: MDBXDatabase] = [:]
     do {
       for table in tables {
         os_signpost(.event, log: .signpost(.table), name: "prepare", "table prepare: %{private}@", table.rawValue)
         let db = MDBXDatabase()
-        try db.open(transaction: transaction, name: table.rawValue, flags: .create)
+        try db.open(transaction: transaction, name: table.rawValue, flags: readonly ? .defaults : .create)
         dbs[table] = db
         os_signpost(.event, log: .signpost(.table), name: "prepare", "table done: %{private}@", table.rawValue)
       }

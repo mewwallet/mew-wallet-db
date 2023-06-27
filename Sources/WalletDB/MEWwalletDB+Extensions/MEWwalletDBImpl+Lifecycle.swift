@@ -14,7 +14,7 @@ import UIKit
 #endif
 
 public extension MEWwalletDBImpl {
-  func start(path: String, tables: [MDBXTableName]) throws {
+  func start(path: String, tables: [MDBXTableName], readOnly: Bool) throws {
     guard !self.started else { return }
     self.started = true
     self.path = path
@@ -22,7 +22,7 @@ public extension MEWwalletDBImpl {
     
     Logger.debug(.lifecycle, "Database path: \(path)")
     
-    try self.prepareEnvironment(path: path, tables: tables)
+    try self.prepareEnvironment(path: path, tables: tables, readOnly: readOnly)
     
     #if os(iOS)
     NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
@@ -32,7 +32,7 @@ public extension MEWwalletDBImpl {
       .store(in: &cancellable)
     NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
       .sink {[weak self] _ in
-        try? self?.prepareEnvironment(path: path, tables: tables)
+        try? self?.prepareEnvironment(path: path, tables: tables, readOnly: readOnly)
       }
       .store(in: &cancellable)
     #endif
@@ -54,10 +54,10 @@ public extension MEWwalletDBImpl {
   
   // MARK: - Private
   
-  private func prepareEnvironment(path: String, tables: [MDBXTableName]) throws {
+  private func prepareEnvironment(path: String, tables: [MDBXTableName], readOnly: Bool) throws {
     guard self.environment == nil else { return }
     do {
-      let environment = try MEWwalletDBEnvironment(path: path, tables: tables)
+      let environment = try MEWwalletDBEnvironment(path: path, tables: tables, readOnly: readOnly)
       self.environment = environment
     } catch {
       Logger.critical(.lifecycle, "Prepare environment error: \(error.localizedDescription)")

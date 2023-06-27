@@ -124,6 +124,10 @@ extension NFTAsset {
     guard let account = try? account, let key = self.key as? NFTAssetKey else { return false }
     return account.nftHiddenKeys(chain: chain).contains(key)
   }
+  public var ownerAddress: Address? {
+    guard let collectionKey = _collectionKey else { return nil }
+    return collectionKey.address
+  }
   
   // MARK: - Methods
   
