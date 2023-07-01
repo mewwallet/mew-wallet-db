@@ -59,6 +59,15 @@ public extension MEWwalletDBImpl {
     do {
       let environment = try MEWwalletDBEnvironment(path: path, tables: tables, readOnly: readOnly)
       self.environment = environment
+    } catch MDBXError.EACCESS {
+      Logger.critical(.lifecycle, "Prepare environment error: \(MDBXError.EACCESS.localizedDescription). Recovering")
+      try? FileManager.default.removeItem(atPath: path)
+      do {
+        try self.prepareEnvironment(path: path, tables: tables, readOnly: readOnly)
+      } catch {
+        Logger.critical(.lifecycle, "Prepare environment error: \(error.localizedDescription)")
+        throw error
+      }
     } catch {
       Logger.critical(.lifecycle, "Prepare environment error: \(error.localizedDescription)")
       throw error

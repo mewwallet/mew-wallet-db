@@ -66,6 +66,10 @@ extension NFTCollection {
     guard self._wrapped.hasStats else { return nil }
     return self._wrapped.stats.wrapped(_chain)
   }
+  public var cursor: String? {
+    guard self._wrapped.hasCursor else { return nil }
+    return self._wrapped.cursor
+  }
 }
 
 // MARK: - NFTCollection + MDBXObject
@@ -173,7 +177,16 @@ extension NFTCollection: ProtoWrapper {
 extension Array where Element == NFTCollection {
   public var collectAssets: [NFTAsset] {
     get throws {
-      try flatMap { try $0.assets }
+      return try flatMap { try $0.assets }
+        .enumerated()
+        .map { (index, asset) in
+          /// That part makes date unique
+          var asset = asset
+          var extra = String(index)
+          extra = String(repeating: "0", count: 3 - extra.count) + extra
+          asset.last_acquired_date = asset.last_acquired_date + extra
+          return asset
+        }
     }
   }
   

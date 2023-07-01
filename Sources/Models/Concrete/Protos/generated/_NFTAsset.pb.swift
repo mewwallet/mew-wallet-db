@@ -89,6 +89,12 @@ struct _NFTAsset {
   /// Clears the value of `openseaURL`. Subsequent reads from it will return its default value.
   mutating func clearOpenseaURL() {_uniqueStorage()._openseaURL = nil}
 
+  /// Most recently acquired date
+  var lastAcquiredDate: String {
+    get {return _storage._lastAcquiredDate}
+    set {_uniqueStorage()._lastAcquiredDate = newValue}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -113,6 +119,7 @@ extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     6: .same(proto: "urls"),
     7: .standard(proto: "last_sale"),
     8: .standard(proto: "opensea_url"),
+    9: .standard(proto: "last_acquired_date"),
   ]
 
   fileprivate class _StorageClass {
@@ -124,6 +131,7 @@ extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     var _urls: [_NFTAssetUrl] = []
     var _lastSale: _NFTAssetLastSale? = nil
     var _openseaURL: String? = nil
+    var _lastAcquiredDate: String = String()
 
     static let defaultInstance = _StorageClass()
 
@@ -138,6 +146,7 @@ extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       _urls = source._urls
       _lastSale = source._lastSale
       _openseaURL = source._openseaURL
+      _lastAcquiredDate = source._lastAcquiredDate
     }
   }
 
@@ -164,6 +173,7 @@ extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
         case 6: try { try decoder.decodeRepeatedMessageField(value: &_storage._urls) }()
         case 7: try { try decoder.decodeSingularMessageField(value: &_storage._lastSale) }()
         case 8: try { try decoder.decodeSingularStringField(value: &_storage._openseaURL) }()
+        case 9: try { try decoder.decodeSingularStringField(value: &_storage._lastAcquiredDate) }()
         default: break
         }
       }
@@ -200,6 +210,9 @@ extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       try { if let v = _storage._openseaURL {
         try visitor.visitSingularStringField(value: v, fieldNumber: 8)
       } }()
+      if !_storage._lastAcquiredDate.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._lastAcquiredDate, fieldNumber: 9)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -217,6 +230,7 @@ extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
         if _storage._urls != rhs_storage._urls {return false}
         if _storage._lastSale != rhs_storage._lastSale {return false}
         if _storage._openseaURL != rhs_storage._openseaURL {return false}
+        if _storage._lastAcquiredDate != rhs_storage._lastAcquiredDate {return false}
         return true
       }
       if !storagesAreEqual {return false}

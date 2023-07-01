@@ -73,12 +73,23 @@ struct _NFTCollection {
   /// Array of assets in the collection
   var assets: [_NFTAsset] = []
 
+  /// Temporary backend cursor to load next page
+  var cursor: String {
+    get {return _cursor ?? String()}
+    set {_cursor = newValue}
+  }
+  /// Returns true if `cursor` has been explicitly set.
+  var hasCursor: Bool {return self._cursor != nil}
+  /// Clears the value of `cursor`. Subsequent reads from it will return its default value.
+  mutating func clearCursor() {self._cursor = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
   fileprivate var _social: _NFTSocial? = nil
   fileprivate var _stats: _NFTStats? = nil
+  fileprivate var _cursor: String? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -101,6 +112,7 @@ extension _NFTCollection: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     9: .same(proto: "social"),
     10: .same(proto: "stats"),
     11: .same(proto: "assets"),
+    12: .same(proto: "cursor"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -120,6 +132,7 @@ extension _NFTCollection: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 9: try { try decoder.decodeSingularMessageField(value: &self._social) }()
       case 10: try { try decoder.decodeSingularMessageField(value: &self._stats) }()
       case 11: try { try decoder.decodeRepeatedMessageField(value: &self.assets) }()
+      case 12: try { try decoder.decodeSingularStringField(value: &self._cursor) }()
       default: break
       }
     }
@@ -163,6 +176,9 @@ extension _NFTCollection: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if !self.assets.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.assets, fieldNumber: 11)
     }
+    try { if let v = self._cursor {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 12)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -178,6 +194,7 @@ extension _NFTCollection: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs._social != rhs._social {return false}
     if lhs._stats != rhs._stats {return false}
     if lhs.assets != rhs.assets {return false}
+    if lhs._cursor != rhs._cursor {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -27,4 +27,6 @@ message _NFTCollection {
   optional _NFTStats stats                = 10;
   // Array of assets in the collection
   repeated _NFTAsset assets               = 11;
+  // Temporary backend cursor to load next page
+  optional string cursor                  = 12;
 }

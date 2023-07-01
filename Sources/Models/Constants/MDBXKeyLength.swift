@@ -13,12 +13,13 @@ public enum MDBXKeyLength {
   public static let order                 = 2
   public static let hash                  = 32
   public static let uuid                  = 8
-  public static let name                  = 8
+  public static let name                  = 64
   public static let block                 = 8
   public static let direction             = 1
   public static let nonce                 = 8
   public static let transactionID         = 32
   public static let timestamp             = 4
+  public static let dateHex               = 10
   
   public static var account:              Int { return chain + address }                                        // 36
   public static var tokenMeta:            Int { return chain + address }                                        // 36
@@ -30,8 +31,8 @@ public enum MDBXKeyLength {
   public static var dAppRecordReference:  Int { return chain + order }                                          // 18
   public static var dAppRecordMeta:       Int { return chain + hash }                                           // 48
   public static var dAppRecordHistory:    Int { return chain + hash }                                           // 48
-  public static var nftCollection:        Int { return chain + address + address + name + hash }                // 96
-  public static var nftAsset:             Int { return nftCollection + address + hash }                         // 172
+  public static var nftCollection:        Int { return chain + address + address + name + hash }                // 152
+  public static var nftAsset:             Int { return nftCollection + dateHex + address + hash }               // 214
   public static var transfer:             Int { return chain + address + block + direction + nonce + order }    // 55
   public static var transferStable:       Int { return chain + address + direction + nonce + order }            // 47
   public static var historySwap:          Int { return chain + address + hash }                                 // 68
@@ -39,3 +40,4 @@ public enum MDBXKeyLength {
   public static var profile:              Int { return chain + hash + hash }                                    // 80
   public static var staked:               Int { return chain + address + timestamp }                            // 40
 }
+
