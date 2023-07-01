@@ -13,8 +13,8 @@ public final class NFTCollectionKey: MDBXKey {
   public let key: Data
   public var chain: MDBXChain           { MDBXChain(rawValue: self._chain) }
   public var address: Address           { _address }
-  public var contractAddress: Address   { _contractAddress }
   public var name: String               { _name }
+  public var contractAddress: Address   { _contractAddress }
   public var hash: Data                 { _hash }
   
   // MARK: - Private
@@ -29,17 +29,17 @@ public final class NFTCollectionKey: MDBXKey {
     return Address(rawValue: key[_addressRange].hexString)
   }()
   
-  private lazy var _contractAddressRange: Range<Int> = { _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.address }()
-  private lazy var _contractAddress: Address = {
-    return Address(rawValue: key[_contractAddressRange].hexString)
-  }()
-  
-  private lazy var _nameRange: Range<Int> = { _contractAddressRange.endIndex..<_contractAddressRange.upperBound+MDBXKeyLength.name }()
+  private lazy var _nameRange: Range<Int> = { _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.name }()
   private lazy var _name: String = {
     return String(data: key[_nameRange], encoding: .utf8) ?? ""
   }()
   
-  private lazy var _hashRange: Range<Int> = { _nameRange.endIndex..<key.count }()
+  private lazy var _contractAddressRange: Range<Int> = { _nameRange.endIndex..<_nameRange.upperBound+MDBXKeyLength.address }()
+  private lazy var _contractAddress: Address = {
+    return Address(rawValue: key[_contractAddressRange].hexString)
+  }()
+  
+  private lazy var _hashRange: Range<Int> = { _contractAddressRange.endIndex..<key.count }()
   private lazy var _hash: Data = {
     return key[_hashRange]
   }()
@@ -54,11 +54,11 @@ public final class NFTCollectionKey: MDBXKey {
     
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
-    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
     let namePart            = nameData.setLengthRight(MDBXKeyLength.name)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
     let hashPart            = namePart.sha256.setLengthLeft(MDBXKeyLength.hash)
     
-    self.key = chainPart + addressPart + contractAddressPart + namePart + hashPart
+    self.key = chainPart + addressPart + namePart + contractAddressPart + hashPart
   }
   
   public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
@@ -66,11 +66,11 @@ public final class NFTCollectionKey: MDBXKey {
     
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
-    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.address)
     let namePart            = Data(repeating: rangeValue, count: MDBXKeyLength.name)
+    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.address)
     let hashPart            = Data(repeating: rangeValue, count: MDBXKeyLength.hash)
     
-    self.key = chainPart + addressPart + contractAddressPart + namePart + hashPart
+    self.key = chainPart + addressPart + namePart + contractAddressPart + hashPart
   }
 
   public init?(data: Data) {

@@ -6,19 +6,21 @@ import "subs/_NFTAssetLastSale.proto";
 
 message _NFTAsset {
   // Token ID in the collection
-  string token_id                         = 1;
+  string token_id                                 = 1;
   // Contract address for asset, collection might has different contract_address
-  string contract_address                 = 2;
+  string contract_address                         = 2;
   // Name of token, like "Block #9999"
-  optional string name                    = 3;
+  optional string name                            = 3;
   // Description of the token, like "Complete on 5/4/2020, this...."
-  optional string description             = 4;
+  optional string description                     = 4;
   // Array of traits of the token, contains information about the token
-  repeated _NFTAssetTrait traits          = 5;
+  repeated _NFTAssetTrait traits                  = 5;
   // Array of URLs and types
-  repeated _NFTAssetUrl urls              = 6;
+  repeated _NFTAssetUrl urls                      = 6;
   // Information about last known sale of the token
-  optional _NFTAssetLastSale last_sale    = 7;
+  optional _NFTAssetLastSale last_sale            = 7;
   // External link to token
-  optional string opensea_url             = 8;
+  optional string opensea_url                     = 8;
+  // Most recently acquired date
+  string last_acquired_date                       = 9;
 }

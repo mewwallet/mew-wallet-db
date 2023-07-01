@@ -22,7 +22,7 @@ public enum MDBXTableName: String, CaseIterable {
   case dappRecordFavorite = "DAppRecordFavorite_1"
   case dappRecordMeta     = "DAppRecordMeta_1"
   case dappRecordHistory  = "DAppRecordHistory_1"
-  case nftCollection      = "nftCollection_0"
+  case nftCollection      = "nftCollection_1"
   case nftAsset           = "nftAsset_0"
   case transfer           = "Transfer_1"
   case historySwap        = "HistorySwap_0"
