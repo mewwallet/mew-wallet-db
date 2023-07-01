@@ -128,6 +128,10 @@ extension NFTAsset {
     guard let collectionKey = _collectionKey else { return nil }
     return collectionKey.address
   }
+  public var last_acquired_date: String {
+    set { _wrapped.lastAcquiredDate = newValue }
+    get { _wrapped.lastAcquiredDate }
+  }
   
   // MARK: - Methods
   
@@ -160,6 +164,7 @@ extension NFTAsset: MDBXObject {
   
   public var key: MDBXKey {
     NFTAssetKey(collectionKey: _collectionKey,
+                date: _wrapped.lastAcquiredDate,
                 contractAddress: .unknown(_wrapped.contractAddress),
                 id: _wrapped.tokenID)
   }
