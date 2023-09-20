@@ -14,7 +14,11 @@ message _Profile {
         // Address must be included in weekly portfolio tracker
         INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER       = 1;
         // Address must be included in daily portfolio tracker
-        INCLUDE_IN_DAILY_PORTFOLIO_TRACKER        = 3;
+        INCLUDE_IN_DAILY_PORTFOLIO_TRACKER        = 2;
+        // Type of address is watch-only
+        TYPE_WATCH_ONLY                           = 64;
+        // Type of address is internal
+        TYPE_INTERNAL                             = 128;
       }
 
       // Store address

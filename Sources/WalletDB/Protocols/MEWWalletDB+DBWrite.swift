@@ -90,6 +90,7 @@ extension DBWriteMode {
     case .historyPurchase:    return .appendOverrideMerge
     case .profile:            return .appendOverrideMerge
     case .staked:             return .appendOverrideMerge
+    case .energyReceipts:     return .appendOverrideMerge
     }
   }
   

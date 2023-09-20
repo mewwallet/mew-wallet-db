@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message _EnergyNFTTransfer {
+  // NFT token ID
+  string          token_id                    = 1;
+  string          hash                        = 2;
+  string          address                     = 3;
+}
