@@ -156,7 +156,13 @@ struct _Profile {
         case includeInWeeklyPortfolioTracker // = 1
 
         /// Address must be included in daily portfolio tracker
-        case includeInDailyPortfolioTracker // = 3
+        case includeInDailyPortfolioTracker // = 2
+
+        /// Type of address is watch-only
+        case typeWatchOnly // = 64
+
+        /// Type of address is internal
+        case typeInternal // = 128
         case UNRECOGNIZED(Int)
 
         init() {
@@ -167,7 +173,9 @@ struct _Profile {
           switch rawValue {
           case 0: self = .disabled
           case 1: self = .includeInWeeklyPortfolioTracker
-          case 3: self = .includeInDailyPortfolioTracker
+          case 2: self = .includeInDailyPortfolioTracker
+          case 64: self = .typeWatchOnly
+          case 128: self = .typeInternal
           default: self = .UNRECOGNIZED(rawValue)
           }
         }
@@ -176,7 +184,9 @@ struct _Profile {
           switch self {
           case .disabled: return 0
           case .includeInWeeklyPortfolioTracker: return 1
-          case .includeInDailyPortfolioTracker: return 3
+          case .includeInDailyPortfolioTracker: return 2
+          case .typeWatchOnly: return 64
+          case .typeInternal: return 128
           case .UNRECOGNIZED(let i): return i
           }
         }
@@ -349,6 +359,8 @@ extension _Profile._Settings._Address._AddressFlags: CaseIterable {
     .disabled,
     .includeInWeeklyPortfolioTracker,
     .includeInDailyPortfolioTracker,
+    .typeWatchOnly,
+    .typeInternal,
   ]
 }
 
@@ -568,7 +580,9 @@ extension _Profile._Settings._Address._AddressFlags: SwiftProtobuf._ProtoNamePro
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "DISABLED"),
     1: .same(proto: "INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER"),
-    3: .same(proto: "INCLUDE_IN_DAILY_PORTFOLIO_TRACKER"),
+    2: .same(proto: "INCLUDE_IN_DAILY_PORTFOLIO_TRACKER"),
+    64: .same(proto: "TYPE_WATCH_ONLY"),
+    128: .same(proto: "TYPE_INTERNAL"),
   ]
 }
 

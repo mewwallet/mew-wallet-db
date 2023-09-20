@@ -39,5 +39,6 @@ public enum MDBXKeyLength {
   public static var historyPurchase:      Int { return chain + address + transactionID }                        // 68
   public static var profile:              Int { return chain + hash + hash }                                    // 80
   public static var staked:               Int { return chain + address + timestamp }                            // 40
+  public static var energyReceipt:        Int { return chain + timestamp }                                      // 20
 }
 
