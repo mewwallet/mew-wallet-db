@@ -60,6 +60,14 @@ public struct Profile {
     /// mask: `0b0000_0010`
     public static let includeInDailyPortfolio             = AddressFlags(rawValue: UInt32(_Profile._Settings._Address._AddressFlags.includeInDailyPortfolioTracker.rawValue))
     
+    /// Option that indicates that address is Watch-Only
+    /// mask: `0b0100_0000`
+    public static let typeWatchOnly                       = AddressFlags(rawValue: UInt32(_Profile._Settings._Address._AddressFlags.typeWatchOnly.rawValue))
+    
+    /// Option that indicates that address is Internal
+    /// mask: `0b1000_0000`
+    public static let typeInternal                        = AddressFlags(rawValue: UInt32(_Profile._Settings._Address._AddressFlags.typeInternal.rawValue))
+    
     public init(rawValue: UInt32) {
       self.rawValue = rawValue
     }
