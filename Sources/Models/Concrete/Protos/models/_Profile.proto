@@ -127,4 +127,7 @@ message _Profile {
 
   // Stores status object
   _Status status                              = 2;
+
+  // Stores share code
+  optional string share_code                  = 3;
 }
