@@ -454,6 +454,7 @@ extension Profile {
       return status
     }
   }
+  public var shareCode: String { _wrapped.shareCode }
 }
 
 // MARK: - Profile + MDBXObject
@@ -514,6 +515,7 @@ extension Profile: MDBXObject {
     
     self._wrapped.settings = other._wrapped.settings
     self._wrapped.status = other._wrapped.status
+    self._wrapped.shareCode = other._wrapped.shareCode
   }
 }
 
