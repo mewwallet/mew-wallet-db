@@ -178,15 +178,6 @@ extension Array where Element == NFTCollection {
   public var collectAssets: [NFTAsset] {
     get throws {
       return try flatMap { try $0.assets }
-        .enumerated()
-        .map { (index, asset) in
-          /// That part makes date unique
-          var asset = asset
-          var extra = String(index)
-          extra = String(repeating: "0", count: 3 - extra.count) + extra
-          asset.last_acquired_date = asset.last_acquired_date + extra
-          return asset
-        }
     }
   }
   

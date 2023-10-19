@@ -80,18 +80,33 @@ extension NFTAssetKey: Equatable {
   public static func == (lhs: NFTAssetKey, rhs: NFTAssetKey) -> Bool { lhs.key == rhs.key }
 }
 
+extension NFTAssetKey: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(key)
+  }
+}
+
 // MARK: - NFTAssetKey + Range
 
 extension NFTAssetKey {
-  public static func range(chain: MDBXChain, address: Address) -> MDBXKeyRange {
-    let start = NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: true), lowerRange: true)
-    let end = NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: false), lowerRange: false)
-    return MDBXKeyRange(start: start, end: end, limit: nil)
+  public static func range(chain: MDBXChain, address: Address, start: NFTAssetKey?, end: [NFTAssetKey]?) -> MDBXKeyRange {
+    let op: MDBXKeyRange.Op = start == nil ? .all : .greaterThanStart
+    
+    let start = start ?? NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: true), lowerRange: true)
+    if let end {
+      let end = end.sorted(by: {
+        $0.key.hexString < $1.key.hexString
+      }).last ?? NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: false), lowerRange: false)
+      return MDBXKeyRange(start: start, end: end, limit: nil, op: op)
+    } else {
+      let end = NFTAssetKey(collectionKey: NFTCollectionKey(chain: chain, address: address, lowerRange: false), lowerRange: false)
+      return MDBXKeyRange(start: start, end: end, limit: nil, op: op)
+    }
   }
   
   public static func range(collectionKey: NFTCollectionKey) -> MDBXKeyRange {
     let start = NFTAssetKey(collectionKey: collectionKey, lowerRange: true)
     let end = NFTAssetKey(collectionKey: collectionKey, lowerRange: false)
-    return MDBXKeyRange(start: start, end: end, limit: nil)
+    return MDBXKeyRange(start: start, end: end, limit: nil, op: .all)
   }
 }
