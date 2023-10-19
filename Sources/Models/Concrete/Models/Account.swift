@@ -160,7 +160,7 @@ extension Account {
   
   /// List of all NFT
   public func nft(chain: MDBXChain, ignoreCache: Bool) throws -> [NFTAsset] {
-    let range = NFTAssetKey.range(chain: chain, address: self.address)
+    let range = NFTAssetKey.range(chain: chain, address: self.address, start: nil, end: nil)
     return try _nft.getRelationship(range, policy: ignoreCache ? .ignoreCache : .cacheOrLoad, order: .asc, chain: chain, database: self.database)
       .sorted(by: { asset1, asset2 in
         guard asset1.last_acquired_date == asset2.last_acquired_date else {

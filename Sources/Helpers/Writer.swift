@@ -153,7 +153,12 @@ actor Writer {
 
       let cursor = MDBXCursor()
       try cursor.open(transaction: transaction, database: table.db)
-      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
+      var results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
+      if range.op == .greaterThanStart {
+        if results.first?.hexString != nil, results.first?.hexString == range.start?.key.hexString {
+          results.removeFirst()
+        }
+      }
       
       let difference = newKeys.difference(from: results)
       deletions = difference.compactMap {

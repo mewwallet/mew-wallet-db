@@ -45,6 +45,16 @@ struct _Profile {
   /// Clears the value of `status`. Subsequent reads from it will return its default value.
   mutating func clearStatus() {_uniqueStorage()._status = nil}
 
+  /// Stores share code
+  var shareCode: String {
+    get {return _storage._shareCode ?? String()}
+    set {_uniqueStorage()._shareCode = newValue}
+  }
+  /// Returns true if `shareCode` has been explicitly set.
+  var hasShareCode: Bool {return _storage._shareCode != nil}
+  /// Clears the value of `shareCode`. Subsequent reads from it will return its default value.
+  mutating func clearShareCode() {_uniqueStorage()._shareCode = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   /// Represents Profile settings section
@@ -385,11 +395,13 @@ extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "settings"),
     2: .same(proto: "status"),
+    3: .standard(proto: "share_code"),
   ]
 
   fileprivate class _StorageClass {
     var _settings: _Profile._Settings? = nil
     var _status: _Profile._Status? = nil
+    var _shareCode: String? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -398,6 +410,7 @@ extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     init(copying source: _StorageClass) {
       _settings = source._settings
       _status = source._status
+      _shareCode = source._shareCode
     }
   }
 
@@ -418,6 +431,7 @@ extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         switch fieldNumber {
         case 1: try { try decoder.decodeSingularMessageField(value: &_storage._settings) }()
         case 2: try { try decoder.decodeSingularMessageField(value: &_storage._status) }()
+        case 3: try { try decoder.decodeSingularStringField(value: &_storage._shareCode) }()
         default: break
         }
       }
@@ -436,6 +450,9 @@ extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       try { if let v = _storage._status {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
       } }()
+      try { if let v = _storage._shareCode {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -447,6 +464,7 @@ extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         let rhs_storage = _args.1
         if _storage._settings != rhs_storage._settings {return false}
         if _storage._status != rhs_storage._status {return false}
+        if _storage._shareCode != rhs_storage._shareCode {return false}
         return true
       }
       if !storagesAreEqual {return false}
