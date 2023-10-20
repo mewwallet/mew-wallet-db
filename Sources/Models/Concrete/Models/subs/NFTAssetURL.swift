@@ -66,7 +66,19 @@ extension NFTAssetURL {
     guard let url = url else { return nil }
     return DisplayType(type: self.type, url: url)
   }
-  public var url: URL? { URL(string: self._wrapped.url) }
+  public var url: URL? {
+    if self.type == .preview {
+      var components = URLComponents(string: self._wrapped.url)
+      if components?.queryItems == nil {
+        components?.queryItems = [.init(name: "_mew_preview", value: "true")]
+      } else {
+        components?.queryItems?.append(.init(name: "_mew_preview", value: "true"))
+      }
+      return components?.url
+    } else {
+      return URL(string: self._wrapped.url)
+    }
+  }
 }
 
 // MARK: - NFTAssetURL + Equatable
