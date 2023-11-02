@@ -240,6 +240,7 @@ struct _EnergyRewardReceipt {
         case rare // = 3
         case epic // = 4
         case legendary // = 5
+        case exclusive // = 6
         case UNRECOGNIZED(Int)
 
         init() {
@@ -266,6 +267,7 @@ struct _EnergyRewardReceipt {
           case .rare: return 3
           case .epic: return 4
           case .legendary: return 5
+          case .exclusive: return 6
           case .UNRECOGNIZED(let i): return i
           }
         }
