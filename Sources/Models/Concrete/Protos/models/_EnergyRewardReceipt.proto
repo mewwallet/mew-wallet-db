@@ -27,6 +27,7 @@ message _EnergyRewardReceipt {
         _RARITY_RARE                          = 3;
         _RARITY_EPIC                          = 4;
         _RARITY_LEGENDARY                     = 5;
+        _RARITY_EXCLUSIVE                     = 6;
       }
       string          url                     = 1;
       _Rarity         rarity                  = 2;
