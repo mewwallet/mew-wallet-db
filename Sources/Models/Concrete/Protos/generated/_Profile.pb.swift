@@ -354,7 +354,7 @@ struct _Profile {
 
 extension _Profile._Settings._Notifications: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static var allCases: [_Profile._Settings._Notifications] = [
+  static let allCases: [_Profile._Settings._Notifications] = [
     .disabled,
     .outgoingTx,
     .incomingTx,
@@ -365,7 +365,7 @@ extension _Profile._Settings._Notifications: CaseIterable {
 
 extension _Profile._Settings._Address._AddressFlags: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static var allCases: [_Profile._Settings._Address._AddressFlags] = [
+  static let allCases: [_Profile._Settings._Address._AddressFlags] = [
     .disabled,
     .includeInWeeklyPortfolioTracker,
     .includeInDailyPortfolioTracker,
