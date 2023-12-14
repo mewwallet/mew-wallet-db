@@ -382,7 +382,7 @@ struct _EnergyRewardReceipt {
 
 extension _EnergyRewardReceipt._PurchaseType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static let allCases: [_EnergyRewardReceipt._PurchaseType] = [
+  static var allCases: [_EnergyRewardReceipt._PurchaseType] = [
     .unknown,
     .consumable,
     .nonconsumable,
@@ -391,7 +391,7 @@ extension _EnergyRewardReceipt._PurchaseType: CaseIterable {
 
 extension _EnergyRewardReceipt._Item._ItemType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static let allCases: [_EnergyRewardReceipt._Item._ItemType] = [
+  static var allCases: [_EnergyRewardReceipt._Item._ItemType] = [
     .unknown,
     .icon,
     .energy,
@@ -401,7 +401,7 @@ extension _EnergyRewardReceipt._Item._ItemType: CaseIterable {
 
 extension _EnergyRewardReceipt._Item._NFT._Rarity: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static let allCases: [_EnergyRewardReceipt._Item._NFT._Rarity] = [
+  static var allCases: [_EnergyRewardReceipt._Item._NFT._Rarity] = [
     .unknown,
     .common,
     .uncommon,
@@ -414,7 +414,7 @@ extension _EnergyRewardReceipt._Item._NFT._Rarity: CaseIterable {
 
 extension _EnergyRewardReceipt._Item._ICON._IconID: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static let allCases: [_EnergyRewardReceipt._Item._ICON._IconID] = [
+  static var allCases: [_EnergyRewardReceipt._Item._ICON._IconID] = [
     .iconUnknown,
     .iconEnergy,
   ]
@@ -422,7 +422,7 @@ extension _EnergyRewardReceipt._Item._ICON._IconID: CaseIterable {
 
 extension _EnergyRewardReceipt._Item._ENERGY._Size: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static let allCases: [_EnergyRewardReceipt._Item._ENERGY._Size] = [
+  static var allCases: [_EnergyRewardReceipt._Item._ENERGY._Size] = [
     .unknown,
     .small,
     .medium,
