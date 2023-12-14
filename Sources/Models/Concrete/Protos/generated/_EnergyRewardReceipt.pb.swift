@@ -240,6 +240,7 @@ struct _EnergyRewardReceipt {
         case rare // = 3
         case epic // = 4
         case legendary // = 5
+        case exclusive // = 6
         case UNRECOGNIZED(Int)
 
         init() {
@@ -254,6 +255,7 @@ struct _EnergyRewardReceipt {
           case 3: self = .rare
           case 4: self = .epic
           case 5: self = .legendary
+          case 6: self = .exclusive
           default: self = .UNRECOGNIZED(rawValue)
           }
         }
@@ -266,6 +268,7 @@ struct _EnergyRewardReceipt {
           case .rare: return 3
           case .epic: return 4
           case .legendary: return 5
+          case .exclusive: return 6
           case .UNRECOGNIZED(let i): return i
           }
         }
@@ -405,6 +408,7 @@ extension _EnergyRewardReceipt._Item._NFT._Rarity: CaseIterable {
     .rare,
     .epic,
     .legendary,
+    .exclusive,
   ]
 }
 
@@ -747,6 +751,7 @@ extension _EnergyRewardReceipt._Item._NFT._Rarity: SwiftProtobuf._ProtoNameProvi
     3: .same(proto: "_RARITY_RARE"),
     4: .same(proto: "_RARITY_EPIC"),
     5: .same(proto: "_RARITY_LEGENDARY"),
+    6: .same(proto: "_RARITY_EXCLUSIVE"),
   ]
 }
 

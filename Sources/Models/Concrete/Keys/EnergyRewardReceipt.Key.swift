@@ -23,8 +23,9 @@ extension EnergyRewardReceipt {
     
     private lazy var _timestampRange: Range<Int> = { _chainRange.endIndex..<key.count }()
     private lazy var _timestamp: Date = {
-      let value = key[_timestampRange].withUnsafeBytes { $0.load(as: UInt32.self) }
-      let seconds = TimeInterval(UInt32(bigEndian: value))
+      let value = key[_timestampRange].withUnsafeBytes { $0.load(as: UInt64.self) }
+      let milliseconds = UInt64(bigEndian: value)
+      let seconds = TimeInterval(milliseconds / 1000)
       return Date(timeIntervalSince1970: seconds)
     }()
     
@@ -33,8 +34,8 @@ extension EnergyRewardReceipt {
     public init(timestamp: Date) {
       let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
       
-      let seconds             = UInt32(timestamp.timeIntervalSince1970)
-      let timestampPart       = withUnsafeBytes(of: seconds.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.timestamp)
+      let seconds             = UInt64(timestamp.timeIntervalSince1970 * 1000)
+      let timestampPart       = withUnsafeBytes(of: seconds.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.timestampMilliseconds)
       
       self.key = chainPart + timestampPart
     }
@@ -43,9 +44,9 @@ extension EnergyRewardReceipt {
       let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
       let timestampPart: Data
       if lowerRange {
-        timestampPart         = Data().setLengthLeft(MDBXKeyLength.timestamp)
+        timestampPart         = Data().setLengthLeft(MDBXKeyLength.timestampMilliseconds)
       } else {
-        timestampPart         = Data(repeating: 0xFF, count: MDBXKeyLength.timestamp)
+        timestampPart         = Data(repeating: 0xFF, count: MDBXKeyLength.timestampMilliseconds)
       }
       self.key = chainPart + timestampPart
     }

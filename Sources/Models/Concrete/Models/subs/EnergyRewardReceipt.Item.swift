@@ -45,6 +45,7 @@ extension EnergyRewardReceipt {
           case rare
           case epic
           case legendary
+          case exclusive
           
           init(_ rarity: _EnergyRewardReceipt._Item._NFT._Rarity) {
             switch rarity {
@@ -54,6 +55,7 @@ extension EnergyRewardReceipt {
             case .rare:           self = .rare
             case .epic:           self = .epic
             case .legendary:      self = .legendary
+            case .exclusive:      self = .exclusive
             case .UNRECOGNIZED:   self = .unknown
             }
           }
@@ -65,6 +67,7 @@ extension EnergyRewardReceipt {
             case .rare:           return .rare
             case .epic:           return .epic
             case .legendary:      return .legendary
+            case .exclusive:      return .exclusive
             case .unknown:        return .unknown
             }
           }

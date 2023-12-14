@@ -111,6 +111,9 @@ struct _Profile {
 
       /// 'Security updates notification' flag
       case security // = 8
+
+      /// 'Big movers notification' flag
+      case bigMovers // = 16
       case UNRECOGNIZED(Int)
 
       init() {
@@ -124,6 +127,7 @@ struct _Profile {
         case 2: self = .incomingTx
         case 4: self = .announcements
         case 8: self = .security
+        case 16: self = .bigMovers
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -135,6 +139,7 @@ struct _Profile {
         case .incomingTx: return 2
         case .announcements: return 4
         case .security: return 8
+        case .bigMovers: return 16
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -360,6 +365,7 @@ extension _Profile._Settings._Notifications: CaseIterable {
     .incomingTx,
     .announcements,
     .security,
+    .bigMovers,
   ]
 }
 
@@ -553,6 +559,7 @@ extension _Profile._Settings._Notifications: SwiftProtobuf._ProtoNameProviding {
     2: .same(proto: "INCOMING_TX"),
     4: .same(proto: "ANNOUNCEMENTS"),
     8: .same(proto: "SECURITY"),
+    16: .same(proto: "BIG_MOVERS"),
   ]
 }
 

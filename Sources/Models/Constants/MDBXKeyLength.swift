@@ -19,6 +19,7 @@ public enum MDBXKeyLength {
   public static let nonce                 = 8
   public static let transactionID         = 32
   public static let timestamp             = 4
+  public static let timestampMilliseconds = 8
   public static let dateHex               = 10
   
   public static var account:              Int { return chain + address }                                        // 36
@@ -39,6 +40,6 @@ public enum MDBXKeyLength {
   public static var historyPurchase:      Int { return chain + address + transactionID }                        // 68
   public static var profile:              Int { return chain + hash + hash }                                    // 80
   public static var staked:               Int { return chain + address + timestamp }                            // 40
-  public static var energyReceipt:        Int { return chain + timestamp }                                      // 20
+  public static var energyReceipt:        Int { return chain + timestampMilliseconds }                          // 24
 }
 

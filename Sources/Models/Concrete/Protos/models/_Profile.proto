@@ -79,6 +79,8 @@ message _Profile {
       ANNOUNCEMENTS                             = 4;
       // 'Security updates notification' flag
       SECURITY                                  = 8;
+      // 'Big movers notification' flag
+      BIG_MOVERS                                = 16;
     }
     
     // Stores notifications settings flags
