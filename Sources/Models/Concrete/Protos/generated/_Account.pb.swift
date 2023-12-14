@@ -290,7 +290,7 @@ struct _Account {
 
 extension _Account._Source: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static let allCases: [_Account._Source] = [
+  static var allCases: [_Account._Source] = [
     .unknown,
     .recoveryPhrase,
     .privateKey,
@@ -300,7 +300,7 @@ extension _Account._Source: CaseIterable {
 
 extension _Account._Type: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static let allCases: [_Account._Type] = [
+  static var allCases: [_Account._Type] = [
     .internal,
     .readOnly,
     .external,

@@ -94,7 +94,7 @@ public struct Profile {
     public static let security                            = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.security.rawValue))
     /// Option to enable/disable big movers notifications
     /// mask: `0b0001_0000`
-    public static let big_movers                          = NotificationFlags(rawValue: UInt32(16))
+    public static let big_movers                          = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.bigMovers.rawValue))
     
     public static let all: NotificationFlags              = [.outgoingTx, .incomingTx, .announcements, .security]
     
