@@ -107,6 +107,12 @@ extension EnergyRewardReceipt {
     }
   }
   public var purchaseDate: Date { _wrapped.purchaseDate.date }
+  public var spendingSince: Date? {
+    guard spendingStatus == .spending,
+          _wrapped.hasNftTx,
+          _wrapped.nftTx.hasTimestamp else { return nil }
+    return _wrapped.nftTx.timestamp.date
+  }
   
   public var item: EnergyRewardReceipt.Item {
     guard let item = self.$_item else {
@@ -194,7 +200,11 @@ extension EnergyRewardReceipt: MDBXObject {
     }
     _wrapped.purchaseDate = other._wrapped.purchaseDate
     if other._wrapped.hasNftTx {
+      let spendingSince = _wrapped.hasNftTx && _wrapped.nftTx.hasTimestamp ? _wrapped.nftTx.timestamp : nil
       _wrapped.nftTx = other._wrapped.nftTx
+      if let spendingSince {
+        _wrapped.nftTx.timestamp = spendingSince
+      }
     }
   }
 }

@@ -15,6 +15,7 @@ public struct EnergyNFTTransfer: MDBXBackedObject, Equatable {
   public init(tokenId: Int,
               hash: String,
               address: Address,
+              timestamp: Date,
               database: WalletDB? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .eth
@@ -22,6 +23,7 @@ public struct EnergyNFTTransfer: MDBXBackedObject, Equatable {
       $0.tokenID = String(tokenId)
       $0.hash = hash
       $0.address = address.rawValue
+      $0.timestamp = .init(date: timestamp)
     }
   }
 }
@@ -35,6 +37,7 @@ extension EnergyNFTTransfer {
   public var tokenID: Int { Int(_wrapped.tokenID, radix: 10) ?? 0 }
   public var hash: String { _wrapped.hash }
   public var address: Address { .unknown(_wrapped.address) }
+  public var timestamp: Date? { _wrapped.hasTimestamp ? _wrapped.timestamp.date : nil }
 }
 
 // MARK: - EnergyNFTTransfer + Equatable
