@@ -1,8 +1,12 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 message _EnergyNFTTransfer {
   // NFT token ID
-  string          token_id                    = 1;
-  string          hash                        = 2;
-  string          address                     = 3;
+  string          token_id                        = 1;
+  string          hash                            = 2;
+  string          address                         = 3;
+  optional google.protobuf.Timestamp timestamp    = 4;
 }
+

@@ -32,9 +32,20 @@ struct _EnergyNFTTransfer {
 
   var address: String = String()
 
+  var timestamp: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _timestamp ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_timestamp = newValue}
+  }
+  /// Returns true if `timestamp` has been explicitly set.
+  var hasTimestamp: Bool {return self._timestamp != nil}
+  /// Clears the value of `timestamp`. Subsequent reads from it will return its default value.
+  mutating func clearTimestamp() {self._timestamp = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+
+  fileprivate var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -49,6 +60,7 @@ extension _EnergyNFTTransfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     1: .standard(proto: "token_id"),
     2: .same(proto: "hash"),
     3: .same(proto: "address"),
+    4: .same(proto: "timestamp"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -60,12 +72,17 @@ extension _EnergyNFTTransfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       case 1: try { try decoder.decodeSingularStringField(value: &self.tokenID) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.hash) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.address) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.tokenID.isEmpty {
       try visitor.visitSingularStringField(value: self.tokenID, fieldNumber: 1)
     }
@@ -75,6 +92,9 @@ extension _EnergyNFTTransfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if !self.address.isEmpty {
       try visitor.visitSingularStringField(value: self.address, fieldNumber: 3)
     }
+    try { if let v = self._timestamp {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -82,6 +102,7 @@ extension _EnergyNFTTransfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if lhs.tokenID != rhs.tokenID {return false}
     if lhs.hash != rhs.hash {return false}
     if lhs.address != rhs.address {return false}
+    if lhs._timestamp != rhs._timestamp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
