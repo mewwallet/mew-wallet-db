@@ -16,6 +16,7 @@ private enum _MDBXChain: Data {
   case zksync_v2_mainnet  = "0x00000000000000000000000000000144" // 324
   case zksync_v2_testnet  = "0x00000000000000000000000000000118" // 280
   case canto              = "0x00000000000000000000000000001e14" // 7700
+  case bsc                = "0x00000000000000000000000000000038" // 56
   case base               = "0x00000000000000000000000000002105" // 8453
   
   var chain: MDBXChain {
@@ -28,6 +29,7 @@ private enum _MDBXChain: Data {
     case .zksync_v2_mainnet:  return .zksync_v2_mainnet
     case .zksync_v2_testnet:  return .zksync_v2_testnet
     case .canto:              return .canto
+    case .bsc:                return .bsc
     case .base:               return .base
     }
   }
@@ -42,6 +44,7 @@ public enum MDBXChain: CaseIterable {
     .zksync_v2_mainnet,
     .zksync_v2_testnet,
     .canto,
+    .bsc,
     .base
   ]
   
@@ -55,6 +58,7 @@ public enum MDBXChain: CaseIterable {
   case zksync_v2_mainnet
   case zksync_v2_testnet
   case canto
+  case bsc
   case base
   case custom(Data)
   
@@ -69,6 +73,7 @@ public enum MDBXChain: CaseIterable {
     case .zksync_v2_mainnet:  return _MDBXChain.zksync_v2_mainnet.rawValue
     case .zksync_v2_testnet:  return _MDBXChain.zksync_v2_testnet.rawValue
     case .canto:              return _MDBXChain.canto.rawValue
+    case .bsc:                return _MDBXChain.bsc.rawValue
     case .base:               return _MDBXChain.base.rawValue
     case .custom(let data): return data
     }
@@ -90,6 +95,7 @@ public enum MDBXChain: CaseIterable {
     case "ETH":               self = .eth
     case "MATIC":             self = .polygon_mainnet
     case "CANTO":             self = .canto
+    case "BSC":               self = .bsc
     default:                  self = .eth
     }
   }
@@ -103,6 +109,7 @@ public enum MDBXChain: CaseIterable {
     case .zksync_v2_mainnet:  return "zkSync Era"
     case .zksync_v2_testnet:  return "Ethereum"
     case .canto:              return "CANTO"
+    case .bsc:                return "BSC"
     case .base:               return "Base"
     default:    return ""
     }
@@ -117,6 +124,7 @@ public enum MDBXChain: CaseIterable {
     case .zksync_v2_mainnet:  return "ETH"
     case .zksync_v2_testnet:  return "ETH"
     case .canto:              return "CANTO"
+    case .bsc:                return "BSC"
     case .base:               return "ETH"
     default:    return ""
     }
@@ -131,6 +139,7 @@ public enum MDBXChain: CaseIterable {
     case .zksync_v2_mainnet:  return 18
     case .zksync_v2_testnet:  return 18
     case .canto:              return 18
+    case .bsc:                return 18
     case .base:               return 18
     default:                  return 18
     }
@@ -160,6 +169,7 @@ public enum MDBXChain: CaseIterable {
     case .zksync_v2_testnet:  return "0x00000000000000000000000000000118" // 280
     case .universal:          return "0x00000000000000000000000000000001" // 1
     case .canto:              return "0x00000000000000000000000000001e14" // 7700
+    case .bsc:                return "0x00000000000000000000000000000038" // 56
     case .base:               return "0x00000000000000000000000000002105" // 8453
     case .custom(let chain):  return chain.hexString
     }
