@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol MDBXKey {
+public protocol MDBXKey: Sendable {
   var key: Data { get }
   var chain: MDBXChain { get }
   init?(data: Data)

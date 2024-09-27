@@ -308,7 +308,7 @@ final class Transfer_tests: XCTestCase {
     db = MEWwalletDBImpl()
     try? FileManager.default.removeItem(atPath: self._path)
 
-    try! db.start(path: self._path, tables: MDBXTableName.allCases)
+    try! db.start(path: self._path, tables: MDBXTableName.allCases, readOnly: false)
   }
 
   override func tearDown() {
@@ -321,7 +321,7 @@ final class Transfer_tests: XCTestCase {
   func testTransfers() async {
     do {
       let objects = try Transfer.array(fromJSONString: testJson, chain: .eth)
-      let keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
+      let keysAndObjects: [(any MDBXKey, any MDBXObject)] = objects.lazy.map ({
         return ($0.key, $0)
       })
       
@@ -375,7 +375,7 @@ final class Transfer_tests: XCTestCase {
       """
       
       var objects = try Transfer.array(fromJSONString: txs1, chain: .eth)
-      var keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
+      var keysAndObjects: [(any MDBXKey, any MDBXObject)] = objects.lazy.map ({
         return ($0.key, $0)
       })
       

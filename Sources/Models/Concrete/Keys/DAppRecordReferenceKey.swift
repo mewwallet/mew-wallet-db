@@ -12,18 +12,8 @@ public final class DAppRecordReferenceKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { .universal }
-  public var order: UInt16 { return self._order }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  
-  private lazy var _orderRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order }()
-  private lazy var _order: UInt16 = {
-    let value = key[_orderRange].withUnsafeBytes { $0.load(as: UInt16.self) }
-    return UInt16(bigEndian: value)
-  }()
+  public let chain: MDBXChain = .universal
+  public let order: UInt16
   
   // MARK: - Lifecycle
   
@@ -31,15 +21,28 @@ public final class DAppRecordReferenceKey: MDBXKey {
     let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
     
-    self.key = chainPart + orderPart
+    let key = chainPart + orderPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _orderRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order
+    
+    self.order = {
+      let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
+      return UInt16(bigEndian: value)
+    }()
   }
   
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.dAppRecordReference else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _orderRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order
+    
+    self.order = {
+      let value = data.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
+      return UInt16(bigEndian: value)
+    }()
   }
 }
-
-// MARK: - DAppRecordReferenceKey + Sendable
-
-extension DAppRecordReferenceKey: @unchecked Sendable {}

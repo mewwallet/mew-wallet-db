@@ -46,7 +46,7 @@ extension Profile {
       }
     }
     
-    public weak var database: WalletDB?
+    public weak var database: (any WalletDB)?
     var _chain: MDBXChain
     var _wrapped: _Profile._Status
   }

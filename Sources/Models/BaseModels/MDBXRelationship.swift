@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
+public final class MDBXRelationship<K: MDBXKey, T: MDBXObject>: Sendable {
   private let _uuid = UUID().uuidString
   private let _table: MDBXTableName
   
@@ -17,7 +17,7 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
   
   // MARK: - Load
   
-  func getRelationship(_ range: MDBXKeyRange, policy: RelationshipLoadPolicy, order: MDBXReadOrder, chain: MDBXChain, database: WalletDB?) throws -> [T] {
+  func getRelationship(_ range: MDBXKeyRange, policy: RelationshipLoadPolicy, order: MDBXReadOrder, chain: MDBXChain, database: (any WalletDB)?) throws -> [T] {
     guard let database = database else {
       return LRU.cache.value(forKey: _uuid + chain.hexString) ?? []
     }
@@ -35,7 +35,7 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     }
   }
   
-  func getRelationship(_ keys: [MDBXKey], policy: RelationshipLoadPolicy, chain: MDBXChain, database: WalletDB?) throws -> [T] {
+  func getRelationship(_ keys: [any MDBXKey], policy: RelationshipLoadPolicy, chain: MDBXChain, database: (any WalletDB)?) throws -> [T] {
     guard let database = database else {
       return LRU.cache.value(forKey: _uuid + chain.hexString) ?? []
     }
@@ -57,5 +57,3 @@ public final class MDBXRelationship<K: MDBXKey, T: MDBXObject> {
     LRU.cache.setValue(data, forKey: _uuid + chain.hexString)
   }
 }
-
-extension MDBXRelationship: @unchecked Sendable { }

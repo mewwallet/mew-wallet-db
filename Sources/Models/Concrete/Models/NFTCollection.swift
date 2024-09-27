@@ -24,7 +24,7 @@ public struct NFTCollection: Equatable {
     }
   }
   
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _NFTCollection
   var _chain: MDBXChain
   
@@ -82,18 +82,18 @@ extension NFTCollection: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return NFTCollectionKey(chain: _chain,
                             address: .unknown(self._wrapped.address),
                             contractAddress: .unknown(self._wrapped.contractAddress),
                             name: self._wrapped.name)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _NFTCollection(serializedData: data)
+    self._wrapped = try _NFTCollection(serializedBytes: data)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -124,7 +124,7 @@ extension NFTCollection: MDBXObject {
     return objects.lazy.map({$0.wrapped(chain)})
   }
   
-  public mutating func merge(with object: MDBXObject) {
+  public mutating func merge(with object: any MDBXObject) {
     let other = object as! NFTCollection
     
     self._wrapped.address = other._wrapped.address

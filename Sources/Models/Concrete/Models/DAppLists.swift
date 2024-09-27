@@ -10,8 +10,8 @@ import SwiftProtobuf
 import mdbx_ios
 import mew_wallet_ios_extensions
 
-public struct DAppLists: Equatable {
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+public struct DAppLists: Equatable, Sendable {
+  public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DAppLists
   let _chain: MDBXChain = .universal
   
@@ -43,16 +43,16 @@ extension DAppLists: MDBXObject {
     }
   }
 
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     DAppLists.Key()
   }
 
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._wrapped = try _DAppLists(serializedData: data)
+    self._wrapped = try _DAppLists(serializedBytes: data)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -81,7 +81,7 @@ extension DAppLists: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! DAppLists
     
     self._wrapped.allowlist = other._wrapped.allowlist
@@ -123,7 +123,3 @@ extension DAppLists: Hashable {
     hasher.combine(self.fuzzyList)
   }
 }
-
-// MARK: - DAppLists + Sendable
-
-extension DAppLists: @unchecked Sendable {}

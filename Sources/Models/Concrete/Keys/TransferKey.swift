@@ -12,49 +12,13 @@ public final class TransferKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  internal lazy var sortingKey: Data = { key[(MDBXKeyLength.chain+MDBXKeyLength.address)...] }()
-  public var chain: MDBXChain { MDBXChain(rawValue: _chain) }
-  public var address: Address { _address }
-  public var block: UInt64 { _block }
-  public var direction: Transfer.Direction { Transfer.Direction(rawValue: _direction) ?? .incoming }
-  public var nonce: UInt64 { _nonce }
-  public var order: UInt16 { _order }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  private lazy var _chain: Data = {
-    return key[_chainRange]
-  }()
-  
-  private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address }()
-  private lazy var _address: Address = {
-    return Address(rawValue: key[_addressRange].hexString)
-  }()
-  
-  private lazy var _blockRange: Range<Int> = { _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.block }()
-  private lazy var _block: UInt64 = {
-    let value = key[_blockRange].withUnsafeBytes { $0.load(as: UInt64.self) }
-    return UInt64(bigEndian: value)
-  }()
-  
-  private lazy var _directionRange: Range<Int> = { _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction }()
-  private lazy var _direction: UInt8 = {
-    let value = key[_directionRange].withUnsafeBytes { $0.load(as: UInt8.self) }
-    return UInt8(bigEndian: value)
-  }()
-  
-  private lazy var _nonceRange: Range<Int> = { _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce }()
-  private lazy var _nonce: UInt64 = {
-    let value = key[_nonceRange].withUnsafeBytes { $0.load(as: UInt64.self) }
-    return UInt64(bigEndian: value)
-  }()
-  
-  private lazy var _orderRange: Range<Int> = { _nonceRange.endIndex..<key.count }()
-  private lazy var _order: UInt16 = {
-    let value = Data(key[_orderRange]).withUnsafeBytes { $0.load(as: UInt16.self) }
-    return UInt16(bigEndian: value)
-  }()
+  internal let sortingKey: Data
+  public let chain: MDBXChain
+  public let address: Address
+  public let block: UInt64
+  public let direction: Transfer.Direction
+  public let nonce: UInt64
+  public let order: UInt16
   
   // MARK: - Lifecycle
   
@@ -66,7 +30,48 @@ public final class TransferKey: MDBXKey {
     let noncePart           = withUnsafeBytes(of: nonce.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.nonce)
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
     
-    self.key = chainPart + addressPart + blockPart + directionPart + noncePart + orderPart
+    let key = chainPart + addressPart + blockPart + directionPart + noncePart + orderPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _blockRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.block
+    let _directionRange: Range<Int> = _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction
+    let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
+    let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
+    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.address)...
+    
+    self.chain = {
+      return MDBXChain(rawValue: key[_chainRange])
+    }()
+    
+    self.address = {
+      return Address(rawValue: key[_addressRange].hexString)
+    }()
+    
+    self.block = {
+      let value = key.subdata(in: _blockRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+      return UInt64(bigEndian: value)
+    }()
+    
+    self.direction = {
+      let value = key.subdata(in: _directionRange).withUnsafeBytes { $0.load(as: UInt8.self) }
+      return Transfer.Direction(rawValue: UInt8(bigEndian: value)) ?? .incoming
+    }()
+    
+    self.nonce = {
+      let value = key.subdata(in: _nonceRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+      return UInt64(bigEndian: value)
+    }()
+    
+    self.order = {
+      let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
+      return UInt16(bigEndian: value)
+    }()
+    
+    self.sortingKey = {
+      return key[_sortingKeyRange]
+    }()
   }
   
   public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
@@ -88,12 +93,93 @@ public final class TransferKey: MDBXKey {
       noncePart     = Data(repeating: 0xFF, count: MDBXKeyLength.nonce)
       orderPart     = Data(repeating: 0xFF, count: MDBXKeyLength.order)
     }
-    self.key = chainPart + addressPart + blockPart + directionPart + noncePart + orderPart
+    let key = chainPart + addressPart + blockPart + directionPart + noncePart + orderPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _blockRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.block
+    let _directionRange: Range<Int> = _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction
+    let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
+    let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
+    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.address)...
+    
+    self.chain = {
+      return MDBXChain(rawValue: key[_chainRange])
+    }()
+    
+    self.address = {
+      return Address(rawValue: key[_addressRange].hexString)
+    }()
+    
+    self.block = {
+      let value = key.subdata(in: _blockRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+      return UInt64(bigEndian: value)
+    }()
+    
+    self.direction = {
+      let value = key.subdata(in: _directionRange).withUnsafeBytes { $0.load(as: UInt8.self) }
+      return Transfer.Direction(rawValue: UInt8(bigEndian: value)) ?? .incoming
+    }()
+    
+    self.nonce = {
+      let value = key.subdata(in: _nonceRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+      return UInt64(bigEndian: value)
+    }()
+    
+    self.order = {
+      let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
+      return UInt16(bigEndian: value)
+    }()
+    
+    self.sortingKey = {
+      return key[_sortingKeyRange]
+    }()
   }
   
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.transfer else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _blockRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.block
+    let _directionRange: Range<Int> = _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction
+    let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
+    let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
+    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.address)...
+    
+    self.chain = {
+      return MDBXChain(rawValue: data[_chainRange])
+    }()
+    
+    self.address = {
+      return Address(rawValue: data[_addressRange].hexString)
+    }()
+    
+    self.block = {
+      let value = data.subdata(in: _blockRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+      return UInt64(bigEndian: value)
+    }()
+    
+    self.direction = {
+      let value = data.subdata(in: _directionRange).withUnsafeBytes { $0.load(as: UInt8.self) }
+      return Transfer.Direction(rawValue: UInt8(bigEndian: value)) ?? .incoming
+    }()
+    
+    self.nonce = {
+      let value = data.subdata(in: _nonceRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+      return UInt64(bigEndian: value)
+    }()
+    
+    self.order = {
+      let value = data.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
+      return UInt16(bigEndian: value)
+    }()
+    
+    self.sortingKey = {
+      return data[_sortingKeyRange]
+    }()
   }
 }
 

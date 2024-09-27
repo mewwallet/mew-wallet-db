@@ -15,23 +15,9 @@ public final class HistoryPurchaseKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { .universal }
-  public var address: Address { return self._address }
-  public var transactionID: String { return self._transactionID }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  
-  private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address }()
-  private lazy var _address: Address = {
-    return Address(rawValue: key[_addressRange].hexString)
-  }()
-  
-  private lazy var _transactionIDRange: Range<Int> = { _addressRange.endIndex..<key.count }()
-  private lazy var _transactionID: String = {
-    return key[_transactionIDRange].hexString
-  }()
+  public let chain: MDBXChain = .universal
+  public let address: Address
+  public let transactionID: String
   
   // MARK: - Lifecycle
   
@@ -40,7 +26,20 @@ public final class HistoryPurchaseKey: MDBXKey {
     let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.address)
     let transactionIDPart   = Data(hex: transactionID).setLengthLeft(MDBXKeyLength.hash)
     
-    self.key = chainPart + addressPart + transactionIDPart
+    let key = chainPart + addressPart + transactionIDPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _transactionIDRange: Range<Int> = _addressRange.endIndex..<key.count
+    
+    self.address = {
+      return Address(rawValue: key[_addressRange].hexString)
+    }()
+    
+    self.transactionID = {
+      return key[_transactionIDRange].hexString
+    }()
   }
   
   public init(address: Address, lowerRange: Bool) {
@@ -52,12 +51,37 @@ public final class HistoryPurchaseKey: MDBXKey {
     } else {
       transactionIDPart     = Data(repeating: 0xFF, count: MDBXKeyLength.hash)
     }
-    self.key = chainPart + addressPart + transactionIDPart
+    let key = chainPart + addressPart + transactionIDPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _transactionIDRange: Range<Int> = _addressRange.endIndex..<key.count
+    
+    self.address = {
+      return Address(rawValue: key[_addressRange].hexString)
+    }()
+    
+    self.transactionID = {
+      return key[_transactionIDRange].hexString
+    }()
   }
   
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.historySwap else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _transactionIDRange: Range<Int> = _addressRange.endIndex..<key.count
+    
+    self.address = {
+      return Address(rawValue: data[_addressRange].hexString)
+    }()
+    
+    self.transactionID = {
+      return data[_transactionIDRange].hexString
+    }()
   }
 }
 

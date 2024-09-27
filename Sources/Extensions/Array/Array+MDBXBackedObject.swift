@@ -8,7 +8,7 @@
 import Foundation
 
 extension Array: MDBXBackedObject where Element: MDBXBackedObject {
-  public var database: WalletDB? {
+  public var database: (any WalletDB)? {
     get { nil }
     set {
       for i in 0..<self.count {

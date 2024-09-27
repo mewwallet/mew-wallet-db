@@ -39,7 +39,7 @@ public struct EnergyRewardReceipt: Equatable {
     case spent
   }
   
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _EnergyRewardReceipt
   var _chain: MDBXChain
   
@@ -55,7 +55,7 @@ public struct EnergyRewardReceipt: Equatable {
               isSpent: Bool,
               purchaseDate: Date,
               nft: EnergyNFTTransfer?,
-              database: WalletDB? = nil) {
+              database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.uuid = uuid
@@ -144,17 +144,17 @@ extension EnergyRewardReceipt: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return Key(timestamp: purchaseDate)
   }
   
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _EnergyRewardReceipt(serializedData: data)
+    self._wrapped = try _EnergyRewardReceipt(serializedBytes: data)
     commonInit(chain: .universal)
   }
   
@@ -188,7 +188,7 @@ extension EnergyRewardReceipt: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! EnergyRewardReceipt
     
     _wrapped.uuid = other._wrapped.uuid
@@ -256,13 +256,6 @@ extension EnergyRewardReceipt {
     
     __item.chain = .universal
     __item.wrappedValue = _wrapped.item
-    
-    self.populateDB()
-  }
-  
-  func populateDB() {
-    __energyNftTransfer.database = database
-    __item.database = database
   }
 }
 

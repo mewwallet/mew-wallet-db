@@ -14,28 +14,9 @@ public final class OrderedDexItemKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  
-  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
-  public var order: UInt16 { return self._order }
-  public var contractAddress: Address { return self._contractAddress }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  private lazy var _chain: Data = {
-    return key[_chainRange]
-  }()
-  
-  private lazy var _orderRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order }()
-  private lazy var _order: UInt16 = {
-    let value = key[_orderRange].withUnsafeBytes { $0.load(as: UInt16.self) }
-    return UInt16(bigEndian: value)
-  }()
-  
-  private lazy var _contractAddressRange: Range<Int> = { _orderRange.endIndex..<key.count }()
-  private lazy var _contractAddress: Address = {
-    return Address(rawValue: key[_contractAddressRange].hexString)
-  }()
+  public let chain: MDBXChain
+  public let order: UInt16
+  public let contractAddress: Address
   
   // MARK: - Lifecycle
   
@@ -44,15 +25,46 @@ public final class OrderedDexItemKey: MDBXKey {
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
     let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
     
-    self.key = chainPart + orderPart + contractAddressPart
+    let key = chainPart + orderPart + contractAddressPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _orderRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order
+    let _contractAddressRange: Range<Int> = _orderRange.endIndex..<key.count
+    
+    self.chain = {
+      return MDBXChain(rawValue: key[_chainRange])
+    }()
+    
+    self.order = {
+      let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
+      return UInt16(bigEndian: value)
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: key[_contractAddressRange].hexString)
+    }()
   }
   
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.orderedDexItem else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _orderRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.order
+    let _contractAddressRange: Range<Int> = _orderRange.endIndex..<key.count
+    
+    self.chain = {
+      return MDBXChain(rawValue: data[_chainRange])
+    }()
+    
+    self.order = {
+      let value = data.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
+      return UInt16(bigEndian: value)
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: data[_contractAddressRange].hexString)
+    }()
   }
 }
-
-// MARK: - OrderedDexItemKey + Sendable
-
-extension OrderedDexItemKey: @unchecked Sendable {}

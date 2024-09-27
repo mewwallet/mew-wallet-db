@@ -76,7 +76,7 @@ public struct StakedItem: Equatable {
     }
   }
   
-  public var database: WalletDB? {
+  public var database: (any WalletDB)? {
     get { MEWwalletDBImpl.shared }
     set {}
   }
@@ -161,17 +161,17 @@ extension StakedItem: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return StakedItem.Key(chain: _chain, address: self.address, timestamp: self.timestamp)
   }
   
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _StakedItem(serializedData: data)
+    self._wrapped = try _StakedItem(serializedBytes: data)
     commonInit(chain: chain, key: key)
   }
   
@@ -205,7 +205,7 @@ extension StakedItem: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! StakedItem
     
     _wrapped.address                  = other._wrapped.address
@@ -298,11 +298,5 @@ extension StakedItem {
     
     __detailedInfo.chain = chain
     __detailedInfo.wrappedValue = _wrapped.detailedInfo
-    
-    self.populateDB()
-  }
-
-  func populateDB() {
-    __queue.database = database
   }
 }

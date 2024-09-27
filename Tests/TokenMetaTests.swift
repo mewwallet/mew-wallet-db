@@ -100,7 +100,7 @@ final class TokenMeta_tests: XCTestCase {
     db = MEWwalletDBImpl()
     try? FileManager.default.removeItem(atPath: self._path)
 
-    try! db.start(path: self._path, tables: MDBXTableName.allCases)
+    try! db.start(path: self._path, tables: MDBXTableName.allCases, readOnly: false)
   }
 
   override func tearDown() {
@@ -113,7 +113,7 @@ final class TokenMeta_tests: XCTestCase {
   func testTokenMeta() async {
     do {
       let objects = try TokenMeta.array(fromJSONString: testJson, chain: .eth)
-      let keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map ({
+      let keysAndObjects: [(any MDBXKey, any MDBXObject)] = objects.lazy.map ({
         return ($0.key, $0)
       })
       try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])

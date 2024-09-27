@@ -9,25 +9,13 @@ import Foundation
 import mew_wallet_ios_extensions
 
 extension EnergyRewardReceipt {
-  public final class Key: MDBXKey {
-    public var chain: MDBXChain = .universal
+  public final class Key: MDBXKey {    
     
     // MARK: - Public
     
+    public let chain: MDBXChain = .universal
     public let key: Data
-    public var timestamp: Date { _timestamp }
-    
-    // MARK: - Private
-    
-    private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-    
-    private lazy var _timestampRange: Range<Int> = { _chainRange.endIndex..<key.count }()
-    private lazy var _timestamp: Date = {
-      let value = key[_timestampRange].withUnsafeBytes { $0.load(as: UInt64.self) }
-      let milliseconds = UInt64(bigEndian: value)
-      let seconds = TimeInterval(milliseconds / 1000)
-      return Date(timeIntervalSince1970: seconds)
-    }()
+    public let timestamp: Date
     
     // MARK: - Lifecycle
     
@@ -37,7 +25,18 @@ extension EnergyRewardReceipt {
       let seconds             = UInt64(timestamp.timeIntervalSince1970 * 1000)
       let timestampPart       = withUnsafeBytes(of: seconds.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.timestampMilliseconds)
       
-      self.key = chainPart + timestampPart
+      let key = chainPart + timestampPart
+      self.key = key
+      
+      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+      let _timestampRange: Range<Int> = _chainRange.endIndex..<key.count
+      
+      self.timestamp = {
+        let value = key.subdata(in: _timestampRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+        let milliseconds = UInt64(bigEndian: value)
+        let seconds = TimeInterval(milliseconds / 1000)
+        return Date(timeIntervalSince1970: seconds)
+      }()
     }
     
     public init(lowerRange: Bool) {
@@ -48,12 +47,33 @@ extension EnergyRewardReceipt {
       } else {
         timestampPart         = Data(repeating: 0xFF, count: MDBXKeyLength.timestampMilliseconds)
       }
-      self.key = chainPart + timestampPart
+      let key = chainPart + timestampPart
+      self.key = key
+      
+      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+      let _timestampRange: Range<Int> = _chainRange.endIndex..<key.count
+      
+      self.timestamp = {
+        let value = key.subdata(in: _timestampRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+        let milliseconds = UInt64(bigEndian: value)
+        let seconds = TimeInterval(milliseconds / 1000)
+        return Date(timeIntervalSince1970: seconds)
+      }()
     }
     
     public init?(data: Data) {
       guard data.count == MDBXKeyLength.energyReceipt else { return nil }
       self.key = data
+      
+      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+      let _timestampRange: Range<Int> = _chainRange.endIndex..<key.count
+      
+      self.timestamp = {
+        let value = data.subdata(in: _timestampRange).withUnsafeBytes { $0.load(as: UInt64.self) }
+        let milliseconds = UInt64(bigEndian: value)
+        let seconds = TimeInterval(milliseconds / 1000)
+        return Date(timeIntervalSince1970: seconds)
+      }()
     }
   }
 }

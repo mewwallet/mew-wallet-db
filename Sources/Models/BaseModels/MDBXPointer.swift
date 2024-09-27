@@ -15,7 +15,7 @@ enum RelationshipLoadPolicy {
 
 // TODO: Re-do to @propertyWrapper when "Property wrappers currently cannot define an 'async' or 'throws' accessor" will be fixed
 
-public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
+public final class MDBXPointer<K: MDBXKey, T: MDBXObject>: Sendable {
   private let _uuid = UUID().uuidString
   private let _table: MDBXTableName
   
@@ -23,7 +23,7 @@ public final class MDBXPointer<K: MDBXKey, T: MDBXObject> {
     _table = table
   }
   
-  func getData(key: K, policy: RelationshipLoadPolicy, chain: MDBXChain, database: WalletDB?) throws -> T {
+  func getData(key: K, policy: RelationshipLoadPolicy, chain: MDBXChain, database: (any WalletDB)?) throws -> T {
     guard let database = database else {
       guard let data: T = LRU.cache.value(forKey: _uuid + chain.hexString) else { throw MDBXError.notFound }
       return data
@@ -58,7 +58,3 @@ extension RelationshipLoadPolicy: Equatable {
     }
   }
 }
-
-// MARK: - MDBXPointer + Sendable
-
-extension MDBXPointer: @unchecked Sendable {}

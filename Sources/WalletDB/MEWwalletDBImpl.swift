@@ -8,27 +8,33 @@
 import Foundation
 import mdbx_ios
 import Combine
+import mew_wallet_ios_extensions
 
 public final class MEWwalletDBImpl: WalletDB {
-  static weak var shared: MEWwalletDBImpl!
+  static let _shared = WeakThreadSafe<MEWwalletDBImpl>(nil)
+  static var shared: MEWwalletDBImpl! {
+    get { _shared.value }
+    set { _shared.value = newValue }
+  }
   
-  internal var started: Bool = false
-  internal var path: String = ""
-  internal var tableNames: [MDBXTableName] = []
+  internal let started = ThreadSafe<Bool>(false)
+  internal let path = ThreadSafe<String>("")
+  internal let tableNames = ThreadSafe<[MDBXTableName]>([])
+  internal let _environment = ThreadSafe<MEWwalletDBEnvironment?>(nil)
   internal var environment: MEWwalletDBEnvironment? {
-    didSet {
-      self._canWrite.send(self.environment != nil)
+    get { _environment.value }
+    set {
+      _environment.value = newValue
+      self._canWrite.value.send(newValue != nil)
     }
   }
   
-  private lazy var _canWrite: CurrentValueSubject<Bool, Never> = {
-    .init(false)
-  }()
+  private let _canWrite = ThreadSafe<CurrentValueSubject<Bool, Never>>(.init(false))
   public var canWrite: AnyPublisher<Bool, Never> {
-    self._canWrite.eraseToAnyPublisher()
+    self._canWrite.value.eraseToAnyPublisher()
   }
   
-  internal var cancellable = Set<AnyCancellable>()
+  internal let cancellable = ThreadSafe<Set<AnyCancellable>>(.init())
   
   public init() {
     MEWwalletDBImpl.shared = self
@@ -38,7 +44,3 @@ public final class MEWwalletDBImpl: WalletDB {
     stop()
   }
 }
-
-// MARK: - MEWwalletDBImpl + Sendable
-
-extension MEWwalletDBImpl: @unchecked Sendable {}
