@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - ProtoWrappedMessage
 
-protocol ProtoWrappedMessage {
-  associatedtype T
+protocol ProtoWrappedMessage: Sendable {
+  associatedtype T: Sendable
   func wrapped(_ chain: MDBXChain) -> T
 }

@@ -12,7 +12,7 @@ import os.signpost
 public extension MEWwalletDBImpl {
   // MARK: - Ranges
   
-  func fetch<T: MDBXObject>(keys: [MDBXKey], from table: MDBXTableName) throws -> [T] {
+  func fetch<T: MDBXObject>(keys: [any MDBXKey], from table: MDBXTableName) throws -> [T] {
     var results = [T]()
     
     os_signpost(.begin, log: .signpost(.read), name: "fetchArray", "from table: %{private}@", table.rawValue)
@@ -202,7 +202,7 @@ public extension MEWwalletDBImpl {
   }
   
   @available(*, deprecated, message: "Use fetch(range:from)")
-  func fetchRange<T: MDBXObject>(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> [T] {
+  func fetchRange<T: MDBXObject>(startKey: (any MDBXKey)?, endKey: (any MDBXKey)?, from table: MDBXTableName) throws -> [T] {
     return try self.fetch(range: .with(start: startKey, end: endKey), from: table, order: .asc)
   }
   
@@ -212,13 +212,13 @@ public extension MEWwalletDBImpl {
   }
   
   @available(*, deprecated, message: "Use count(range:from)")
-  func countRange(startKey: MDBXKey?, endKey: MDBXKey?, from table: MDBXTableName) throws -> Int {
+  func countRange(startKey: (any MDBXKey)?, endKey: (any MDBXKey)?, from table: MDBXTableName) throws -> Int {
     return try count(range: .with(start: startKey, end: endKey), from: table)
   }
   
   // MARK: - Single Objects
   
-  func read<T: MDBXObject>(key: MDBXKey, table: MDBXTableName) throws -> T {
+  func read<T: MDBXObject>(key: (any MDBXKey), table: MDBXTableName) throws -> T {
     let environment = try self.getEnvironment()
     guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
     let table: MDBXTable = (table, db)
@@ -227,7 +227,7 @@ public extension MEWwalletDBImpl {
 
   // MARK: - Private
   
-  private func _read<T: MDBXObject>(key: MDBXKey, table: MDBXTable, signpost: StaticString) throws -> T {
+  private func _read<T: MDBXObject>(key: any MDBXKey, table: MDBXTable, signpost: StaticString) throws -> T {
     var result: T!
     os_signpost(.begin, log: .signpost(.read), name: signpost, "from table: %{private}@", table.name.rawValue)
     

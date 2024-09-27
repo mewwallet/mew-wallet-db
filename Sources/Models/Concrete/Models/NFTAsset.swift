@@ -10,11 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct NFTAsset: Equatable {
-  public weak var database: WalletDB? {
-    didSet {
-      self.populateDB()
-    }
-  }
+  public weak var database: (any WalletDB)? 
   var _wrapped: _NFTAsset
   var _chain: MDBXChain
   
@@ -162,18 +158,18 @@ extension NFTAsset: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     NFTAssetKey(collectionKey: _collectionKey,
                 date: _wrapped.lastAcquiredDate,
                 contractAddress: .unknown(_wrapped.contractAddress),
                 id: _wrapped.tokenID)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _NFTAsset(serializedData: data)
+    self._wrapped = try _NFTAsset(serializedBytes: data)
     commonInit(chain: chain, key: key)
   }
   
@@ -207,7 +203,7 @@ extension NFTAsset: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! NFTAsset
     
     self._wrapped.tokenID = other._wrapped.tokenID
@@ -291,14 +287,6 @@ extension NFTAsset {
     if let tokenMeta = _wrapped._cleanLastSale(chain) {
       $_last_sale?._meta.updateData(tokenMeta.wrapped(chain), chain: chain)
     }
-    
-    self.populateDB()
-  }
-  
-  func populateDB() {
-    __last_sale.database = database
-    __urls.database = database
-    __traits.database = database
   }
 }
 

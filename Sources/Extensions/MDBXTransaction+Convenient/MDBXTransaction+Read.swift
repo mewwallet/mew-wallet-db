@@ -9,7 +9,7 @@ import Foundation
 import mdbx_ios
 
 extension MDBXTransaction {
-  func isKeyExist(key: MDBXKey, database: MDBXDatabase) throws -> Bool {
+  func isKeyExist(key: any MDBXKey, database: MDBXDatabase) throws -> Bool {
     var key = key.key
     do {
       _ = try self.getValue(for: &key, database: database)

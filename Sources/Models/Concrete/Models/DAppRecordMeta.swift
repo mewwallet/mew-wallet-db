@@ -9,17 +9,17 @@ import Foundation
 import SwiftProtobuf
 import mdbx_ios
 
-public struct DAppRecordMeta: Equatable {
+public struct DAppRecordMeta: Equatable, Sendable {
   private let _queue = DispatchQueue(label: "db.DAppRecordMeta.queue")
   
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecordMeta
   var _chain: MDBXChain
   var _hash: Data = Data()
   
   // MARK: - Lifecycle
   
-  public init(url: URL, icon: URL?, database: WalletDB? = nil) {
+  public init(url: URL, icon: URL?, database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .universal
     self._hash = url.sha256
@@ -79,17 +79,17 @@ extension DAppRecordMeta: MDBXObject {
     }
   }
 
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return DAppRecordMetaKey(hash: _hash)
   }
 
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _DAppRecordMeta(serializedData: data)
+    self._wrapped = try _DAppRecordMeta(serializedBytes: data)
     self.tryRestorePrimaryKeyInfo(key)
   }
 
@@ -123,7 +123,7 @@ extension DAppRecordMeta: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! DAppRecordMeta
     if other._wrapped.hasIcon {
       self._wrapped.icon = other._wrapped.icon
@@ -156,7 +156,3 @@ extension DAppRecordMeta: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
-
-// MARK: - DAppRecordMeta + Sendable
-
-extension DAppRecordMeta: @unchecked Sendable {}

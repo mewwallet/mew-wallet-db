@@ -32,7 +32,7 @@ final class RawTransaction_tests: XCTestCase {
     db = MEWwalletDBImpl()
     try? FileManager.default.removeItem(atPath: self._path)
 
-    try! db.start(path: self._path, tables: MDBXTableName.allCases)
+    try! db.start(path: self._path, tables: MDBXTableName.allCases, readOnly: false)
   }
 
   override func tearDown() {
@@ -42,7 +42,7 @@ final class RawTransaction_tests: XCTestCase {
     db = nil
   }
   
-  func test() {
+  @MainActor func test() {
     let expectation = XCTestExpectation()
     Task {
       do {

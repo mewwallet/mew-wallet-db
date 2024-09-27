@@ -103,10 +103,10 @@ public protocol DBWrite {
   var canWrite: AnyPublisher<Bool, Never> { get }
   
   @discardableResult
-  func write(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int
+  func write(table: MDBXTableName, key: any MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int
   
   @discardableResult
-  func write(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int
+  func write(table: MDBXTableName, key: any MDBXKey, object: any MDBXObject, mode: DBWriteMode) async throws -> Int
   
   @discardableResult
   func write(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode) async throws -> Int
@@ -114,8 +114,8 @@ public protocol DBWrite {
   @discardableResult
   func write(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int
   
-  func writeAsync(table: MDBXTableName, key: MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
-  func writeAsync(table: MDBXTableName, key: MDBXKey, object: MDBXObject, mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
-  func writeAsync(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
-  func writeAsync(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode, completion: @escaping (Bool, Int) -> Void)
+  func writeAsync(table: MDBXTableName, key: any MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping @Sendable (Bool, Int) -> Void)
+  func writeAsync(table: MDBXTableName, key: any MDBXKey, object: any MDBXObject, mode: DBWriteMode, completion: @escaping @Sendable (Bool, Int) -> Void)
+  func writeAsync(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode, completion: @escaping @Sendable (Bool, Int) -> Void)
+  func writeAsync(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode, completion: @escaping @Sendable (Bool, Int) -> Void)
 }

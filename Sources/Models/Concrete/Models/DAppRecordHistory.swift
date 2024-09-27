@@ -12,8 +12,8 @@ import mew_wallet_ios_extensions
 import SwiftProtobuf
 import mdbx_ios
 
-public struct DAppRecordHistory: Equatable {
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+public struct DAppRecordHistory: Equatable, Sendable {
+  public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecordHistory
   var _chain: MDBXChain
   var _hash: Data = Data()
@@ -24,7 +24,7 @@ public struct DAppRecordHistory: Equatable {
   
   // MARK: - Lifecycle
   
-  public init(url: URL, title: String?, database: WalletDB? = nil) {
+  public init(url: URL, title: String?, database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .universal
     self._hash = url.sha256
@@ -84,17 +84,17 @@ extension DAppRecordHistory: MDBXObject {
     }
   }
 
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return DAppRecordHistoryKey(hash: _hash)
   }
 
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _DAppRecordHistory(serializedData: data)
+    self._wrapped = try _DAppRecordHistory(serializedBytes: data)
     self.tryRestorePrimaryKeyInfo(key)
   }
 
@@ -128,7 +128,7 @@ extension DAppRecordHistory: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! DAppRecordHistory
     if other._wrapped.hasTitle {
       self._wrapped.title = other._wrapped.title
@@ -178,7 +178,3 @@ extension DAppRecordHistory: Comparable {
     lhs._wrapped.timestamp.seconds > rhs._wrapped.timestamp.seconds
   }
 }
-
-// MARK: - DAppRecordHistory + Sendable
-
-extension DAppRecordHistory: @unchecked Sendable {}

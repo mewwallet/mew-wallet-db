@@ -13,28 +13,9 @@ public final class DAppRecordKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { .universal }
-  public var urlHash: Data { return self._hash }
-  public var uuid: UInt64 { return self._uuid }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  
-  private lazy var _hashRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash }()
-  private lazy var _hash: Data = {
-    return key[_hashRange]
-  }()
-  
-  private lazy var _uuidRange: Range<Int> = { _hashRange.endIndex..<_hashRange.upperBound+MDBXKeyLength.uuid }()
-  private lazy var _uuid: UInt64 = {
-    let value = key[_uuidRange].bytes.withUnsafeBufferPointer {
-      $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
-        $0.pointee
-      })
-    }
-    return UInt64(bigEndian: value)
-  }()
+  public let chain: MDBXChain = .universal
+  public let urlHash: Data
+  public let uuid: UInt64
   
   // MARK: - Lifecycle
   
@@ -43,7 +24,25 @@ public final class DAppRecordKey: MDBXKey {
     let hashPart            = hash.setLengthLeft(MDBXKeyLength.hash)
     let uuidPart            = withUnsafeBytes(of: uuid.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.uuid)
     
-    self.key = chainPart + hashPart + uuidPart
+    let key = chainPart + hashPart + uuidPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _hashRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash
+    let _uuidRange: Range<Int> = _hashRange.endIndex..<_hashRange.upperBound+MDBXKeyLength.uuid
+    
+    self.urlHash = {
+      return key[_hashRange]
+    }()
+    
+    self.uuid = {
+      let value = key[_uuidRange].bytes.withUnsafeBufferPointer {
+        $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
+          $0.pointee
+        })
+      }
+      return UInt64(bigEndian: value)
+    }()
   }
   
   public convenience init(url: URL, uuid: UInt64) {
@@ -53,5 +52,22 @@ public final class DAppRecordKey: MDBXKey {
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.dAppRecord else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _hashRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash
+    let _uuidRange: Range<Int> = _hashRange.endIndex..<_hashRange.upperBound+MDBXKeyLength.uuid
+    
+    self.urlHash = {
+      return data[_hashRange]
+    }()
+    
+    self.uuid = {
+      let value = data[_uuidRange].bytes.withUnsafeBufferPointer {
+        $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
+          $0.pointee
+        })
+      }
+      return UInt64(bigEndian: value)
+    }()
   }
 }

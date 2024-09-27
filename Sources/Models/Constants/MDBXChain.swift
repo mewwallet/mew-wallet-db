@@ -7,7 +7,7 @@
 
 import Foundation
 
-private enum _MDBXChain: Data {
+private enum _MDBXChain: Data, Sendable {
   case invalid            = "0x00000000000000000000000000000000" // 0
   case eth                = "0x00000000000000000000000000000001" // 1
   case goerli             = "0x00000000000000000000000000000005" // 5
@@ -35,8 +35,8 @@ private enum _MDBXChain: Data {
   }
 }
 
-public enum MDBXChain: CaseIterable {
-  public static var allCases: [MDBXChain] = [
+public enum MDBXChain: CaseIterable, Sendable {
+  public static let allCases: [MDBXChain] = [
     .eth,
     .goerli,
     .polygon_mainnet,
@@ -179,8 +179,6 @@ public enum MDBXChain: CaseIterable {
 extension MDBXChain: Equatable {}
 
 extension MDBXChain: Hashable {}
-
-extension MDBXChain: @unchecked Sendable {}
 
 extension MDBXChain: CustomDebugStringConvertible {
   public var debugDescription: String {

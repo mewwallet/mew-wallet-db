@@ -7,5 +7,5 @@
 
 import Foundation
 
-public typealias MDBXKeyObject = (MDBXKey, MDBXObject)
-public typealias MDBXKeyData = (MDBXKey, Data)
+public typealias MDBXKeyObject = (any MDBXKey, any MDBXObject)
+public typealias MDBXKeyData = (any MDBXKey, Data)

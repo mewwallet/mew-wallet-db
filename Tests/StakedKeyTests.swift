@@ -14,7 +14,7 @@ final class StakedKeyTests: XCTestCase {
     let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let timestamp = Date(timeIntervalSince1970: 1680835030.123)
     
-    let stakedKey = StakedKey(chain: chain, address: address, timestamp: timestamp)
+    let stakedKey = StakedItem.Key(chain: chain, address: address, timestamp: timestamp)
     
     XCTAssertNotNil(stakedKey)
     XCTAssertEqual(stakedKey.chain, chain)
@@ -28,7 +28,7 @@ final class StakedKeyTests: XCTestCase {
     let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let timestamp = Date(timeIntervalSince1970: 1680835030)
     
-    let stakedKey = StakedKey(chain: chain, address: address, timestamp: timestamp)
+    let stakedKey = StakedItem.Key(chain: chain, address: address, timestamp: timestamp)
     
     XCTAssertNotNil(stakedKey)
     XCTAssertEqual(stakedKey.chain, chain)
@@ -42,7 +42,7 @@ final class StakedKeyTests: XCTestCase {
     let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let lowerRange = true
     
-    let stakedKey = StakedKey(chain: chain, address: address, lowerRange: lowerRange)
+    let stakedKey = StakedItem.Key(chain: chain, address: address, lowerRange: lowerRange)
     
     XCTAssertNotNil(stakedKey)
     XCTAssertEqual(stakedKey.chain, chain)
@@ -55,7 +55,7 @@ final class StakedKeyTests: XCTestCase {
     let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let lowerRange = false
     
-    let stakedKey = StakedKey(chain: chain, address: address, lowerRange: lowerRange)
+    let stakedKey = StakedItem.Key(chain: chain, address: address, lowerRange: lowerRange)
     
     XCTAssertNotNil(stakedKey)
     XCTAssertEqual(stakedKey.chain, chain)
@@ -65,7 +65,7 @@ final class StakedKeyTests: XCTestCase {
   
   func testInitWithData() {
     let data = Data(hex: "0x00000000000000000000000000000001ab904e350f27af4d4a70994ae1f3bbc1dafee665642f81d6")
-    let stakedKey = StakedKey(data: data)
+    let stakedKey = StakedItem.Key(data: data)
     
     XCTAssertNotNil(stakedKey)
     XCTAssertEqual(stakedKey?.chain, .eth)
@@ -75,7 +75,7 @@ final class StakedKeyTests: XCTestCase {
   
   func testInitWithIncorrectData() {
     let data = Data(hex: "0x00000000000000000000000000000001ab904e350f27af4d4a70994a")
-    let stakedKey = StakedKey(data: data)
+    let stakedKey = StakedItem.Key(data: data)
     
     XCTAssertNil(stakedKey)
   }
@@ -84,10 +84,10 @@ final class StakedKeyTests: XCTestCase {
     let chain = MDBXChain.eth
     let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     
-    let range = StakedKey.range(chain: chain, address: address)
+    let range = StakedItem.Key.range(chain: chain, address: address)
     
     XCTAssertNotNil(range)
-    XCTAssertEqual(range.start?.key, StakedKey(chain: chain, address: address, lowerRange: true).key)
-    XCTAssertEqual(range.end?.key, StakedKey(chain: chain, address: address, lowerRange: false).key)
+    XCTAssertEqual(range.start?.key, StakedItem.Key(chain: chain, address: address, lowerRange: true).key)
+    XCTAssertEqual(range.end?.key, StakedItem.Key(chain: chain, address: address, lowerRange: false).key)
   }
 }

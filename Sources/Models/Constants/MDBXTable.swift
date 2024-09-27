@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import mdbx_ios
+@preconcurrency import mdbx_ios
 
-public enum MDBXTableName: String, CaseIterable {
+public enum MDBXTableName: String, CaseIterable, Sendable {
   case account            = "Account_0"
   case dex                = "Dex_0"
   case orderedDex         = "OrderedDex_0"

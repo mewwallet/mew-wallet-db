@@ -152,7 +152,7 @@ final class diff_tests: XCTestCase {
     try? FileManager.default.removeItem(atPath: self._path)
     
     do {
-      try self.db.start(path: self._path, tables: MDBXTableName.allCases)
+      try self.db.start(path: self._path, tables: MDBXTableName.allCases, readOnly: false)
     } catch {
       XCTFail(error.localizedDescription)
     }
@@ -181,7 +181,7 @@ final class diff_tests: XCTestCase {
       try await db.write(table: .account, key: account.key, object: account, mode: .recommended(.account))
       
       let objects = try NFTCollection.array(fromJSONString: testJson, chain: .eth)
-      var keysAndObjects: [(MDBXKey, MDBXObject)] = objects.lazy.map { ($0.key, $0) }
+      var keysAndObjects: [(any MDBXKey, any MDBXObject)] = objects.lazy.map { ($0.key, $0) }
       
       try await db.write(table: .nftCollection, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
       

@@ -38,7 +38,7 @@ public struct HistoryPurchase {
     }
   }
   
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _HistoryPurchase
   var _chain: MDBXChain
   
@@ -104,15 +104,15 @@ extension HistoryPurchase: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return HistoryPurchaseKey(account: .unknown(_wrapped.address), transactionID: _wrapped.transactionID)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _HistoryPurchase(serializedData: data)
+    self._wrapped = try _HistoryPurchase(serializedBytes: data)
     self.commonInit(chain: .universal)
   }
   
@@ -146,7 +146,7 @@ extension HistoryPurchase: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! HistoryPurchase
     
     self._wrapped.address               = other._wrapped.address
@@ -246,10 +246,5 @@ extension HistoryPurchase {
     // Wrappers
     __crypto_currency.chain = .universal
     __crypto_currency.wrappedValue = _wrapped.cryptoCurrency
-    self.populateDB()
-  }
-
-  func populateDB() {
-    __crypto_currency.database = database
   }
 }

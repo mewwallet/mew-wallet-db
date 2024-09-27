@@ -12,20 +12,8 @@ public final class TokenMetaKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { return MDBXChain(rawValue: self._chain) }
-  public var contractAddress: Address { _contractAddress }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  private lazy var _chain: Data = {
-    return key[_chainRange]
-  }()
-  
-  private lazy var _contractAddressRange: Range<Int> = { _chainRange.endIndex..<key.count }()
-  private lazy var _contractAddress: Address = {
-    return Address(rawValue: key[_contractAddressRange].hexString)
-  }()
+  public let chain: MDBXChain
+  public let contractAddress: Address
   
   // MARK: - Lifecycle
   
@@ -33,7 +21,18 @@ public final class TokenMetaKey: MDBXKey {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
     
-    self.key = chainPart + contractAddressPart
+    let key = chainPart + contractAddressPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _contractAddressRange: Range<Int> = _chainRange.endIndex..<key.count
+    self.chain = {
+      return MDBXChain(rawValue: key[_chainRange])
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: key[_contractAddressRange].hexString)
+    }()
   }
   
   public init(chain: MDBXChain, lowerRange: Bool) {
@@ -42,18 +41,35 @@ public final class TokenMetaKey: MDBXKey {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(repeating: rangeValue, count: MDBXKeyLength.address)
     
-    self.key = chainPart + addressPart
+    let key = chainPart + addressPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _contractAddressRange: Range<Int> = _chainRange.endIndex..<key.count
+    self.chain = {
+      return MDBXChain(rawValue: key[_chainRange])
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: key[_contractAddressRange].hexString)
+    }()
   }
   
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.tokenMeta else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _contractAddressRange: Range<Int> = _chainRange.endIndex..<key.count
+    self.chain = {
+      return MDBXChain(rawValue: data[_chainRange])
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: data[_contractAddressRange].hexString)
+    }()
   }
 }
-
-// MARK: - TokenMetaKey + Sendable
-
-extension TokenMetaKey: @unchecked Sendable {}
 
 // MARK: - TokenMetaKey + Range
 

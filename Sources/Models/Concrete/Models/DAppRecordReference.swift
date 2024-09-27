@@ -12,7 +12,7 @@ import mew_wallet_ios_extensions
 
 public struct DAppRecordReference: Equatable {
   private var _restoredAlternateKey: DAppRecordReferenceKey?
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecordReference
   var _chain: MDBXChain
   public var order: UInt16 = 0
@@ -23,7 +23,7 @@ public struct DAppRecordReference: Equatable {
   
   // MARK: - Lifecycle
   
-  public init(url: URL, order: UInt16, title: String?, preview: Data?, database: WalletDB? = nil) {
+  public init(url: URL, order: UInt16, title: String?, preview: Data?, database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .universal
     self.order = order
@@ -116,15 +116,15 @@ extension DAppRecordReference: MDBXObject {
   }
   
   /// Reference key
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return DAppRecordReferenceKey(order: order)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _DAppRecordReference(serializedData: data)
+    self._wrapped = try _DAppRecordReference(serializedBytes: data)
     self.tryRestorePrimaryKeyInfo(key)
   }
 
@@ -158,7 +158,7 @@ extension DAppRecordReference: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! DAppRecordReference
     self._wrapped.reference               = other._wrapped.reference
     self._wrapped.uuid                    = other._wrapped.uuid

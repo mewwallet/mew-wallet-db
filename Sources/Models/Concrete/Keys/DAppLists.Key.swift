@@ -12,18 +12,18 @@ extension DAppLists {
   public final class Key: MDBXKey {
     // MARK: - Public
     
-    public lazy var key: Data = {
-      let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-      let dataPart            = data
-      
-      return chainPart + dataPart
-    }()
-    public var chain: MDBXChain { .universal }
-    public var data: Data { Data(hex: "0x6c69737473") } // lists
+    public let key: Data
+    public let chain: MDBXChain = .universal
+    public let data = Data(hex: "0x6c69737473") // lists
     
     // MARK: - Lifecycle
     
-    public init() { }
+    public init() {
+      let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+      let dataPart            = self.data
+      
+      self.key = chainPart + dataPart
+    }
     
     public init?(data: Data) {
       guard data.count == MDBXKeyLength.dAppLists else { return nil }

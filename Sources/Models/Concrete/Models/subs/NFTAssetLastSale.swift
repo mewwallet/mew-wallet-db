@@ -9,7 +9,7 @@ import Foundation
 import mew_wallet_ios_extensions
 
 public struct NFTAssetLastSale: MDBXBackedObject, Equatable {
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _chain: MDBXChain
   var _wrapped: _NFTAssetLastSale
   

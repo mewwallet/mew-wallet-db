@@ -13,28 +13,9 @@ extension StakedItem {
     // MARK: - Public
     
     public let key: Data
-    public var chain: MDBXChain { MDBXChain(rawValue: _chain) }
-    public var address: Address { _address }
-    public var timestamp: Date { _timestamp }
-    
-    // MARK: - Private
-    
-    private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-    private lazy var _chain: Data = {
-      return key[_chainRange]
-    }()
-    
-    private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address }()
-    private lazy var _address: Address = {
-      return Address(rawValue: key[_addressRange].hexString)
-    }()
-    
-    private lazy var _timestampRange: Range<Int> = { _addressRange.endIndex..<key.count }()
-    private lazy var _timestamp: Date = {
-      let value = key[_timestampRange].withUnsafeBytes { $0.load(as: UInt32.self) }
-      let seconds = TimeInterval(UInt32(bigEndian: value))
-      return Date(timeIntervalSince1970: seconds)
-    }()
+    public let chain: MDBXChain
+    public let address: Address
+    public let timestamp: Date
     
     // MARK: - Lifecycle
     
@@ -45,7 +26,26 @@ extension StakedItem {
       let seconds             = UInt32(timestamp.timeIntervalSince1970)
       let timestampPart       = withUnsafeBytes(of: seconds.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.timestamp)
       
-      self.key = chainPart + addressPart + timestampPart
+      let key = chainPart + addressPart + timestampPart
+      self.key = key
+      
+      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+      let _timestampRange: Range<Int> = _addressRange.endIndex..<key.count
+      
+      self.chain = {
+        return MDBXChain(rawValue: key[_chainRange])
+      }()
+      
+      self.address = {
+        return Address(rawValue: key[_addressRange].hexString)
+      }()
+      
+      self.timestamp = {
+        let value = key.subdata(in: _timestampRange).withUnsafeBytes { $0.load(as: UInt32.self) }
+        let seconds = TimeInterval(UInt32(bigEndian: value))
+        return Date(timeIntervalSince1970: seconds)
+      }()
     }
     
     public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
@@ -58,12 +58,49 @@ extension StakedItem {
       } else {
         timestampPart         = Data(repeating: 0xFF, count: MDBXKeyLength.timestamp)
       }
-      self.key = chainPart + addressPart + timestampPart
+      let key = chainPart + addressPart + timestampPart
+      self.key = key
+      
+      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+      let _timestampRange: Range<Int> = _addressRange.endIndex..<key.count
+      
+      self.chain = {
+        return MDBXChain(rawValue: key[_chainRange])
+      }()
+      
+      self.address = {
+        return Address(rawValue: key[_addressRange].hexString)
+      }()
+      
+      self.timestamp = {
+        let value = key.subdata(in: _timestampRange).withUnsafeBytes { $0.load(as: UInt32.self) }
+        let seconds = TimeInterval(UInt32(bigEndian: value))
+        return Date(timeIntervalSince1970: seconds)
+      }()
     }
     
     public init?(data: Data) {
       guard data.count == MDBXKeyLength.staked else { return nil }
       self.key = data
+      
+      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+      let _timestampRange: Range<Int> = _addressRange.endIndex..<key.count
+      
+      self.chain = {
+        return MDBXChain(rawValue: data[_chainRange])
+      }()
+      
+      self.address = {
+        return Address(rawValue: data[_addressRange].hexString)
+      }()
+      
+      self.timestamp = {
+        let value = data.subdata(in: _timestampRange).withUnsafeBytes { $0.load(as: UInt32.self) }
+        let seconds = TimeInterval(UInt32(bigEndian: value))
+        return Date(timeIntervalSince1970: seconds)
+      }()
     }
   }
 }

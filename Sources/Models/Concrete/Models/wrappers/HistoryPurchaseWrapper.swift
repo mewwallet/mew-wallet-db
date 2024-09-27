@@ -11,7 +11,7 @@ import SwiftProtobuf
 public struct HistoryPurchaseWrapper: MDBXWrapperObject {
   var _chain: MDBXChain
   var _wrapped: _HistoryPurchaseWrapper
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   
   public init(jsonString: String, chain: MDBXChain) throws {
     var options = JSONDecodingOptions()
