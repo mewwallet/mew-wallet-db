@@ -615,14 +615,14 @@ extension Profile {
   mutating func commonInit(chain: MDBXChain) {
     // Wrappers
     __dailyPortfolioTracker.chain = .universal
-    __dailyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.daily
+    __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
     __dailyPortfolioTracker.projectedValue?._type = .daily
     
     __weeklyPortfolioTracker.chain = .universal
-    __weeklyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.weekly
+    __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
     __weeklyPortfolioTracker.projectedValue?._type = .weekly
     
     __status.chain = .universal
-    __status.wrappedValue = _wrapped.status
+    __status.refreshProjected(wrapped: _wrapped.status)
   }
 }

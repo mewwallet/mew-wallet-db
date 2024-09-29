@@ -276,13 +276,13 @@ extension NFTAsset {
     
     // Wrappers
     __last_sale.chain = chain
-    __last_sale.wrappedValue = _wrapped.lastSale
+    __last_sale.refreshProjected(wrapped: _wrapped.lastSale)
     
     __urls.chain = chain
-    __urls.wrappedValue = _wrapped.urls
+    __urls.refreshProjected(wrapped: _wrapped.urls)
     
     __traits.chain = chain
-    __traits.wrappedValue = _wrapped.traits
+    __traits.refreshProjected(wrapped: _wrapped.traits)
     
     if let tokenMeta = _wrapped._cleanLastSale(chain) {
       $_last_sale?._meta.updateData(tokenMeta.wrapped(chain), chain: chain)

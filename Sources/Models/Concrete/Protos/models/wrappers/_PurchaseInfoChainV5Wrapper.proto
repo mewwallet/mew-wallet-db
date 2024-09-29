@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "_PurchaseToken.proto";
+
+message _PurchaseInfoChainV5Wrapper {
+  // Chain ID
+  string chain                            = 1;
+  // Chain name
+  string name                             = 2;
+  // Tokens for purchase
+  repeated _PurchaseToken assets          = 3;
+}

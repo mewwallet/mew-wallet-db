@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "_TokenMeta.proto";
+
+message _PurchaseToken {
+  string chain                        = 1;
+  string symbol                       = 2;
+  string name                         = 3;
+  string contract_address             = 4;
+  repeated string providers           = 5;
+  optional _TokenMeta market_data     = 6;
+}

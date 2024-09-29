@@ -245,6 +245,6 @@ extension HistoryPurchase {
   mutating func commonInit(chain: MDBXChain) {
     // Wrappers
     __crypto_currency.chain = .universal
-    __crypto_currency.wrappedValue = _wrapped.cryptoCurrency
+    __crypto_currency.refreshProjected(wrapped: _wrapped.cryptoCurrency)
   }
 }

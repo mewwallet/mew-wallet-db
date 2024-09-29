@@ -91,6 +91,8 @@ extension DBWriteMode {
     case .profile:            return .appendOverrideMerge
     case .staked:             return .appendOverrideMerge
     case .energyReceipts:     return .appendOverrideMerge
+    case .purchaseProviders:  return .appendOverrideMerge
+    case .purchaseTokens:     return [.dropTable, .appendOverrideMerge]
     }
   }
   

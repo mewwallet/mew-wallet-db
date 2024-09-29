@@ -252,10 +252,10 @@ extension EnergyRewardReceipt {
   mutating func commonInit(chain: MDBXChain) {
     // Wrappers
     __energyNftTransfer.chain = .eth
-    __energyNftTransfer.wrappedValue = _wrapped.nftTx
+    __energyNftTransfer.refreshProjected(wrapped: _wrapped.nftTx)
     
     __item.chain = .universal
-    __item.wrappedValue = _wrapped.item
+    __item.refreshProjected(wrapped: _wrapped.item)
   }
 }
 
