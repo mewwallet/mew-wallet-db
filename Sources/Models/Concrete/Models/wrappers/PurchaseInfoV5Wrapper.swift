@@ -44,13 +44,7 @@ extension PurchaseInfoV5Wrapper {
     }
   }
 
-  var chains: [MDBXChain] {
-    self._wrapped.assets
-      .filter({ !$0.assets.isEmpty })
-      .map({ MDBXChain(rawValue: $0.chain) })
-  }
-
-  var assets: [PurchaseToken] {
+  public var assets: [PurchaseToken] {
     self._wrapped.assets.flatMap { element in
       let chain = MDBXChain(rawValue: element.chain)
       return element.assets.enumerated().map { element in
@@ -61,7 +55,7 @@ extension PurchaseInfoV5Wrapper {
     }
   }
 
-  var metas: [TokenMeta] {
+  public var metas: [TokenMeta] {
     self._wrapped.assets.flatMap { element in
       let chain = MDBXChain(rawValue: element.chain)
       let metas: [TokenMeta] = element.assets.compactMap { element in
@@ -70,6 +64,12 @@ extension PurchaseInfoV5Wrapper {
       }
       return metas
     }
+  }
+  
+  var chains: [MDBXChain] {
+    self._wrapped.assets
+      .filter({ !$0.assets.isEmpty })
+      .map({ MDBXChain(rawValue: $0.chain) })
   }
 }
 

@@ -132,7 +132,7 @@ extension _PurchaseProvider: ProtoWrappedMessage {
 
 // MARK: - PurchaseProvider + Equitable
 
-extension PurchaseProvider {
+extension PurchaseProvider: Equatable {
   public static func == (lhs: PurchaseProvider, rhs: PurchaseProvider) -> Bool {
     return lhs._wrapped == rhs._wrapped
   }
@@ -158,10 +158,6 @@ extension PurchaseProvider: Identifiable {
   /// The stable identity of the entity associated with this instance.
   public var id: ProviderID { ProviderID(chain: self._chain, name: self.name) }
 }
-
-// MARK: - PurchaseProvider + Sendable
-
-extension PurchaseProvider: Sendable {}
 
 // MARK: - PurchaseProvider + CommonInit
 
