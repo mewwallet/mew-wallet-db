@@ -156,7 +156,7 @@ extension PurchaseToken: ProtoWrapper {
 
 extension PurchaseToken: Identifiable {
   /// The stable identity of the entity associated with this instance.
-  public var id: String { self._chain.hexString + self.contract_address.rawValue }
+  public var id: String { self._chain.hexString + self.contract_address.rawValue + self.symbol }
 }
 
 // MARK: - PurchaseToken + Sendable
