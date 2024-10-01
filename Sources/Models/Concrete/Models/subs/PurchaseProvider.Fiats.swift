@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import mew_wallet_ios_extensions
 
 extension PurchaseProvider {
   public struct Fiat: MDBXBackedObject {
@@ -64,7 +65,7 @@ extension PurchaseProvider.Fiat {
 
   // MARK: - Properties
 
-  public var currency: String { _wrapped.fiatCurrency }
+  public var currency: FiatCurrency { FiatCurrency(currencyCode: _wrapped.fiatCurrency) }
 
   public var paymentMethods: [PaymentMethod] { _wrapped.paymentMethods.compactMap({ PaymentMethod(rawValue: $0) }).flatMap(\.unfolded) }
 
