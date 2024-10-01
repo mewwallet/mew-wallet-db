@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftProtobuf
+import mew_wallet_ios_extensions
 
 public struct PurchaseProvider {
   public enum Name: String, Sendable {
@@ -169,5 +170,14 @@ extension PurchaseProvider {
 
     __iso.chain = chain
     __iso.refreshProjected(wrapped: _wrapped.isos.first)
+  }
+}
+
+extension Array where Element == PurchaseProvider {
+  public func filter(for currency: FiatCurrency, with amount: Decimal) -> [Element] {
+    filter {
+      guard let fiat = $0.fiats.first(where: { $0.currency == currency }) else { return false }
+      return fiat.limits.contains(amount)
+    }
   }
 }
