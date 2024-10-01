@@ -180,4 +180,11 @@ extension Array where Element == PurchaseProvider {
       return fiat.limits.contains(amount)
     }
   }
+  
+  public func limit(for currency: FiatCurrency) -> ClosedRange<Decimal> {
+    let providersFiats = self.flatMap(\.fiats).filter({ $0.currency == currency })
+    let min = providersFiats.min(by: { $0.limits.lowerBound < $1.limits.lowerBound })?.limits.lowerBound ?? .zero
+    let max = providersFiats.max(by: { $0.limits.upperBound < $1.limits.upperBound })?.limits.upperBound ?? .zero
+    return min...max
+  }
 }
