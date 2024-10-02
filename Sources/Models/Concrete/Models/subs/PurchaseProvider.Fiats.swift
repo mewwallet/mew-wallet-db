@@ -92,3 +92,9 @@ extension PurchaseProvider.Fiat: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+extension Array where Element == PurchaseProvider.Fiat {
+  public func first(for currency: FiatCurrency) -> Element? {
+    self.first(where: { $0.currency == currency })
+  }
+}
