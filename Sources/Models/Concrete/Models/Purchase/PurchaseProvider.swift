@@ -10,7 +10,9 @@ import SwiftProtobuf
 import mew_wallet_ios_extensions
 
 public struct PurchaseProvider {
-  public enum Name: String, Sendable {
+  public enum Name: String, Sendable, Hashable, Equatable, Identifiable {
+    public var id: String { self.rawValue }
+    
     case simplex    = "SIMPLEX"
     case moonpay    = "MOONPAY"
     case coinbase   = "COINBASE"
@@ -178,6 +180,7 @@ extension PurchaseProvider {
 extension Array where Element == PurchaseProvider {
   public func filter(for currency: FiatCurrency, with amount: Decimal) -> [Element] {
     filter {
+      guard $0.name != .unknown else { return false }
       guard let fiat = $0.fiats.first(where: { $0.currency == currency }) else { return false }
       return fiat.limits.contains(amount)
     }

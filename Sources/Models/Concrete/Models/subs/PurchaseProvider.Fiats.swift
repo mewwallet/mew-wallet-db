@@ -10,7 +10,7 @@ import mew_wallet_ios_extensions
 
 extension PurchaseProvider {
   public struct Fiat: MDBXBackedObject {
-    public enum PaymentMethod: String, Sendable, Hashable, Identifiable {
+    public enum PaymentMethod: String, Sendable, Hashable, Equatable, Identifiable {
       public var id: String { self.rawValue }
       
       case card                   = "CARD"
