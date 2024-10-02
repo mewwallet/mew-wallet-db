@@ -10,7 +10,9 @@ import mew_wallet_ios_extensions
 
 extension PurchaseProvider {
   public struct Fiat: MDBXBackedObject {
-    public enum PaymentMethod: String, Sendable {
+    public enum PaymentMethod: String, Sendable, Hashable, Identifiable {
+      public var id: String { self.rawValue }
+      
       case card                   = "CARD"
       case visa                   = "VISA"
       case mastercard             = "MASTERCARD"
@@ -92,6 +94,8 @@ extension PurchaseProvider.Fiat: ProtoWrapper {
     self._wrapped = wrapped
   }
 }
+
+// MARK: - PurchaseProvider.Fiat + Convenient
 
 extension Array where Element == PurchaseProvider.Fiat {
   public func first(for currency: FiatCurrency) -> Element? {

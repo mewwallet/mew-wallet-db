@@ -173,6 +173,8 @@ extension PurchaseProvider {
   }
 }
 
+// MARK: - PurchaseProvider + Convenient
+
 extension Array where Element == PurchaseProvider {
   public func filter(for currency: FiatCurrency, with amount: Decimal) -> [Element] {
     filter {
