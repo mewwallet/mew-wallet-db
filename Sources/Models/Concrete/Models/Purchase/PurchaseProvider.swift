@@ -55,6 +55,10 @@ extension PurchaseProvider {
     guard !_wrapped.fiats.isEmpty else { return [] }
     return self.$_fiats ?? []
   }
+  
+  public var currencies: [FiatCurrency] {
+    self.fiats.map(\.currency)
+  }
 
   public var buy: Bool { self.$_iso?.buy ?? false }
 
@@ -191,5 +195,11 @@ extension Array where Element == PurchaseProvider {
     let min = providersFiats.min(by: { $0.limits.lowerBound < $1.limits.lowerBound })?.limits.lowerBound ?? .zero
     let max = providersFiats.max(by: { $0.limits.upperBound < $1.limits.upperBound })?.limits.upperBound ?? .zero
     return min...max
+  }
+  
+  public var currencies: [FiatCurrency] {
+    return [FiatCurrency](
+      Set(self.flatMap { $0.currencies })
+    ).sorted(by: <)
   }
 }
