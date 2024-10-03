@@ -202,4 +202,10 @@ extension Array where Element == PurchaseProvider {
       Set(self.flatMap { $0.currencies })
     ).sorted(by: <)
   }
+  
+  public func payment_methods(for currency: FiatCurrency) -> [PurchaseProvider.Fiat.PaymentMethod] {
+    let providersFiats = self.flatMap(\.fiats).filter({ $0.currency == currency })
+    let paymentMethods = Set(providersFiats.flatMap(\.paymentMethods))
+    return paymentMethods.sorted(by: <)
+  }
 }
