@@ -98,7 +98,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case "CANTO":             self = .canto
     case "BSC":               self = .bsc
     case "BASE":              self = .base
-    case "ZKSYNC":            self = .zksync_v2_mainnet
+    case "ZKSYNC_MAINNET":    self = .zksync_v2_mainnet
     default:                  self = .eth
     }
   }
