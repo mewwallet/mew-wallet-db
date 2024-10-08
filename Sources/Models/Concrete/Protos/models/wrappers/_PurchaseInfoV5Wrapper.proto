@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "_PurchaseProvider.proto";
+import "wrappers/_PurchaseInfoChainV5Wrapper.proto";
+
+message _PurchaseInfoV5Wrapper {
+  // Assets
+  repeated _PurchaseInfoChainV5Wrapper assets     = 1;
+  
+  // Providers
+  repeated _PurchaseProvider providers            = 2;
+}

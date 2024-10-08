@@ -325,7 +325,7 @@ extension Transfer {
   mutating func commonInit(chain: MDBXChain, key: Data?) {
     // Wrappers
     __nftTransfer.chain = chain
-    __nftTransfer.wrappedValue = _wrapped.nft
+    __nftTransfer.refreshProjected(wrapped: _wrapped.nft)
     
     if let key, let transferKey = TransferKey(data: key) {
       self.order = transferKey.order

@@ -294,9 +294,9 @@ extension StakedItem {
   mutating func commonInit(chain: MDBXChain, key: Data?) {
     // Wrappers
     __queue.chain = chain
-    __queue.wrappedValue = _wrapped.queue
+    __queue.refreshProjected(wrapped: _wrapped.queue)
     
     __detailedInfo.chain = chain
-    __detailedInfo.wrappedValue = _wrapped.detailedInfo
+    __detailedInfo.refreshProjected(wrapped: _wrapped.detailedInfo)
   }
 }

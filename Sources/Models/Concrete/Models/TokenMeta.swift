@@ -85,6 +85,12 @@ extension TokenMeta {
   public var sparkline: [Decimal] {
     self._wrapped.sparkline.compactMap { Decimal(wrapped: $0, hex: false) }
   }
+  public var sparkline_change: Decimal? {
+    let sparkline = self.sparkline
+    guard let first = sparkline.first, let last = sparkline.last else { return nil }
+    let change = last / first - Decimal(1)
+    return change
+  }
   public var volume24h: Decimal? {
     guard self._wrapped.hasVolume24H else { return nil }
     return Decimal(wrapped: self._wrapped.volume24H, hex: false)

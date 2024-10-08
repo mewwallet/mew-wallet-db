@@ -94,8 +94,11 @@ public enum MDBXChain: CaseIterable, Sendable {
     switch rawValue.uppercased() {
     case "ETH":               self = .eth
     case "MATIC":             self = .polygon_mainnet
+    case "POL":               self = .polygon_mainnet
     case "CANTO":             self = .canto
     case "BSC":               self = .bsc
+    case "BASE":              self = .base
+    case "ZKSYNC_MAINNET":    self = .zksync_v2_mainnet
     default:                  self = .eth
     }
   }
