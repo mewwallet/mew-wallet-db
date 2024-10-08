@@ -27,7 +27,7 @@ final class HistorySwap_tests: XCTestCase {
     db = MEWwalletDBImpl()
     try? FileManager.default.removeItem(atPath: self._path)
 
-    try! db.start(path: self._path, tables: MDBXTableName.allCases)
+    try! db.start(path: self._path, tables: MDBXTableName.allCases, readOnly: false)
   }
 
   override func tearDown() {
@@ -49,7 +49,7 @@ final class HistorySwap_tests: XCTestCase {
                                 dex: "1INCH",
                                 hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452"])
       
-      let keysAndObjects: [(MDBXKey, MDBXObject)] = [(history.key, history)]
+      let keysAndObjects: [(any MDBXKey, any MDBXObject)] = [(history.key, history)]
       
       debugPrint(keysAndObjects.map({ $0.0.key.hexString }))
       try await db.write(table: .historySwap, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
@@ -115,7 +115,7 @@ final class HistorySwap_tests: XCTestCase {
       )
       
       
-      let keysAndObjects: [(MDBXKey, MDBXObject)] = history.map({ ($0.key, $0) })
+      let keysAndObjects: [(any MDBXKey, any MDBXObject)] = history.map({ ($0.key, $0) })
       
       try await db.write(table: .historySwap, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
       let historyFetched: [HistorySwap] = try db.fetch(range: .all(limit: 10), from: .historySwap, order: .asc)

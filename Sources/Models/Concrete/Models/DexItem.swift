@@ -11,7 +11,7 @@ import mdbx_ios
 
 public struct DexItem: Equatable {
   private var _restoredAlternateKey: OrderedDexItemKey?
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DexItem
   var _chain: MDBXChain
   public var order: UInt16?
@@ -35,7 +35,7 @@ public struct DexItem: Equatable {
     }
   }
   
-  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, order: UInt16?, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, order: UInt16?, database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
     self._contract_address = contractAddress
@@ -96,18 +96,18 @@ extension DexItem: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return TokenMetaKey(chain: _chain, contractAddress: contract_address)
   }
   
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     guard let order = order else { return nil }
     return OrderedDexItemKey(chain: _chain, order: order, contractAddress: contract_address)
   }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _DexItem(serializedData: data)
+    self._wrapped = try _DexItem(serializedBytes: data)
     self.tryRestoreAlternateKey(key)
   }
   
@@ -141,7 +141,7 @@ extension DexItem: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! DexItem
     
     self._wrapped.contractAddress       = other._wrapped.contractAddress

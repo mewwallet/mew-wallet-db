@@ -10,7 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct Transfer: Equatable {
-  public enum Direction: UInt8 {
+  public enum Direction: UInt8, Sendable {
     case `self`
     case outgoing
     case incoming
@@ -42,7 +42,7 @@ public struct Transfer: Equatable {
     }
   }
   
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _Transfer
   var _chain: MDBXChain
   public var order: UInt16?
@@ -72,7 +72,7 @@ public struct Transfer: Equatable {
               nft: NFTTransfer?,
               local: Bool,
               order: UInt16?,
-              database: WalletDB? = nil) {
+              database: (any WalletDB)? = nil) {
 
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
@@ -196,17 +196,17 @@ extension Transfer: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return TransferKey(chain: _chain, address: self.address, block: _wrapped.blockNumber, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0)
   }
   
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return TransferStableKey(chain: _chain, address: self.address, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0)
   }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _Transfer(serializedData: data)
+    self._wrapped = try _Transfer(serializedBytes: data)
     let address = Address(rawValue: self._wrapped.contractAddress)
     self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: key)
@@ -246,7 +246,7 @@ extension Transfer: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! Transfer
     
     _wrapped.hash               = other._wrapped.hash
@@ -325,16 +325,10 @@ extension Transfer {
   mutating func commonInit(chain: MDBXChain, key: Data?) {
     // Wrappers
     __nftTransfer.chain = chain
-    __nftTransfer.wrappedValue = _wrapped.nft
+    __nftTransfer.refreshProjected(wrapped: _wrapped.nft)
     
     if let key, let transferKey = TransferKey(data: key) {
       self.order = transferKey.order
     }
-    
-    self.populateDB()
-  }
-  
-  func populateDB() {
-    __nftTransfer.database = database
   }
 }

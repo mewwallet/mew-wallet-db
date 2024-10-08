@@ -10,7 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct RawTransaction: Equatable {
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _RawTransaction
   var _chain: MDBXChain
   
@@ -28,7 +28,7 @@ public struct RawTransaction: Equatable {
        blockNumber: String?,
        maxFeePerGas: String?,
        maxPriorityFeePerGas: String?,
-       database: WalletDB? = nil) {
+       database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     var transaction = _RawTransaction.with {
       $0.hash = hash
@@ -96,15 +96,15 @@ extension RawTransaction: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return RawTransactionKey(chain: _chain, hash: self.hash)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _RawTransaction(serializedData: data)
+    self._wrapped = try _RawTransaction(serializedBytes: data)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -135,7 +135,7 @@ extension RawTransaction: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! RawTransaction
     
     self._wrapped.hash                  = other._wrapped.hash

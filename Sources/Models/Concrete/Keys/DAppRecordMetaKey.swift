@@ -12,17 +12,8 @@ public final class DAppRecordMetaKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { .universal }
-  public var urlHash: Data { return self._hash }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  
-  private lazy var _hashRange: Range<Int> = { _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash }()
-  private lazy var _hash: Data = {
-    return key[_hashRange]
-  }()
+  public let chain: MDBXChain = .universal
+  public let urlHash: Data
   
   // MARK: - Lifecycle
   
@@ -30,7 +21,15 @@ public final class DAppRecordMetaKey: MDBXKey {
     let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let hashPart            = hash.setLengthLeft(MDBXKeyLength.hash)
     
-    self.key = chainPart + hashPart
+    let key = chainPart + hashPart
+    self.key = key
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _hashRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash
+    
+    self.urlHash = {
+      return key[_hashRange]
+    }()
   }
   
   public convenience init(url: URL) {
@@ -40,5 +39,12 @@ public final class DAppRecordMetaKey: MDBXKey {
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.dAppRecordMeta else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _hashRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash
+    
+    self.urlHash = {
+      return data[_hashRange]
+    }()
   }
 }

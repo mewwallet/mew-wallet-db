@@ -13,8 +13,8 @@ import mew_wallet_ios_extensions
 public struct Profile {
   public enum Patch {
     case remove(path: String)
-    case add(path: String, value: Encodable)
-    case replace(path: String, value: Encodable)
+    case add(path: String, value: any Encodable)
+    case replace(path: String, value: any Encodable)
   }
   
   public enum UpdateError: LocalizedError {
@@ -45,7 +45,7 @@ public struct Profile {
     }
   }
   
-  public struct AddressFlags: OptionSet {
+  public struct AddressFlags: OptionSet, Sendable {
     public let rawValue: UInt32
     
     /// Option represent all disabled flags
@@ -73,7 +73,7 @@ public struct Profile {
     }
   }
   
-  public struct NotificationFlags: OptionSet {
+  public struct NotificationFlags: OptionSet, Sendable {
     public let rawValue: UInt32
     
     /// Option represent all disabled flags
@@ -109,7 +109,7 @@ public struct Profile {
     case Android    = "ANDROID"
   }
   
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _Profile
   var _chain: MDBXChain
   @SubProperty<_Profile._Settings._PortfolioTracker._TrackerTime, Profile.TrackerTime> var _dailyPortfolioTracker: _Profile._Settings._PortfolioTracker._TrackerTime?
@@ -469,17 +469,17 @@ extension Profile: MDBXObject {
     }
   }
 
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     fatalError("Not in use")
   }
 
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _Profile(serializedData: data)
+    self._wrapped = try _Profile(serializedBytes: data)
     self.commonInit(chain: .universal)
   }
 
@@ -513,7 +513,7 @@ extension Profile: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! Profile
     
     self._wrapped.settings = other._wrapped.settings
@@ -601,7 +601,7 @@ extension _Profile._Settings._Address: Encodable {
     case flags
   }
   
-  func encode(to encoder: Encoder) throws {
+  func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     
     try container.encode(self.address, forKey: .address)
@@ -615,22 +615,14 @@ extension Profile {
   mutating func commonInit(chain: MDBXChain) {
     // Wrappers
     __dailyPortfolioTracker.chain = .universal
-    __dailyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.daily
+    __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
     __dailyPortfolioTracker.projectedValue?._type = .daily
     
     __weeklyPortfolioTracker.chain = .universal
-    __weeklyPortfolioTracker.wrappedValue = _wrapped.settings.portfolioTracker.weekly
+    __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
     __weeklyPortfolioTracker.projectedValue?._type = .weekly
     
     __status.chain = .universal
-    __status.wrappedValue = _wrapped.status
-    
-    self.populateDB()
-  }
-  
-  func populateDB() {
-    __dailyPortfolioTracker.database = database
-    __weeklyPortfolioTracker.database = database
-    __status.database = database
+    __status.refreshProjected(wrapped: _wrapped.status)
   }
 }

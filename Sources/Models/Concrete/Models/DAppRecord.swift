@@ -10,8 +10,8 @@ import SwiftProtobuf
 import mdbx_ios
 import mew_wallet_ios_extensions
 
-public struct DAppRecord: Equatable {
-  public struct RecordType: OptionSet {
+public struct DAppRecord: Equatable, Sendable {
+  public struct RecordType: OptionSet, Sendable {
     public static let unknown   = RecordType(rawValue: 0 << 0)
     public static let recent    = RecordType(rawValue: 1 << 0)
     public static let favorite  = RecordType(rawValue: 1 << 1)
@@ -22,7 +22,7 @@ public struct DAppRecord: Equatable {
     }
   }
   
-  public weak var database: WalletDB? = MEWwalletDBImpl.shared
+  public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DAppRecord
   var _chain: MDBXChain
   let _hash: Data
@@ -36,7 +36,7 @@ public struct DAppRecord: Equatable {
   
   // MARK: - Lifecycle
   
-  public init(url: URL, address: String?, type: DAppRecord.RecordType, uuid: UInt64, database: WalletDB? = nil) {
+  public init(url: URL, address: String?, type: DAppRecord.RecordType, uuid: UInt64, database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .universal
     self._hash = url.sha256
@@ -104,17 +104,17 @@ extension DAppRecord: MDBXObject {
     }
   }
 
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return DAppRecordKey(hash: _hash, uuid: _uuid)
   }
 
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _DAppRecord(serializedData: data)
+    self._wrapped = try _DAppRecord(serializedBytes: data)
     self._hash = self._wrapped.url.sha256
     self.tryRestorePrimaryKeyInfo(key)
   }
@@ -151,7 +151,7 @@ extension DAppRecord: MDBXObject {
     return objects.lazy.map({ $0.wrapped(.universal) })
   }
 
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! DAppRecord
     
     self._wrapped.url = other._wrapped.url
@@ -202,7 +202,3 @@ extension DAppRecord: Hashable {
     }
   }
 }
-
-// MARK: - DAppRecord + Sendable
-
-extension DAppRecord: @unchecked Sendable {}

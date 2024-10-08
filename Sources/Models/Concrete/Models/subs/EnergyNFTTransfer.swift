@@ -8,7 +8,7 @@
 import Foundation
 
 public struct EnergyNFTTransfer: MDBXBackedObject, Equatable {
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _chain: MDBXChain
   var _wrapped: _EnergyNFTTransfer
   
@@ -16,7 +16,7 @@ public struct EnergyNFTTransfer: MDBXBackedObject, Equatable {
               hash: String,
               address: Address,
               timestamp: Date,
-              database: WalletDB? = nil) {
+              database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = .eth
     self._wrapped = .with {

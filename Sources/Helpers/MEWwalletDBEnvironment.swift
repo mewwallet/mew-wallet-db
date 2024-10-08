@@ -5,7 +5,7 @@
 //  Created by Mikhail Nikanorov on 5/12/22.
 //
 
-import mdbx_ios
+@preconcurrency import mdbx_ios
 import os.signpost
 
 final class MEWwalletDBEnvironment {

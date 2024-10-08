@@ -10,7 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct TokenMeta: Equatable {
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _TokenMeta
   var _chain: MDBXChain
   
@@ -28,7 +28,7 @@ public struct TokenMeta: Equatable {
               decimals: Int32 = 0, // FIXME: optional decimals?
               icon: String? = nil,
               price: String? = nil,
-              database: WalletDB? = nil) {
+              database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
@@ -85,6 +85,12 @@ extension TokenMeta {
   public var sparkline: [Decimal] {
     self._wrapped.sparkline.compactMap { Decimal(wrapped: $0, hex: false) }
   }
+  public var sparkline_change: Decimal? {
+    let sparkline = self.sparkline
+    guard let first = sparkline.first, let last = sparkline.last else { return nil }
+    let change = last / first - Decimal(1)
+    return change
+  }
   public var volume24h: Decimal? {
     guard self._wrapped.hasVolume24H else { return nil }
     return Decimal(wrapped: self._wrapped.volume24H, hex: false)
@@ -107,15 +113,15 @@ extension TokenMeta: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return TokenMetaKey(chain: _chain, contractAddress: self.contract_address)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _TokenMeta(serializedData: data)
+    self._wrapped = try _TokenMeta(serializedBytes: data)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -146,7 +152,7 @@ extension TokenMeta: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! TokenMeta
     
     self._wrapped.contractAddress       = other._wrapped.contractAddress

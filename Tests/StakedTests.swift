@@ -26,7 +26,7 @@ final class StakedTests: XCTestCase {
     db = MEWwalletDBImpl()
     try? FileManager.default.removeItem(atPath: self._path)
 
-    try db.start(path: self._path, tables: MDBXTableName.allCases)
+    try db.start(path: self._path, tables: MDBXTableName.allCases, readOnly: false)
     
     let account = Account(order: 0,
                           address: "0x6a289fd5142b081e0d90b48d83dcd2029274a727",
@@ -50,7 +50,7 @@ final class StakedTests: XCTestCase {
   }
   
   func testArrayFromJson() async throws {
-    let objects = try Staked.array(fromJSONString: testJson, chain: .eth)
+    let objects = try StakedItem.array(fromJSONString: testJson, chain: .eth)
     debugPrint(objects)
     
     XCTAssertEqual(objects.count, 1)

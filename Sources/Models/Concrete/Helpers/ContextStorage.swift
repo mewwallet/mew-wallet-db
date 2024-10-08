@@ -6,30 +6,21 @@
 //
 
 import Foundation
+import mew_wallet_ios_extensions
 
 @propertyWrapper
-public final class ContextStorage<T> where T: Sendable {
-  private let _queue = DispatchQueue(label: "db.contextstorage.queue")
-  
-  public var _wrappedValue: T?
+public final class ContextStorage<T>: Sendable where T: Sendable {
+  public let _wrappedValue: ThreadSafe<T?>
   public var wrappedValue: T? {
-    set {
-      _queue.sync {
-        _wrappedValue = newValue
-      }
-    }
-    get {
-      _wrappedValue
-    }
+    set { _wrappedValue.value = newValue }
+    get { _wrappedValue.value }
   }
   
   public init(wrappedValue: T?) {
-    self.wrappedValue = wrappedValue
+    _wrappedValue = .init(wrappedValue)
   }
   
   public convenience init() {
     self.init(wrappedValue: nil)
   }
 }
-
-extension ContextStorage: @unchecked Sendable {}
