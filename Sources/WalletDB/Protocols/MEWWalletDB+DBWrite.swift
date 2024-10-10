@@ -70,29 +70,30 @@ public struct DBWriteMode: OptionSetAssociated {
 extension DBWriteMode {
   public static func recommended(_ table: MDBXTableName) -> DBWriteMode {
     switch table {
-    case .account:            return .appendOverrideMerge
-    case .dex:                return .appendOverrideMerge
-    case .orderedDex:         return .appendOverrideMerge
-    case .featuredDex:        return .appendOverrideMerge
-    case .tokenMeta:          return .appendOverrideMerge
-    case .token:              return .default
-    case .rawTransaction:     return .default
-    case .dappLists:          return .appendOverrideMerge
-    case .dappRecord:         return .appendOverrideMerge
-    case .dappRecordRecent:   return .appendOverrideMerge
-    case .dappRecordFavorite: return .appendOverrideMerge
-    case .dappRecordMeta:     return .default
-    case .dappRecordHistory:  return .appendOverrideMerge
-    case .nftCollection:      return .appendOverrideMerge
-    case .nftAsset:           return .appendOverrideMerge
-    case .transfer:           return .appendOverrideMerge
-    case .historySwap:        return .appendOverrideMerge
-    case .historyPurchase:    return .appendOverrideMerge
-    case .profile:            return .appendOverrideMerge
-    case .staked:             return .appendOverrideMerge
-    case .energyReceipts:     return .appendOverrideMerge
-    case .purchaseProviders:  return .appendOverrideMerge
-    case .purchaseTokens:     return [.dropTable, .appendOverrideMerge]
+    case .account:                return .appendOverrideMerge
+    case .dex:                    return .appendOverrideMerge
+    case .orderedDex:             return .appendOverrideMerge
+    case .featuredDex:            return .appendOverrideMerge
+    case .tokenMeta:              return .appendOverrideMerge
+    case .token:                  return .default
+    case .rawTransaction:         return .default
+    case .dappLists:              return .appendOverrideMerge
+    case .dappRecord:             return .appendOverrideMerge
+    case .dappRecordRecent:       return .appendOverrideMerge
+    case .dappRecordFavorite:     return .appendOverrideMerge
+    case .dappRecordMeta:         return .default
+    case .dappRecordHistory:      return .appendOverrideMerge
+    case .nftCollection:          return .appendOverrideMerge
+    case .nftAsset:               return .appendOverrideMerge
+    case .transfer:               return .appendOverrideMerge
+    case .historySwap:            return .appendOverrideMerge
+    case .historyPurchase:        return .appendOverrideMerge
+    case .profile:                return .appendOverrideMerge
+    case .staked:                 return .appendOverrideMerge
+    case .energyReceipts:         return .appendOverrideMerge
+    case .purchaseProviders:      return [.dropTable, .appendOverrideMerge]
+    case .purchaseTokens:         return [.dropTable, .appendOverrideMerge]
+    case .purchaseOrderedTokens:  return [.dropTable, .appendOverrideMerge]
     }
   }
   
