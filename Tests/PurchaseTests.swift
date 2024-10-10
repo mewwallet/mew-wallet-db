@@ -65,7 +65,11 @@ final class Purchase_tests: XCTestCase {
       for chain in chains {
         let loadMetas: [TokenMeta] = try db.fetch(range: TokenMetaKey.range(chain: chain), from: .tokenMeta, order: .asc)
         
-        debugPrint(loadMetas.count)
+        debugPrint("metas \(loadMetas.count)")
+        let purchaseTokensFromMetas = loadMetas.compactMap({ try? $0.purchaseToken })
+        
+        debugPrint("metas \(purchaseTokensFromMetas.count)")
+        
         
         let loadTokens: [PurchaseToken] = try db.fetch(range: PurchaseToken.Key.range(chain: chain), from: .purchaseTokens, order: .asc)
         
