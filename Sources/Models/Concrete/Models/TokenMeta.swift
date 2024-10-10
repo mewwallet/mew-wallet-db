@@ -18,6 +18,7 @@ public struct TokenMeta: Equatable {
   
   private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
   private let _token: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _purchaseToken: MDBXPointer<PurchaseToken.Key, PurchaseToken> = .init(.purchaseTokens)
   
   // MARK: - LifeCycle
    
@@ -61,6 +62,13 @@ extension TokenMeta {
   public func token(of account: Address) throws -> Token {
     let key = TokenKey(chain: _chain, address: account, contractAddress: contract_address)
     return try _token.getData(key: key, policy: .ignoreCache, chain: _chain, database: self.database)
+  }
+  
+  public var purchaseToken: PurchaseToken {
+    get throws {
+      let key = PurchaseToken.Key(chain: _chain, contractAddress: self.contract_address)
+      return try _purchaseToken.getData(key: key, policy: .cacheOrLoad, chain: _chain, database: self.database)
+    }
   }
   
   // MARK: - Properties

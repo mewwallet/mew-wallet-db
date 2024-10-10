@@ -72,11 +72,11 @@ extension PurchaseToken: MDBXObject {
   }
 
   public var key: any MDBXKey {
-    return PurchaseToken.Key(chain: _chain, order: self.order ?? 0, contractAddress: self.contract_address)
+    return PurchaseToken.Key(chain: _chain, contractAddress: self.contract_address)
   }
 
   public var alternateKey: (any MDBXKey)? {
-    return nil
+    return PurchaseToken.OrderedKey(chain: _chain, order: self.order ?? 0, contractAddress: self.contract_address)
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
