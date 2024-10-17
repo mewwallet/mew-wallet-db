@@ -9,5 +9,5 @@ import Foundation
 
 public protocol DBDelete {
   @discardableResult
-  func delete(key: MDBXKey, in table: MDBXTableName) async throws -> Int
+  func delete(key: any MDBXKey, in table: MDBXTableName) async throws -> Int
 }

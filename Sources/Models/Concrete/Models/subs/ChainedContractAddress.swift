@@ -9,7 +9,7 @@ import Foundation
 
 extension HistoryPurchase {
   public struct ChainedContractAddress: MDBXBackedObject {
-    public weak var database: WalletDB?
+    public weak var database: (any WalletDB)?
     var _chain: MDBXChain
     var _wrapped: _ChainedContractAddress
   }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Address: RawRepresentable, Equatable {
+public enum Address: RawRepresentable, Equatable, Sendable {
   public typealias RawValue = String
   case _primary             // "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
   case _zktv2Primary        // "0x0000000000000000000000000000000000000000"

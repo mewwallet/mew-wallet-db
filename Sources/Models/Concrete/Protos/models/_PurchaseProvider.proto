@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+message _PurchaseProvider {
+  // Name of the provider
+  string provider                           = 1;
+
+  // List of ISOs with information about availability
+  message _ISO {
+    // Represents availability of buy and sell
+    message _Allowed {
+      bool buy                                    = 1;
+      bool sell                                   = 2;
+    }
+    _Allowed allowed                            = 1;
+  }
+  repeated _ISO isos                        = 2;
+
+  // Detailed information about specific fiats
+  message _Fiat {
+    string fiat_currency                        = 1;
+    message _Limits {
+      double min                                  = 1;
+      double max                                  = 2;
+    }
+    _Limits limits                              = 2;
+    repeated string payment_methods             = 3;
+    bool is_sell_supported                      = 4;
+  }
+  repeated _Fiat fiats                      = 3;
+}

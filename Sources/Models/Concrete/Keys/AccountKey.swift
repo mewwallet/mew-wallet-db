@@ -13,17 +13,8 @@ public final class AccountKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain { .universal }
-  public var address: String { return self._address }
-  
-  // MARK: - Private
-  
-  private lazy var _chainRange: Range<Int> = { 0..<MDBXKeyLength.chain }()
-  
-  private lazy var _addressRange: Range<Int> = { _chainRange.endIndex..<key.count }()
-  private lazy var _address: String = {
-    return key[_addressRange].hexString
-  }()
+  public let chain: MDBXChain = .universal 
+  public let address: String
   
   // MARK: - Lifecycle
   
@@ -32,10 +23,20 @@ public final class AccountKey: MDBXKey {
     let addressPart   = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
     
     self.key = chainPart + addressPart
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange = _chainRange.endIndex..<key.count
+    
+    self.address = key[_addressRange].hexString
   }
   
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.account else { return nil }
     self.key = data
+    
+    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
+    let _addressRange = _chainRange.endIndex..<key.count
+    
+    self.address = key[_addressRange].hexString
   }
 }

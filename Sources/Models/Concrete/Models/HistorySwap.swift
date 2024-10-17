@@ -34,7 +34,7 @@ public struct HistorySwap {
     }
   }
   
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _HistorySwap
   var _chain: MDBXChain
   
@@ -53,7 +53,7 @@ public struct HistorySwap {
               status: Status,
               dex: String,
               hashes: [String],
-              database: WalletDB? = nil) {
+              database: (any WalletDB)? = nil) {
 
     precondition(!hashes.isEmpty)
     self.database = database ?? MEWwalletDBImpl.shared
@@ -153,15 +153,15 @@ extension HistorySwap: MDBXObject {
   
   public var chain: MDBXChain { _chain }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return HistorySwapKey(chain: _chain, account: .unknown(_wrapped.address), hash: _wrapped.hash)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _HistorySwap(serializedData: data)
+    self._wrapped = try _HistorySwap(serializedBytes: data)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -192,7 +192,7 @@ extension HistorySwap: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! HistorySwap
     
     self._wrapped.address         = other._wrapped.address

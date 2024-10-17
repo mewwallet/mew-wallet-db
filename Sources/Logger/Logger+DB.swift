@@ -26,13 +26,13 @@ extension Logger {
   // MARK: - Logger + Convenient
   
   // swiftlint:disable line_length opening_brace
-  static func trace(_ service: Logger.Service, _ error: Error)        { Logger.for(service).trace(error: error) }
-  static func debug(_ service: Logger.Service, _ error: Error)        { _debug ? Logger.for(service).debug(error: error) : () }
-  static func info(_ service: Logger.Service, _ error: Error)         { Logger.for(service).info(error: error) }
-  static func notice(_ service: Logger.Service, _ error: Error)       { Logger.for(service).notice(error: error) }
-  static func warning(_ service: Logger.Service, _ error: Error)      { Logger.for(service).warning(error: error) }
-  static func error(_ service: Logger.Service, _ error: Error)        { Logger.for(service).error(error: error) }
-  static func critical(_ service: Logger.Service, _ error: Error)     { Logger.for(service).critical(error: error) }
+  static func trace(_ service: Logger.Service, _ error: any Error)     { Logger.for(service).trace(error: error) }
+  static func debug(_ service: Logger.Service, _ error: any Error)     { _debug ? Logger.for(service).debug(error: error) : () }
+  static func info(_ service: Logger.Service, _ error: any Error)      { Logger.for(service).info(error: error) }
+  static func notice(_ service: Logger.Service, _ error: any Error)    { Logger.for(service).notice(error: error) }
+  static func warning(_ service: Logger.Service, _ error: any Error)   { Logger.for(service).warning(error: error) }
+  static func error(_ service: Logger.Service, _ error: any Error)     { Logger.for(service).error(error: error) }
+  static func critical(_ service: Logger.Service, _ error: any Error)  { Logger.for(service).critical(error: error) }
   
   static func trace(_ service: Logger.Service, _ message: String)     { Logger.for(service).trace(message: message) }
   static func debug(_ service: Logger.Service, _ message: String)     { _debug ? Logger.for(service).debug(message: message) : () }
@@ -42,13 +42,13 @@ extension Logger {
   static func error(_ service: Logger.Service, _ message: String)     { Logger.for(service).error(message: message) }
   static func critical(_ service: Logger.Service, _ message: String)  { Logger.for(service).critical(message: message) }
   
-  static func trace(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: Error)         { Logger.for(service).trace(file: file, line: line, function: function, message: error.localizedDescription) }
-  static func debug(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: Error)         { _debug ? Logger.for(service).debug(file: file, line: line, function: function, message: error.localizedDescription) : () }
-  static func info(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: Error)          { Logger.for(service).info(file: file, line: line, function: function, message: error.localizedDescription) }
-  static func notice(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: Error)        { Logger.for(service).notice(file: file, line: line, function: function, message: error.localizedDescription) }
-  static func warning(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: Error)       { Logger.for(service).warning(file: file, line: line, function: function, message: error.localizedDescription) }
-  static func error(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: Error)         { Logger.for(service).error(file: file, line: line, function: function, message: error.localizedDescription) }
-  static func critical(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: Error)      { Logger.for(service).critical(file: file, line: line, function: function, message: error.localizedDescription) }
+  static func trace(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: any Error)     { Logger.for(service).trace(file: file, line: line, function: function, message: error.localizedDescription) }
+  static func debug(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: any Error)     { _debug ? Logger.for(service).debug(file: file, line: line, function: function, message: error.localizedDescription) : () }
+  static func info(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: any Error)      { Logger.for(service).info(file: file, line: line, function: function, message: error.localizedDescription) }
+  static func notice(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: any Error)    { Logger.for(service).notice(file: file, line: line, function: function, message: error.localizedDescription) }
+  static func warning(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: any Error)   { Logger.for(service).warning(file: file, line: line, function: function, message: error.localizedDescription) }
+  static func error(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: any Error)     { Logger.for(service).error(file: file, line: line, function: function, message: error.localizedDescription) }
+  static func critical(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ error: any Error)  { Logger.for(service).critical(file: file, line: line, function: function, message: error.localizedDescription) }
   
   static func trace(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ message: String)      { Logger.for(service).trace(file: file, line: line, function: function, message: message) }
   static func debug(service: Logger.Service, file: String = #fileID, line: Int = #line, function: String = #function, _ message: String)      { _debug ? Logger.for(service).debug(file: file, line: line, function: function, message: message) : () }

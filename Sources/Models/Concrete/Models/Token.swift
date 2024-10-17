@@ -17,7 +17,7 @@ public struct Token: Equatable {
   // Note: TCA or Result resets weak var, probably on copy or something...didn't investigate yet, but looks like it's a good time to switch to property wrapper
   // which will hold database...and also, we have single db which is static, means we can optimise that moment
   // ~Foboz
-  public var database: WalletDB? {
+  public var database: (any WalletDB)? {
     get { MEWwalletDBImpl.shared }
     set {}
   }
@@ -33,7 +33,7 @@ public struct Token: Equatable {
   
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, database: WalletDB? = nil) {
+  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, database: (any WalletDB)? = nil) {
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue
@@ -119,15 +119,15 @@ extension Token: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return TokenKey(chain: _chain, address: self.address, contractAddress: self.contract_address)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _Token(serializedData: data)
+    self._wrapped = try _Token(serializedBytes: data)
     let address = Address(self._wrapped.contractAddress)
     self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
   }
@@ -165,7 +165,7 @@ extension Token: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! Token
 
     self._wrapped.address               = other._wrapped.address
@@ -258,7 +258,3 @@ extension Token: Comparable {
     }
   }
 }
-
-// MARK: - Token + Sendable
-
-extension Token: Sendable {}

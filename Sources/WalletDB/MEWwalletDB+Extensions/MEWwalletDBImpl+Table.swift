@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import mdbx_ios
+@preconcurrency import mdbx_ios
 import OSLog
 
 extension MEWwalletDBImpl {

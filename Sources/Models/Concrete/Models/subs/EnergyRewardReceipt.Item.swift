@@ -156,7 +156,7 @@ extension EnergyRewardReceipt {
       case icon(Icon)
     }
     
-    public weak var database: WalletDB?
+    public weak var database: (any WalletDB)?
     var _chain: MDBXChain
     var _wrapped: _EnergyRewardReceipt._Item
 
@@ -166,7 +166,7 @@ extension EnergyRewardReceipt {
                 chance: Decimal,
                 type: `Type`,
                 payload: Payload,
-                database: WalletDB? = nil) {
+                database: (any WalletDB)? = nil) {
       self.database = database ?? MEWwalletDBImpl.shared
       self._chain = .universal
       self._wrapped = .with {

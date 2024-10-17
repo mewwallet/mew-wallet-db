@@ -8,7 +8,7 @@
 import Foundation
 
 public struct NFTStats: MDBXBackedObject, Equatable {
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _chain: MDBXChain
   var _wrapped: _NFTStats
 }

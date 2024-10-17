@@ -10,7 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 
 public struct TokenMeta: Equatable {
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   var _wrapped: _TokenMeta
   var _chain: MDBXChain
   
@@ -18,6 +18,7 @@ public struct TokenMeta: Equatable {
   
   private let _dexItem: MDBXPointer<DexItemKey, DexItem> = .init(.dex)
   private let _token: MDBXPointer<TokenKey, Token> = .init(.token)
+  private let _purchaseToken: MDBXPointer<PurchaseToken.Key, PurchaseToken> = .init(.purchaseTokens)
   
   // MARK: - LifeCycle
    
@@ -28,7 +29,7 @@ public struct TokenMeta: Equatable {
               decimals: Int32 = 0, // FIXME: optional decimals?
               icon: String? = nil,
               price: String? = nil,
-              database: WalletDB? = nil) {
+              database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
@@ -63,6 +64,13 @@ extension TokenMeta {
     return try _token.getData(key: key, policy: .ignoreCache, chain: _chain, database: self.database)
   }
   
+  public var purchaseToken: PurchaseToken {
+    get throws {
+      let key = PurchaseToken.Key(chain: _chain, contractAddress: self.contract_address)
+      return try _purchaseToken.getData(key: key, policy: .cacheOrLoad, chain: _chain, database: self.database)
+    }
+  }
+  
   // MARK: - Properties
   
   public var chain: MDBXChain { _chain }
@@ -84,6 +92,12 @@ extension TokenMeta {
   }
   public var sparkline: [Decimal] {
     self._wrapped.sparkline.compactMap { Decimal(wrapped: $0, hex: false) }
+  }
+  public var sparkline_change: Decimal? {
+    let sparkline = self.sparkline
+    guard let first = sparkline.first, let last = sparkline.last else { return nil }
+    let change = last / first - Decimal(1)
+    return change
   }
   public var volume24h: Decimal? {
     guard self._wrapped.hasVolume24H else { return nil }
@@ -107,15 +121,15 @@ extension TokenMeta: MDBXObject {
     }
   }
   
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return TokenMetaKey(chain: _chain, contractAddress: self.contract_address)
   }
   
-  public var alternateKey: MDBXKey? { return nil }
+  public var alternateKey: (any MDBXKey)? { return nil }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
-    self._wrapped = try _TokenMeta(serializedData: data)
+    self._wrapped = try _TokenMeta(serializedBytes: data)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -146,7 +160,7 @@ extension TokenMeta: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
   
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! TokenMeta
     
     self._wrapped.contractAddress       = other._wrapped.contractAddress

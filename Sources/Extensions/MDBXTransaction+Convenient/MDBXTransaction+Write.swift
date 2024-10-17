@@ -9,7 +9,7 @@ import Foundation
 import mdbx_ios
 
 extension MDBXTransaction {
-  func write(key: MDBXKey, value: Data, database: MDBXDatabase) throws {
+  func write(key: any MDBXKey, value: Data, database: MDBXDatabase) throws {
     guard self.flags.contains(.readWrite) else { throw MDBXError.badTransaction }
     var key = key.key
     var value = value

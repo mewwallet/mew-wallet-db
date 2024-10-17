@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 
 import PackageDescription
 
@@ -15,10 +15,10 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "git@github.com:mewwallet/mew-wallet-ios-extensions.git", .upToNextMajor(from: "1.0.0")),
+    .package(url: "git@github.com:mewwallet/mew-wallet-ios-extensions.git", .upToNextMajor(from: "2.0.0")),
     .package(url: "git@github.com:mewwallet/mdbx-ios.git", .upToNextMajor(from: "1.0.11")),
     .package(url: "https://github.com/apple/swift-algorithms.git", exact: "1.0.0"),
-    .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMinor(from: "1.18.0"))
+    .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMinor(from: "1.28.0"))
   ],
   targets: [
     .target(
@@ -43,5 +43,14 @@ let package = Package(
       dependencies: ["mew-wallet-db"],
       path: "Tests"
     )
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )
+
+for target in package.targets {
+  target.swiftSettings = target.swiftSettings ?? []
+  target.swiftSettings?.append(contentsOf: [
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableExperimentalFeature("StrictConcurrency=complete")
+  ])
+}

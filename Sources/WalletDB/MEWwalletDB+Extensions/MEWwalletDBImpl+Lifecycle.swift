@@ -15,10 +15,14 @@ import UIKit
 
 public extension MEWwalletDBImpl {
   func start(path: String, tables: [MDBXTableName], readOnly: Bool) throws {
-    guard !self.started else { return }
-    self.started = true
-    self.path = path
-    self.tableNames = tables
+    let started = self.started.write {
+      let oldValue = $0
+      $0 = true
+      return oldValue
+    }
+    guard !started else { return }
+    self.path.value = path
+    self.tableNames.value = tables
     
     Logger.debug(.lifecycle, "Database path: \(path)")
     
@@ -29,12 +33,12 @@ public extension MEWwalletDBImpl {
       .sink {[weak self] _ in
         self?.dropEnvironment()
       }
-      .store(in: &cancellable)
+      .store(in: &cancellable.value)
     NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
       .sink {[weak self] _ in
         try? self?.prepareEnvironment(path: path, tables: tables, readOnly: readOnly)
       }
-      .store(in: &cancellable)
+      .store(in: &cancellable.value)
     #endif
   }
   

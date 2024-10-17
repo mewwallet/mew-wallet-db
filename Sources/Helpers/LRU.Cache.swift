@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import mew_wallet_ios_extensions
 
 #if os(iOS) || os(tvOS)
 import UIKit
@@ -25,26 +26,35 @@ let LRUCacheMemoryWarningNotification: NSNotification.Name =
 struct LRU {
   static let cache = LRU.Cache<String>()
   
-  final class Cache<Key: Hashable> {
-    
-    private var values: [Key: Container] = [:]
-    private unowned(unsafe) var head: Container?
-    private unowned(unsafe) var tail: Container?
+  final class Cache<Key: Hashable & Sendable>: Sendable {
     private let lock: NSLock = .init()
-    private var token: AnyObject?
+    private let values = ThreadSafe<[Key: Container]>([:])
+    private let head = ThreadSafe<Container?>(nil)
+    private let tail = ThreadSafe<Container?>(nil)
+    private let token = ThreadSafe<(any NSObjectProtocol)?>(nil)
     private let notificationCenter: NotificationCenter
     
     /// The current total cost of values in the cache
-    private(set) var totalCost: Int = 0
+    private let totalCost = ThreadSafe<Int>(0)
     
     /// The maximum total cost permitted
+    let _totalCostLimit: ThreadSafe<Int>
     var totalCostLimit: Int {
-      didSet { clean() }
+      get { return _totalCostLimit.value }
+      set {
+        _totalCostLimit.value = newValue
+        clean()
+      }
     }
     
     /// The maximum number of values permitted
+    let _countLimit: ThreadSafe<Int>
     var countLimit: Int {
-      didSet { clean() }
+      get { _countLimit.value }
+      set {
+        _countLimit.value = newValue
+        clean()
+      }
     }
     
     /// Initialize the cache with the specified `totalCostLimit` and `countLimit`
@@ -53,11 +63,11 @@ struct LRU {
       countLimit: Int = .max,
       notificationCenter: NotificationCenter = .default
     ) {
-      self.totalCostLimit = totalCostLimit
-      self.countLimit = countLimit
+      self._totalCostLimit = .init(totalCostLimit)
+      self._countLimit = .init(countLimit)
       self.notificationCenter = notificationCenter
       
-      self.token = notificationCenter.addObserver(
+      self.token.value = notificationCenter.addObserver(
         forName: LRUCacheMemoryWarningNotification,
         object: nil,
         queue: nil
@@ -67,8 +77,9 @@ struct LRU {
     }
     
     deinit {
-      if let token = token {
+      if let token = token.value {
         notificationCenter.removeObserver(token)
+        self.token.value = nil
       }
     }
   }
@@ -79,12 +90,12 @@ struct LRU {
 extension LRU.Cache {
   /// The number of values currently stored in the cache
   var count: Int {
-    values.count
+    values.value.count
   }
   
   /// Is the cache empty?
   var isEmpty: Bool {
-    values.isEmpty
+    values.value.isEmpty
   }
   
   /// Insert a value into the cache with optional `cost`
@@ -93,23 +104,26 @@ extension LRU.Cache {
       let _: Value? = removeValue(forKey: key)
       return
     }
+    
     lock.lock()
-    if let container = values[key] {
-      container.value = value
-      totalCost -= container.cost
-      container.cost = cost
-      remove(container)
-      append(container)
-    } else {
-      let container = Container(
-        value: value,
-        cost: cost,
-        key: key
-      )
-      values[key] = container
-      append(container)
+    self.values.write { values in
+      if let container = values[key] {
+        container.value = value
+        totalCost.value -= container.cost
+        container.cost = cost
+        remove(container)
+        append(container)
+      } else {
+        let container = Container(
+          value: value,
+          cost: cost,
+          key: key
+        )
+        values[key] = container
+        append(container)
+      }
     }
-    totalCost += cost
+    totalCost.value += cost
     lock.unlock()
     clean()
   }
@@ -118,11 +132,11 @@ extension LRU.Cache {
   @discardableResult func removeValue<Value>(forKey key: Key) -> Value? {
     lock.lock()
     defer { lock.unlock() }
-    guard let container = values.removeValue(forKey: key) else {
+    guard let container = values.value.removeValue(forKey: key) else {
       return nil
     }
     remove(container)
-    totalCost -= container.cost
+    totalCost.value -= container.cost
     return container.value as? Value
   }
   
@@ -130,7 +144,7 @@ extension LRU.Cache {
   func value<Value>(forKey key: Key) -> Value? {
     lock.lock()
     defer { lock.unlock() }
-    if let container = values[key] {
+    if let container = values.value[key] {
       remove(container)
       append(container)
       return container.value as? Value
@@ -141,9 +155,9 @@ extension LRU.Cache {
   /// Remove all values from the cache
   func removeAllValues() {
     lock.lock()
-    values.removeAll()
-    head = nil
-    tail = nil
+    values.value.removeAll()
+    head.value = nil
+    tail.value = nil
     lock.unlock()
   }
 }
@@ -167,11 +181,11 @@ private extension LRU.Cache {
   
   // Remove container from list (must be called inside lock)
   func remove(_ container: Container) {
-    if head === container {
-      head = container.next
+    if head.value === container {
+      head.value = container.next
     }
-    if tail === container {
-      tail = container.prev
+    if tail.value === container {
+      tail.value = container.prev
     }
     container.next?.prev = container.prev
     container.prev?.next = container.next
@@ -181,24 +195,24 @@ private extension LRU.Cache {
   // Append container to list (must be called inside lock)
   func append(_ container: Container) {
     assert(container.next == nil)
-    if head == nil {
-      head = container
+    if head.value == nil {
+      head.value = container
     }
-    container.prev = tail
-    tail?.next = container
-    tail = container
+    container.prev = tail.value
+    tail.value?.next = container
+    tail.value = container
   }
   
   // Remove expired values (must be called outside lock)
   func clean() {
     lock.lock()
     defer { lock.unlock() }
-    while totalCost > totalCostLimit || count > countLimit,
-          let container = head
+    while totalCost.value > totalCostLimit || count > countLimit,
+          let container = head.value
     {
       remove(container)
-      values.removeValue(forKey: container.key)
-      totalCost -= container.cost
+      values.value.removeValue(forKey: container.key)
+      totalCost.value -= container.cost
     }
   }
 }

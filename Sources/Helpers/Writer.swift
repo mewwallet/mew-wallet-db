@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import mdbx_ios
+@preconcurrency import mdbx_ios
 import os.signpost
 import Algorithms
 
@@ -23,14 +23,14 @@ actor Writer {
   
   // MARK: - Write
   
-  func write(table: MDBXTable, key: MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
+  func write(table: MDBXTable, key: any MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
     guard !mode.contains(.diff) else {
       throw DBWriteError.badMode
     }
     return try await self.write(table: table, keysAndData: [(key, data)], mode: mode)
   }
   
-  func write(table: MDBXTable, key: MDBXKey, object: MDBXObject, mode: DBWriteMode) async throws -> Int {
+  func write(table: MDBXTable, key: any MDBXKey, object: any MDBXObject, mode: DBWriteMode) async throws -> Int {
     guard !mode.contains(.diff) else {
       throw DBWriteError.badMode
     }
@@ -48,13 +48,14 @@ actor Writer {
     // Diff logic - removes old in the range
     if let range: MDBXKeyRange = mode[for: .diff] {
       var keysAndData = keysAndData
-      let deletions: [MDBXKey]
+      let deletions: [any MDBXKey]
       try self.transaction.begin(parent: nil, flags: [.readWrite])
       
+      let db = table.db
       keysAndData.sort {
         var lhs = $0.0.key
         var rhs = $1.0.key
-        return transaction.compare(a: &lhs, b: &rhs, database: table.db) <= 0
+        return transaction.compare(a: &lhs, b: &rhs, database: db) <= 0
       }
       let newKeys = keysAndData.map { $0.0.key }
 
@@ -74,9 +75,10 @@ actor Writer {
       if deletions.isEmpty {
         try? self.transaction.abort()
       } else {
+        let db = table.db
         try deletions.forEach {
           var key = $0.key
-          try transaction.delete(key: &key, database: table.db)
+          try transaction.delete(key: &key, database: db)
         }
         try self.transaction.commit()
         totalCount += deletions.count
@@ -141,13 +143,14 @@ actor Writer {
     // Diff logic - removes old in the range
     if let range: MDBXKeyRange = mode[for: .diff] {
       var keysAndObject = keysAndObject
-      let deletions: [MDBXKey]
+      let deletions: [any MDBXKey]
       try self.transaction.begin(parent: nil, flags: [.readWrite])
       
+      let db = table.db
       keysAndObject.sort {
         var lhs = $0.0.key
         var rhs = $1.0.key
-        return transaction.compare(a: &lhs, b: &rhs, database: table.db) <= 0
+        return transaction.compare(a: &lhs, b: &rhs, database: db) <= 0
       }
       let newKeys = keysAndObject.map { $0.0.key }
 
@@ -172,9 +175,10 @@ actor Writer {
       if deletions.isEmpty {
         try? self.transaction.abort()
       } else {
+        let db = table.db
         try deletions.forEach {
           var key = $0.key
-          try transaction.delete(key: &key, database: table.db)
+          try transaction.delete(key: &key, database: db)
         }
         try self.transaction.commit()
         totalCount += deletions.count
@@ -268,7 +272,7 @@ actor Writer {
   
   // MARK: - Delete
   
-  func delete(key: MDBXKey, in table: MDBXTable) async throws -> Int {
+  func delete(key: any MDBXKey, in table: MDBXTable) async throws -> Int {
     os_signpost(.begin, log: .signpost(.table), name: "delete", "table: %{private}@ (%d)", table.name.rawValue)
     
     do {
@@ -319,7 +323,7 @@ actor Writer {
   /// - if `mode` contains both `.append` and `.override`, and not `.changes` - we must write anyway
   /// - if `mode` contains `.override`, but key doesn't exist - we should skip object
   /// - if `mode` doesn't contains `override` and contains
-  private func canWrite(key: MDBXKey, data: Data, in table: MDBXTable, with mode: DBWriteMode) throws -> Bool {
+  private func canWrite(key: any MDBXKey, data: Data, in table: MDBXTable, with mode: DBWriteMode) throws -> Bool {
     // Write all
     if mode.contains([.append, .override]), !mode.contains(.changes) {
       return true

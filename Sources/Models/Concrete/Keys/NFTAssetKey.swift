@@ -13,33 +13,11 @@ public final class NFTAssetKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public var chain: MDBXChain                 { _collectionKey.chain }
-  public var collectionKey: NFTCollectionKey  { _collectionKey }
-  public var dateHex: String                  { _dateHex }
-  public var contractAddress: Address         { _contractAddress }
-  public var hash: Data                       { _hash }
-
-  // MARK: - Private
-  
-  private lazy var _collectionKeyRange: Range<Int> = { 0..<MDBXKeyLength.nftCollection }()
-  private lazy var _collectionKey: NFTCollectionKey = {
-    return NFTCollectionKey(data: key[_collectionKeyRange])!
-  }()
-  
-  private lazy var _dateHexRange: Range<Int> = { _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.dateHex }()
-  private lazy var _dateHex: String = {
-    return key[_dateHexRange].hexString
-  }()
-  
-  private lazy var _contractAddressRange: Range<Int> = { _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.address }()
-  private lazy var _contractAddress: Address = {
-    return Address(rawValue: key[_contractAddressRange].hexString)
-  }()
-  
-  private lazy var _hashRange: Range<Int> = { _contractAddressRange.endIndex..<key.count }()
-  private lazy var _hash: Data = {
-    return key[_hashRange]
-  }()
+  public let chain: MDBXChain
+  public let collectionKey: NFTCollectionKey
+  public let dateHex: String
+  public let contractAddress: Address
+  public let hash: Data
 
   // MARK: - Lifecycle
   
@@ -54,7 +32,30 @@ public final class NFTAssetKey: MDBXKey {
     let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
     let hashPart            = id.sha256.setLengthLeft(MDBXKeyLength.hash)
     
-    self.key = collectionKeyPart + dateHexPart + contractAddressPart + hashPart
+    let key = collectionKeyPart + dateHexPart + contractAddressPart + hashPart
+    self.key = key
+    
+    let _collectionKeyRange: Range<Int> = 0..<MDBXKeyLength.nftCollection
+    let _dateHexRange: Range<Int> = _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.dateHex
+    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.address
+    let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
+
+    self.collectionKey = {
+      return NFTCollectionKey(data: key[_collectionKeyRange])!
+    }()
+    self.chain = self.collectionKey.chain
+    
+    self.dateHex = {
+      return key[_dateHexRange].hexString
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: key[_contractAddressRange].hexString)
+    }()
+    
+    self.hash = {
+      return key[_hashRange]
+    }()
   }
   
   public init(collectionKey: NFTCollectionKey?, lowerRange: Bool) {
@@ -65,12 +66,57 @@ public final class NFTAssetKey: MDBXKey {
     let dateHexPart         = Data(repeating: rangeValue, count: MDBXKeyLength.dateHex)
     let hashPart            = Data(repeating: rangeValue, count: MDBXKeyLength.hash)
     
-    self.key = collectionKeyPart + dateHexPart + contractAddressPart + hashPart
+    let key = collectionKeyPart + dateHexPart + contractAddressPart + hashPart
+    self.key = key
+    
+    let _collectionKeyRange: Range<Int> = 0..<MDBXKeyLength.nftCollection
+    let _dateHexRange: Range<Int> = _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.dateHex
+    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.address
+    let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
+
+    self.collectionKey = {
+      return NFTCollectionKey(data: key[_collectionKeyRange])!
+    }()
+    self.chain = self.collectionKey.chain
+    
+    self.dateHex = {
+      return key[_dateHexRange].hexString
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: key[_contractAddressRange].hexString)
+    }()
+    
+    self.hash = {
+      return key[_hashRange]
+    }()
   }
   
   public init?(data: Data) {
     guard data.count == MDBXKeyLength.nftAsset else { return nil }
     self.key = data
+    
+    let _collectionKeyRange: Range<Int> = 0..<MDBXKeyLength.nftCollection
+    let _dateHexRange: Range<Int> = _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.dateHex
+    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.address
+    let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
+
+    self.collectionKey = {
+      return NFTCollectionKey(data: data[_collectionKeyRange])!
+    }()
+    self.chain = self.collectionKey.chain
+    
+    self.dateHex = {
+      return data[_dateHexRange].hexString
+    }()
+    
+    self.contractAddress = {
+      return Address(rawValue: data[_contractAddressRange].hexString)
+    }()
+    
+    self.hash = {
+      return data[_hashRange]
+    }()
   }
 }
 

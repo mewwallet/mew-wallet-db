@@ -11,7 +11,7 @@ import SwiftProtobuf
 public struct JSONRPCRawTransactionWrapper: MDBXWrapperObject {
   var _chain: MDBXChain
   var _wrapped: _JSONRPCRawTransactionWrapper
-  public weak var database: WalletDB?
+  public weak var database: (any WalletDB)?
   
   public init(jsonString: String, chain: MDBXChain) throws {
     var options = JSONDecodingOptions()

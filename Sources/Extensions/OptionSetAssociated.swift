@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol OptionSetAssociated: OptionSet where RawValue: FixedWidthInteger {
+public protocol OptionSetAssociated: OptionSet, Sendable where RawValue: FixedWidthInteger & Sendable {
   associatedtype AT
   var store: [RawValue: AT] { get set }
 }

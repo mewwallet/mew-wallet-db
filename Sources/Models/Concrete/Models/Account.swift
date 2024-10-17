@@ -43,7 +43,7 @@ public struct Account {
     }
   }
   
-  public var database: WalletDB? {
+  public var database: (any WalletDB)? {
     get { MEWwalletDBImpl.shared }
     set {}
   }
@@ -87,7 +87,7 @@ public struct Account {
               encryptionPublicKey: String?,
               withdrawalPublicKey: String?,
               isHidden: Bool = false,
-              database: WalletDB? = nil) {
+              database: (any WalletDB)? = nil) {
     self._chain = .universal
     self._wrapped = .with {
       $0.address = address.rawValue
@@ -398,17 +398,17 @@ extension Account: MDBXObject {
     }
   }
 
-  public var key: MDBXKey {
+  public var key: any MDBXKey {
     return AccountKey(address: address)
   }
 
-  public var alternateKey: MDBXKey? {
+  public var alternateKey: (any MDBXKey)? {
     return nil
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = .universal
-    self._wrapped = try _Account(serializedData: data)
+    self._wrapped = try _Account(serializedBytes: data)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
@@ -439,7 +439,7 @@ extension Account: MDBXObject {
     return objects.lazy.map({ $0.wrapped(chain) })
   }
 
-  mutating public func merge(with object: MDBXObject) {
+  mutating public func merge(with object: any MDBXObject) {
     let other = object as! Account
     
     self._wrapped.groupID = other._wrapped.groupID

@@ -41,5 +41,7 @@ public enum MDBXKeyLength {
   public static var profile:              Int { return chain + hash + hash }                                    // 80
   public static var staked:               Int { return chain + address + timestamp }                            // 40
   public static var energyReceipt:        Int { return chain + timestampMilliseconds }                          // 24
+  public static var purchaseProvider:     Int { return chain + order + name }                                   // 82
+  public static var purchaseToken:        Int { return chain + address }                                        // 36
+  public static var purchaseOrderedToken: Int { return chain + order + address }                                // 38
 }
-
