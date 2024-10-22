@@ -104,6 +104,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case "BSC":               self = .bsc
     case "BASE":              self = .base
     case "ZKSYNC_MAINNET":    self = .zksync_v2_mainnet
+    case "ARB":               self = .arbitrum
     default:                  self = .eth
     }
   }
