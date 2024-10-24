@@ -60,6 +60,7 @@ extension PurchaseToken {
   public var symbol: String { self._wrapped.symbol }
   public var name: String { self._wrapped.name }
   public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
+  public var isSellSupported: Bool { self._wrapped.isSellSupported }
 }
 
 // MARK: - PurchaseToken + MDBXObject
@@ -118,9 +119,15 @@ extension PurchaseToken: MDBXObject {
   mutating public func merge(with object: any MDBXObject) {
     let other = object as! PurchaseToken
 
+    self._wrapped.chain = other._wrapped.chain
     self._wrapped.symbol = other._wrapped.symbol
     self._wrapped.name = other._wrapped.name
     self._wrapped.contractAddress = other._wrapped.contractAddress
+    self._wrapped.isSellSupported = other._wrapped.isSellSupported
+    self._wrapped.providers = other._wrapped.providers
+    if other._wrapped.hasMarketData {
+      self._wrapped.marketData = other._wrapped.marketData
+    }
   }
 }
 

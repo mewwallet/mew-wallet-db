@@ -44,11 +44,21 @@ struct _PurchaseToken: Sendable {
   /// Clears the value of `marketData`. Subsequent reads from it will return its default value.
   mutating func clearMarketData() {self._marketData = nil}
 
+  var isSellSupported: Bool {
+    get {return _isSellSupported ?? false}
+    set {_isSellSupported = newValue}
+  }
+  /// Returns true if `isSellSupported` has been explicitly set.
+  var hasIsSellSupported: Bool {return self._isSellSupported != nil}
+  /// Clears the value of `isSellSupported`. Subsequent reads from it will return its default value.
+  mutating func clearIsSellSupported() {self._isSellSupported = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
   fileprivate var _marketData: _TokenMeta? = nil
+  fileprivate var _isSellSupported: Bool? = nil
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -62,6 +72,7 @@ extension _PurchaseToken: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     4: .standard(proto: "contract_address"),
     5: .same(proto: "providers"),
     6: .standard(proto: "market_data"),
+    7: .standard(proto: "is_sell_supported"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -76,6 +87,7 @@ extension _PurchaseToken: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 4: try { try decoder.decodeSingularStringField(value: &self.contractAddress) }()
       case 5: try { try decoder.decodeRepeatedStringField(value: &self.providers) }()
       case 6: try { try decoder.decodeSingularMessageField(value: &self._marketData) }()
+      case 7: try { try decoder.decodeSingularBoolField(value: &self._isSellSupported) }()
       default: break
       }
     }
@@ -104,6 +116,9 @@ extension _PurchaseToken: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     try { if let v = self._marketData {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
     } }()
+    try { if let v = self._isSellSupported {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 7)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -114,6 +129,7 @@ extension _PurchaseToken: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.contractAddress != rhs.contractAddress {return false}
     if lhs.providers != rhs.providers {return false}
     if lhs._marketData != rhs._marketData {return false}
+    if lhs._isSellSupported != rhs._isSellSupported {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

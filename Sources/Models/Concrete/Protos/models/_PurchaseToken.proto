@@ -8,4 +8,5 @@ message _PurchaseToken {
   string contract_address             = 4;
   repeated string providers           = 5;
   optional _TokenMeta market_data     = 6;
+  optional bool is_sell_supported     = 7;
 }
