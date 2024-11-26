@@ -20,7 +20,6 @@ extension _NFTAssetLastSale {
     guard self.hasToken else { return nil }
     let token = self.token
     self.metaKey = token.wrapped(chain).key.key
-    self.clearToken()
     return token
   }
 }
