@@ -122,7 +122,7 @@ public struct SwapListV5Wrapper: Sendable {
   
   public init(fromJSONString: String) throws {
     let items = try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.universal) })
-    self.tokens = items.tokens//.flatMap { $0.tokens }
+    self.tokens = items.tokens
     self.tokens_dexItems = items.tokens_dexItems
     self.featured_dexItems = items.featured_dexItems
   }
