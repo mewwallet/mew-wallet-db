@@ -19,6 +19,7 @@ private enum _MDBXChain: Data, Sendable {
   case bsc                = "0x00000000000000000000000000000038" // 56
   case base               = "0x00000000000000000000000000002105" // 8453
   case arbitrum           = "0x0000000000000000000000000000A4B1" // 42161
+  case optimism           = "0x0000000000000000000000000000000A" // 10
   
   var chain: MDBXChain {
     switch self {
@@ -33,6 +34,7 @@ private enum _MDBXChain: Data, Sendable {
     case .bsc:                return .bsc
     case .base:               return .base
     case .arbitrum:           return .arbitrum
+    case .optimism:           return .optimism
     }
   }
 }
@@ -60,7 +62,8 @@ public enum MDBXChain: CaseIterable, Sendable {
     .canto,
     .bsc,
     .base,
-    .arbitrum
+    .arbitrum,
+    .optimism
   ]
   
   case invalid
@@ -76,6 +79,7 @@ public enum MDBXChain: CaseIterable, Sendable {
   case bsc
   case base
   case arbitrum
+  case optimism
   case custom(Data)
   
   internal var value: UInt64 {
@@ -110,6 +114,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .bsc:                return _MDBXChain.bsc.rawValue
     case .base:               return _MDBXChain.base.rawValue
     case .arbitrum:           return _MDBXChain.arbitrum.rawValue
+    case .optimism:           return _MDBXChain.optimism.rawValue
     case .custom(let data): return data
     }
   }
@@ -144,6 +149,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case "BASE":              self = .base
     case "ZKSYNC_MAINNET":    self = .zksync_v2_mainnet
     case "ARB":               self = .arbitrum
+    case "OP":                self = .optimism
     default:                  self = .eth
     }
   }
@@ -160,6 +166,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .bsc:                return "BSC"
     case .base:               return "Base"
     case .arbitrum:           return "Arbitrum"
+    case .optimism:           return "Optimism"
     default:    return ""
     }
   }
@@ -176,6 +183,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .bsc:                return "BSC"
     case .base:               return "ETH"
     case .arbitrum:           return "ETH"
+    case .optimism:           return "ETH"
     default:    return ""
     }
   }
@@ -192,6 +200,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .bsc:                return 18
     case .base:               return 18
     case .arbitrum:           return 18
+    case .optimism:           return 18
     default:                  return 18
     }
   }
@@ -223,6 +232,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .bsc:                return "0x00000000000000000000000000000038" // 56
     case .base:               return "0x00000000000000000000000000002105" // 8453
     case .arbitrum:           return "0x0000000000000000000000000000A4B1" // 42161
+    case .optimism:           return "0x0000000000000000000000000000000A" // 10
     case .custom(let chain):  return chain.hexString
     }
   }
