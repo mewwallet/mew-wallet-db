@@ -40,6 +40,18 @@ private enum _MDBXChain: Data, Sendable {
 }
 
 public enum MDBXChain: CaseIterable, Sendable {
+  fileprivate static let _chainsMap: [UInt64: MDBXChain] = [
+    1:      .eth,
+    5:      .goerli,
+    137:    .polygon_mainnet,
+    80001:  .polygon_mumbai,
+    324:    .zksync_v2_mainnet,
+    280:    .zksync_v2_testnet,
+    7700:   .canto,
+    56:     .bsc,
+    8453:   .base,
+    42161:  .arbitrum,
+  ]
   public static let allCases: [MDBXChain] = [
     .eth,
     .goerli,
@@ -70,6 +82,24 @@ public enum MDBXChain: CaseIterable, Sendable {
   case optimism
   case custom(Data)
   
+  internal var value: UInt64 {
+    switch self {
+    case .universal:                  return 1
+    case .invalid:                    return 0
+    case .eth:                        return 1
+    case .goerli:                     return 5
+    case .polygon_mainnet:            return 137
+    case .polygon_mumbai:             return 80001
+    case .zksync_v2_mainnet:          return 324
+    case .zksync_v2_testnet:          return 280
+    case .canto:                      return 7700
+    case .bsc:                        return 56
+    case .base:                       return 8453
+    case .arbitrum:                   return 42161
+    case .custom(let data):           return data.withUnsafeBytes { $0.load(as: UInt64.self) }
+    }
+  }
+  
   public var rawValue: Data {
     switch self {
     case .invalid:            return _MDBXChain.invalid.rawValue
@@ -96,6 +126,15 @@ public enum MDBXChain: CaseIterable, Sendable {
       return
     }
     self = chain.chain
+  }
+  
+  public init(rawValue: UInt64) {
+    if let chain = Self._chainsMap[rawValue] {
+      self = chain
+      return
+    }
+    let data = withUnsafeBytes(of: rawValue) { Data($0) }
+    self.init(rawValue: data)
   }
   
   /// Uses to recover chain for HistoryPurchase

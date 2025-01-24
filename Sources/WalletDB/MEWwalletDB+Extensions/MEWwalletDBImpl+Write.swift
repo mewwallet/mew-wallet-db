@@ -30,15 +30,15 @@ public extension MEWwalletDBImpl {
   }
   
   @discardableResult
-  func write(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode) async throws -> Int {
+  func write<S: Sequence>(table: MDBXTableName, keysAndData: S, mode: DBWriteMode) async throws -> Int where S.Element == MDBXKeyData, S: Sendable {
     let environment = try self.getEnvironment()
     guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
     let table = (table, db)
     return try await environment.writer.write(table: table, keysAndData: keysAndData, mode: mode)
   }
   
-  @discardableResult 
-  func write(table: MDBXTableName, keysAndObjects: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int {
+  @discardableResult
+  func write<S: Sequence>(table: MDBXTableName, keysAndObjects: S, mode: DBWriteMode) async throws -> Int where S.Element == MDBXKeyObject, S: Sendable {
     let environment = try self.getEnvironment()
     guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
     let table = (table, db)

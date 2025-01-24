@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message _SwapListV5TokenMetaWrapper {
+  string n = 1;                // Name of the token
+  string s = 2;                // Symbol
+  string p = 3;                // Price as a string
+  string i = 4;                // Image URL
+  repeated uint64 c = 5;       // Chain IDs
+  repeated string ca = 6;      // Contract addresses
+  repeated int32 d = 7;        // Decimals
+  repeated int32 f = 8;        // Featured index
+}
