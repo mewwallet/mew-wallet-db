@@ -51,6 +51,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     56:     .bsc,
     8453:   .base,
     42161:  .arbitrum,
+    10:     .optimism
   ]
   public static let allCases: [MDBXChain] = [
     .eth,
@@ -96,6 +97,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .bsc:                        return 56
     case .base:                       return 8453
     case .arbitrum:                   return 42161
+    case .optimism:                   return 10
     case .custom(let data):           return data.withUnsafeBytes { $0.load(as: UInt64.self) }
     }
   }
