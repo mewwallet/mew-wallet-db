@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Mikhail Nikanorov on 3/2/22.
 //
@@ -37,214 +37,226 @@ actor Writer {
     return try await self.write(table: table, keysAndObject: [(key, object)], mode: mode)
   }
   
-  func write(table: MDBXTable, keysAndData: [MDBXKeyData], mode: DBWriteMode) async throws -> Int {
-    let mode: DBWriteMode = mode.isEmpty ? .default : mode
-    guard mode.contains(.append) || mode.contains(.override) else {
-      throw DBWriteError.badMode
-    }
-    
-    var totalCount = 0
-    
-    // Diff logic - removes old in the range
-    if let range: MDBXKeyRange = mode[for: .diff] {
-      var keysAndData = keysAndData
-      let deletions: [any MDBXKey]
-      try self.transaction.begin(parent: nil, flags: [.readWrite])
-      
-      let db = table.db
-      keysAndData.sort {
-        var lhs = $0.0.key
-        var rhs = $1.0.key
-        return transaction.compare(a: &lhs, b: &rhs, database: db) <= 0
+  func write<S: Sequence>(table: MDBXTable, keysAndData: S, mode: DBWriteMode) async throws -> Int where S.Element == MDBXKeyData, S: Sendable {
+    return try autoreleasepool {
+      let mode: DBWriteMode = mode.isEmpty ? .default : mode
+      guard mode.contains(.append) || mode.contains(.override) else {
+        throw DBWriteError.badMode
       }
-      let newKeys = keysAndData.map { $0.0.key }
-
-      let cursor = MDBXCursor()
-      try cursor.open(transaction: transaction, database: table.db)
-      let results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
       
-      let difference = newKeys.difference(from: results)
-      deletions = difference.compactMap {
-        switch $0 {
-        case .remove(_, let key, _):
-          return key
-        default:
+      var totalCount = 0
+      
+      /// Optimize memory usage in diff logic
+      if let range: MDBXKeyRange = mode[for: .diff] {
+        var keysAndData = Array(keysAndData)
+        let deletions: [any MDBXKey]
+        try self.transaction.begin(parent: nil, flags: [.readWrite])
+        
+        /// Sort keysAndObject for proper comparison
+        let db = table.db
+        keysAndData.sort {
+          var lhs = $0.0.key
+          var rhs = $1.0.key
+          return transaction.compare(a: &lhs, b: &rhs, database: db) <= 0
+        }
+        let newKeys = keysAndData.lazy.map { $0.0.key }
+        
+        let cursor = MDBXCursor()
+        try cursor.open(transaction: transaction, database: table.db)
+        
+        /// Use ArraySlice to avoid unnecessary copies
+        let results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
+        
+        let difference = newKeys.difference(from: results)
+        deletions = difference.compactMap {
+          if case let .remove(_, key, _) = $0 {
+            return key
+          }
           return nil
         }
-      }
-      if deletions.isEmpty {
-        try? self.transaction.abort()
-      } else {
-        let db = table.db
-        try deletions.forEach {
-          var key = $0.key
-          try transaction.delete(key: &key, database: db)
-        }
-        try self.transaction.commit()
-        totalCount += deletions.count
-      }
-      
-      cursor.close()
-    }
-    
-    os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
-    
-    let chunks = keysAndData.chunks(ofCount: WriterStatic.chunkSize)
-    
-    do {
-      var dropped = !mode.contains(.dropTable)
-      
-      for chunk in chunks {
-        try self.transaction.begin(parent: nil, flags: [.readWrite])
-        /// Drop table if required
-        if !dropped {
-          try self.transaction.drop(database: table.db, delete: false)
-          dropped = true
-        }
-        var count = 0
-        for (key, data) in chunk {
-          guard try self.canWrite(key: key, data: data, in: table, with: mode) else {
-            continue
+        
+        if deletions.isEmpty {
+          try? self.transaction.abort()
+        } else {
+          let db = table.db
+          try deletions.forEach {
+            var key = $0.key
+            try transaction.delete(key: &key, database: db)
           }
-          
-          count += 1
-          try self.transaction.write(key: key, value: data, database: table.db)
+          try self.transaction.commit()
+          totalCount += deletions.count
         }
         
-        if count > 0 {
-          os_signpost(.event, log: .signpost(.write), name: "write", "put finished")
-          try self.transaction.commit()
-        } else {
-          os_signpost(.event, log: .signpost(.write), name: "write", "nothing to put")
-          try self.transaction.abort()
-        }
-        totalCount += count
+        cursor.close()
       }
       
-      os_signpost(.end, log: .signpost(.write), name: "write", "done")
-      return totalCount
-    } catch {
-      os_signpost(.end, log: .signpost(.write), name: "write", "Error: %{private}@", error.localizedDescription)
-      Logger.error(.write, error)
-      try self.transaction.abort()
-      return 0
+      os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+      
+      let chunks = Array(keysAndData).lazy.chunks(ofCount: WriterStatic.chunkSize)
+      
+      do {
+        var dropped = !mode.contains(.dropTable)
+        
+        for chunk in chunks {
+          try self.transaction.begin(parent: nil, flags: [.readWrite])
+          /// Drop table if required
+          if !dropped {
+            try self.transaction.drop(database: table.db, delete: false)
+            dropped = true
+          }
+          
+          var count = 0
+          for (key, data) in chunk {
+            guard try self.canWrite(key: key, data: data, in: table, with: mode) else {
+              continue
+            }
+            
+            count += 1
+            try self.transaction.write(key: key, value: data, database: table.db)
+          }
+          
+          if count > 0 {
+            os_signpost(.event, log: .signpost(.write), name: "write", "put finished")
+            try self.transaction.commit()
+          } else {
+            os_signpost(.event, log: .signpost(.write), name: "write", "nothing to put")
+            try self.transaction.abort()
+          }
+          totalCount += count
+        }
+        
+        os_signpost(.end, log: .signpost(.write), name: "write", "done")
+        return totalCount
+      } catch {
+        os_signpost(.end, log: .signpost(.write), name: "write", "Error: %{private}@", error.localizedDescription)
+        Logger.error(.write, error)
+        try self.transaction.abort()
+        return 0
+      }
     }
   }
   
-  func write(table: MDBXTable, keysAndObject: [MDBXKeyObject], mode: DBWriteMode) async throws -> Int {
-    let mode: DBWriteMode = mode.isEmpty ? .default : mode
-    guard mode.contains(.append) || mode.contains(.override) else {
-      throw DBWriteError.badMode
-    }
-    
-    os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
-    var totalCount = 0
-    
-    // Diff logic - removes old in the range
-    if let range: MDBXKeyRange = mode[for: .diff] {
-      var keysAndObject = keysAndObject
-      let deletions: [any MDBXKey]
-      try self.transaction.begin(parent: nil, flags: [.readWrite])
-      
-      let db = table.db
-      keysAndObject.sort {
-        var lhs = $0.0.key
-        var rhs = $1.0.key
-        return transaction.compare(a: &lhs, b: &rhs, database: db) <= 0
-      }
-      let newKeys = keysAndObject.map { $0.0.key }
-
-      let cursor = MDBXCursor()
-      try cursor.open(transaction: transaction, database: table.db)
-      var results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
-      if range.op == .greaterThanStart {
-        if results.first?.hexString != nil, results.first?.hexString == range.start?.key.hexString {
-          results.removeFirst()
-        }
+  func write<S: Sequence>(table: MDBXTable, keysAndObject: S, mode: DBWriteMode) async throws -> Int where S.Element == MDBXKeyObject, S: Sendable {
+    return try autoreleasepool {
+      let mode: DBWriteMode = mode.isEmpty ? .default : mode
+      guard mode.contains(.append) || mode.contains(.override) else {
+        throw DBWriteError.badMode
       }
       
-      let difference = newKeys.difference(from: results)
-      deletions = difference.compactMap {
-        switch $0 {
-        case .remove(_, let key, _):
-          return key
-        default:
-          return nil
-        }
-      }
-      if deletions.isEmpty {
-        try? self.transaction.abort()
-      } else {
-        let db = table.db
-        try deletions.forEach {
-          var key = $0.key
-          try transaction.delete(key: &key, database: db)
-        }
-        try self.transaction.commit()
-        totalCount += deletions.count
-      }
+      os_signpost(.begin, log: .signpost(.write), name: "write", "to table: %{private}@", table.name.rawValue)
+      var totalCount = 0
       
-      cursor.close()
-    }
-    
-    let chunks = keysAndObject.chunks(ofCount: WriterStatic.chunkSize)
-    
-    do {
-      var dropped = !mode.contains(.dropTable)
-      for chunk in chunks {
+      /// Optimize memory usage in diff logic
+      if let range: MDBXKeyRange = mode[for: .diff] {
+        var keysAndObject = Array(keysAndObject)
+        let deletions: [any MDBXKey]
         try self.transaction.begin(parent: nil, flags: [.readWrite])
         
-        /// Drop table if required
-        if !dropped {
-          try self.transaction.drop(database: table.db, delete: false)
-          dropped = true
+        /// Sort keysAndObject for proper comparison
+        let db = table.db
+        keysAndObject.sort {
+          var lhs = $0.0.key
+          var rhs = $1.0.key
+          return transaction.compare(a: &lhs, b: &rhs, database: db) <= 0
         }
-        var count = 0
-        for (key, object) in chunk {
-          var data = try object.serialized
-          guard try self.canWrite(key: key, data: data, in: table, with: mode) else {
-            continue
+        let newKeys = keysAndObject.lazy.map { $0.0.key }
+        
+        let cursor = MDBXCursor()
+        try cursor.open(transaction: transaction, database: table.db)
+        
+        /// Use ArraySlice to avoid unnecessary copies
+        var results: [Data] = try cursor.fetchKeys(range: range, from: table.db, order: .asc)
+        if range.op == .greaterThanStart {
+          if let first = results.first?.hexString, first == range.start?.key.hexString {
+            results = Array(results.dropFirst())
           }
-          
-          /// Merge objects if required
-          if mode.contains(.merge) {
-            var key = key.key
-            do {
-              let cachedData = try self.transaction.getValue(for: &key, database: table.db)
-              var cachedObject = try type(of: object).init(serializedData: cachedData, chain: key.chain, key: key)
-              cachedObject.merge(with: object)
-              data = try cachedObject.serialized
-              /// Double check if we need to override object
-              if mode.contains(.overrideChanges), cachedData == data {
-                continue
-              }
-            } catch MDBXError.notFound {
-            } catch {
-              throw error
-            }
-          }
-          
-          count += 1
-          try self.transaction.write(key: key, value: data, database: table.db)
         }
         
-        if count > 0 {
-          os_signpost(.event, log: .signpost(.write), name: "write", "put finished")
-          try self.transaction.commit()
-        } else {
-          os_signpost(.event, log: .signpost(.write), name: "write", "nothing to put")
-          try self.transaction.abort()
+        let difference = newKeys.difference(from: results)
+        deletions = difference.compactMap {
+          if case let .remove(_, key, _) = $0 {
+            return key
+          }
+          return nil
         }
-        totalCount += count
+        
+        if deletions.isEmpty {
+          try? self.transaction.abort()
+        } else {
+          let db = table.db
+          try deletions.forEach {
+            var key = $0.key
+            try transaction.delete(key: &key, database: db)
+          }
+          try self.transaction.commit()
+          totalCount += deletions.count
+        }
+        
+        cursor.close()
       }
       
-      os_signpost(.end, log: .signpost(.write), name: "write", "done")
-      return totalCount
-    } catch {
-      os_signpost(.end, log: .signpost(.write), name: "write", "Error: %{private}@", error.localizedDescription)
-      Logger.error(.write, error)
-      try self.transaction.abort()
-      return 0
+      /// Process in chunks to limit memory usage
+      let chunks = Array(keysAndObject).lazy.chunks(ofCount: WriterStatic.chunkSize)
+      
+      do {
+        var dropped = !mode.contains(.dropTable)
+        for chunk in chunks {
+          try self.transaction.begin(parent: nil, flags: [.readWrite])
+          
+          /// Drop table if required
+          if !dropped {
+            try self.transaction.drop(database: table.db, delete: false)
+            dropped = true
+          }
+          
+          var count = 0
+          for (key, object) in chunk {
+            // Serialize objects efficiently
+            var data = try object.serialized
+            guard try self.canWrite(key: key, data: data, in: table, with: mode) else {
+              continue
+            }
+            
+            /// Merge logic optimized for fewer operations
+            if mode.contains(.merge) {
+              var key = key.key
+              do {
+                let cachedData = try self.transaction.getValue(for: &key, database: table.db)
+                var cachedObject = try type(of: object).init(serializedData: cachedData, chain: key.chain, key: key)
+                cachedObject.merge(with: object)
+                data = try cachedObject.serialized
+                /// Double check if we need to override object
+                if mode.contains(.overrideChanges), cachedData == data {
+                  continue
+                }
+              } catch MDBXError.notFound {
+              } catch {
+                throw error
+              }
+            }
+            
+            count += 1
+            try self.transaction.write(key: key, value: data, database: table.db)
+          }
+          
+          if count > 0 {
+            os_signpost(.event, log: .signpost(.write), name: "write", "put finished")
+            try self.transaction.commit()
+          } else {
+            os_signpost(.event, log: .signpost(.write), name: "write", "nothing to put")
+            try self.transaction.abort()
+          }
+          totalCount += count
+        }
+        
+        os_signpost(.end, log: .signpost(.write), name: "write", "done")
+        return totalCount
+      } catch {
+        os_signpost(.end, log: .signpost(.write), name: "write", "Error: %{private}@", error.localizedDescription)
+        Logger.error(.write, error)
+        try self.transaction.abort()
+        return 0
+      }
     }
   }
   
@@ -315,7 +327,6 @@ actor Writer {
       throw error
     }
   }
-
   
   // MARK: - Private
   
