@@ -208,11 +208,7 @@ public enum MDBXChain: CaseIterable, Sendable {
   }
   
   public var primary: Address {
-    switch self {
-    case .zksync_v2_testnet:  return ._zktv2Primary
-    case .zksync_v2_mainnet:  return ._zktv2Primary
-    default:                  return ._primary
-    }
+    return ._primary
   }
   
   public var isZKSync: Bool {
