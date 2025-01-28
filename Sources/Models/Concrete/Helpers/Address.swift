@@ -10,7 +10,6 @@ import Foundation
 public enum Address: RawRepresentable, Equatable, Sendable {
   public typealias RawValue = String
   case _primary             // "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-  case _zktv2Primary        // "0x0000000000000000000000000000000000000000"
   
   case starkChain           // "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c"
   case renBTC               // "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d"
@@ -51,7 +50,7 @@ public enum Address: RawRepresentable, Equatable, Sendable {
   public var isRenBTC: Bool          { self == .renBTC }
   public var isSkale: Bool           { self == .skale }
   public var isStEth: Bool           { self == .stEth }
-  public var isPrimary: Bool         { self == ._primary || self == ._zktv2Primary }
+  public var isPrimary: Bool         { self == ._primary }
   public var isWBTC: Bool            { self == .wBTC }
   public var isZK2Buidl: Bool        { self == ._zktv2Buidl || self == ._zkv2Buidl }
   public var isMEWUniverse: Bool     { self == .mewUniverse }
@@ -66,7 +65,6 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     let rawValue = rawValue.stringAddHexPrefix().lowercased()
     switch rawValue {
     case "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": self = ._primary
-    case "0x0000000000000000000000000000000000000000": self = ._zktv2Primary
     
     case "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c": self = .starkChain
     case "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d": self = .renBTC
@@ -92,7 +90,6 @@ public enum Address: RawRepresentable, Equatable, Sendable {
   public var rawValue: String {
     switch self {
     case ._primary:                                   return "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-    case ._zktv2Primary:                              return "0x0000000000000000000000000000000000000000"
       
     case .starkChain:                                 return "0x1edc9ba729ef6fb017ef9c687b1a37d48b6a166c"
     case .renBTC:                                     return "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d"
