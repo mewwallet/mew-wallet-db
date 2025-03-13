@@ -114,6 +114,12 @@ struct _Profile: @unchecked Sendable {
 
       /// 'Big movers notification' flag
       case bigMovers // = 16
+
+      /// 'Season start announcement'
+      case energySeasonStart // = 32
+
+      /// 'Season end announcement'
+      case energySeasonEnd // = 64
       case UNRECOGNIZED(Int)
 
       init() {
@@ -128,6 +134,8 @@ struct _Profile: @unchecked Sendable {
         case 4: self = .announcements
         case 8: self = .security
         case 16: self = .bigMovers
+        case 32: self = .energySeasonStart
+        case 64: self = .energySeasonEnd
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -140,6 +148,8 @@ struct _Profile: @unchecked Sendable {
         case .announcements: return 4
         case .security: return 8
         case .bigMovers: return 16
+        case .energySeasonStart: return 32
+        case .energySeasonEnd: return 64
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -152,6 +162,8 @@ struct _Profile: @unchecked Sendable {
         .announcements,
         .security,
         .bigMovers,
+        .energySeasonStart,
+        .energySeasonEnd,
       ]
 
     }
@@ -548,6 +560,8 @@ extension _Profile._Settings._Notifications: SwiftProtobuf._ProtoNameProviding {
     4: .same(proto: "ANNOUNCEMENTS"),
     8: .same(proto: "SECURITY"),
     16: .same(proto: "BIG_MOVERS"),
+    32: .same(proto: "ENERGY_SEASON_START"),
+    64: .same(proto: "ENERGY_SEASON_END"),
   ]
 }
 
