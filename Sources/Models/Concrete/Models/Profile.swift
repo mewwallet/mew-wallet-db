@@ -95,8 +95,14 @@ public struct Profile {
     /// Option to enable/disable big movers notifications
     /// mask: `0b0001_0000`
     public static let big_movers                          = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.bigMovers.rawValue))
+    /// Option to enable/disable season start announcement
+    /// mask: `0b0010_0000`
+    public static let energy_season_start                 = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.energySeasonStart.rawValue))
+    /// Option to enable/disable season end announcement
+    /// mask: `0b0100_0000`
+    public static let energy_season_end                   = NotificationFlags(rawValue: UInt32(_Profile._Settings._Notifications.energySeasonEnd.rawValue))
     
-    public static let all: NotificationFlags              = [.outgoingTx, .incomingTx, .announcements, .security]
+    public static let all: NotificationFlags              = [.outgoingTx, .incomingTx, .announcements, .security, .energy_season_start, .energy_season_end]
     
     public init(rawValue: UInt32) {
       self.rawValue = rawValue

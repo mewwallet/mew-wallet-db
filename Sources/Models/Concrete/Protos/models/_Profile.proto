@@ -81,6 +81,10 @@ message _Profile {
       SECURITY                                  = 8;
       // 'Big movers notification' flag
       BIG_MOVERS                                = 16;
+      // 'Season start announcement'
+      ENERGY_SEASON_START                       = 32;
+      // 'Season end announcement'
+      ENERGY_SEASON_END                         = 64;
     }
     
     // Stores notifications settings flags
