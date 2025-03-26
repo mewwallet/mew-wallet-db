@@ -89,7 +89,7 @@ extension HistorySwap {
   public var account: Account {
     get throws {
       let address = Address(rawValue: _wrapped.address)
-      return try _account.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
+      return try _account.getData(key: AccountKey(chain: .evm, address: address), policy: .cacheOrLoad, chain: .evm, database: self.database)
     }
   }
 

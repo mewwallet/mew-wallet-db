@@ -66,4 +66,11 @@ message _Account {
     repeated _Token tokenHidden             = 8;
   }
   _UserState state                        = 6;
+
+  enum _Network {
+    EVM                                     = 0;
+    BITCOIN                                 = 1;
+  }
+
+  optional _Network network               = 7;
 }

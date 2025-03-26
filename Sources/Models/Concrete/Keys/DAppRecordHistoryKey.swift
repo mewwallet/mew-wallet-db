@@ -12,13 +12,13 @@ public final class DAppRecordHistoryKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public let chain: MDBXChain = .universal
+  public let chain: MDBXChain = .evm
   public let urlHash: Data
   
   // MARK: - Lifecycle
   
   public init(hash: Data) {
-    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let hashPart            = hash.setLengthLeft(MDBXKeyLength.hash)
     
     let key = chainPart + hashPart

@@ -13,14 +13,14 @@ extension EnergyRewardReceipt {
     
     // MARK: - Public
     
-    public let chain: MDBXChain = .universal
+    public let chain: MDBXChain = .evm
     public let key: Data
     public let timestamp: Date
     
     // MARK: - Lifecycle
     
     public init(timestamp: Date) {
-      let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+      let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
       
       let seconds             = UInt64(timestamp.timeIntervalSince1970 * 1000)
       let timestampPart       = withUnsafeBytes(of: seconds.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.timestampMilliseconds)
@@ -40,7 +40,7 @@ extension EnergyRewardReceipt {
     }
     
     public init(lowerRange: Bool) {
-      let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+      let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
       let timestampPart: Data
       if lowerRange {
         timestampPart         = Data().setLengthLeft(MDBXKeyLength.timestampMilliseconds)

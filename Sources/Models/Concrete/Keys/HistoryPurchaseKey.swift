@@ -15,14 +15,14 @@ public final class HistoryPurchaseKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public let chain: MDBXChain = .universal
+  public let chain: MDBXChain = .evm
   public let address: Address
   public let transactionID: String
   
   // MARK: - Lifecycle
   
   public init(account: Address, transactionID: String) {
-    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.address)
     let transactionIDPart   = Data(hex: transactionID).setLengthLeft(MDBXKeyLength.hash)
     
@@ -43,7 +43,7 @@ public final class HistoryPurchaseKey: MDBXKey {
   }
   
   public init(address: Address, lowerRange: Bool) {
-    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
     let transactionIDPart: Data
     if lowerRange {

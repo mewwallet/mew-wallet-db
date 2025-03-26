@@ -107,11 +107,11 @@ extension SwapListV5TokenMetaWrapper: ProtoWrapper {
 
 extension SwapListV5TokenMetaWrapper {
   public static func array(fromJSONString: String) throws -> [Self] {
-    return try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.universal) })
+    return try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.evm) })
   }
   
   public static func array(fromJSONUTF8Data: Data) throws -> [Self] {
-    return try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.universal) })
+    return try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.evm) })
   }
 }
 
@@ -121,14 +121,14 @@ public struct SwapListV5Wrapper: Sendable {
   public let featured_dexItems: [DexItem]
   
   public init(fromJSONString: String) throws {
-    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.universal) })
+    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.evm) })
     self.tokens = items.tokens
     self.tokens_dexItems = items.tokens_dexItems
     self.featured_dexItems = items.featured_dexItems
   }
   
   public init(fromJSONUTF8Data: Data) throws {
-    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.universal) })
+    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.evm) })
     self.tokens = items.tokens
     self.tokens_dexItems = items.tokens_dexItems
     self.featured_dexItems = items.featured_dexItems

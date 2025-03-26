@@ -12,13 +12,13 @@ public final class DAppRecordReferenceKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public let chain: MDBXChain = .universal
+  public let chain: MDBXChain = .evm
   public let order: UInt16
   
   // MARK: - Lifecycle
   
   public init(order: UInt16) {
-    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
     
     let key = chainPart + orderPart

@@ -43,6 +43,19 @@ public struct Account {
     }
   }
   
+  public enum Network: Int {
+    case evm              = 0
+    case bitcoin          = 1
+    
+    init(_ network: _Account._Network) {
+      switch network {
+      case .evm:               self = .evm
+      case .bitcoin:           self = .bitcoin
+      case .UNRECOGNIZED:      self = .evm
+      }
+    }
+  }
+  
   public var database: (any WalletDB)? {
     get { MEWwalletDBImpl.shared }
     set {}
@@ -88,7 +101,7 @@ public struct Account {
               withdrawalPublicKey: String?,
               isHidden: Bool = false,
               database: (any WalletDB)? = nil) {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = .with {
       $0.address = address.rawValue
       $0.groupID = 0
@@ -203,6 +216,13 @@ extension Account {
   public var type: `Type` {
     set { self._wrapped.type = .init(rawValue: newValue.rawValue) ?? .UNRECOGNIZED(newValue.rawValue) }
     get { Type(self._wrapped.type) }
+  }
+  
+  /// Network type of account
+  /// EVM or Bitcoin
+  public var network: Network {
+    set { self._wrapped.network = .init(rawValue: newValue.rawValue) ?? .UNRECOGNIZED(newValue.rawValue) }
+    get { Network(self._wrapped.network) }
   }
   
   // MARK: Keys
@@ -399,7 +419,7 @@ extension Account: MDBXObject {
   }
 
   public var key: any MDBXKey {
-    return AccountKey(address: address)
+    return AccountKey(chain: .evm, address: address)
   }
 
   public var alternateKey: (any MDBXKey)? {
@@ -407,21 +427,21 @@ extension Account: MDBXObject {
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _Account(serializedBytes: data)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _Account(jsonUTF8Data: jsonData, options: options)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _Account(jsonString: jsonString, options: options)
   }
 

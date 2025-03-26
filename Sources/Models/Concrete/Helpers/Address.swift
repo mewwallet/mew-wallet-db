@@ -62,7 +62,12 @@ public enum Address: RawRepresentable, Equatable, Sendable {
   }
   
   public init(rawValue: String) {
-    let rawValue = rawValue.stringAddHexPrefix().lowercased()
+    let value: String
+    if !rawValue.hasPrefix("bc") && !rawValue.hasPrefix("tb") {
+      value = rawValue.stringAddHexPrefix().lowercased()
+    } else {
+      value = rawValue
+    }
     switch rawValue {
     case "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": self = ._primary
     
@@ -82,8 +87,10 @@ public enum Address: RawRepresentable, Equatable, Sendable {
       
     case "0xeeeeeece1b4d9c1bd876b3e7fbe1871947c705cd": self = .mewUniverse
       
-    case _ where rawValue.count == 42:                 self = .unknown(rawValue)
-    default:                                           self = .invalid(rawValue)
+    case _ where rawValue.count == 42:                 self = .unknown(value)
+    case _ where rawValue.hasPrefix("bc"):             self = .unknown(value)
+    case _ where rawValue.hasPrefix("tb"):             self = .unknown(value)
+    default:                                           self = .invalid(value)
     }
   }
   
@@ -111,6 +118,15 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     case .invalid(let address):                       return address.lowercased()
     }
   }
+  
+//  public var data: Data {
+//    let raw = self.rawValue
+//    if self.rawValue.isHex() {
+//      return Data(hex: raw)
+//    } else {
+//      return raw.data(using: .utf8)
+//    }
+//  }
 }
 
 extension Address: ExpressibleByStringLiteral {

@@ -68,8 +68,8 @@ public struct EnergyRewardReceipt: Equatable {
         $0.nftTx = nft._wrapped
       }
     }
-    self._chain = .universal
-    self.commonInit(chain: .universal)
+    self._chain = .evm
+    self.commonInit(chain: .evm)
   }
 }
 
@@ -116,7 +116,7 @@ extension EnergyRewardReceipt {
   
   public var item: EnergyRewardReceipt.Item {
     guard let item = self.$_item else {
-      return EnergyRewardReceipt.Item(_wrapped.item, chain: .universal)
+      return EnergyRewardReceipt.Item(_wrapped.item, chain: .evm)
     }
     return item
   }
@@ -153,39 +153,39 @@ extension EnergyRewardReceipt: MDBXObject {
   }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _EnergyRewardReceipt(serializedBytes: data)
-    commonInit(chain: .universal)
+    commonInit(chain: .evm)
   }
   
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _EnergyRewardReceipt(jsonUTF8Data: jsonData, options: options)
-    commonInit(chain: .universal)
+    commonInit(chain: .evm)
   }
   
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _EnergyRewardReceipt(jsonString: jsonString, options: options)
-    commonInit(chain: .universal)
+    commonInit(chain: .evm)
   }
   
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _EnergyRewardReceipt.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
   
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _EnergyRewardReceipt.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
   
   mutating public func merge(with object: any MDBXObject) {
@@ -213,8 +213,8 @@ extension EnergyRewardReceipt: MDBXObject {
 
 extension _EnergyRewardReceipt: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> EnergyRewardReceipt {
-    var receipt = EnergyRewardReceipt(self, chain: .universal)
-    receipt.commonInit(chain: .universal)
+    var receipt = EnergyRewardReceipt(self, chain: .evm)
+    receipt.commonInit(chain: .evm)
     return receipt
   }
 }
@@ -232,9 +232,9 @@ public extension EnergyRewardReceipt {
 
 extension EnergyRewardReceipt: ProtoWrapper {
   init(_ wrapped: _EnergyRewardReceipt, chain: MDBXChain) {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = wrapped
-    commonInit(chain: .universal)
+    commonInit(chain: .evm)
   }
 }
 
@@ -251,10 +251,10 @@ extension EnergyRewardReceipt: Comparable {
 extension EnergyRewardReceipt {
   mutating func commonInit(chain: MDBXChain) {
     // Wrappers
-    __energyNftTransfer.chain = .eth
+    __energyNftTransfer.chain = .evm
     __energyNftTransfer.refreshProjected(wrapped: _wrapped.nftTx)
     
-    __item.chain = .universal
+    __item.chain = .evm
     __item.refreshProjected(wrapped: _wrapped.item)
   }
 }

@@ -13,13 +13,13 @@ extension DAppLists {
     // MARK: - Public
     
     public let key: Data
-    public let chain: MDBXChain = .universal
+    public let chain: MDBXChain = .evm
     public let data = Data(hex: "0x6c69737473") // lists
     
     // MARK: - Lifecycle
     
     public init() {
-      let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+      let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
       let dataPart            = self.data
       
       self.key = chainPart + dataPart

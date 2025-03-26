@@ -59,8 +59,8 @@ extension Token {
   
   public var account: Account? {
     get throws {
-      let key = AccountKey(address: .unknown(_wrapped.address))
-      return try _account.getData(key: key, policy: .ignoreCache, chain: .universal, database: self.database)
+      let key = AccountKey(chain: .evm, address: .unknown(_wrapped.address))
+      return try _account.getData(key: key, policy: .ignoreCache, chain: .evm, database: self.database)
     }
   }
   

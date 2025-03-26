@@ -120,21 +120,21 @@ extension Transfer {
   public var from: Account {
     get throws {
       let address = Address(rawValue: _wrapped.from)
-      return try _from.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
+      return try _from.getData(key: AccountKey(chain: .evm, address: address), policy: .cacheOrLoad, chain: .evm, database: self.database)
     }
   }
   
   public var to: Account {
     get throws {
       let address = Address(rawValue: _wrapped.to)
-      return try _to.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
+      return try _to.getData(key: AccountKey(chain: .evm, address: address), policy: .cacheOrLoad, chain: .evm, database: self.database)
     }
   }
   
   public var owner: Account {
     get throws {
       let address = Address(rawValue: _wrapped.address)
-      return try _owner.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
+      return try _owner.getData(key: AccountKey(chain: .evm, address: address), policy: .cacheOrLoad, chain: .evm, database: self.database)
     }
   }
   

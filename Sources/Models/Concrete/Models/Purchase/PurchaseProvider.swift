@@ -35,7 +35,7 @@ public struct PurchaseProvider {
     set {}
   }
   var _wrapped: _PurchaseProvider = .with({ _ in })
-  var _chain: MDBXChain = .universal
+  var _chain: MDBXChain = .evm
   public var order: UInt16? = nil
   @SubProperty<[_PurchaseProvider._Fiat], [PurchaseProvider.Fiat]> var _fiats: [_PurchaseProvider._Fiat]?
   @SubProperty<_PurchaseProvider._ISO, PurchaseProvider.ISO> var _iso: _PurchaseProvider._ISO?
