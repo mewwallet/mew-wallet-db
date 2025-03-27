@@ -20,7 +20,7 @@ private enum _MDBXChain: Data, Sendable {
   case base               = "0x00000000000000000000000000002105" // 8453
   case arbitrum           = "0x0000000000000000000000000000A4B1" // 42161
   case optimism           = "0x0000000000000000000000000000000A" // 10
-  case btc                = "0x0000000000000000000000000000000B" // 11
+  case bitcoin            = "0x0000000000000000000000000000000B" // 11
   
   var chain: MDBXChain {
     switch self {
@@ -36,7 +36,7 @@ private enum _MDBXChain: Data, Sendable {
     case .base:               return .base
     case .arbitrum:           return .arbitrum
     case .optimism:           return .optimism
-    case .btc:                return .btc
+    case .bitcoin:            return .bitcoin
     }
   }
 }
@@ -54,7 +54,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     8453:   .base,
     42161:  .arbitrum,
     10:     .optimism,
-    11:     .btc
+    11:     .bitcoin
   ]
   public static let allCases: [MDBXChain] = [
     .eth,
@@ -68,7 +68,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     .base,
     .arbitrum,
     .optimism,
-    .btc
+    .bitcoin
   ]
   
   case invalid
@@ -85,7 +85,7 @@ public enum MDBXChain: CaseIterable, Sendable {
   case base
   case arbitrum
   case optimism
-  case btc
+  case bitcoin
   case custom(Data)
   
   internal var value: UInt64 {
@@ -103,7 +103,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:                       return 8453
     case .arbitrum:                   return 42161
     case .optimism:                   return 10
-    case .btc:                        return 11
+    case .bitcoin:                    return 11
     case .custom(let data):           return data.withUnsafeBytes { $0.load(as: UInt64.self) }
     }
   }
@@ -123,7 +123,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return _MDBXChain.base.rawValue
     case .arbitrum:           return _MDBXChain.arbitrum.rawValue
     case .optimism:           return _MDBXChain.optimism.rawValue
-    case .btc:                return _MDBXChain.btc.rawValue
+    case .bitcoin:            return _MDBXChain.bitcoin.rawValue
     case .custom(let data): return data
     }
   }
@@ -159,7 +159,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case "ZKSYNC_MAINNET":    self = .zksync_v2_mainnet
     case "ARB":               self = .arbitrum
     case "OP":                self = .optimism
-    case "BTC":               self = .btc
+    case "BTC":               self = .bitcoin
     default:                  self = .eth
     }
   }
@@ -177,7 +177,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return "Base"
     case .arbitrum:           return "Arbitrum"
     case .optimism:           return "Optimism"
-    case .btc:                return "Bitcoin"
+    case .bitcoin:            return "Bitcoin"
     default:    return ""
     }
   }
@@ -195,7 +195,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return "ETH"
     case .arbitrum:           return "ETH"
     case .optimism:           return "ETH"
-    case .btc:                return "BTC"
+    case .bitcoin:            return "BTC"
     default:    return ""
     }
   }
@@ -213,7 +213,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return 18
     case .arbitrum:           return 18
     case .optimism:           return 18
-    case .btc:                return 18
+    case .bitcoin:            return 18
     default:                  return 18
     }
   }
@@ -242,7 +242,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return "0x00000000000000000000000000002105" // 8453
     case .arbitrum:           return "0x0000000000000000000000000000A4B1" // 42161
     case .optimism:           return "0x0000000000000000000000000000000A" // 10
-    case .btc:                return "0x0000000000000000000000000000000B" // 11
+    case .bitcoin:            return "0x0000000000000000000000000000000B" // 11
     case .custom(let chain):  return chain.hexString
     }
   }
