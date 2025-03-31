@@ -44,7 +44,7 @@ final class Purchase_tests: XCTestCase {
   
   func testPurchaseInfoV5() async {
     do {
-      let objects = try PurchaseInfoV5Wrapper(jsonString: testJson, chain: .universal)
+      let objects = try PurchaseInfoV5Wrapper(jsonString: testJson, chain: .evm)
       let providers = objects.providers.map({ ($0.key, $0) })
       
       let assets = objects.assets

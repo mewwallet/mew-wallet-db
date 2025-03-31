@@ -19,7 +19,7 @@ public final class TokenMetaKey: MDBXKey {
   
   public init(chain: MDBXChain, contractAddress: Address) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     
     let key = chainPart + contractAddressPart
     self.key = key
@@ -39,7 +39,7 @@ public final class TokenMetaKey: MDBXKey {
     let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
     
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(repeating: rangeValue, count: MDBXKeyLength.address)
+    let addressPart         = Data(repeating: rangeValue, count: MDBXKeyLength.legacyEVMAddress)
     
     let key = chainPart + addressPart
     self.key = key

@@ -24,7 +24,7 @@ public final class TransferKey: MDBXKey {
   
   public init(chain: MDBXChain, address: Address, block: UInt64, direction: Transfer.Direction, nonce: UInt64, order: UInt16) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let blockPart           = withUnsafeBytes(of: block.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.block)
     let directionPart       = withUnsafeBytes(of: direction.rawValue.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.direction)
     let noncePart           = withUnsafeBytes(of: nonce.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.nonce)
@@ -34,12 +34,12 @@ public final class TransferKey: MDBXKey {
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _blockRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.block
     let _directionRange: Range<Int> = _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction
     let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
     let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
-    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.address)...
+    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.legacyEVMAddress)...
     
     self.chain = {
       return MDBXChain(rawValue: key[_chainRange])
@@ -76,7 +76,7 @@ public final class TransferKey: MDBXKey {
   
   public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
 
     let blockPart: Data
     let directionPart: Data
@@ -97,12 +97,12 @@ public final class TransferKey: MDBXKey {
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _blockRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.block
     let _directionRange: Range<Int> = _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction
     let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
     let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
-    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.address)...
+    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.legacyEVMAddress)...
     
     self.chain = {
       return MDBXChain(rawValue: key[_chainRange])
@@ -142,12 +142,12 @@ public final class TransferKey: MDBXKey {
     self.key = data
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> =  _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _blockRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.block
     let _directionRange: Range<Int> = _blockRange.endIndex..<_blockRange.upperBound+MDBXKeyLength.direction
     let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
     let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
-    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.address)...
+    let _sortingKeyRange: PartialRangeFrom<Int> = (MDBXKeyLength.chain+MDBXKeyLength.legacyEVMAddress)...
     
     self.chain = {
       return MDBXChain(rawValue: data[_chainRange])

@@ -23,14 +23,14 @@ public final class HistoryPurchaseKey: MDBXKey {
   
   public init(account: Address, transactionID: String) {
     let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let transactionIDPart   = Data(hex: transactionID).setLengthLeft(MDBXKeyLength.hash)
     
     let key = chainPart + addressPart + transactionIDPart
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _transactionIDRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.address = {
@@ -44,7 +44,7 @@ public final class HistoryPurchaseKey: MDBXKey {
   
   public init(address: Address, lowerRange: Bool) {
     let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let transactionIDPart: Data
     if lowerRange {
       transactionIDPart     = Data().setLengthLeft(MDBXKeyLength.hash)
@@ -55,7 +55,7 @@ public final class HistoryPurchaseKey: MDBXKey {
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _transactionIDRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.address = {
@@ -72,7 +72,7 @@ public final class HistoryPurchaseKey: MDBXKey {
     self.key = data
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _transactionIDRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.address = {

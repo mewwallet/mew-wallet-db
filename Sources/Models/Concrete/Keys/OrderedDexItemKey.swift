@@ -23,7 +23,7 @@ public final class OrderedDexItemKey: MDBXKey {
   public init(chain: MDBXChain, order: UInt16, contractAddress: Address) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
-    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     
     let key = chainPart + orderPart + contractAddressPart
     self.key = key

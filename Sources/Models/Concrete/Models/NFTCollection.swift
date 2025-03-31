@@ -84,8 +84,8 @@ extension NFTCollection: MDBXObject {
   
   public var key: any MDBXKey {
     return NFTCollectionKey(chain: _chain,
-                            address: .unknown(self._wrapped.address),
-                            contractAddress: .unknown(self._wrapped.contractAddress),
+                            address: Address(self._wrapped.address),
+                            contractAddress: Address(self._wrapped.contractAddress),
                             name: self._wrapped.name)
   }
   

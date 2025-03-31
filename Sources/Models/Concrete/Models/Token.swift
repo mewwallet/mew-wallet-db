@@ -59,7 +59,7 @@ extension Token {
   
   public var account: Account? {
     get throws {
-      let key = AccountKey(chain: .evm, address: .unknown(_wrapped.address))
+      let key = AccountKey(chain: .evm, address: Address(_wrapped.address))
       return try _account.getData(key: key, policy: .ignoreCache, chain: .evm, database: self.database)
     }
   }
@@ -73,8 +73,8 @@ extension Token {
   
   // MARK: - Properties
   
-  public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
-  public var address: Address { Address(rawValue: self._wrapped.address) }
+  public var contract_address: Address { Address(self._wrapped.contractAddress) }
+  public var address: Address { Address(self._wrapped.address) }
   public var amount: Decimal { Decimal(wrapped: self._wrapped.amount, hex: true) ?? .zero }
   public var lockedAmount: Decimal { Decimal(wrapped: self._wrapped.lockedAmount, hex: true) ?? .zero }
   

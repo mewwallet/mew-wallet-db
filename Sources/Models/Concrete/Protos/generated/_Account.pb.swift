@@ -65,14 +65,14 @@ struct _Account: @unchecked Sendable {
   /// Clears the value of `state`. Subsequent reads from it will return its default value.
   mutating func clearState() {_uniqueStorage()._state = nil}
 
-  var network: _Account._Network {
-    get {return _storage._network ?? .evm}
-    set {_uniqueStorage()._network = newValue}
+  var networkType: _NetworkType {
+    get {return _storage._networkType ?? .evm}
+    set {_uniqueStorage()._networkType = newValue}
   }
-  /// Returns true if `network` has been explicitly set.
-  var hasNetwork: Bool {return _storage._network != nil}
-  /// Clears the value of `network`. Subsequent reads from it will return its default value.
-  mutating func clearNetwork() {_uniqueStorage()._network = nil}
+  /// Returns true if `networkType` has been explicitly set.
+  var hasNetworkType: Bool {return _storage._networkType != nil}
+  /// Clears the value of `networkType`. Subsequent reads from it will return its default value.
+  mutating func clearNetworkType() {_uniqueStorage()._networkType = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -166,40 +166,6 @@ struct _Account: @unchecked Sendable {
       .internal,
       .readOnly,
       .external,
-    ]
-
-  }
-
-  enum _Network: SwiftProtobuf.Enum, Swift.CaseIterable {
-    typealias RawValue = Int
-    case evm // = 0
-    case bitcoin // = 1
-    case UNRECOGNIZED(Int)
-
-    init() {
-      self = .evm
-    }
-
-    init?(rawValue: Int) {
-      switch rawValue {
-      case 0: self = .evm
-      case 1: self = .bitcoin
-      default: self = .UNRECOGNIZED(rawValue)
-      }
-    }
-
-    var rawValue: Int {
-      switch self {
-      case .evm: return 0
-      case .bitcoin: return 1
-      case .UNRECOGNIZED(let i): return i
-      }
-    }
-
-    // The compiler won't synthesize support with the UNRECOGNIZED case.
-    static let allCases: [_Account._Network] = [
-      .evm,
-      .bitcoin,
     ]
 
   }
@@ -370,7 +336,7 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     4: .same(proto: "type"),
     5: .same(proto: "keys"),
     6: .same(proto: "state"),
-    7: .same(proto: "network"),
+    7: .same(proto: "networkType"),
   ]
 
   fileprivate class _StorageClass {
@@ -380,7 +346,7 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _type: _Account._Type = .internal
     var _keys: _Account._Keys? = nil
     var _state: _Account._UserState? = nil
-    var _network: _Account._Network? = nil
+    var _networkType: _NetworkType? = nil
 
     #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
@@ -401,7 +367,7 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _type = source._type
       _keys = source._keys
       _state = source._state
-      _network = source._network
+      _networkType = source._networkType
     }
   }
 
@@ -426,7 +392,7 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 4: try { try decoder.decodeSingularEnumField(value: &_storage._type) }()
         case 5: try { try decoder.decodeSingularMessageField(value: &_storage._keys) }()
         case 6: try { try decoder.decodeSingularMessageField(value: &_storage._state) }()
-        case 7: try { try decoder.decodeSingularEnumField(value: &_storage._network) }()
+        case 7: try { try decoder.decodeSingularEnumField(value: &_storage._networkType) }()
         default: break
         }
       }
@@ -457,7 +423,7 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       try { if let v = _storage._state {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
       } }()
-      try { if let v = _storage._network {
+      try { if let v = _storage._networkType {
         try visitor.visitSingularEnumField(value: v, fieldNumber: 7)
       } }()
     }
@@ -475,7 +441,7 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._type != rhs_storage._type {return false}
         if _storage._keys != rhs_storage._keys {return false}
         if _storage._state != rhs_storage._state {return false}
-        if _storage._network != rhs_storage._network {return false}
+        if _storage._networkType != rhs_storage._networkType {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -499,13 +465,6 @@ extension _Account._Type: SwiftProtobuf._ProtoNameProviding {
     0: .same(proto: "INTERNAL"),
     1: .same(proto: "READ_ONLY"),
     2: .same(proto: "EXTERNAL"),
-  ]
-}
-
-extension _Account._Network: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "EVM"),
-    1: .same(proto: "BITCOIN"),
   ]
 }
 

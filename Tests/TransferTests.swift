@@ -389,10 +389,10 @@ final class Transfer_tests: XCTestCase {
       try await db.write(table: .transfer, keysAndObjects: keysAndObjects, mode: .recommended(.transfer))
       
       
-      let transfers: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"), limit: 3),
+      let transfers: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"), limit: 3),
                                                from: .transfer, order: .desc)
       
-      let transfers2: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: .unknown("0x810fb3b90f7261878c9d3326923e3547d7713971"), limit: 3),
+      let transfers2: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: Address("0x810fb3b90f7261878c9d3326923e3547d7713971"), limit: 3),
                                                from: .transfer, order: .desc)
       
       debugPrint(transfers.map({ $0.hash }))

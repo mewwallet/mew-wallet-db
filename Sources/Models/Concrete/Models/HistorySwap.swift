@@ -154,7 +154,7 @@ extension HistorySwap: MDBXObject {
   public var chain: MDBXChain { _chain }
   
   public var key: any MDBXKey {
-    return HistorySwapKey(chain: _chain, account: .unknown(_wrapped.address), hash: _wrapped.hash)
+    return HistorySwapKey(chain: _chain, account: Address(_wrapped.address), hash: _wrapped.hash)
   }
   
   public var alternateKey: (any MDBXKey)? { return nil }

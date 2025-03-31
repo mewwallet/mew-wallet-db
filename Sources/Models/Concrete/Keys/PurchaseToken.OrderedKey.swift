@@ -23,7 +23,7 @@ extension PurchaseToken {
     public init(chain: MDBXChain, order: UInt16, contractAddress: Address) {
       let chainPart = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
       let orderPart = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
-      let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+      let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
 
       let key = chainPart + orderPart + contractAddressPart
       self.key = key
@@ -76,10 +76,10 @@ extension PurchaseToken {
 
       if lowerRange {
         orderPart = Data().setLengthLeft(MDBXKeyLength.order)
-        contractAddressPart = Data().setLengthLeft(MDBXKeyLength.address)
+        contractAddressPart = Data().setLengthLeft(MDBXKeyLength.legacyEVMAddress)
       } else {
         orderPart = Data(repeating: 0xFF, count: MDBXKeyLength.order)
-        contractAddressPart = Data(repeating: 0xFF, count: MDBXKeyLength.address)
+        contractAddressPart = Data(repeating: 0xFF, count: MDBXKeyLength.legacyEVMAddress)
       }
 
       let key = chainPart + orderPart + contractAddressPart

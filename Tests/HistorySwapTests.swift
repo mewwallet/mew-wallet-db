@@ -40,7 +40,7 @@ final class HistorySwap_tests: XCTestCase {
   func testTransfers() async {
     do {
       let history = HistorySwap(chain: .eth,
-                                address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                                address: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
                                 fromToken: ._primary,
                                 toToken: ._primary,
                                 fromAmount: Decimal(123),
@@ -65,7 +65,7 @@ final class HistorySwap_tests: XCTestCase {
     do {
       var history = [
         HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    address: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
                     fromToken: ._primary,
                     toToken: ._primary,
                     fromAmount: Decimal(123),
@@ -77,7 +77,7 @@ final class HistorySwap_tests: XCTestCase {
       try await Task.sleep(nanoseconds: 1000)
       history.append(
         HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    address: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
                     fromToken: ._primary,
                     toToken: ._primary,
                     fromAmount: Decimal(123),
@@ -90,7 +90,7 @@ final class HistorySwap_tests: XCTestCase {
       try await Task.sleep(nanoseconds: 1000)
       history.append(
         HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    address: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
                     fromToken: ._primary,
                     toToken: ._primary,
                     fromAmount: Decimal(123),
@@ -103,7 +103,7 @@ final class HistorySwap_tests: XCTestCase {
       try await Task.sleep(nanoseconds: 1000)
       history.append(
         HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    address: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
                     fromToken: ._primary,
                     toToken: ._primary,
                     fromAmount: Decimal(123),

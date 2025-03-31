@@ -21,14 +21,14 @@ public final class HistorySwapKey: MDBXKey {
   
   public init(chain: MDBXChain, account: Address, hash: String) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let hashPart            = Data(hex: hash).setLengthLeft(MDBXKeyLength.hash)
     
     let key = chainPart + addressPart + hashPart
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.chain = {
@@ -48,12 +48,12 @@ public final class HistorySwapKey: MDBXKey {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let addressPart: Data
     if let address {
-      addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+      addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     } else {
       if lowerRange {
-        addressPart         = Data().setLengthLeft(MDBXKeyLength.address)
+        addressPart         = Data().setLengthLeft(MDBXKeyLength.legacyEVMAddress)
       } else {
-        addressPart         = Data(repeating: 0xFF, count: MDBXKeyLength.address)
+        addressPart         = Data(repeating: 0xFF, count: MDBXKeyLength.legacyEVMAddress)
       }
     }
     let hashPart: Data
@@ -66,7 +66,7 @@ public final class HistorySwapKey: MDBXKey {
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.chain = {
@@ -87,7 +87,7 @@ public final class HistorySwapKey: MDBXKey {
     self.key = data
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.chain = {

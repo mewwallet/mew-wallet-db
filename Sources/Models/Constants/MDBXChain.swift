@@ -39,6 +39,13 @@ private enum _MDBXChain: Data, Sendable {
     case .bitcoin:            return .bitcoin
     }
   }
+  
+  var networkChain: MDBXChain {
+    switch self {
+    case .bitcoin:            return .bitcoin
+    default:                  return .evm
+    }
+  }
 }
 
 public enum MDBXChain: CaseIterable, Sendable {
@@ -56,7 +63,11 @@ public enum MDBXChain: CaseIterable, Sendable {
     10:     .optimism,
     13599952493558414524: .bitcoin
   ]
-  public static let allCases: [MDBXChain] = [
+  
+  @available(*, deprecated, renamed: "evmCases", message: "No longer supported")
+  public static let allCases: [MDBXChain] = []
+  
+  public static let evmCases: [MDBXChain] = [
     .eth,
     .goerli,
     .polygon_mainnet,
@@ -67,7 +78,10 @@ public enum MDBXChain: CaseIterable, Sendable {
     .bsc,
     .base,
     .arbitrum,
-    .optimism,
+    .optimism
+  ]
+  
+  public static let bitcoinCases: [MDBXChain] = [
     .bitcoin
   ]
   
@@ -135,6 +149,15 @@ public enum MDBXChain: CaseIterable, Sendable {
       return
     }
     self = chain.chain
+  }
+  
+  public init(networkRawValue: Data) {
+    let data = networkRawValue.setLengthLeft(MDBXKeyLength.chain)
+    guard let chain = _MDBXChain(rawValue: data) else {
+      self = .custom(data)
+      return
+    }
+    self = chain.networkChain
   }
   
   public init(rawValue: UInt64) {
@@ -225,6 +248,10 @@ public enum MDBXChain: CaseIterable, Sendable {
   public var isZKSync: Bool {
     let zkChains: [MDBXChain] = [.zksync_v2_testnet, .zksync_v2_mainnet]
     return zkChains.contains(self)
+  }
+  
+  public var isBitcoinNetwork: Bool {
+    return self == .bitcoin
   }
   
   internal var hexString: String {

@@ -105,7 +105,7 @@ extension HistoryPurchase: MDBXObject {
   }
   
   public var key: any MDBXKey {
-    return HistoryPurchaseKey(account: .unknown(_wrapped.address), transactionID: _wrapped.transactionID)
+    return HistoryPurchaseKey(account: Address(_wrapped.address), transactionID: _wrapped.transactionID)
   }
   
   public var alternateKey: (any MDBXKey)? { return nil }

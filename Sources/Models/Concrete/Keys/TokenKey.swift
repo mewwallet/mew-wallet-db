@@ -21,14 +21,14 @@ public final class TokenKey: MDBXKey {
   
   public init(chain: MDBXChain, address: Address, contractAddress: Address) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
-    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     
     let key = chainPart + addressPart + contractAddressPart
     self.key = key
         
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _contractAddressRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.chain = {
@@ -46,18 +46,18 @@ public final class TokenKey: MDBXKey {
   
   public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let contractAddressPart: Data
     if lowerRange {
-      contractAddressPart = Data().setLengthLeft(MDBXKeyLength.address)
+      contractAddressPart = Data().setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     } else {
-      contractAddressPart = Data(repeating: 0xFF, count: MDBXKeyLength.address)
+      contractAddressPart = Data(repeating: 0xFF, count: MDBXKeyLength.legacyEVMAddress)
     }
     let key = chainPart + addressPart + contractAddressPart
     self.key = key
         
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _contractAddressRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.chain = {
@@ -78,7 +78,7 @@ public final class TokenKey: MDBXKey {
     self.key = data
         
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _contractAddressRange: Range<Int> = _addressRange.endIndex..<key.count
     
     self.chain = {

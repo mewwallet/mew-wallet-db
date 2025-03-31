@@ -161,7 +161,7 @@ extension NFTAsset: MDBXObject {
   public var key: any MDBXKey {
     NFTAssetKey(collectionKey: _collectionKey,
                 date: _wrapped.lastAcquiredDate,
-                contractAddress: .unknown(_wrapped.contractAddress),
+                contractAddress: Address(_wrapped.contractAddress),
                 id: _wrapped.tokenID)
   }
   

@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "subs/_NetworkType.proto";
 
 message _Account {
   // Account address
@@ -67,10 +68,5 @@ message _Account {
   }
   _UserState state                        = 6;
 
-  enum _Network {
-    EVM                                     = 0;
-    BITCOIN                                 = 1;
-  }
-
-  optional _Network network               = 7;
+  optional _NetworkType networkType       = 7;
 }

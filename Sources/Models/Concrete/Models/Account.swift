@@ -43,19 +43,6 @@ public struct Account {
     }
   }
   
-  public enum Network: Int {
-    case evm              = 0
-    case bitcoin          = 1
-    
-    init(_ network: _Account._Network) {
-      switch network {
-      case .evm:               self = .evm
-      case .bitcoin:           self = .bitcoin
-      case .UNRECOGNIZED:      self = .evm
-      }
-    }
-  }
-  
   public var database: (any WalletDB)? {
     get { MEWwalletDBImpl.shared }
     set {}
@@ -83,6 +70,7 @@ public struct Account {
               name: "",
               source: .unknown,
               type: .internal,
+              network: NetworkType(address),
               derivationPath: nil,
               anonymizedId: nil,
               encryptionPublicKey: nil,
@@ -95,18 +83,22 @@ public struct Account {
               name: String,
               source: Source = .recoveryPhrase,
               type: `Type` = .`internal`,
+              network: NetworkType? = nil,
               derivationPath: String?,
               anonymizedId: String?,
               encryptionPublicKey: String?,
               withdrawalPublicKey: String?,
               isHidden: Bool = false,
               database: (any WalletDB)? = nil) {
-    self._chain = .evm
+    
+    let network = network ?? NetworkType(address)
+    self._chain = network.chain
     self._wrapped = .with {
       $0.address = address.rawValue
       $0.groupID = 0
       $0.source = .init(rawValue: source.rawValue) ?? .unknown
       $0.type = .init(rawValue: type.rawValue) ?? .internal
+      $0.networkType = .init(rawValue: network.rawValue) ?? .evm
       
       // Keys
       $0.keys = .with {
@@ -138,36 +130,36 @@ extension Account {
   
   public func primary(chain: MDBXChain) -> Token {
     do {
-      let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
+      let key = TokenKey(chain: chain, address: Address(_wrapped.address), contractAddress: chain.primary)
       return try _primary.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
     } catch {
-      return Token(chain: chain, address: .unknown(_wrapped.address), contractAddress: chain.primary)
+      return Token(chain: chain, address: Address(_wrapped.address), contractAddress: chain.primary)
     }
   }
   
   public func renBTC(chain: MDBXChain) throws -> Token {
-    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .renBTC)
+    let key = TokenKey(chain: chain, address: Address(_wrapped.address), contractAddress: .renBTC)
     return try _renBTC.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   public func stETH(chain: MDBXChain) throws -> Token {
-    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .stEth)
+    let key = TokenKey(chain: chain, address: Address(_wrapped.address), contractAddress: .stEth)
     return try _stETH.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   public func skale(chain: MDBXChain) throws -> Token {
-    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .skale)
+    let key = TokenKey(chain: chain, address: Address(_wrapped.address), contractAddress: .skale)
     return try _skale.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   public func zkSyncBuidl(chain: MDBXChain) throws -> Token {
-    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: .buidl(for: chain))
+    let key = TokenKey(chain: chain, address: Address(_wrapped.address), contractAddress: .buidl(for: chain))
     return try _zkSyncBuidl.getData(key: key, policy: .ignoreCache, chain: chain, database: self.database)
   }
   
   public func token(with contractAddress: Address, chain: MDBXChain) throws -> Token {
     guard let database else { throw MDBXError.notFound }
-    let key = TokenKey(chain: chain, address: .unknown(_wrapped.address), contractAddress: contractAddress)
+    let key = TokenKey(chain: chain, address: Address(_wrapped.address), contractAddress: contractAddress)
     return try database.read(key: key, table: .token)
   }
   
@@ -220,9 +212,9 @@ extension Account {
   
   /// Network type of account
   /// EVM or Bitcoin
-  public var network: Network {
-    set { self._wrapped.network = .init(rawValue: newValue.rawValue) ?? .UNRECOGNIZED(newValue.rawValue) }
-    get { Network(self._wrapped.network) }
+  public var networkType: NetworkType {
+    set { self._wrapped.networkType = .init(rawValue: newValue.rawValue) ?? .UNRECOGNIZED(newValue.rawValue) }
+    get { NetworkType(self._wrapped.networkType) }
   }
   
   // MARK: Keys
@@ -419,7 +411,7 @@ extension Account: MDBXObject {
   }
 
   public var key: any MDBXKey {
-    return AccountKey(chain: .evm, address: address)
+    return AccountKey(chain: self.networkType.chain, address: address)
   }
 
   public var alternateKey: (any MDBXKey)? {
@@ -427,21 +419,36 @@ extension Account: MDBXObject {
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = .evm
+    if let key {
+      let key = AccountKey(data: key)
+      self._chain = key?.chain ?? .evm
+    } else {
+      self._chain = .evm
+    }
     self._wrapped = try _Account(serializedBytes: data)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .evm
+    if let key {
+      let key = AccountKey(data: key)
+      self._chain = key?.chain ?? .evm
+    } else {
+      self._chain = .evm
+    }
     self._wrapped = try _Account(jsonUTF8Data: jsonData, options: options)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .evm
+    if let key {
+      let key = AccountKey(data: key)
+      self._chain = key?.chain ?? .evm
+    } else {
+      self._chain = .evm
+    }
     self._wrapped = try _Account(jsonString: jsonString, options: options)
   }
 
