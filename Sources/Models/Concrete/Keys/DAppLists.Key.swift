@@ -19,10 +19,12 @@ extension DAppLists {
     // MARK: - Lifecycle
     
     public init() {
-      let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
-      let dataPart            = self.data
+      let coder = MDBXKeyCoder()
       
-      self.key = chainPart + dataPart
+      self.key = coder.encode(fields: [
+        MDBXChain.evm,
+        self.data
+      ])
     }
     
     public init?(data: Data) {

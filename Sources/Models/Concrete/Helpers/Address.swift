@@ -151,34 +151,6 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     }
   }
   
-  public init(encodedData: Data) {
-    switch encodedData.count {
-    case MDBXKeyLength.legacyEVMAddress:
-      let rawValue = encodedData.hexString
-      self.init(rawValue: rawValue)
-    default:
-      let type = AddressType(rawValue: encodedData[0]) ?? .unknown
-      let countData = Data(encodedData[1...2])
-      let count = {
-        let value = countData.withUnsafeBytes { $0.load(as: UInt16.self) }
-        let uint = UInt16(bigEndian: value)
-        return Int(uint)
-      }()
-      let addressData = encodedData[encodedData.count-count..<encodedData.count]
-      switch type {
-      case .evm:
-        let rawValue = addressData.hexString
-        self.init(rawValue: rawValue)
-      case .bitcoin:
-        let rawValue = String(data: addressData, encoding: .utf8)!
-        self.init(rawValue: rawValue)
-      case .unknown:
-        let rawValue = String(data: encodedData, encoding: .utf8)!
-        self.init(rawValue: rawValue)
-      }
-    }
-  }
-  
   public var rawValue: String {
     switch self {
     case ._primary:                                   return "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
@@ -209,21 +181,6 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     case .evm:                  return Data(hex: rawValue)
     case .bitcoin:              return rawValue.data(using: .utf8)!
     case .unknown:              return rawValue.data(using: .utf8)!
-    }
-  }
-  
-  public var encodedData: Data {
-    switch self.addressType {
-    case .evm:
-      return Data(hex: rawValue)
-    case .bitcoin:
-      var data = rawValue.data(using: .utf8)!
-      let count = UInt16(clamping: data.count)
-      let lenghtData = withUnsafeBytes(of: count.bigEndian) { Data($0) }
-      data = Data([self.addressType.rawValue.bigEndian]) + lenghtData + data
-      return data
-    case .unknown:
-      return rawValue.data(using: .utf8)!
     }
   }
 }
@@ -257,3 +214,51 @@ extension Address: Comparable {
 extension Address: Hashable {}
 
 extension Address.AddressType: Hashable {}
+
+extension Address: MDBXKeyComponent {
+  public init(encodedData: Data) {
+    switch encodedData.count {
+    case MDBXKeyLength.legacyEVMAddress:
+      let rawValue = encodedData.hexString
+      self.init(rawValue: rawValue)
+    default:
+      let type = AddressType(rawValue: encodedData[encodedData.startIndex]) ?? .unknown
+      let start = encodedData.startIndex
+      let end = encodedData.endIndex
+      let countRange = encodedData.index(start, offsetBy: 1)..<encodedData.index(start, offsetBy: 3)
+      let countData = encodedData[countRange]
+      let count = {
+        let value = countData.withUnsafeBytes { $0.loadUnaligned(as: UInt16.self) }
+        let uint = UInt16(bigEndian: value)
+        return Int(uint)
+      }()
+      let addressData = encodedData[encodedData.index(end, offsetBy: -count)..<end]
+      switch type {
+      case .evm:
+        let rawValue = addressData.hexString
+        self.init(rawValue: rawValue)
+      case .bitcoin:
+        let rawValue = String(data: addressData, encoding: .utf8)!
+        self.init(rawValue: rawValue)
+      case .unknown:
+        let rawValue = String(data: encodedData, encoding: .utf8)!
+        self.init(rawValue: rawValue)
+      }
+    }
+  }
+  
+  public var encodedData: Data {
+    switch self.addressType {
+    case .evm:
+      let data = Data(hex: rawValue)
+      let count = UInt16(clamping: data.count)
+      let lenghtData = withUnsafeBytes(of: count.bigEndian) { Data($0) }
+      return Data([self.addressType.rawValue.bigEndian]) + lenghtData + data
+    case .bitcoin, .unknown:
+      let data = rawValue.data(using: .utf8)!
+      let count = UInt16(clamping: data.count)
+      let lenghtData = withUnsafeBytes(of: count.bigEndian) { Data($0) }
+      return Data([self.addressType.rawValue.bigEndian]) + lenghtData + data
+    }
+  }
+}

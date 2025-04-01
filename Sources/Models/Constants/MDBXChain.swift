@@ -142,15 +142,6 @@ public enum MDBXChain: CaseIterable, Sendable {
     }
   }
   
-  public init(rawValue: Data) {
-    let data = rawValue.setLengthLeft(MDBXKeyLength.chain)
-    guard let chain = _MDBXChain(rawValue: data) else {
-      self = .custom(data)
-      return
-    }
-    self = chain.chain
-  }
-  
   public init(networkRawValue: Data) {
     let data = networkRawValue.setLengthLeft(MDBXKeyLength.chain)
     guard let chain = _MDBXChain(rawValue: data) else {
@@ -158,6 +149,15 @@ public enum MDBXChain: CaseIterable, Sendable {
       return
     }
     self = chain.networkChain
+  }
+  
+  public init(rawValue: Data) {
+    let data = rawValue.setLengthLeft(MDBXKeyLength.chain)
+    guard let chain = _MDBXChain(rawValue: data) else {
+      self = .custom(data)
+      return
+    }
+    self = chain.chain
   }
   
   public init(rawValue: UInt64) {
@@ -282,5 +282,15 @@ extension MDBXChain: Hashable {}
 extension MDBXChain: CustomDebugStringConvertible {
   public var debugDescription: String {
     self.rawValue.hexString
+  }
+}
+
+extension MDBXChain: MDBXKeyComponent {
+  public init(encodedData: Data) {
+    self.init(rawValue: encodedData)
+  }
+  
+  public var encodedData: Data {
+    self.rawValue.setLengthLeft(MDBXKeyLength.chain)
   }
 }

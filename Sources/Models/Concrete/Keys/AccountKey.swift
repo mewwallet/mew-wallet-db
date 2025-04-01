@@ -19,32 +19,28 @@ public final class AccountKey: MDBXKey {
   // MARK: - Lifecycle
   
   public init(chain: MDBXChain, address: Address) {
-    let chainPart     = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart   = address.encodedData
+    let coder = MDBXKeyCoder()
     
-    self.key = chainPart + addressPart
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange = _chainRange.endIndex..<key.count
+    self.key = coder.encode(fields: [
+      chain,
+      address
+    ])
     
     self.chain = chain
-    self.address = key[_addressRange].hexString
+    self.address = address.rawValue
   }
   
   public init?(data: Data) {
-    guard data.count >= MDBXKeyLength.legacyAccount else { return nil }
     self.key = data
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange = _chainRange.endIndex..<key.count
+    let coder = MDBXKeyCoder()
     
-    self.chain = MDBXChain(networkRawValue: key[_chainRange])
-    if self.chain.isBitcoinNetwork {
-      guard let address = String(data: key[_addressRange], encoding: .utf8) else { return nil }
-      self.address = address
-    } else {
-      self.address = key[_addressRange].hexString
-    }
+    let decoded = coder.decode(data: data, fields: [
+      .network,
+      .address
+    ])
+    self.chain = decoded[0] as! MDBXChain
+    self.address = (decoded[1] as! Address).rawValue
   }
 }
 

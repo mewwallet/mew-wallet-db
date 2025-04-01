@@ -1,8 +1,8 @@
 //
 //  File.swift
-//  
+//  mew-wallet-db
 //
-//  Created by Mikhail Nikanorov on 6/8/22.
+//  Created by Mikhail Nikanorov on 3/31/25.
 //
 
 import Foundation
@@ -11,8 +11,8 @@ import mew_wallet_ios_extensions
 import SwiftProtobuf
 import Testing
 
-@Suite("Account tests")
-fileprivate final class AccountTests {
+@Suite("Token tests")
+fileprivate final class TokenTests {
   private var db: MEWwalletDBImpl!
   private let _path: String
   
@@ -32,37 +32,68 @@ fileprivate final class AccountTests {
     db = nil
   }
   
-  @Test("Test simple evm account")
-  func evmAccount() async throws {
-    var account = Account(order: 0,
-                          address: "0x00c17f958d2ee523a2206206994597c13d831ec7",
-                          name: "My account",
-                          source: .recoveryPhrase,
-                          type: .internal,
-                          network: .evm,
-                          derivationPath: nil,
-                          anonymizedId: "anonID",
-                          encryptionPublicKey: nil,
-                          withdrawalPublicKey: nil,
-                          isHidden: true)
+  @Test("Test simple evm token")
+  func evmToken() async throws {
+    var token = Token(chain: .eth,
+                      address: Address("0x00c17f958d2ee523a2206206994597c13d831ec7"),
+                      contractAddress: ._primary,
+                      rawAmount: "123456789")
+    try await db.write(table: .token, key: token.key, object: token, mode: .recommended(.token))
+    let tokens: [Token] = try db.fetch(range: .all, from: .token, order: .asc)
     
-    try await db.write(table: .account, key: account.key, object: account, mode: .recommended(.account))
-    let accounts: [Account] = try db.fetch(range: .all, from: .account, order: .asc)
+    debugPrint(tokens)
+    debugPrint(token)
     
-    #expect(accounts.count == 1)
-    #expect(accounts.first == account)
-    
-    let key = AccountKey(chain: .evm, address: "0x00c17f958d2ee523a2206206994597c13d831ec7")
-    var dbAccount: Account = try db.read(key: key, table: .account)
-    #expect(account == dbAccount)
-    
-    account.name = "new name"
-    try await db.write(table: .account, key: account.key, object: account, mode: .recommended(.account))
-    dbAccount = try db.read(key: key, table: .account)
-    #expect(account == dbAccount)
+//    
+//    var account = Account(order: 0,
+//                          address: "0x00c17f958d2ee523a2206206994597c13d831ec7",
+//                          name: "My account",
+//                          source: .recoveryPhrase,
+//                          type: .internal,
+//                          network: .evm,
+//                          derivationPath: nil,
+//                          anonymizedId: "anonID",
+//                          encryptionPublicKey: nil,
+//                          withdrawalPublicKey: nil,
+//                          isHidden: true)
+//    
+//    try await db.write(table: .account, key: account.key, object: account, mode: .recommended(.account))
+//    let accounts: [Account] = try db.fetch(range: .all, from: .account, order: .asc)
+//    
+//    #expect(accounts.count == 1)
+//    #expect(accounts.first == account)
+//    
+//    let key = AccountKey(chain: .evm, address: "0x00c17f958d2ee523a2206206994597c13d831ec7")
+//    var dbAccount: Account = try db.read(key: key, table: .account)
+//    #expect(account == dbAccount)
+//    
+//    account.name = "new name"
+//    try await db.write(table: .account, key: account.key, object: account, mode: .recommended(.account))
+//    dbAccount = try db.read(key: key, table: .account)
+//    #expect(account == dbAccount)
   }
   
-  @Test("Test address encodedData")
+  @Test("Test simple bitcoin token")
+  func btcToken() async throws {
+    var token = Token(chain: .eth,
+                      address: Address("bc1q8c6fshw2dlwun7ekn9qwf37cu2rn755upcp6el"),
+                      contractAddress: ._primary,
+                      rawAmount: "123456789")
+    try await db.write(table: .token, key: token.key, object: token, mode: .recommended(.token))
+    let tokens: [Token] = try db.fetch(range: .all, from: .token, order: .asc)
+    
+//    0x0000000000000000000000000000000100c17f958d2ee523a2206206994597c13d831ec7eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+//    0x0000000000000000000000000000000103002a626331713863366673687732646c77756e37656b6e397177663337637532726e3735357570637036656ceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    
+    let key = tokens.first?.key as? TokenKey
+    
+    debugPrint(tokens)
+    debugPrint(key?.address)
+    debugPrint(key?.contractAddress)
+    debugPrint(token)
+  }
+  
+  @Test("Test Address encodedData")
   func addressEncodedData() async throws {
     let address = Address("bc1pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp5z9v2w")
     #expect(address.addressType == .bitcoin(.taproot))
@@ -82,6 +113,25 @@ fileprivate final class AccountTests {
     let restoredEVMAddress = Address(encodedData: evmData)
     #expect(restoredEVMAddress.addressType == .evm)
     #expect(restoredEVMAddress.rawValue == "0x00c17f958d2ee523a2206206994597c13d831ec7")
+  }
+  
+  @Test("asd")
+  func asdasd() async throws {
+    let coder = MDBXKeyCoder()
+    
+    let data = coder.encode(fields: [
+      MDBXChain.eth,
+      Address("bc1q8c6fshw2dlwun7ekn9qwf37cu2rn755upcp6el"),
+      Address._primary
+    ])
+    debugPrint(data.hexString)
+    
+    let decoded = coder.decode(data: data, fields: [
+      .chain,
+      .address,
+      .legacyAddress
+    ])
+    debugPrint(decoded)
   }
   
   @Test("Test bitcoint account")
