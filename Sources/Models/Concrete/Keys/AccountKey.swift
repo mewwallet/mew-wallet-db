@@ -32,7 +32,7 @@ public final class AccountKey: MDBXKey {
   }
   
   public init?(data: Data) {
-    guard data.count == MDBXKeyLength.legacyAccount || data.count == MDBXKeyLength.account else { return nil }
+    guard data.count >= MDBXKeyLength.legacyAccount else { return nil }
     self.key = data
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
@@ -46,21 +46,6 @@ public final class AccountKey: MDBXKey {
       self.address = key[_addressRange].hexString
     }
   }
-  
-  public init(chain: MDBXChain, lowerRange: Bool) {
-    let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
-    
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(repeating: rangeValue, count: chain.isBitcoinNetwork ? MDBXKeyLength.legacyEVMAddress : MDBXKeyLength.addressEncodedLength)
-    
-    let key = chainPart + addressPart
-    self.key = key
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    self.chain = MDBXChain(rawValue: key[_chainRange])
-    
-    self.address = ""
-  }
 }
 
 // MARK: - AccountKey + Equatable
@@ -72,17 +57,6 @@ extension AccountKey: Equatable {
 extension AccountKey: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(key)
-  }
-}
-
-// MARK: - AccountKey + Range
-
-extension AccountKey {
-  public static func range(chain: MDBXChain) -> MDBXKeyRange {
-    let start = AccountKey(chain: chain, lowerRange: true)
-    let end = TokenMetaKey(chain: chain, lowerRange: false)
-    
-    return MDBXKeyRange(start: start, end: end, limit: nil)
   }
 }
 

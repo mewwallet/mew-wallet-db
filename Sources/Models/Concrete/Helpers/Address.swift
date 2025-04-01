@@ -156,8 +156,7 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     case MDBXKeyLength.legacyEVMAddress:
       let rawValue = encodedData.hexString
       self.init(rawValue: rawValue)
-    case MDBXKeyLength.addressEncodedLength:
-      // bitcoin only for now, we can handle it without type
+    default:
       let type = AddressType(rawValue: encodedData[0]) ?? .unknown
       let countData = Data(encodedData[1...2])
       let count = {
@@ -177,9 +176,6 @@ public enum Address: RawRepresentable, Equatable, Sendable {
         let rawValue = String(data: encodedData, encoding: .utf8)!
         self.init(rawValue: rawValue)
       }
-    default:
-      let rawValue = String(data: encodedData, encoding: .utf8)!
-      self.init(rawValue: rawValue)
     }
   }
   
@@ -223,12 +219,8 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     case .bitcoin:
       var data = rawValue.data(using: .utf8)!
       let count = UInt16(clamping: data.count)
-      precondition(data.count < MDBXKeyLength.addressEncodedLength)
-      data = data.setLengthLeft(MDBXKeyLength.addressEncodedLength)
-      data[0] = self.addressType.rawValue.bigEndian
       let lenghtData = withUnsafeBytes(of: count.bigEndian) { Data($0) }
-      data[1] = lenghtData[0]
-      data[2] = lenghtData[1]
+      data = Data([self.addressType.rawValue.bigEndian]) + lenghtData + data
       return data
     case .unknown:
       return rawValue.data(using: .utf8)!
