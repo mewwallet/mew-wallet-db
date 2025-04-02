@@ -33,13 +33,17 @@ public final class DAppRecordHistoryKey: MDBXKey {
   }
   
   public init?(data: Data) {
-    let coder = MDBXKeyCoder()
-    let decoded = coder.decode(data: data, fields: [
-      .chain,
-      .rawData(count: MDBXKeyLength.hash)
-    ])
-    self.key = data
-    
-    self.urlHash = decoded[1] as! Data
+    do {
+      let coder = MDBXKeyCoder()
+      let decoded = try coder.decode(data: data, fields: [
+        .chain,
+        .rawData(count: MDBXKeyLength.hash)
+      ])
+      self.key = data
+      
+      self.urlHash = decoded[1] as! Data
+    } catch {
+      return nil
+    }
   }
 }

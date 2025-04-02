@@ -49,7 +49,7 @@ extension NFTAsset {
   public var account: Account? {
     get throws {
       guard let collectionKey = _collectionKey else { return nil }
-      let key = AccountKey(chain: .evm, address: collectionKey.address)
+      let key = AccountKey(address: collectionKey.address)
       return try _account.getData(key: key, policy: .ignoreCache, chain: .evm, database: self.database)
     }
   }

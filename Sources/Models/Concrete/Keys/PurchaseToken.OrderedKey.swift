@@ -21,86 +21,52 @@ extension PurchaseToken {
     // MARK: - Lifecycle
 
     public init(chain: MDBXChain, order: UInt16, contractAddress: Address) {
-      let chainPart = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-      let orderPart = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
-      let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
+      let coder = MDBXKeyCoder()
+      
+      self.key = coder.encode(fields: [
+        chain,
+        order,
+        contractAddress
+      ])
 
-      let key = chainPart + orderPart + contractAddressPart
-      self.key = key
-
-      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-      let _orderRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound + MDBXKeyLength.order
-      let _contractAddressRange: Range<Int> = _orderRange.endIndex..<key.count
-
-      self.chain = {
-        return MDBXChain(rawValue: key[_chainRange])
-      }()
-
-      self.order = {
-        let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
-        return UInt16(bigEndian: value)
-      }()
-
-      self.contractAddress = {
-        return Address(rawValue: key[_contractAddressRange].hexString)
-      }()
+      self.chain = chain
+      self.order = order
+      self.contractAddress = contractAddress
     }
 
     public init?(data: Data) {
-      guard data.count == MDBXKeyLength.purchaseOrderedToken else { return nil }
-      self.key = data
-
-      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-      let _orderRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound + MDBXKeyLength.order
-      let _contractAddressRange: Range<Int> = _orderRange.endIndex..<key.count
-
-      self.chain = {
-        return MDBXChain(rawValue: data[_chainRange])
-      }()
-
-      self.order = {
-        let value = data.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
-        return UInt16(bigEndian: value)
-      }()
-
-      self.contractAddress = {
-        return Address(rawValue: data[_contractAddressRange].hexString)
-      }()
+      do {
+        self.key = data
+        
+        let coder = MDBXKeyCoder()
+        let decoded = try coder.decode(data: data, fields: [
+          .chain,
+          .order,
+          .address
+        ])
+        
+        self.chain = decoded[0] as! MDBXChain
+        self.order = decoded[1] as! UInt16
+        self.contractAddress = decoded[2] as! Address
+      } catch {
+        return nil
+      }
     }
 
     public init(chain: MDBXChain, lowerRange: Bool) {
-      let chainPart = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-
-      let orderPart: Data
-      let contractAddressPart: Data
-
-      if lowerRange {
-        orderPart = Data().setLengthLeft(MDBXKeyLength.order)
-        contractAddressPart = Data().setLengthLeft(MDBXKeyLength.legacyEVMAddress)
-      } else {
-        orderPart = Data(repeating: 0xFF, count: MDBXKeyLength.order)
-        contractAddressPart = Data(repeating: 0xFF, count: MDBXKeyLength.legacyEVMAddress)
-      }
-
-      let key = chainPart + orderPart + contractAddressPart
-      self.key = key
-
-      let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-      let _orderRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound + MDBXKeyLength.order
-      let _contractAddressRange: Range<Int> = _orderRange.endIndex..<key.count
-
-      self.chain = {
-        return MDBXChain(rawValue: key[_chainRange])
-      }()
-
-      self.order = {
-        let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
-        return UInt16(bigEndian: value)
-      }()
-
-      self.contractAddress = {
-        return Address(rawValue: key[_contractAddressRange].hexString)
-      }()
+      let coder = MDBXKeyCoder()
+      let rangeData = Data([lowerRange ? 0x00 : 0xFF])
+      
+      self.key = coder.encode(fields: [
+        chain,
+        rangeData, //2 ranges for order
+        rangeData,
+        rangeData //1 range for contract address
+      ])
+      
+      self.chain = chain
+      self.order = lowerRange ? .min : .max
+      self.contractAddress = .invalid(rangeData.hexString)
     }
   }
 }

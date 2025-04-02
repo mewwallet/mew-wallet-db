@@ -18,6 +18,10 @@ public final class AccountKey: MDBXKey {
   
   // MARK: - Lifecycle
   
+  public convenience init(address: Address) {
+    self.init(chain: address.networkChain, address: address)
+  }
+  
   public init(chain: MDBXChain, address: Address) {
     let coder = MDBXKeyCoder()
     
@@ -31,16 +35,20 @@ public final class AccountKey: MDBXKey {
   }
   
   public init?(data: Data) {
-    self.key = data
-    
-    let coder = MDBXKeyCoder()
-    
-    let decoded = coder.decode(data: data, fields: [
-      .network,
-      .address
-    ])
-    self.chain = decoded[0] as! MDBXChain
-    self.address = (decoded[1] as! Address).rawValue
+    do {
+      self.key = data
+      
+      let coder = MDBXKeyCoder()
+      
+      let decoded = try coder.decode(data: data, fields: [
+        .network,
+        .address
+      ])
+      self.chain = decoded[0] as! MDBXChain
+      self.address = (decoded[1] as! Address).rawValue
+    } catch {
+      return nil
+    }
   }
 }
 

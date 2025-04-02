@@ -110,6 +110,14 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     }
   }
   
+  public var networkChain: MDBXChain {
+    switch self.addressType {
+    case .evm:                    return .evm
+    case .bitcoin:                return .bitcoin
+    case .unknown:                return .evm
+    }
+  }
+  
   public init(_ rawValue: String) {
     self.init(rawValue: rawValue)
   }

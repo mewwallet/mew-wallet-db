@@ -49,18 +49,22 @@ public final class TokenKey: MDBXKey {
   }
   
   public init?(data: Data) {
-    self.key = data
-    
-    let coder = MDBXKeyCoder()
-    let decoded = coder.decode(data: data, fields: [
-      .chain,
-      .address,
-      .address
-    ])
-    
-    self.chain = decoded[0] as! MDBXChain
-    self.address = decoded[1] as! Address
-    self.contractAddress = decoded[2] as! Address
+    do {
+      self.key = data
+      
+      let coder = MDBXKeyCoder()
+      let decoded = try coder.decode(data: data, fields: [
+        .chain,
+        .address,
+        .address
+      ])
+      
+      self.chain = decoded[0] as! MDBXChain
+      self.address = decoded[1] as! Address
+      self.contractAddress = decoded[2] as! Address
+    } catch {
+      return nil
+    }
   }
 }
 

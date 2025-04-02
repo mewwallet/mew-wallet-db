@@ -126,7 +126,7 @@ fileprivate final class TokenTests {
     ])
     debugPrint(data.hexString)
     
-    let decoded = coder.decode(data: data, fields: [
+    let decoded = try coder.decode(data: data, fields: [
       .chain,
       .address,
       .legacyAddress

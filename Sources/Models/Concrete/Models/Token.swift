@@ -59,7 +59,7 @@ extension Token {
   
   public var account: Account? {
     get throws {
-      let key = AccountKey(chain: .evm, address: Address(_wrapped.address))
+      let key = AccountKey(address: Address(_wrapped.address))
       return try _account.getData(key: key, policy: .ignoreCache, chain: .evm, database: self.database)
     }
   }

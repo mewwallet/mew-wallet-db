@@ -44,16 +44,20 @@ public final class TokenMetaKey: MDBXKey {
   }
   
   public init?(data: Data) {
-    self.key = data
-    
-    let coder = MDBXKeyCoder()
-    let decoded = coder.decode(data: data, fields: [
-      .chain,
-      .address
-    ])
-    
-    self.chain = decoded[0] as! MDBXChain
-    self.contractAddress = decoded[1] as! Address
+    do {
+      self.key = data
+      
+      let coder = MDBXKeyCoder()
+      let decoded = try coder.decode(data: data, fields: [
+        .chain,
+        .address
+      ])
+      
+      self.chain = decoded[0] as! MDBXChain
+      self.contractAddress = decoded[1] as! Address
+    } catch {
+      return nil
+    }
   }
 }
 
