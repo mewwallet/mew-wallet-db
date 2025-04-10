@@ -8,6 +8,7 @@
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
+import mew_wallet_ios_extensions
 
 public struct Token: Equatable {
   public enum Error: LocalizedError {
@@ -77,6 +78,17 @@ extension Token {
   public var address: Address { Address(self._wrapped.address) }
   public var amount: Decimal { Decimal(wrapped: self._wrapped.amount, hex: true) ?? .zero }
   public var lockedAmount: Decimal { Decimal(wrapped: self._wrapped.lockedAmount, hex: true) ?? .zero }
+  public var availableAmount: Decimal { max(amount - lockedAmount, .zero) }
+  /// Contains human-readable balance (counts decimals of the token)
+  public var bundledAvailableAmount: BundledDecimal.Decimal {
+    get throws {
+      let meta = try self.meta
+      return .init(
+        availableAmount.convert(from: .wei, to: .custom(meta.decimals)),
+        symbol: meta.symbol
+      )
+    }
+  }
   
   public func isHidden(locked: Bool) -> Bool {
     guard let account = try? account else { return false }
