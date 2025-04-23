@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol MDBXKeyComponent {
-  init(encodedData: Data)
+protocol MDBXKeyComponent {
+  init(encodedData: Data) throws(DataReaderError)
   var encodedData: Data { get }
 }

@@ -102,7 +102,7 @@ fileprivate final class TokenTests {
     #expect(address.encodedData.count == 94)
     
     let data = Data(hex: "0x04005b62633170707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070357a39763277")
-    let restoredAddress = Address(encodedData: data)
+    let restoredAddress = try Address(encodedData: data)
     #expect(address == restoredAddress)
     #expect(restoredAddress.rawValue == "bc1pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp5z9v2w")
     #expect(restoredAddress.addressType == .bitcoin(.taproot))
@@ -110,7 +110,7 @@ fileprivate final class TokenTests {
     let evmAddress: Address = Address.unknown(.evm, "0x00c17f958d2ee523a2206206994597c13d831ec7")
     #expect(evmAddress.encodedData.hexString == "0x01001400c17f958d2ee523a2206206994597c13d831ec7")
     let evmData = Data(hex: "0x00c17f958d2ee523a2206206994597c13d831ec7")
-    let restoredEVMAddress = Address(encodedData: evmData)
+    let restoredEVMAddress = try Address(encodedData: evmData)
     #expect(restoredEVMAddress.addressType == .evm)
     #expect(restoredEVMAddress.rawValue == "0x00c17f958d2ee523a2206206994597c13d831ec7")
   }

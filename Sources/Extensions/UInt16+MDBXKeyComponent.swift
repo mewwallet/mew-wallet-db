@@ -8,12 +8,12 @@
 import Foundation
 
 extension UInt16: MDBXKeyComponent {
-  public init(encodedData: Data) {
+  init(encodedData: Data) throws(DataReaderError) {
     let value = encodedData.withUnsafeBytes { $0.loadUnaligned(as: UInt16.self) }
     self = UInt16(bigEndian: value)
   }
   
-  public var encodedData: Data {
+  var encodedData: Data {
     return withUnsafeBytes(of: self.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
   }
 }

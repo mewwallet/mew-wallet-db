@@ -224,23 +224,17 @@ extension Address: Hashable {}
 extension Address.AddressType: Hashable {}
 
 extension Address: MDBXKeyComponent {
-  public init(encodedData: Data) {
+  init(encodedData: Data) throws(DataReaderError) {
     switch encodedData.count {
     case MDBXKeyLength.legacyEVMAddress:
       let rawValue = encodedData.hexString
       self.init(rawValue: rawValue)
     default:
-      let type = AddressType(rawValue: encodedData[encodedData.startIndex]) ?? .unknown
-      let start = encodedData.startIndex
-      let end = encodedData.endIndex
-      let countRange = encodedData.index(start, offsetBy: 1)..<encodedData.index(start, offsetBy: 3)
-      let countData = encodedData[countRange]
-      let count = {
-        let value = countData.withUnsafeBytes { $0.loadUnaligned(as: UInt16.self) }
-        let uint = UInt16(bigEndian: value)
-        return Int(uint)
-      }()
-      let addressData = encodedData[encodedData.index(end, offsetBy: -count)..<end]
+      var cursor = encodedData.startIndex
+      let typeByte: UInt8 = try encodedData.readBE(&cursor)
+      let type = AddressType(rawValue: typeByte) ?? .unknown
+      let count: UInt16 = try encodedData.readBE(&cursor)
+      let addressData = try encodedData.read(&cursor, offsetBy: Int(count))
       switch type {
       case .evm:
         let rawValue = addressData.hexString
@@ -249,13 +243,14 @@ extension Address: MDBXKeyComponent {
         let rawValue = String(data: addressData, encoding: .utf8)!
         self.init(rawValue: rawValue)
       case .unknown:
-        let rawValue = String(data: encodedData, encoding: .utf8)!
-        self.init(rawValue: rawValue)
+        let rawValue = String(data: encodedData, encoding: .utf8)
+        precondition(rawValue != nil)
+        self.init(rawValue: rawValue!)
       }
     }
   }
   
-  public var encodedData: Data {
+  var encodedData: Data {
     switch self.addressType {
     case .evm:
       let data = Data(hex: rawValue)

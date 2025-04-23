@@ -8,7 +8,7 @@
 import Foundation
 
 extension Data: MDBXKeyComponent {
-  public init(encodedData: Data) {
+  init(encodedData: Data) throws(DataReaderError) {
     self = encodedData
   }
   
