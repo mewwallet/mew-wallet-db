@@ -74,6 +74,7 @@ extension DBWriteMode {
     case .dex:                    return [.append, .override]
     case .orderedDex:             return [.append, .override]
     case .featuredDex:            return [.append, .override]
+    case .crossChainDex:          return [.append, .override]
     case .tokenMeta:              return .appendOverrideMerge
     case .token:                  return .default
     case .rawTransaction:         return .default

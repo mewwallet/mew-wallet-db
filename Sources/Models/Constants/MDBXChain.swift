@@ -20,7 +20,7 @@ private enum _MDBXChain: Data, Sendable {
   case base               = "0x00000000000000000000000000002105" // 8453
   case arbitrum           = "0x0000000000000000000000000000A4B1" // 42161
   case optimism           = "0x0000000000000000000000000000000A" // 10
-  case bitcoin            = "0x0000000000000000bcbcbcbcbcbcbcbc" // 13599952493558414524 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
+  case bitcoin            = "0x00000000000000000000bcbcbcbcbcbc" // 207518806359228 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
   
   var chain: MDBXChain {
     switch self {
@@ -61,7 +61,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     8453:   .base,
     42161:  .arbitrum,
     10:     .optimism,
-    13599952493558414524: .bitcoin
+    207518806359228: .bitcoin
   ]
   
   @available(*, deprecated, renamed: "evmCases", message: "No longer supported")
@@ -117,7 +117,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:                       return 8453
     case .arbitrum:                   return 42161
     case .optimism:                   return 10
-    case .bitcoin:                    return 13599952493558414524
+    case .bitcoin:                    return 207518806359228
     case .custom(let data):           return data.withUnsafeBytes { $0.load(as: UInt64.self) }
     }
   }
@@ -269,7 +269,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return "0x00000000000000000000000000002105" // 8453
     case .arbitrum:           return "0x0000000000000000000000000000A4B1" // 42161
     case .optimism:           return "0x0000000000000000000000000000000A" // 10
-    case .bitcoin:            return "0x0000000000000000bcbcbcbcbcbcbcbc" // 13599952493558414524 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
+    case .bitcoin:            return "0x00000000000000000000bcbcbcbcbcbc" // 207518806359228 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
     case .custom(let chain):  return chain.hexString
     }
   }

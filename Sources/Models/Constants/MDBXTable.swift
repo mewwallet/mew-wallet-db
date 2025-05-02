@@ -13,6 +13,7 @@ public enum MDBXTableName: String, CaseIterable, Sendable {
   case dex                    = "Dex_0"
   case orderedDex             = "OrderedDex_0"
   case featuredDex            = "FeaturedDex_0"
+  case crossChainDex          = "CrossChainDex_0"
   case tokenMeta              = "TokenMeta_0"
   case token                  = "Token_0"
   case rawTransaction         = "RawTransaction_0"

@@ -10,7 +10,7 @@ import SwiftProtobuf
 import mdbx_ios
 import mew_wallet_ios_extensions
 
-public struct Token: Equatable {
+public struct Token {
   public enum Error: LocalizedError {
     case badValue
   }
@@ -24,6 +24,7 @@ public struct Token: Equatable {
   }
   var _wrapped: _Token
   var _chain: MDBXChain
+  public var chain: MDBXChain { _chain }
 
   // MARK: - Private Properties
   
@@ -208,8 +209,8 @@ extension Token: ProtoWrapper {
 
 // MARK: - Token + Equitable
 
-public extension Token {
-  static func ==(lhs: Token, rhs: Token) -> Bool {
+extension Token: Equatable {
+  public static func ==(lhs: Token, rhs: Token) -> Bool {
     return lhs._chain == rhs._chain &&
            lhs._wrapped == rhs._wrapped
   }
