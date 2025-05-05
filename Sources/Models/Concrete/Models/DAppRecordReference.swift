@@ -183,7 +183,7 @@ extension _DAppRecordReference: ProtoWrappedMessage {
   }
 }
 
-// MARK: - DAppRecordReference + Equitable
+// MARK: - DAppRecordReference + Equatable
 
 public extension DAppRecordReference {
   static func ==(lhs: DAppRecordReference, rhs: DAppRecordReference) -> Bool {

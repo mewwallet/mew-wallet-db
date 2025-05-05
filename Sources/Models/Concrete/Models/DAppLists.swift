@@ -98,7 +98,7 @@ extension _DAppLists: ProtoWrappedMessage {
   }
 }
 
-// MARK: - DAppLists + Equitable
+// MARK: - DAppLists + Equatable
 
 public extension DAppLists {
   static func ==(lhs: DAppLists, rhs: DAppLists) -> Bool {

@@ -241,7 +241,7 @@ extension _NFTAsset: ProtoWrappedMessage {
   }
 }
 
-// MARK: - NFTAsset + Equitable
+// MARK: - NFTAsset + Equatable
 
 public extension NFTAsset {
   static func ==(lhs: NFTAsset, rhs: NFTAsset) -> Bool {

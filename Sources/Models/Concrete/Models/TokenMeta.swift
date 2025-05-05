@@ -195,7 +195,7 @@ extension _TokenMeta: ProtoWrappedMessage {
   }
 }
 
-// MARK: - TokenMeta + Equitable
+// MARK: - TokenMeta + Equatable
 
 public extension TokenMeta {
   static func ==(lhs: TokenMeta, rhs: TokenMeta) -> Bool {

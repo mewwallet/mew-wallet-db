@@ -144,7 +144,7 @@ extension _DAppRecordHistory: ProtoWrappedMessage {
   }
 }
 
-// MARK: - DAppRecordHistory + Equitable
+// MARK: - DAppRecordHistory + Equatable
 
 public extension DAppRecordHistory {
   static func ==(lhs: DAppRecordHistory, rhs: DAppRecordHistory) -> Bool {

@@ -278,7 +278,7 @@ extension _Transfer: ProtoWrappedMessage {
   }
 }
 
-// MARK: - Transfer + Equitable
+// MARK: - Transfer + Equatable
 
 public extension Transfer {
   static func ==(lhs: Transfer, rhs: Transfer) -> Bool {

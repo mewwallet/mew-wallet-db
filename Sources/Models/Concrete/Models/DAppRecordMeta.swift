@@ -139,7 +139,7 @@ extension _DAppRecordMeta: ProtoWrappedMessage {
   }
 }
 
-// MARK: - DAppRecordMeta + Equitable
+// MARK: - DAppRecordMeta + Equatable
 
 public extension DAppRecordMeta {
   static func ==(lhs: DAppRecordMeta, rhs: DAppRecordMeta) -> Bool {

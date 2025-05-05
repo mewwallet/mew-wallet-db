@@ -166,7 +166,7 @@ extension _DexItem: ProtoWrappedMessage {
   }
 }
 
-// MARK: - DexItem + Equitable
+// MARK: - DexItem + Equatable
 
 extension DexItem: Equatable {
   public static func ==(lhs: DexItem, rhs: DexItem) -> Bool {

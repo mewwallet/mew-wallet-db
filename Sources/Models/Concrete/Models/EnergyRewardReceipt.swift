@@ -219,7 +219,7 @@ extension _EnergyRewardReceipt: ProtoWrappedMessage {
   }
 }
 
-// MARK: - EnergyRewardReceipt + Equitable
+// MARK: - EnergyRewardReceipt + Equatable
 
 public extension EnergyRewardReceipt {
   static func ==(lhs: EnergyRewardReceipt, rhs: EnergyRewardReceipt) -> Bool {

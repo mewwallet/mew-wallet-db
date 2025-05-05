@@ -141,7 +141,7 @@ extension _PurchaseToken: ProtoWrappedMessage {
   }
 }
 
-// MARK: - PurchaseToken + Equitable
+// MARK: - PurchaseToken + Equatable
 
 extension PurchaseToken {
   public static func == (lhs: PurchaseToken, rhs: PurchaseToken) -> Bool {

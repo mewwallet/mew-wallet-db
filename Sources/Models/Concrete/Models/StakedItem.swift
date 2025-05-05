@@ -247,7 +247,7 @@ extension _StakedItem: ProtoWrappedMessage {
   }
 }
 
-// MARK: - StakedItem + Equitable
+// MARK: - StakedItem + Equatable
 
 public extension StakedItem {
   static func ==(lhs: StakedItem, rhs: StakedItem) -> Bool {

@@ -137,7 +137,7 @@ extension _PurchaseProvider: ProtoWrappedMessage {
   }
 }
 
-// MARK: - PurchaseProvider + Equitable
+// MARK: - PurchaseProvider + Equatable
 
 extension PurchaseProvider: Equatable {
   public static func == (lhs: PurchaseProvider, rhs: PurchaseProvider) -> Bool {

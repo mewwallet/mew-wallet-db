@@ -166,7 +166,7 @@ extension _DAppRecord: ProtoWrappedMessage {
   }
 }
 
-// MARK: - DAppRecord + Equitable
+// MARK: - DAppRecord + Equatable
 
 public extension DAppRecord {
   static func ==(lhs: DAppRecord, rhs: DAppRecord) -> Bool {

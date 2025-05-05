@@ -40,7 +40,7 @@ extension NFTAssetLastSale {
   }
 }
 
-// MARK: - NFTAssetLastSale + Equitable
+// MARK: - NFTAssetLastSale + Equatable
 
 public extension NFTAssetLastSale {
   static func ==(lhs: NFTAssetLastSale, rhs: NFTAssetLastSale) -> Bool {

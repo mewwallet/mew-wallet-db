@@ -176,7 +176,7 @@ extension _HistoryPurchase: ProtoWrappedMessage {
   }
 }
 
-// MARK: - HistoryPurchase + Equitable
+// MARK: - HistoryPurchase + Equatable
 
 extension HistoryPurchase: Equatable {
   public static func ==(lhs: HistoryPurchase, rhs: HistoryPurchase) -> Bool {

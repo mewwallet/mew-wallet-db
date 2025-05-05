@@ -152,7 +152,7 @@ extension _NFTCollection: ProtoWrappedMessage {
   }
 }
 
-// MARK: - NFTCollection + Equitable
+// MARK: - NFTCollection + Equatable
 
 public extension NFTCollection {
   static func ==(lhs: NFTCollection, rhs: NFTCollection) -> Bool {

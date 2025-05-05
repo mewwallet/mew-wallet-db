@@ -538,7 +538,7 @@ extension _Profile: ProtoWrappedMessage {
   }
 }
 
-// MARK: - Profile + Equitable
+// MARK: - Profile + Equatable
 
 extension Profile: Equatable {
   public static func ==(lhs: Profile, rhs: Profile) -> Bool {

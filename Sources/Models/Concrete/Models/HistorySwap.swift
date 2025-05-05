@@ -218,7 +218,7 @@ extension _HistorySwap: ProtoWrappedMessage {
   }
 }
 
-// MARK: - HistorySwap + Equitable
+// MARK: - HistorySwap + Equatable
 
 extension HistorySwap: Equatable {
   public static func ==(lhs: HistorySwap, rhs: HistorySwap) -> Bool {

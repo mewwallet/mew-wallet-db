@@ -495,7 +495,7 @@ extension _Account: ProtoWrappedMessage {
   }
 }
 
-// MARK: - Account + Equitable
+// MARK: - Account + Equatable
 
 extension Account: Equatable {
   public static func ==(lhs: Self, rhs: Self) -> Bool {
