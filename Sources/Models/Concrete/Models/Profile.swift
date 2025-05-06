@@ -176,6 +176,7 @@ public struct Profile {
         $0.pushToken = ""
         $0.platform = ""
         $0.notifications = NotificationFlags.all.rawValue
+        $0.multichainAddresses = .with { _ in }
       }
       $0.status = .with {
         $0.status = Profile.Status.Status.inactive.rawValue
@@ -264,29 +265,57 @@ extension Profile {
   mutating public func add(address: Address, flags: AddressFlags = [.includeInDailyPortfolio, .includeInWeeklyPortfolio]) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
     
-    guard !_wrapped.settings.addresses.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
-    
-    let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.addresses.last
-    
-    var account = _Profile._Settings._Address()
-    account.address = address.rawValue
-    account.flags = flags.rawValue
-    
-    _wrapped.settings.addresses.append(account)
-    
-    return .add(path: keypath.stringValue, value: account)
+    switch address.networkType {
+    case .bitcoin:
+      guard !_wrapped.settings.multichainAddresses.btc.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.btc.last
+      
+      var account = _Profile._Settings._Address()
+      account.address = address.rawValue
+      account.flags = flags.rawValue
+      
+      _wrapped.settings.multichainAddresses.btc.append(account)
+      
+      return .add(path: keypath.stringValue, value: account)
+      
+    case .evm:
+      guard !_wrapped.settings.multichainAddresses.evm.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.evm.last
+      
+      var account = _Profile._Settings._Address()
+      account.address = address.rawValue
+      account.flags = flags.rawValue
+      
+      _wrapped.settings.multichainAddresses.evm.append(account)
+      
+      return .add(path: keypath.stringValue, value: account)
+    }
   }
   
   mutating public func remove(address: Address) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
     
-    guard let index = _wrapped.settings.addresses.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
-    
-    let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.addresses.first
-    
-    _wrapped.settings.addresses.remove(at: index)
-    
-    return .remove(path: keypath.stringValue(index))
+    switch address.networkType {
+    case .bitcoin:
+      guard let index = _wrapped.settings.multichainAddresses.btc.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.btc.first
+      
+      _wrapped.settings.multichainAddresses.btc.remove(at: index)
+      
+      return .remove(path: keypath.stringValue(index, networkType: address.networkType))
+      
+    case .evm:
+      guard let index = _wrapped.settings.multichainAddresses.evm.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.evm.first
+      
+      _wrapped.settings.multichainAddresses.evm.remove(at: index)
+      
+      return .remove(path: keypath.stringValue(index, networkType: address.networkType))
+    }
   }
   
   /// Prepares `PATCH` data to enable/disable daily portfolio tracker
@@ -409,25 +438,49 @@ extension Profile {
   mutating public func set(flag: AddressFlags, for address: Address, enable: Bool) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
     
-    guard let index = _wrapped.settings.addresses.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
-    
-    var account = _wrapped.settings.addresses[index]
-    
-    var flags = AddressFlags(rawValue: account.flags)
-    if enable {
-      flags = flags.union(flag)
-    } else {
-      flags = flags.subtracting(flag)
+    switch address.networkType {
+    case .bitcoin:
+      guard let index = _wrapped.settings.multichainAddresses.btc.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
+      
+      var account = _wrapped.settings.multichainAddresses.btc[index]
+      
+      var flags = AddressFlags(rawValue: account.flags)
+      if enable {
+        flags = flags.union(flag)
+      } else {
+        flags = flags.subtracting(flag)
+      }
+      
+      guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
+      
+      let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.multichainAddresses.btc.last?.flags
+      
+      account.flags = flags.rawValue
+      _wrapped.settings.multichainAddresses.btc[index] = account
+      
+      return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
+      
+    case .evm:
+      guard let index = _wrapped.settings.multichainAddresses.evm.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
+      
+      var account = _wrapped.settings.multichainAddresses.evm[index]
+      
+      var flags = AddressFlags(rawValue: account.flags)
+      if enable {
+        flags = flags.union(flag)
+      } else {
+        flags = flags.subtracting(flag)
+      }
+      
+      guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
+      
+      let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.multichainAddresses.evm.last?.flags
+      
+      account.flags = flags.rawValue
+      _wrapped.settings.multichainAddresses.evm[index] = account
+      
+      return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
     }
-    
-    guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
-    
-    let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.addresses.last?.flags
-    
-    account.flags = flags.rawValue
-    _wrapped.settings.addresses[index] = account
-    
-    return .replace(path: keypath.stringValue(index), value: flags.rawValue)
   }
   
   // MARK: - Properties
@@ -454,7 +507,10 @@ extension Profile {
     return tracker
   }
   
-  public var addresses: [Address] { _wrapped.settings.addresses.map({ Address($0.address) }) }
+  public var addresses: [Address] {
+    _wrapped.settings.multichainAddresses.evm.map({ Address($0.address) }) +
+    _wrapped.settings.multichainAddresses.btc.map({ Address($0.address) })
+  }
   public var notificationsFlags: NotificationFlags { NotificationFlags(rawValue: _wrapped.settings.notifications) }
   public var pushToken: String { _wrapped.settings.pushToken }
   public var status: Profile.Status {
@@ -574,25 +630,29 @@ extension Profile: Sendable {}
 private extension PartialKeyPath where Root == _Profile {
   var stringValue: String {
     switch self {
-    case \_Profile.settings.notifications:                      return "/settings/notifications"
-    case \_Profile.settings.timezone:                           return "/settings/timezone"
-    case \_Profile.settings.gmtOffset:                          return "/settings/gmt_offset"
-    case \_Profile.settings.addresses.last:                     return "/settings/addresses/-"
-    case \_Profile.settings.platform:                           return "/settings/platform"
-    case \_Profile.settings.portfolioTracker.daily.enabled:     return "/settings/portfolio_tracker/daily/enabled"
-    case \_Profile.settings.portfolioTracker.daily.timestamp:   return "/settings/portfolio_tracker/daily/timestamp"
-    case \_Profile.settings.portfolioTracker.weekly.enabled:    return "/settings/portfolio_tracker/weekly/enabled"
-    case \_Profile.settings.portfolioTracker.weekly.timestamp:  return "/settings/portfolio_tracker/weekly/timestamp"
-    case \_Profile.settings.pushToken:                          return "/settings/push_token"
+    case \_Profile.settings.notifications:                                      return "/settings/notifications"
+    case \_Profile.settings.timezone:                                           return "/settings/timezone"
+    case \_Profile.settings.gmtOffset:                                          return "/settings/gmt_offset"
+    case \_Profile.settings.addresses.last:                                     return "/settings/addresses/-"
+    case \_Profile.settings.multichainAddresses.evm.last:                       return "/settings/multichain_addresses/evm/-"
+    case \_Profile.settings.multichainAddresses.btc.last:                       return "/settings/multichain_addresses/btc/-"
+    case \_Profile.settings.platform:                                           return "/settings/platform"
+    case \_Profile.settings.portfolioTracker.daily.enabled:                     return "/settings/portfolio_tracker/daily/enabled"
+    case \_Profile.settings.portfolioTracker.daily.timestamp:                   return "/settings/portfolio_tracker/daily/timestamp"
+    case \_Profile.settings.portfolioTracker.weekly.enabled:                    return "/settings/portfolio_tracker/weekly/enabled"
+    case \_Profile.settings.portfolioTracker.weekly.timestamp:                  return "/settings/portfolio_tracker/weekly/timestamp"
+    case \_Profile.settings.pushToken:                                          return "/settings/push_token"
       
     default: fatalError("Unexpected key path")
     }
   }
   
-  func stringValue(_ index: Int) -> String {
-    switch self {
-    case \_Profile.settings.addresses.first:                    return "/settings/addresses/\(index)"
-    case \_Profile.settings.addresses.last?.flags:              return "/settings/addresses/\(index)/flags"
+  func stringValue(_ index: Int, networkType: NetworkType) -> String {
+    switch (networkType, self) {
+    case (.bitcoin, \_Profile.settings.multichainAddresses.btc.first):          return "/settings/multichain_addresses/btc/\(index)"
+    case (.bitcoin, \_Profile.settings.multichainAddresses.btc.last?.flags):    return "/settings/multichain_addresses/btc/\(index)/flags"
+    case (.evm, \_Profile.settings.multichainAddresses.evm.first):              return "/settings/multichain_addresses/evm/\(index)"
+    case (.evm, \_Profile.settings.multichainAddresses.evm.last?.flags):        return "/settings/multichain_addresses/evm/\(index)/flags"
     default:
       return stringValue
     }

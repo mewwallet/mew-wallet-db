@@ -102,6 +102,13 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     return true
   }
   
+  public var networkType: NetworkType {
+    guard case .bitcoin = addressType else {
+      return .evm
+    }
+    return .bitcoin
+  }
+  
   public var addressType: AddressType {
     switch self {
     case .unknown(let type, _):   return type
