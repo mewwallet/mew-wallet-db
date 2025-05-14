@@ -12,14 +12,14 @@ import mdbx_ios
 public struct HistorySwap {
   public enum Status: String {
     case pending = "PENDING"
-    case success = "SUCCESS"
-    case failed  = "FAIL"
+    case success = "COMPLETE"
+    case failed  = "FAILED"
     
     public init(rawValue: String) {
       switch rawValue {
       case "PENDING":   self = .pending
-      case "SUCCESS":   self = .success
-      case "FAIL":      self = .failed
+      case "COMPLETE":  self = .success
+      case "FAILED":    self = .failed
       default:          self = .pending
       }
     }
@@ -39,44 +39,58 @@ public struct HistorySwap {
   var _chain: MDBXChain
   
   // MARK: - Private Properties
+  private let _fromAccount: MDBXPointer<AccountKey, Account> = .init(.account)
+  private let _toAccount: MDBXPointer<AccountKey, Account> = .init(.account)
   private let _fromMeta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
   private let _toMeta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
-  private let _account: MDBXPointer<AccountKey, Account> = .init(.account)
 
-   
-  public init(chain: MDBXChain,
-              address: Address,
-              fromToken: Address,
-              toToken: Address,
-              fromAmount: Decimal,
-              toAmount: Decimal,
-              status: Status,
+  public init(id: String?,
+              orderId: String?,
               dex: String,
+              status: Status,
+              fromChain: MDBXChain,
+              fromToken: Address,
+              fromAddress: Address,
+              fromAmount: Decimal,
+              toChain: MDBXChain,
+              toToken: Address,
+              toAddress: Address,
+              toAmount: Decimal,
               hashes: [String],
-              database: (any WalletDB)? = nil) {
-
+              hashTo: String?
+  ) {
     precondition(!hashes.isEmpty)
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
-      $0.address = address.rawValue
-      $0.toAddress = address.rawValue
+      if let id {
+        $0.id = id
+      }
+      if let orderId {
+        $0.orderID = orderId
+      }
       
-      $0.fromToken = fromToken.rawValue
-      $0.toToken = toToken.rawValue
-      
-      $0.fromAmount = fromAmount.hexString
-      $0.toAmount = toAmount.hexString
-      
+      $0.provider = dex
       $0.status = status.rawValue
       
-      $0.dex = dex
+      $0.fromChainID = fromChain.value
+      $0.fromContractAddress = fromToken.rawValue
+      $0.fromAddress = fromAddress.rawValue
+      $0.fromAmount = fromAmount.hexString
       
-      $0.hash = hashes.last!
+      $0.toChainID = toChain.value
+      $0.toContractAddress = toToken.rawValue
+      $0.toAddress = toAddress.rawValue
+      $0.toAmount = toAmount.hexString
+      
+      $0.hashFrom = hashes.last!
       $0.hashes.append(contentsOf: hashes)
+      if let hashTo {
+        $0.hashTo = hashTo
+      }
       
       $0.timestamp = .init(date: Date())
     }
-    self._chain = chain
+    self._chain = fromChain
   }
 }
 
@@ -86,39 +100,74 @@ extension HistorySwap {
   
   // MARK: - Relations
   
-  public var account: Account {
+  public var fromAccount: Account {
     get throws {
-      let address = Address(rawValue: _wrapped.address)
-      return try _account.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .evm, database: self.database)
+      let address = Address(rawValue: _wrapped.fromAddress)
+      let key = AccountKey(address: address)
+      return try _fromAccount.getData(key: key, policy: .cacheOrLoad, chain: address.networkChain, database: self.database)
     }
   }
-
+  
+  public var toAccount: Account {
+    get throws {
+      let address = Address(rawValue: _wrapped.toAddress)
+      let key = AccountKey(address: address)
+      return try _toAccount.getData(key: key, policy: .cacheOrLoad, chain: address.networkChain, database: self.database)
+    }
+  }
+  
   public var fromMeta: TokenMeta {
     get throws {
-      let contractAddress = Address(rawValue: _wrapped.fromToken)
-      return try _fromMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, chain: _chain, database: self.database)
+      let contractAddress = Address(rawValue: _wrapped.fromContractAddress)
+      let key = TokenMetaKey(chain: fromChain, contractAddress: contractAddress)
+      return try _fromMeta.getData(key: key, policy: .cacheOrLoad, chain: fromChain, database: self.database)
     }
   }
   
   public var toMeta: TokenMeta {
     get throws {
-      let contractAddress = Address(rawValue: _wrapped.toToken)
-      return try _toMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: contractAddress), policy: .cacheOrLoad, chain: _chain, database: self.database)
+      let contractAddress = Address(rawValue: _wrapped.toContractAddress)
+      let key = TokenMetaKey(chain: toChain, contractAddress: contractAddress)
+      return try _toMeta.getData(key: key, policy: .cacheOrLoad, chain: toChain, database: self.database)
     }
   }
   
   // MARK: - Properties
   
+  public var isCrosschain: Bool { _wrapped.fromChainID != _wrapped.toChainID }
+  public var uuid: String? { _wrapped.hasID ? _wrapped.id : nil }
+  public var orderId: String? { _wrapped.hasOrderID ? _wrapped.orderID : nil }
+  public var error: String? { _wrapped.hasStatusError ? _wrapped.statusError : nil }
+  public var fromChain: MDBXChain { MDBXChain(rawValue: _wrapped.fromChainID) }
+  public var toChain: MDBXChain { MDBXChain(rawValue: _wrapped.toChainID) }
   public var rawFromAmount: Decimal { Decimal(wrapped: _wrapped.fromAmount, hex: true) ?? .zero }
   public var rawToAmount: Decimal { Decimal(wrapped: _wrapped.toAmount, hex: true) ?? .zero }
+  public var fromAmount: Decimal {
+    do {
+      return try self.rawFromAmount.convert(to: self.fromMeta.cryptoUnit)
+    } catch {
+      return .zero
+    }
+  }
+  public var toAmount: Decimal {
+    do {
+      return try self.rawToAmount.convert(to: self.toMeta.cryptoUnit)
+    } catch {
+      return .zero
+    }
+  }
+  
   public var status: History.Status {
     set { _wrapped.status = HistorySwap.Status(newValue).rawValue }
     get { History.Status(_status) }
   }
-  public var dex: String { _wrapped.dex }
-  public var hash: String { _wrapped.hash }
+  public var dex: String { _wrapped.provider }
+  
+  public var hashFrom: String { _wrapped.hashFrom }
+  public var hashTo: String? { _wrapped.hashTo }
+  
   public var currentHash: String {
-    var hash = self._wrapped.hash
+    var hash = self._wrapped.hashFrom
     while let replace = _wrapped.replaceHashes[hash] {
       hash = replace
     }
@@ -126,10 +175,24 @@ extension HistorySwap {
   }
   public var knownHashes: [String] {
     var hashes = _wrapped.hashes
+    if _wrapped.hasHashTo {
+      hashes.append(_wrapped.hashTo)
+    }
     hashes.append(contentsOf: _wrapped.replaceHashes.values)
     return hashes
   }
-  public var timestamp: Date { return _wrapped.timestamp.date }
+  public var timestamp: Date {
+    if self.status.isFinal {
+      return _wrapped.hasUpdatedAt ? _wrapped.updatedAt.date : _wrapped.timestamp.date
+    } else {
+      return _wrapped.timestamp.date
+    }
+  }
+  
+  public var safeFromAccount: Account? { try? fromAccount }
+  public var safeToAccount: Account? { try? toAccount }
+  public var safeFromMeta: TokenMeta? { try? fromMeta }
+  public var safeToMeta: TokenMeta? { try? toMeta }
   
   // MARK: - Methods
   
@@ -154,10 +217,15 @@ extension HistorySwap: MDBXObject {
   public var chain: MDBXChain { _chain }
   
   public var key: any MDBXKey {
-    return HistorySwapKey(chain: _chain, account: Address(_wrapped.address), hash: _wrapped.hash)
+    let address = Address(rawValue: _wrapped.fromAddress)
+    return HistorySwapKey(chain: fromChain, account: address, hash: _wrapped.hashFrom)
   }
   
-  public var alternateKey: (any MDBXKey)? { return nil }
+  public var alternateKey: (any MDBXKey)? {
+    guard self.isCrosschain else { return nil }
+    let address = Address(rawValue: _wrapped.toAddress)
+    return HistorySwapKey(chain: toChain, account: address, hash: _wrapped.hashFrom)
+  }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
@@ -195,18 +263,41 @@ extension HistorySwap: MDBXObject {
   mutating public func merge(with object: any MDBXObject) {
     let other = object as! HistorySwap
     
-    self._wrapped.address         = other._wrapped.address
-    self._wrapped.fromToken       = other._wrapped.fromToken
-    self._wrapped.toToken         = other._wrapped.toToken
-    self._wrapped.fromAmount      = other._wrapped.fromAmount
-    self._wrapped.toAmount        = other._wrapped.toAmount
-    self._wrapped.toAddress       = other._wrapped.toAddress
-    self._wrapped.status          = other._wrapped.status
-    self._wrapped.dex             = other._wrapped.dex
-    self._wrapped.hash            = other._wrapped.hash
-    self._wrapped.hashes          = other._wrapped.hashes
-    self._wrapped.replaceHashes   = other._wrapped.replaceHashes
-    self._wrapped.timestamp       = other._wrapped.timestamp
+    self._wrapped.provider              = other._wrapped.provider
+    self._wrapped.status                = other._wrapped.status
+    
+    self._wrapped.fromChainID           = other._wrapped.fromChainID
+    self._wrapped.fromContractAddress   = other._wrapped.fromContractAddress
+    self._wrapped.fromAddress           = other._wrapped.fromAddress
+    self._wrapped.fromAmount            = other._wrapped.fromAmount
+    
+    self._wrapped.toChainID             = other._wrapped.toChainID
+    self._wrapped.toContractAddress     = other._wrapped.toContractAddress
+    self._wrapped.toAddress             = other._wrapped.toAddress
+    self._wrapped.toAmount              = other._wrapped.toAmount
+    
+    var allHashes = self._wrapped.hashes
+    allHashes.append(contentsOf: other._wrapped.hashes)
+    self._wrapped.hashes                = allHashes.uniqued(on: { $0 })
+    
+    other._wrapped.replaceHashes.forEach {
+      self._wrapped.replaceHashes[$0.key] = $0.value
+    }
+    
+    self._wrapped.timestamp = other._wrapped.timestamp
+    
+    if other._wrapped.hasID {
+      self._wrapped.id = other._wrapped.id
+    }
+    if other._wrapped.hasOrderID {
+      self._wrapped.orderID = other._wrapped.orderID
+    }
+    if other._wrapped.hasStatusError {
+      self._wrapped.statusError = other._wrapped.statusError
+    }
+    if other._wrapped.hasUpdatedAt {
+      self._wrapped.updatedAt = other._wrapped.updatedAt
+    }
   }
 }
 
@@ -222,8 +313,10 @@ extension _HistorySwap: ProtoWrappedMessage {
 
 extension HistorySwap: Equatable {
   public static func ==(lhs: HistorySwap, rhs: HistorySwap) -> Bool {
-    return lhs._chain == rhs._chain &&
-           lhs._wrapped.hash == rhs._wrapped.hash
+    return lhs.fromChain == rhs.fromChain &&
+           lhs.toChain == rhs.toChain &&
+           lhs._wrapped.hashFrom == rhs._wrapped.hashFrom &&
+           lhs._wrapped.hashTo == rhs._wrapped.hashTo
   }
 }
 
@@ -231,7 +324,7 @@ extension HistorySwap: Equatable {
 
 extension HistorySwap: Identifiable {
   /// The stable identity of the entity associated with this instance.
-  public var id: String { self._wrapped.hash }
+  public var id: String { self._wrapped.hashFrom }
 }
 
 // MARK: - HistorySwap + ProtoWrapper
@@ -264,11 +357,17 @@ extension HistorySwap: Comparable {
 extension HistorySwap: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(_wrapped.status)
-    hasher.combine(_wrapped.fromToken)
+    hasher.combine(_wrapped.fromChainID)
+    hasher.combine(_wrapped.fromContractAddress)
     hasher.combine(_wrapped.fromAmount)
-    hasher.combine(_wrapped.toToken)
+    hasher.combine(_wrapped.fromAddress)
+    hasher.combine(_wrapped.toChainID)
+    hasher.combine(_wrapped.toContractAddress)
     hasher.combine(_wrapped.toAmount)
-    hasher.combine(_wrapped.address)
-    hasher.combine(_wrapped.hash)
+    hasher.combine(_wrapped.toAddress)
+    hasher.combine(_wrapped.hashFrom)
+    if _wrapped.hasHashTo {
+      hasher.combine(_wrapped.hashTo)
+    }
   }
 }

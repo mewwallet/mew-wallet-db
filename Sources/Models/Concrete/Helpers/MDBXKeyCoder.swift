@@ -13,7 +13,10 @@ final class MDBXKeyCoder {
     case network
     case legacyAddress
     case address
+    case block
+    case direction
     case order
+    case nonce
     case rawData(count: Int)
   }
   
@@ -45,6 +48,18 @@ final class MDBXKeyCoder {
       case .legacyAddress:
         let encoded = try data.read(&cursor, offsetBy: MDBXKeyLength.legacyEVMAddress)
         try decoded.append(Address(encodedData: encoded))
+        
+      case .block:
+        let order: UInt64 = try data.readBE(&cursor)
+        decoded.append(order)
+        
+      case .direction:
+        let encoded = try data.read(&cursor, offsetBy: MDBXKeyLength.direction)
+        try decoded.append(Transfer.Direction(encodedData: encoded))
+        
+      case .nonce:
+        let order: UInt64 = try data.readBE(&cursor)
+        decoded.append(order)
 
       case .order:
         let order: UInt16 = try data.readBE(&cursor)

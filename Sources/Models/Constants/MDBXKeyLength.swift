@@ -18,7 +18,7 @@ public enum MDBXKeyLength {
   public static let name                  = 64
   public static let block                 = 8
   public static let direction             = 1
-  public static let nonce                 = 8
+  public static let nonce                 = 8 // must be the same as block
   public static let transactionID         = 32
   public static let timestamp             = 4
   public static let timestampMilliseconds = 8

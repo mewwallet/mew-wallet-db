@@ -21,59 +21,154 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Represent Historical Swap record
-struct _HistorySwap: Sendable {
+struct _HistorySwap: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// Account's address
-  var address: String = String()
+  /// Unique swap identifier
+  var id: String {
+    get {return _storage._id ?? String()}
+    set {_uniqueStorage()._id = newValue}
+  }
+  /// Returns true if `id` has been explicitly set.
+  var hasID: Bool {return _storage._id != nil}
+  /// Clears the value of `id`. Subsequent reads from it will return its default value.
+  mutating func clearID() {_uniqueStorage()._id = nil}
 
-  /// From Token contract address
-  var fromToken: String = String()
-
-  /// To Token contract address
-  var toToken: String = String()
-
-  /// From amount
-  var fromAmount: String = String()
-
-  /// To amount
-  var toAmount: String = String()
-
-  /// Same Account's address for now
-  var toAddress: String = String()
-
-  /// Status
-  var status: String = String()
+  /// Unique external swap identifier
+  var orderID: String {
+    get {return _storage._orderID ?? String()}
+    set {_uniqueStorage()._orderID = newValue}
+  }
+  /// Returns true if `orderID` has been explicitly set.
+  var hasOrderID: Bool {return _storage._orderID != nil}
+  /// Clears the value of `orderID`. Subsequent reads from it will return its default value.
+  mutating func clearOrderID() {_uniqueStorage()._orderID = nil}
 
   /// Dex identifier
-  var dex: String = String()
+  var provider: String {
+    get {return _storage._provider}
+    set {_uniqueStorage()._provider = newValue}
+  }
 
-  /// Transaction hash
-  var hash: String = String()
+  /// Status of the swap
+  var status: String {
+    get {return _storage._status}
+    set {_uniqueStorage()._status = newValue}
+  }
 
-  /// All hashes
-  var hashes: [String] = []
+  /// Optional error message related to the swap status
+  var statusError: String {
+    get {return _storage._statusError ?? String()}
+    set {_uniqueStorage()._statusError = newValue}
+  }
+  /// Returns true if `statusError` has been explicitly set.
+  var hasStatusError: Bool {return _storage._statusError != nil}
+  /// Clears the value of `statusError`. Subsequent reads from it will return its default value.
+  mutating func clearStatusError() {_uniqueStorage()._statusError = nil}
 
-  /// Replacement hashes
-  var replaceHashes: Dictionary<String,String> = [:]
+  /// Chain ID of the source blockchain
+  var fromChainID: UInt64 {
+    get {return _storage._fromChainID}
+    set {_uniqueStorage()._fromChainID = newValue}
+  }
 
-  /// Timestamp of the swap
+  /// Source token contract address
+  var fromContractAddress: String {
+    get {return _storage._fromContractAddress}
+    set {_uniqueStorage()._fromContractAddress = newValue}
+  }
+
+  /// Source wallet address
+  var fromAddress: String {
+    get {return _storage._fromAddress}
+    set {_uniqueStorage()._fromAddress = newValue}
+  }
+
+  /// Source token amount
+  var fromAmount: String {
+    get {return _storage._fromAmount}
+    set {_uniqueStorage()._fromAmount = newValue}
+  }
+
+  /// Chain ID of the destination blockchain
+  var toChainID: UInt64 {
+    get {return _storage._toChainID}
+    set {_uniqueStorage()._toChainID = newValue}
+  }
+
+  /// Destination token contract address
+  var toContractAddress: String {
+    get {return _storage._toContractAddress}
+    set {_uniqueStorage()._toContractAddress = newValue}
+  }
+
+  /// Destination wallet address
+  var toAddress: String {
+    get {return _storage._toAddress}
+    set {_uniqueStorage()._toAddress = newValue}
+  }
+
+  /// Destination token's amount
+  var toAmount: String {
+    get {return _storage._toAmount}
+    set {_uniqueStorage()._toAmount = newValue}
+  }
+
+  /// List of transaction hashes associated with the swap
+  var hashes: [String] {
+    get {return _storage._hashes}
+    set {_uniqueStorage()._hashes = newValue}
+  }
+
+  /// Primary hash from the source transaction
+  var hashFrom: String {
+    get {return _storage._hashFrom}
+    set {_uniqueStorage()._hashFrom = newValue}
+  }
+
+  /// Optional hash to the destination transaction
+  var hashTo: String {
+    get {return _storage._hashTo ?? String()}
+    set {_uniqueStorage()._hashTo = newValue}
+  }
+  /// Returns true if `hashTo` has been explicitly set.
+  var hasHashTo: Bool {return _storage._hashTo != nil}
+  /// Clears the value of `hashTo`. Subsequent reads from it will return its default value.
+  mutating func clearHashTo() {_uniqueStorage()._hashTo = nil}
+
+  /// Replacement hashes for failed, retried, or replacement swaps
+  var replaceHashes: Dictionary<String,String> {
+    get {return _storage._replaceHashes}
+    set {_uniqueStorage()._replaceHashes = newValue}
+  }
+
+  /// Timestamp when the swap was recorded
   var timestamp: SwiftProtobuf.Google_Protobuf_Timestamp {
-    get {return _timestamp ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
-    set {_timestamp = newValue}
+    get {return _storage._timestamp ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_uniqueStorage()._timestamp = newValue}
   }
   /// Returns true if `timestamp` has been explicitly set.
-  var hasTimestamp: Bool {return self._timestamp != nil}
+  var hasTimestamp: Bool {return _storage._timestamp != nil}
   /// Clears the value of `timestamp`. Subsequent reads from it will return its default value.
-  mutating func clearTimestamp() {self._timestamp = nil}
+  mutating func clearTimestamp() {_uniqueStorage()._timestamp = nil}
+
+  /// Optional timestamp of last update
+  var updatedAt: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _storage._updatedAt ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_uniqueStorage()._updatedAt = newValue}
+  }
+  /// Returns true if `updatedAt` has been explicitly set.
+  var hasUpdatedAt: Bool {return _storage._updatedAt != nil}
+  /// Clears the value of `updatedAt`. Subsequent reads from it will return its default value.
+  mutating func clearUpdatedAt() {_uniqueStorage()._updatedAt = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -81,100 +176,218 @@ struct _HistorySwap: Sendable {
 extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_HistorySwap"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .standard(proto: "from_token"),
-    3: .standard(proto: "to_token"),
-    4: .standard(proto: "from_amount"),
-    5: .standard(proto: "to_amount"),
-    6: .standard(proto: "to_address"),
-    7: .same(proto: "status"),
-    8: .same(proto: "dex"),
-    9: .same(proto: "hash"),
-    10: .same(proto: "hashes"),
-    11: .same(proto: "replaceHashes"),
-    12: .same(proto: "timestamp"),
+    1: .same(proto: "id"),
+    2: .standard(proto: "order_id"),
+    3: .same(proto: "provider"),
+    4: .same(proto: "status"),
+    5: .standard(proto: "status_error"),
+    6: .standard(proto: "from_chain_id"),
+    7: .standard(proto: "from_contract_address"),
+    8: .standard(proto: "from_address"),
+    9: .standard(proto: "from_amount"),
+    10: .standard(proto: "to_chain_id"),
+    11: .standard(proto: "to_contract_address"),
+    12: .standard(proto: "to_address"),
+    13: .standard(proto: "to_amount"),
+    14: .same(proto: "hashes"),
+    15: .standard(proto: "hash_from"),
+    16: .standard(proto: "hash_to"),
+    17: .same(proto: "replaceHashes"),
+    18: .same(proto: "timestamp"),
+    19: .standard(proto: "updated_at"),
   ]
 
+  fileprivate class _StorageClass {
+    var _id: String? = nil
+    var _orderID: String? = nil
+    var _provider: String = String()
+    var _status: String = String()
+    var _statusError: String? = nil
+    var _fromChainID: UInt64 = 0
+    var _fromContractAddress: String = String()
+    var _fromAddress: String = String()
+    var _fromAmount: String = String()
+    var _toChainID: UInt64 = 0
+    var _toContractAddress: String = String()
+    var _toAddress: String = String()
+    var _toAmount: String = String()
+    var _hashes: [String] = []
+    var _hashFrom: String = String()
+    var _hashTo: String? = nil
+    var _replaceHashes: Dictionary<String,String> = [:]
+    var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    var _updatedAt: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _id = source._id
+      _orderID = source._orderID
+      _provider = source._provider
+      _status = source._status
+      _statusError = source._statusError
+      _fromChainID = source._fromChainID
+      _fromContractAddress = source._fromContractAddress
+      _fromAddress = source._fromAddress
+      _fromAmount = source._fromAmount
+      _toChainID = source._toChainID
+      _toContractAddress = source._toContractAddress
+      _toAddress = source._toAddress
+      _toAmount = source._toAmount
+      _hashes = source._hashes
+      _hashFrom = source._hashFrom
+      _hashTo = source._hashTo
+      _replaceHashes = source._replaceHashes
+      _timestamp = source._timestamp
+      _updatedAt = source._updatedAt
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.address) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.fromToken) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.toToken) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self.fromAmount) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self.toAmount) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self.toAddress) }()
-      case 7: try { try decoder.decodeSingularStringField(value: &self.status) }()
-      case 8: try { try decoder.decodeSingularStringField(value: &self.dex) }()
-      case 9: try { try decoder.decodeSingularStringField(value: &self.hash) }()
-      case 10: try { try decoder.decodeRepeatedStringField(value: &self.hashes) }()
-      case 11: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: &self.replaceHashes) }()
-      case 12: try { try decoder.decodeSingularMessageField(value: &self._timestamp) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._id) }()
+        case 2: try { try decoder.decodeSingularStringField(value: &_storage._orderID) }()
+        case 3: try { try decoder.decodeSingularStringField(value: &_storage._provider) }()
+        case 4: try { try decoder.decodeSingularStringField(value: &_storage._status) }()
+        case 5: try { try decoder.decodeSingularStringField(value: &_storage._statusError) }()
+        case 6: try { try decoder.decodeSingularUInt64Field(value: &_storage._fromChainID) }()
+        case 7: try { try decoder.decodeSingularStringField(value: &_storage._fromContractAddress) }()
+        case 8: try { try decoder.decodeSingularStringField(value: &_storage._fromAddress) }()
+        case 9: try { try decoder.decodeSingularStringField(value: &_storage._fromAmount) }()
+        case 10: try { try decoder.decodeSingularUInt64Field(value: &_storage._toChainID) }()
+        case 11: try { try decoder.decodeSingularStringField(value: &_storage._toContractAddress) }()
+        case 12: try { try decoder.decodeSingularStringField(value: &_storage._toAddress) }()
+        case 13: try { try decoder.decodeSingularStringField(value: &_storage._toAmount) }()
+        case 14: try { try decoder.decodeRepeatedStringField(value: &_storage._hashes) }()
+        case 15: try { try decoder.decodeSingularStringField(value: &_storage._hashFrom) }()
+        case 16: try { try decoder.decodeSingularStringField(value: &_storage._hashTo) }()
+        case 17: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: &_storage._replaceHashes) }()
+        case 18: try { try decoder.decodeSingularMessageField(value: &_storage._timestamp) }()
+        case 19: try { try decoder.decodeSingularMessageField(value: &_storage._updatedAt) }()
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.address.isEmpty {
-      try visitor.visitSingularStringField(value: self.address, fieldNumber: 1)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._id {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._orderID {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+      } }()
+      if !_storage._provider.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._provider, fieldNumber: 3)
+      }
+      if !_storage._status.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._status, fieldNumber: 4)
+      }
+      try { if let v = _storage._statusError {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 5)
+      } }()
+      if _storage._fromChainID != 0 {
+        try visitor.visitSingularUInt64Field(value: _storage._fromChainID, fieldNumber: 6)
+      }
+      if !_storage._fromContractAddress.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._fromContractAddress, fieldNumber: 7)
+      }
+      if !_storage._fromAddress.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._fromAddress, fieldNumber: 8)
+      }
+      if !_storage._fromAmount.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._fromAmount, fieldNumber: 9)
+      }
+      if _storage._toChainID != 0 {
+        try visitor.visitSingularUInt64Field(value: _storage._toChainID, fieldNumber: 10)
+      }
+      if !_storage._toContractAddress.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._toContractAddress, fieldNumber: 11)
+      }
+      if !_storage._toAddress.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._toAddress, fieldNumber: 12)
+      }
+      if !_storage._toAmount.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._toAmount, fieldNumber: 13)
+      }
+      if !_storage._hashes.isEmpty {
+        try visitor.visitRepeatedStringField(value: _storage._hashes, fieldNumber: 14)
+      }
+      if !_storage._hashFrom.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._hashFrom, fieldNumber: 15)
+      }
+      try { if let v = _storage._hashTo {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 16)
+      } }()
+      if !_storage._replaceHashes.isEmpty {
+        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: _storage._replaceHashes, fieldNumber: 17)
+      }
+      try { if let v = _storage._timestamp {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 18)
+      } }()
+      try { if let v = _storage._updatedAt {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 19)
+      } }()
     }
-    if !self.fromToken.isEmpty {
-      try visitor.visitSingularStringField(value: self.fromToken, fieldNumber: 2)
-    }
-    if !self.toToken.isEmpty {
-      try visitor.visitSingularStringField(value: self.toToken, fieldNumber: 3)
-    }
-    if !self.fromAmount.isEmpty {
-      try visitor.visitSingularStringField(value: self.fromAmount, fieldNumber: 4)
-    }
-    if !self.toAmount.isEmpty {
-      try visitor.visitSingularStringField(value: self.toAmount, fieldNumber: 5)
-    }
-    if !self.toAddress.isEmpty {
-      try visitor.visitSingularStringField(value: self.toAddress, fieldNumber: 6)
-    }
-    if !self.status.isEmpty {
-      try visitor.visitSingularStringField(value: self.status, fieldNumber: 7)
-    }
-    if !self.dex.isEmpty {
-      try visitor.visitSingularStringField(value: self.dex, fieldNumber: 8)
-    }
-    if !self.hash.isEmpty {
-      try visitor.visitSingularStringField(value: self.hash, fieldNumber: 9)
-    }
-    if !self.hashes.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.hashes, fieldNumber: 10)
-    }
-    if !self.replaceHashes.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: self.replaceHashes, fieldNumber: 11)
-    }
-    try { if let v = self._timestamp {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _HistorySwap, rhs: _HistorySwap) -> Bool {
-    if lhs.address != rhs.address {return false}
-    if lhs.fromToken != rhs.fromToken {return false}
-    if lhs.toToken != rhs.toToken {return false}
-    if lhs.fromAmount != rhs.fromAmount {return false}
-    if lhs.toAmount != rhs.toAmount {return false}
-    if lhs.toAddress != rhs.toAddress {return false}
-    if lhs.status != rhs.status {return false}
-    if lhs.dex != rhs.dex {return false}
-    if lhs.hash != rhs.hash {return false}
-    if lhs.hashes != rhs.hashes {return false}
-    if lhs.replaceHashes != rhs.replaceHashes {return false}
-    if lhs._timestamp != rhs._timestamp {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._id != rhs_storage._id {return false}
+        if _storage._orderID != rhs_storage._orderID {return false}
+        if _storage._provider != rhs_storage._provider {return false}
+        if _storage._status != rhs_storage._status {return false}
+        if _storage._statusError != rhs_storage._statusError {return false}
+        if _storage._fromChainID != rhs_storage._fromChainID {return false}
+        if _storage._fromContractAddress != rhs_storage._fromContractAddress {return false}
+        if _storage._fromAddress != rhs_storage._fromAddress {return false}
+        if _storage._fromAmount != rhs_storage._fromAmount {return false}
+        if _storage._toChainID != rhs_storage._toChainID {return false}
+        if _storage._toContractAddress != rhs_storage._toContractAddress {return false}
+        if _storage._toAddress != rhs_storage._toAddress {return false}
+        if _storage._toAmount != rhs_storage._toAmount {return false}
+        if _storage._hashes != rhs_storage._hashes {return false}
+        if _storage._hashFrom != rhs_storage._hashFrom {return false}
+        if _storage._hashTo != rhs_storage._hashTo {return false}
+        if _storage._replaceHashes != rhs_storage._replaceHashes {return false}
+        if _storage._timestamp != rhs_storage._timestamp {return false}
+        if _storage._updatedAt != rhs_storage._updatedAt {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
+import mew_wallet_ios_extensions
 
 public struct TokenMeta: Equatable {
   public weak var database: (any WalletDB)?
@@ -78,6 +79,7 @@ extension TokenMeta {
   public var name: String { self._wrapped.name }
   public var symbol: String { self._wrapped.symbol }
   public var decimals: Int { Int(self._wrapped.decimals) }
+  public var cryptoUnit: CryptoUnit { return .custom(decimals) }
   public var icon: URL? {
     guard self._wrapped.hasIcon else { return nil }
     return URL(string: self._wrapped.icon)

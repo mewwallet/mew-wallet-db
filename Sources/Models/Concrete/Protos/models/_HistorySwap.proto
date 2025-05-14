@@ -4,28 +4,60 @@ import "google/protobuf/timestamp.proto";
 
 // Represent Historical Swap record
 message _HistorySwap {
-  // Account's address
-  string address                              = 1;
-  // From Token contract address
-  string from_token                           = 2;
-  // To Token contract address
-  string to_token                             = 3;
-  // From amount
-  string from_amount                          = 4;
-  // To amount
-  string to_amount                            = 5;
-  // Same Account's address for now
-  string to_address                           = 6;
-  // Status
-  string status                               = 7;
+  // Unique swap identifier
+  optional string id                          = 1;
+
+  // Unique external swap identifier
+  optional string order_id                    = 2;
+
   // Dex identifier
-  string dex                                  = 8;
-  // Transaction hash
-  string hash                                 = 9;
-  // All hashes
-  repeated string hashes                      = 10;
-  // Replacement hashes
-  map <string, string> replaceHashes          = 11;
-  // Timestamp of the swap
-  google.protobuf.Timestamp timestamp         = 12;
+  string provider                             = 3;
+
+  // Status of the swap
+  string status                               = 4;
+
+  // Optional error message related to the swap status
+  optional string status_error                = 5;
+
+  // Chain ID of the source blockchain
+  uint64 from_chain_id                        = 6;
+
+  // Source token contract address
+  string from_contract_address                = 7;
+  
+  // Source wallet address
+  string from_address                         = 8;
+
+  // Source token amount
+  string from_amount                          = 9;
+
+  // Chain ID of the destination blockchain
+  uint64 to_chain_id                          = 10;
+
+  // Destination token contract address
+  string to_contract_address                  = 11;
+
+  // Destination wallet address
+  string to_address                           = 12;
+
+  // Destination token's amount
+  string to_amount                            = 13;
+
+  // List of transaction hashes associated with the swap
+  repeated string hashes                      = 14;
+
+  // Primary hash from the source transaction
+  string hash_from                            = 15;
+
+  // Optional hash to the destination transaction
+  optional string hash_to                     = 16;
+
+  // Replacement hashes for failed, retried, or replacement swaps
+  map <string, string> replaceHashes          = 17;
+
+  // Timestamp when the swap was recorded
+  google.protobuf.Timestamp timestamp         = 18;
+
+  // Optional timestamp of last update
+  google.protobuf.Timestamp updated_at        = 19;
 }

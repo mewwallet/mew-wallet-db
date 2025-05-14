@@ -20,87 +20,59 @@ public final class HistorySwapKey: MDBXKey {
   // MARK: - Lifecycle
   
   public init(chain: MDBXChain, account: Address, hash: String) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: account.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
-    let hashPart            = Data(hex: hash).setLengthLeft(MDBXKeyLength.hash)
+    let coder = MDBXKeyCoder()
     
-    let key = chainPart + addressPart + hashPart
-    self.key = key
+    self.key = coder.encode(fields: [
+      chain,
+      account,
+      Data(hex: hash)
+    ])
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
-    let _hashRange: Range<Int> = _addressRange.endIndex..<key.count
-    
-    self.chain = {
-      return MDBXChain(rawValue: key[_chainRange])
-    }()
-    
-    self.address = {
-      return Address(rawValue: key[_addressRange].hexString)
-    }()
-    
-    self.hash = {
-      return key[_hashRange].hexString
-    }()
+    self.chain = chain
+    self.address = account
+    self.hash = hash
   }
   
   public init(chain: MDBXChain, address: Address?, lowerRange: Bool) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart: Data
+    let coder = MDBXKeyCoder()
+    
+    let rangeData = Data([lowerRange ? 0x00 : 0xFF])
     if let address {
-      addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
+      self.key = coder.encode(fields: [
+        chain,
+        address,
+        rangeData
+      ])
     } else {
-      if lowerRange {
-        addressPart         = Data().setLengthLeft(MDBXKeyLength.legacyEVMAddress)
-      } else {
-        addressPart         = Data(repeating: 0xFF, count: MDBXKeyLength.legacyEVMAddress)
-      }
+      self.key = coder.encode(fields: [
+        chain,
+        rangeData
+      ])
     }
-    let hashPart: Data
-    if lowerRange {
-      hashPart              = Data().setLengthLeft(MDBXKeyLength.hash)
-    } else {
-      hashPart              = Data(repeating: 0xFF, count: MDBXKeyLength.hash)
-    }
-    let key = chainPart + addressPart + hashPart
-    self.key = key
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
-    let _hashRange: Range<Int> = _addressRange.endIndex..<key.count
+    self.chain = chain
     
-    self.chain = {
-      return MDBXChain(rawValue: key[_chainRange])
-    }()
-    
-    self.address = {
-      return Address(rawValue: key[_addressRange].hexString)
-    }()
-    
-    self.hash = {
-      return key[_hashRange].hexString
-    }()
+    self.address = address ?? .invalid(rangeData.hexString)
+    self.hash = rangeData.hexString
   }
   
   public init?(data: Data) {
-    guard data.count == MDBXKeyLength.historySwap else { return nil }
-    self.key = data
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
-    let _hashRange: Range<Int> = _addressRange.endIndex..<key.count
-    
-    self.chain = {
-      return MDBXChain(rawValue: data[_chainRange])
-    }()
-    
-    self.address = {
-      return Address(rawValue: data[_addressRange].hexString)
-    }()
-    
-    self.hash = {
-      return data[_hashRange].hexString
-    }()
+    do {
+      let coder = MDBXKeyCoder()
+      
+      let decoded = try coder.decode(data: data, fields: [
+        .chain,
+        .address,
+        .rawData(count: MDBXKeyLength.hash)
+      ])
+      
+      self.key = data
+      self.chain = decoded[0] as! MDBXChain
+      self.address = decoded[1] as! Address
+      self.hash = (decoded[2] as! Data).hexString
+    } catch {
+      return nil
+    }
   }
 }
 
