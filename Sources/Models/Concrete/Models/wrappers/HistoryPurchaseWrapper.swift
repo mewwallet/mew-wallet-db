@@ -16,12 +16,12 @@ public struct HistoryPurchaseWrapper: MDBXWrapperObject {
   public init(jsonString: String, chain: MDBXChain) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _HistoryPurchaseWrapper(jsonString: jsonString, options: options)
   }
   
   public init(jsonData: Data, chain: MDBXChain) throws {
-    self._chain = .universal
+    self._chain = .evm
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     self._wrapped = try _HistoryPurchaseWrapper(jsonUTF8Data: jsonData, options: options)
@@ -35,7 +35,7 @@ extension HistoryPurchaseWrapper {
   // MARK: - Properties
   
   public var results: [HistoryPurchase] {
-    self._wrapped.results.map({ $0.wrapped(.universal) })
+    self._wrapped.results.map({ $0.wrapped(.evm) })
   }
 }
 
@@ -43,7 +43,7 @@ extension HistoryPurchaseWrapper {
 
 extension _HistoryPurchaseWrapper: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> HistoryPurchaseWrapper {
-    return HistoryPurchaseWrapper(self, chain: .universal)
+    return HistoryPurchaseWrapper(self, chain: .evm)
   }
 }
 
@@ -51,7 +51,7 @@ extension _HistoryPurchaseWrapper: ProtoWrappedMessage {
 
 extension HistoryPurchaseWrapper: ProtoWrapper {
   init(_ wrapped: _HistoryPurchaseWrapper, chain: MDBXChain) {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = wrapped
   }
 }

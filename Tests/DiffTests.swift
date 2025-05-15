@@ -172,6 +172,7 @@ final class diff_tests: XCTestCase {
                             name: "My account",
                             source: .recoveryPhrase,
                             type: .internal,
+                            network: .evm,
                             derivationPath: nil,
                             anonymizedId: "anonID",
                             encryptionPublicKey: nil,
@@ -213,8 +214,8 @@ final class diff_tests: XCTestCase {
       XCTAssertEqual(try db.count(range: .all, from: .nftAsset), 2)
       XCTAssertEqual(try db.count(range: .all, from: .tokenMeta), 1)
       
-      var oldKeys: [NFTCollectionKey] = try db.fetchKeys(range: .with(start: NFTCollectionKey(chain: .eth, address: .unknown(account_address), lowerRange: true),
-                                                                      end: NFTCollectionKey(chain: .eth, address: .unknown(account_address), lowerRange: false)),
+      var oldKeys: [NFTCollectionKey] = try db.fetchKeys(range: .with(start: NFTCollectionKey(chain: .eth, address: Address(account_address), lowerRange: true),
+                                                                      end: NFTCollectionKey(chain: .eth, address: Address(account_address), lowerRange: false)),
                                                               from: .nftCollection,
                                                          order: .asc)
       oldKeys.forEach {

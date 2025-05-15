@@ -29,7 +29,7 @@ extension HistoryPurchase.ChainedContractAddress {
 
 extension _ChainedContractAddress: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> HistoryPurchase.ChainedContractAddress {
-    return HistoryPurchase.ChainedContractAddress(self, chain: .universal)
+    return HistoryPurchase.ChainedContractAddress(self, chain: .evm)
   }
 }
 
@@ -37,7 +37,7 @@ extension _ChainedContractAddress: ProtoWrappedMessage {
 
 extension HistoryPurchase.ChainedContractAddress: ProtoWrapper {
   init(_ wrapped: _ChainedContractAddress, chain: MDBXChain) {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = wrapped
   }
 }

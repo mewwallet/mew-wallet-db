@@ -29,7 +29,7 @@ public final class NFTAssetKey: MDBXKey {
     
     let collectionKeyPart   = collectionKey?.key ?? Data(repeating: 0x00, count: MDBXKeyLength.nftCollection)
     let dateHexPart         = nameData.setLengthRight(MDBXKeyLength.dateHex)
-    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let hashPart            = id.sha256.setLengthLeft(MDBXKeyLength.hash)
     
     let key = collectionKeyPart + dateHexPart + contractAddressPart + hashPart
@@ -37,7 +37,7 @@ public final class NFTAssetKey: MDBXKey {
     
     let _collectionKeyRange: Range<Int> = 0..<MDBXKeyLength.nftCollection
     let _dateHexRange: Range<Int> = _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.dateHex
-    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.address
+    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
 
     self.collectionKey = {
@@ -62,7 +62,7 @@ public final class NFTAssetKey: MDBXKey {
     let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
     
     let collectionKeyPart   = collectionKey?.key ?? Data(repeating: 0x00, count: MDBXKeyLength.nftCollection)
-    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.address)
+    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.legacyEVMAddress)
     let dateHexPart         = Data(repeating: rangeValue, count: MDBXKeyLength.dateHex)
     let hashPart            = Data(repeating: rangeValue, count: MDBXKeyLength.hash)
     
@@ -71,7 +71,7 @@ public final class NFTAssetKey: MDBXKey {
     
     let _collectionKeyRange: Range<Int> = 0..<MDBXKeyLength.nftCollection
     let _dateHexRange: Range<Int> = _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.dateHex
-    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.address
+    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
 
     self.collectionKey = {
@@ -98,7 +98,7 @@ public final class NFTAssetKey: MDBXKey {
     
     let _collectionKeyRange: Range<Int> = 0..<MDBXKeyLength.nftCollection
     let _dateHexRange: Range<Int> = _collectionKeyRange.endIndex..<_collectionKeyRange.upperBound+MDBXKeyLength.dateHex
-    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.address
+    let _contractAddressRange: Range<Int> = _dateHexRange.endIndex..<_dateHexRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
 
     self.collectionKey = {

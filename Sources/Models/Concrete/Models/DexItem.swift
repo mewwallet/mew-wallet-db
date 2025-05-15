@@ -9,12 +9,13 @@ import Foundation
 import SwiftProtobuf
 import mdbx_ios
 
-public struct DexItem: Equatable {
+public struct DexItem {
   private var _restoredAlternateKey: OrderedDexItemKey?
   public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DexItem
   var _chain: MDBXChain
   public var order: UInt16?
+  public var chain: MDBXChain { _chain }
   
   // MARK: - Private Properties
   
@@ -35,7 +36,7 @@ public struct DexItem: Equatable {
     }
   }
   
-  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, order: UInt16?, database: (any WalletDB)? = nil) {
+  public init(chain: MDBXChain, contractAddress: String, name: String, symbol: String, order: UInt16?, crosschain: Bool, database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._chain = chain
     self._contract_address = contractAddress
@@ -44,6 +45,7 @@ public struct DexItem: Equatable {
       $0.contractAddress = contractAddress
       $0.name = name
       $0.symbol = symbol
+      $0.crosschain = crosschain
     }
   }
   
@@ -73,17 +75,23 @@ extension DexItem {
   // MARK: - Properties
   
   public var contract_address: Address { Address(rawValue: self._contract_address ?? self._wrapped.contractAddress) }
+  
   public var name: String {
     guard self._wrapped.name.isEmpty else {
       return self._wrapped.name
     }
     return (try? self.meta.name) ?? ""
   }
+  
   public var symbol: String {
     guard self._wrapped.symbol.isEmpty else {
       return self._wrapped.symbol
     }
     return (try? self.meta.symbol) ?? ""
+  }
+  
+  public var isCrossChain: Bool {
+    self._wrapped.crosschain
   }
 }
 
@@ -158,10 +166,10 @@ extension _DexItem: ProtoWrappedMessage {
   }
 }
 
-// MARK: - DexItem + Equitable
+// MARK: - DexItem + Equatable
 
-public extension DexItem {
-  static func ==(lhs: DexItem, rhs: DexItem) -> Bool {
+extension DexItem: Equatable {
+  public static func ==(lhs: DexItem, rhs: DexItem) -> Bool {
     return lhs._wrapped == rhs._wrapped
   }
 }

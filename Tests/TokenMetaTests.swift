@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import XCTest
+import Testing
 @testable import mew_wallet_db
 import mew_wallet_ios_extensions
 import SwiftProtobuf
@@ -86,69 +86,106 @@ private let testJson = """
 
 private let projectId = "0x00"
 
-final class TokenMeta_tests: XCTestCase {
+@Suite("TokenMeta tests")
+fileprivate final class TokenMetaTests {
   private var db: MEWwalletDBImpl!
+  private let _path: String
   
-  lazy private var _path: String = {
+  init() async throws {
     let fileManager = FileManager.default
-    let url = fileManager.temporaryDirectory.appendingPathComponent("test-db")
-    return url.path
-  }()
-
-  override func setUp() {
-    super.setUp()
+    let url = fileManager.temporaryDirectory.appendingPathComponent("test-db-\(UUID().uuidString)")
+    self._path = url.path
+    
     db = MEWwalletDBImpl()
     try? FileManager.default.removeItem(atPath: self._path)
 
     try! db.start(path: self._path, tables: MDBXTableName.allCases, readOnly: false)
   }
-
-  override func tearDown() {
-    super.tearDown()
-
+  
+  deinit {
     try? FileManager.default.removeItem(atPath: self._path)
     db = nil
   }
   
-  func testTokenMeta() async {
-    do {
-      let objects = try TokenMeta.array(fromJSONString: testJson, chain: .eth)
-      let keysAndObjects: [(any MDBXKey, any MDBXObject)] = objects.lazy.map ({
-        return ($0.key, $0)
-      })
-      try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
-      try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes])
-      
-      let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",name: "name", symbol: "symbol", order: 0)
-      let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", name: "name", symbol: "symbol", order: 2)
-      let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", name: "name", symbol: "symbol",order: 1)
-      
-      try await db.write(table: .orderedDex, keysAndObjects: [
-        (dexItem.alternateKey!, dexItem),
-        (dexItem2.alternateKey!, dexItem2),
-        (dexItem3.alternateKey!, dexItem3)
-      ], mode: .append)
-      
-      try await db.write(table: .dex, keysAndObjects: [
-        (dexItem.key, dexItem),
-        (dexItem2.key, dexItem2),
-        (dexItem3.key, dexItem3)
-      ], mode: .append)
-      
-      var dex = try dexItem.meta.dexItem.meta.dexItem
-      dex.order = 0
-      
-      let renBTC: TokenMeta = try db.read(key: TokenMetaKey(chain: .eth, contractAddress: .renBTC), table: .tokenMeta)
-      XCTAssertEqual(renBTC.contract_address, .renBTC)
-    } catch {
-      XCTFail(error.localizedDescription)
-    }
+  @Test("Token meta with dexes")
+  func tokenMetaWithDexes() async throws {
+    let objects = try TokenMeta.array(fromJSONString: testJson, chain: .eth)
+    let keysAndObjects: [(any MDBXKey, any MDBXObject)] = objects.lazy.map ({
+      return ($0.key, $0)
+    })
+    try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes, .override])
+    try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects, mode: [.append, .changes])
+    
+    let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",name: "name", symbol: "symbol", order: 0, crosschain: false)
+    let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", name: "name", symbol: "symbol", order: 2, crosschain: false)
+    let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", name: "name", symbol: "symbol",order: 1, crosschain: false)
+    
+    try await db.write(table: .orderedDex, keysAndObjects: [
+      (dexItem.alternateKey!, dexItem),
+      (dexItem2.alternateKey!, dexItem2),
+      (dexItem3.alternateKey!, dexItem3)
+    ], mode: .append)
+    
+    try await db.write(table: .dex, keysAndObjects: [
+      (dexItem.key, dexItem),
+      (dexItem2.key, dexItem2),
+      (dexItem3.key, dexItem3)
+    ], mode: .append)
+    
+    var dex = try dexItem.meta.dexItem.meta.dexItem
+    dex.order = 0
+    
+    let renBTC: TokenMeta = try db.read(key: TokenMetaKey(chain: .eth, contractAddress: .renBTC), table: .tokenMeta)
+    #expect(renBTC.contract_address == .renBTC)
   }
   
-  func testKey() {
+  @Test("Token meta ranges")
+  func tokenMetaRanges() async throws {
+    let objects1: [TokenMeta] = [
+      .init(chain: .eth, contractAddress: Address("0x0000000000000000000000000000000000000000")),
+      .init(chain: .eth, contractAddress: Address("0x1111111111111111111111111111111111111111")),
+      .init(chain: .eth, contractAddress: Address("0x2222222222222222222222222222222222222222")),
+      .init(chain: .eth, contractAddress: Address("0x3333333333333333333333333333333333333333")),
+      .init(chain: .eth, contractAddress: Address("0x4444444444444444444444444444444444444444")),
+      .init(chain: .eth, contractAddress: Address("0x5555555555555555555555555555555555555555")),
+    ]
+    let objects2: [TokenMeta] = [
+      .init(chain: .arbitrum, contractAddress: Address("0x0000000000000000000000000000000000000000")),
+      .init(chain: .arbitrum, contractAddress: Address("0x1111111111111111111111111111111111111111")),
+      .init(chain: .arbitrum, contractAddress: Address("0x2222222222222222222222222222222222222222")),
+      .init(chain: .arbitrum, contractAddress: Address("0x3333333333333333333333333333333333333333")),
+      .init(chain: .arbitrum, contractAddress: Address("0x4444444444444444444444444444444444444444")),
+      .init(chain: .arbitrum, contractAddress: Address("0x5555555555555555555555555555555555555555")),
+    ]
+    let keysAndObjects1: [(any MDBXKey, any MDBXObject)] = objects1.lazy.map({
+      return ($0.key, $0)
+    })
+    let keysAndObjects2: [(any MDBXKey, any MDBXObject)] = objects2.lazy.map({
+      return ($0.key, $0)
+    })
+    try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects1, mode: [.append, .changes, .override])
+    try await db.write(table: .tokenMeta, keysAndObjects: keysAndObjects2, mode: [.append, .changes, .override])
+    
+    let readAll: [TokenMeta] = try db.fetch(range: .all, from: .tokenMeta, order: .asc)
+    #expect(readAll.count == 12)
+    
+    let range1 = TokenMetaKey.range(chain: .eth)
+    let readRange1: [TokenMeta] = try db.fetch(range: range1, from: .tokenMeta, order: .asc)
+    let range2 = TokenMetaKey.range(chain: .arbitrum)
+    let readRange2: [TokenMeta] = try db.fetch(range: range2, from: .tokenMeta, order: .asc)
+    let range3 = TokenMetaKey.range(chain: .base)
+    let readRange3: [TokenMeta] = try db.fetch(range: range3, from: .tokenMeta, order: .asc)
+    
+    #expect(readRange1 == objects1)
+    #expect(readRange2 == objects2)
+    #expect(readRange3.isEmpty)
+  }
+  
+  @Test("Test key")
+  func key() async throws {
     let tokenKey = TokenKey(chain: .eth, address: "0x112233445566778899aabbccddeeff0011223344", contractAddress: "0x5566778899aabbccddeeff001122334455667788")
-    XCTAssertEqual(tokenKey.address, "0x112233445566778899aabbccddeeff0011223344")
-    XCTAssertEqual(tokenKey.contractAddress, "0x5566778899aabbccddeeff001122334455667788")
-    XCTAssertEqual(tokenKey.key.hexString, "0x00000000000000000000000000000001112233445566778899aabbccddeeff00112233445566778899aabbccddeeff001122334455667788")
+    #expect(tokenKey.address == "0x112233445566778899aabbccddeeff0011223344")
+    #expect(tokenKey.contractAddress == "0x5566778899aabbccddeeff001122334455667788")
+    #expect(tokenKey.key.hexString == "0x00000000000000000000000000000001010014112233445566778899aabbccddeeff00112233440100145566778899aabbccddeeff001122334455667788")
   }
 }

@@ -33,6 +33,7 @@ final class StakedTests: XCTestCase {
                           name: "My account",
                           source: .recoveryPhrase,
                           type: .internal,
+                          network: .evm,
                           derivationPath: nil,
                           anonymizedId: "anonID",
                           encryptionPublicKey: nil,

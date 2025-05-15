@@ -21,7 +21,7 @@ extension StakedItem {
     
     public init(chain: MDBXChain, address: Address, timestamp: Date) {
       let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-      let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+      let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
       
       let seconds             = UInt32(timestamp.timeIntervalSince1970)
       let timestampPart       = withUnsafeBytes(of: seconds.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.timestamp)
@@ -30,7 +30,7 @@ extension StakedItem {
       self.key = key
       
       let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
       let _timestampRange: Range<Int> = _addressRange.endIndex..<key.count
       
       self.chain = {
@@ -50,7 +50,7 @@ extension StakedItem {
     
     public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
       let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-      let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+      let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
       
       let timestampPart: Data
       if lowerRange {
@@ -62,7 +62,7 @@ extension StakedItem {
       self.key = key
       
       let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
       let _timestampRange: Range<Int> = _addressRange.endIndex..<key.count
       
       self.chain = {
@@ -85,7 +85,7 @@ extension StakedItem {
       self.key = data
       
       let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+      let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
       let _timestampRange: Range<Int> = _addressRange.endIndex..<key.count
       
       self.chain = {

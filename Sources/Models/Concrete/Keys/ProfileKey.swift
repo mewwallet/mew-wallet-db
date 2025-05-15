@@ -13,14 +13,14 @@ public final class ProfileKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public let chain: MDBXChain = .universal
+  public let chain: MDBXChain = .evm
   public let profileID: String
   public let deviceID: String
   
   // MARK: - Lifecycle
   
   public init(profileID: String, deviceID: String) {
-    let chainPart     = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let chainPart     = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let profileIDPart = profileID.sha256.setLengthLeft(MDBXKeyLength.hash)
     let deviceIDPart  = deviceID.sha256.setLengthLeft(MDBXKeyLength.hash)
     

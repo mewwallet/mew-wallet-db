@@ -14,7 +14,7 @@ public struct PurchaseToken: Equatable {
     set {}
   }
   var _wrapped: _PurchaseToken = .with({ _ in })
-  var _chain: MDBXChain = .universal
+  var _chain: MDBXChain = .evm
   public var order: UInt16? = nil
 
   private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
@@ -141,7 +141,7 @@ extension _PurchaseToken: ProtoWrappedMessage {
   }
 }
 
-// MARK: - PurchaseToken + Equitable
+// MARK: - PurchaseToken + Equatable
 
 extension PurchaseToken {
   public static func == (lhs: PurchaseToken, rhs: PurchaseToken) -> Bool {

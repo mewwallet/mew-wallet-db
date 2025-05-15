@@ -90,6 +90,17 @@ message _Profile {
     // Stores notifications settings flags
     uint32 notifications                      = 8;
 
+    message _Multichain {
+      // Stores array of evm addresses associated with profile
+      repeated _Address evm               = 1;
+      
+      // Stores array of bitcoin addresses associated with profile
+      repeated _Address btc               = 2;
+    }
+    
+    // Stores structure of multichain addresses associated with the profile
+    optional _Multichain multichain_addresses = 9;
+
     // Last updated timestamp
 //    google.protobuf.Timestamp timestamp       = 100;
   }

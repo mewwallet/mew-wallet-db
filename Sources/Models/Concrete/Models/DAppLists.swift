@@ -13,7 +13,7 @@ import mew_wallet_ios_extensions
 public struct DAppLists: Equatable, Sendable {
   public weak var database: (any WalletDB)? = MEWwalletDBImpl.shared
   var _wrapped: _DAppLists
-  let _chain: MDBXChain = .universal
+  let _chain: MDBXChain = .evm
   
   // MARK: - Lifecycle
   
@@ -71,14 +71,14 @@ extension DAppLists: MDBXObject {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _DAppLists.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
 
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _DAppLists.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
 
   mutating public func merge(with object: any MDBXObject) {
@@ -94,11 +94,11 @@ extension DAppLists: MDBXObject {
 
 extension _DAppLists: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> DAppLists {
-    return DAppLists(self, chain: .universal)
+    return DAppLists(self, chain: .evm)
   }
 }
 
-// MARK: - DAppLists + Equitable
+// MARK: - DAppLists + Equatable
 
 public extension DAppLists {
   static func ==(lhs: DAppLists, rhs: DAppLists) -> Bool {

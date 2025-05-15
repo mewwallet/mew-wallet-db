@@ -84,8 +84,8 @@ extension NFTCollection: MDBXObject {
   
   public var key: any MDBXKey {
     return NFTCollectionKey(chain: _chain,
-                            address: .unknown(self._wrapped.address),
-                            contractAddress: .unknown(self._wrapped.contractAddress),
+                            address: Address(self._wrapped.address),
+                            contractAddress: Address(self._wrapped.contractAddress),
                             name: self._wrapped.name)
   }
   
@@ -152,7 +152,7 @@ extension _NFTCollection: ProtoWrappedMessage {
   }
 }
 
-// MARK: - NFTCollection + Equitable
+// MARK: - NFTCollection + Equatable
 
 public extension NFTCollection {
   static func ==(lhs: NFTCollection, rhs: NFTCollection) -> Bool {

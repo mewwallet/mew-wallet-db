@@ -39,15 +39,20 @@ final class HistorySwap_tests: XCTestCase {
   
   func testTransfers() async {
     do {
-      let history = HistorySwap(chain: .eth,
-                                address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
-                                fromToken: ._primary,
-                                toToken: ._primary,
-                                fromAmount: Decimal(123),
-                                toAmount: Decimal(321),
-                                status: .pending,
+      let history = HistorySwap(id: nil,
+                                orderId: nil,
                                 dex: "1INCH",
-                                hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452"])
+                                status: .pending,
+                                fromChain: .eth,
+                                fromToken: ._primary,
+                                fromAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                                fromAmount: Decimal(123),
+                                toChain: .eth,
+                                toToken: ._primary,
+                                toAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                                toAmount: Decimal(321),
+                                hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452"],
+                                hashTo: "0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452")
       
       let keysAndObjects: [(any MDBXKey, any MDBXObject)] = [(history.key, history)]
       
@@ -64,54 +69,71 @@ final class HistorySwap_tests: XCTestCase {
   func testSort() async {
     do {
       var history = [
-        HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
-                    fromToken: ._primary,
-                    toToken: ._primary,
-                    fromAmount: Decimal(123),
-                    toAmount: Decimal(321),
-                    status: .success,
+        HistorySwap(id: nil,
+                    orderId: nil,
                     dex: "1INCH",
-                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452"])
+                    status: .success,
+                    fromChain: .eth,
+                    fromToken: ._primary,
+                    fromAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    fromAmount: Decimal(123),
+                    toChain: .eth,
+                    toToken: ._primary,
+                    toAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    toAmount: Decimal(321),
+                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452"],
+                    hashTo: "0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452")
       ]
       try await Task.sleep(nanoseconds: 1000)
       history.append(
-        HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
-                    fromToken: ._primary,
-                    toToken: ._primary,
-                    fromAmount: Decimal(123),
-                    toAmount: Decimal(321),
-                    status: .pending,
+        HistorySwap(id: nil,
+                    orderId: nil,
                     dex: "1INCH",
-                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737453"]
-                   )
+                    status: .success,
+                    fromChain: .eth,
+                    fromToken: ._primary,
+                    fromAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    fromAmount: Decimal(123),
+                    toChain: .eth,
+                    toToken: ._primary,
+                    toAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    toAmount: Decimal(321),
+                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737453"],
+                    hashTo: "0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737453")
       )
       try await Task.sleep(nanoseconds: 1000)
       history.append(
-        HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
-                    fromToken: ._primary,
-                    toToken: ._primary,
-                    fromAmount: Decimal(123),
-                    toAmount: Decimal(321),
-                    status: .failed,
+        HistorySwap(id: nil,
+                    orderId: nil,
                     dex: "1INCH",
-                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737454"]
-                   )
+                    status: .success,
+                    fromChain: .eth,
+                    fromToken: ._primary,
+                    fromAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    fromAmount: Decimal(123),
+                    toChain: .eth,
+                    toToken: ._primary,
+                    toAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    toAmount: Decimal(321),
+                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737454"],
+                    hashTo: "0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737454")
       )
       try await Task.sleep(nanoseconds: 1000)
       history.append(
-        HistorySwap(chain: .eth,
-                    address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
-                    fromToken: ._primary,
-                    toToken: ._primary,
-                    fromAmount: Decimal(123),
-                    toAmount: Decimal(321),
-                    status: .pending,
+        HistorySwap(id: nil,
+                    orderId: nil,
                     dex: "1INCH",
-                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737455"]
-                   )
+                    status: .success,
+                    fromChain: .eth,
+                    fromToken: ._primary,
+                    fromAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    fromAmount: Decimal(123),
+                    toChain: .eth,
+                    toToken: ._primary,
+                    toAddress: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"),
+                    toAmount: Decimal(321),
+                    hashes: ["0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737455"],
+                    hashTo: "0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737455")
       )
       
       
