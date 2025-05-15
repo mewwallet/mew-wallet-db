@@ -101,10 +101,10 @@ extension SwapListV5TokenMetaWrapper {
   public var crosschain_dexItems: [DexItem] {
     guard !self._wrapped.cc.isEmpty else { return [] }
     return zip(self._wrapped.c, self._wrapped.cc)
-      .filter({ $0.1 == 1 })
       .enumerated()
       .compactMap { (index, zipObject) -> DexItem? in
-        let (chain, _) = zipObject
+        let (chain, crosschain) = zipObject
+        guard crosschain != 0 else { return nil }
         return DexItem(
           chain: MDBXChain(rawValue: chain),
           contractAddress: self._wrapped.ca[index],
