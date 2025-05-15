@@ -63,38 +63,3 @@ extension AccountKey: Hashable {
     hasher.combine(key)
   }
 }
-
-public final class AccountKey_v1: MDBXKey {
-  
-  // MARK: - Public
-  
-  public let key: Data
-  public let chain: MDBXChain
-  public let address: String
-  
-  // MARK: - Lifecycle
-  
-  public init(address: Address) {
-    let chainPart     = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart   = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
-    
-    self.key = chainPart + addressPart
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange = _chainRange.endIndex..<key.count
-    
-    self.chain = .evm
-    self.address = key[_addressRange].hexString
-  }
-  
-  public init?(data: Data) {
-    guard data.count == MDBXKeyLength.account else { return nil }
-    self.key = data
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange = _chainRange.endIndex..<key.count
-    
-    self.chain = MDBXChain(rawValue: key[_chainRange])
-    self.address = key[_addressRange].hexString
-  }
-}

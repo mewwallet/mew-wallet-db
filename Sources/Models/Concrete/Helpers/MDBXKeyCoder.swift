@@ -41,9 +41,12 @@ final class MDBXKeyCoder {
         decoded.append(MDBXChain(networkRawValue: encoded))
 
       case .address:
+        var start = cursor
+        try data.seek(&cursor, offsetBy: 1)
         let count: UInt16 = try data.readBE(&cursor)
-        let encoded = try data.read(&cursor, offsetBy: Int(count))
+        let encoded = try data.read(&start, offsetBy: Int(count) + 3)
         try decoded.append(Address(encodedData: encoded))
+        cursor = start
       
       case .legacyAddress:
         let encoded = try data.read(&cursor, offsetBy: MDBXKeyLength.legacyEVMAddress)

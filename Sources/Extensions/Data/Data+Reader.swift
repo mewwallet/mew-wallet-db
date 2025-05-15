@@ -71,8 +71,8 @@ extension Data {
   internal func readBE<T: FixedWidthInteger>(_ cursor: inout Index) throws(DataReaderError) -> T {
     let size = MemoryLayout<T>.size
     guard cursor + size <= self.endIndex else { throw .outOfBounds }
-    let newCursor = index(cursor, offsetBy: size-1)
-    let result: T = try self[cursor...newCursor].readBE()
+    let newCursor = index(cursor, offsetBy: size)
+    let result: T = try self[cursor..<newCursor].readBE()
     cursor = newCursor
     return result
   }

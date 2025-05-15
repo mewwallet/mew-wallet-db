@@ -104,7 +104,7 @@ extension SwapListV5TokenMetaWrapper {
       .filter({ $0.1 == 1 })
       .enumerated()
       .compactMap { (index, zipObject) -> DexItem? in
-        let (chain, crosschain) = zipObject
+        let (chain, _) = zipObject
         return DexItem(
           chain: MDBXChain(rawValue: chain),
           contractAddress: self._wrapped.ca[index],

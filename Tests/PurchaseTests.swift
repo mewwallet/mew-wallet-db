@@ -49,19 +49,14 @@ final class Purchase_tests: XCTestCase {
       
       let assets = objects.assets
       let metas = objects.metas
-//      debugPrint(metas)
       
       try await db.write(table: .purchaseTokens, keysAndObjects: assets.map({ ($0.key, $0) }), mode: .recommended(.purchaseTokens))
       
       try await db.write(table: .tokenMeta, keysAndObjects: metas.map({ ($0.key, $0) }), mode: .recommended(.tokenMeta))
       
-      // keep working....
-      
-      
       try await db.write(table: .purchaseProviders, keysAndObjects: providers, mode: .recommended(.purchaseProviders))
-//      
+
       let chains = objects.chains
-//      
       for chain in chains {
         let loadMetas: [TokenMeta] = try db.fetch(range: TokenMetaKey.range(chain: chain), from: .tokenMeta, order: .asc)
         
@@ -86,29 +81,7 @@ final class Purchase_tests: XCTestCase {
         })
         
         debugPrint(names)
-        
-        
-//        let loadProviders: [Purchase.Provider] = try db.fetch(range: Purchase.Provider.Key.range(chain: chain), from: .purchaseProviders, order: .asc)
-//        let names = loadProviders.map(\.name)
-//        let chains = loadProviders.map(\._chain)
-//        let fiats = loadProviders.flatMap(\.fiats).map(\.limits)
-//        let buy = loadProviders.flatMap(\.sell)
-//        let sell = loadProviders.flatMap(\.buy)
-//        
-////        debugPrint(names)
-////        debugPrint(chains)
-//        debugPrint(buy)
-//        debugPrint(sell)
-//        
-////        let names = loadProviders.map({ $0.key.name })
       }
-      
-      
-//      debugPrint(objects)
-////      
-//      debugPrint(objects.chains)
-//      debugPrint(objects.providers)
-//      debugPrint(objects.providers.count)
     } catch {
       debugPrint(error)
       XCTFail(error.localizedDescription)

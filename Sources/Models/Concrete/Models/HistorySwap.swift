@@ -217,13 +217,13 @@ extension HistorySwap: MDBXObject {
   
   public var key: any MDBXKey {
     let address = Address(rawValue: _wrapped.fromAddress)
-    return HistorySwapKey(chain: fromChain, account: address, hash: _wrapped.hashFrom)
+    return HistorySwap.Key(chain: fromChain, account: address, hash: _wrapped.hashFrom)
   }
   
   public var alternateKey: (any MDBXKey)? {
     guard self.isCrosschain else { return nil }
     let address = Address(rawValue: _wrapped.toAddress)
-    return HistorySwapKey(chain: toChain, account: address, hash: _wrapped.hashFrom)
+    return HistorySwap.Key(chain: toChain, account: address, hash: _wrapped.hashFrom)
   }
   
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {

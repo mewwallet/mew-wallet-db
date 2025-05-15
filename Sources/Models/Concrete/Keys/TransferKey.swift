@@ -55,42 +55,23 @@ public final class TransferKey: MDBXKey {
   public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
     let coder = MDBXKeyCoder()
 
-    let blockPart: Data
-    let directionPart: Data
-    let noncePart: Data
-    let orderPart: Data
-    let contractAddressPart: Data
-    if lowerRange {
-      blockPart               = Data().setLengthLeft(MDBXKeyLength.block)
-      directionPart           = Data().setLengthLeft(MDBXKeyLength.direction)
-      noncePart               = Data().setLengthLeft(MDBXKeyLength.nonce)
-      orderPart               = Data().setLengthLeft(MDBXKeyLength.order)
-      contractAddressPart     = Data().setLengthLeft(MDBXKeyLength.legacyEVMAddress)
-      self.contractAddress = .init(rawValue: "0x0000000000000000000000000000000000000000")
-    } else {
-      blockPart               = Data(repeating: 0xFF, count: MDBXKeyLength.block)
-      directionPart           = Data(repeating: 0xFF, count: MDBXKeyLength.direction)
-      noncePart               = Data(repeating: 0xFF, count: MDBXKeyLength.nonce)
-      orderPart               = Data(repeating: 0xFF, count: MDBXKeyLength.order)
-      contractAddressPart     = Data(repeating: 0xFF, count: MDBXKeyLength.legacyEVMAddress)
-      self.contractAddress = .init(rawValue: "0xffffffffffffffffffffffffffffffffffffffff")
-    }
+    let rangeData = Data(lowerRange ? [0x00] : [0xFF])
     
     self.key = coder.encode(fields: [
       chain,
       address,
-      blockPart,
-      directionPart,
-      noncePart,
-      orderPart,
-      contractAddressPart
+      rangeData, // block part
+      rangeData, // direction part
+      rangeData, // nonce part
+      rangeData, // order part
+      rangeData  // contract address
     ])
     
     self.sortingKey = coder.encode(fields: [
-      blockPart,
-      noncePart,
-      directionPart,
-      orderPart
+      rangeData, // block part
+      rangeData, // nonce part
+      rangeData, // direction part
+      rangeData  // order part
     ])
     
     self.chain = chain
@@ -99,6 +80,7 @@ public final class TransferKey: MDBXKey {
     self.direction = .`self`
     self.nonce = 0
     self.order = 0
+    self.contractAddress = .unknown(.unknown, rangeData.hexString)
   }
   
   public init?(data: Data) {
