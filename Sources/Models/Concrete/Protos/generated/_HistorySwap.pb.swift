@@ -58,16 +58,6 @@ struct _HistorySwap: @unchecked Sendable {
     set {_uniqueStorage()._status = newValue}
   }
 
-  /// Optional error message related to the swap status
-  var statusError: String {
-    get {return _storage._statusError ?? String()}
-    set {_uniqueStorage()._statusError = newValue}
-  }
-  /// Returns true if `statusError` has been explicitly set.
-  var hasStatusError: Bool {return _storage._statusError != nil}
-  /// Clears the value of `statusError`. Subsequent reads from it will return its default value.
-  mutating func clearStatusError() {_uniqueStorage()._statusError = nil}
-
   /// Chain ID of the source blockchain
   var fromChainID: UInt64 {
     get {return _storage._fromChainID}
@@ -180,7 +170,6 @@ extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     2: .standard(proto: "order_id"),
     3: .same(proto: "provider"),
     4: .same(proto: "status"),
-    5: .standard(proto: "status_error"),
     6: .standard(proto: "from_chain_id"),
     7: .standard(proto: "from_contract_address"),
     8: .standard(proto: "from_address"),
@@ -202,7 +191,6 @@ extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     var _orderID: String? = nil
     var _provider: String = String()
     var _status: String = String()
-    var _statusError: String? = nil
     var _fromChainID: UInt64 = 0
     var _fromContractAddress: String = String()
     var _fromAddress: String = String()
@@ -235,7 +223,6 @@ extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       _orderID = source._orderID
       _provider = source._provider
       _status = source._status
-      _statusError = source._statusError
       _fromChainID = source._fromChainID
       _fromContractAddress = source._fromContractAddress
       _fromAddress = source._fromAddress
@@ -272,7 +259,6 @@ extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
         case 2: try { try decoder.decodeSingularStringField(value: &_storage._orderID) }()
         case 3: try { try decoder.decodeSingularStringField(value: &_storage._provider) }()
         case 4: try { try decoder.decodeSingularStringField(value: &_storage._status) }()
-        case 5: try { try decoder.decodeSingularStringField(value: &_storage._statusError) }()
         case 6: try { try decoder.decodeSingularUInt64Field(value: &_storage._fromChainID) }()
         case 7: try { try decoder.decodeSingularStringField(value: &_storage._fromContractAddress) }()
         case 8: try { try decoder.decodeSingularStringField(value: &_storage._fromAddress) }()
@@ -311,9 +297,6 @@ extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       if !_storage._status.isEmpty {
         try visitor.visitSingularStringField(value: _storage._status, fieldNumber: 4)
       }
-      try { if let v = _storage._statusError {
-        try visitor.visitSingularStringField(value: v, fieldNumber: 5)
-      } }()
       if _storage._fromChainID != 0 {
         try visitor.visitSingularUInt64Field(value: _storage._fromChainID, fieldNumber: 6)
       }
@@ -369,7 +352,6 @@ extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
         if _storage._orderID != rhs_storage._orderID {return false}
         if _storage._provider != rhs_storage._provider {return false}
         if _storage._status != rhs_storage._status {return false}
-        if _storage._statusError != rhs_storage._statusError {return false}
         if _storage._fromChainID != rhs_storage._fromChainID {return false}
         if _storage._fromContractAddress != rhs_storage._fromContractAddress {return false}
         if _storage._fromAddress != rhs_storage._fromAddress {return false}

@@ -137,7 +137,6 @@ extension HistorySwap {
   public var isCrosschain: Bool { _wrapped.fromChainID != _wrapped.toChainID }
   public var uuid: String? { _wrapped.hasID ? _wrapped.id : nil }
   public var orderId: String? { _wrapped.hasOrderID ? _wrapped.orderID : nil }
-  public var error: String? { _wrapped.hasStatusError ? _wrapped.statusError : nil }
   public var fromChain: MDBXChain { MDBXChain(rawValue: _wrapped.fromChainID) }
   public var toChain: MDBXChain { MDBXChain(rawValue: _wrapped.toChainID) }
   public var rawFromAmount: Decimal { Decimal(wrapped: _wrapped.fromAmount, hex: true) ?? .zero }
@@ -164,7 +163,7 @@ extension HistorySwap {
   public var dex: String { _wrapped.provider }
   
   public var hashFrom: String { _wrapped.hashFrom }
-  public var hashTo: String? { _wrapped.hasHashTo ? _wrapped.hashTo : _wrapped.hashTo }
+  public var hashTo: String? { _wrapped.hasHashTo ? _wrapped.hashTo : nil }
   
   public var currentHash: String {
     var hash = self._wrapped.hashFrom
@@ -291,9 +290,6 @@ extension HistorySwap: MDBXObject {
     }
     if other._wrapped.hasOrderID {
       self._wrapped.orderID = other._wrapped.orderID
-    }
-    if other._wrapped.hasStatusError {
-      self._wrapped.statusError = other._wrapped.statusError
     }
     if other._wrapped.hasUpdatedAt {
       self._wrapped.updatedAt = other._wrapped.updatedAt

@@ -16,48 +16,45 @@ message _HistorySwap {
   // Status of the swap
   string status                               = 4;
 
-  // Optional error message related to the swap status
-  optional string status_error                = 5;
-
   // Chain ID of the source blockchain
-  uint64 from_chain_id                        = 6;
+  uint64 from_chain_id                        = 5;
 
   // Source token contract address
-  string from_contract_address                = 7;
+  string from_contract_address                = 6;
   
   // Source wallet address
-  string from_address                         = 8;
+  string from_address                         = 7;
 
   // Source token amount
-  string from_amount                          = 9;
+  string from_amount                          = 8;
 
   // Chain ID of the destination blockchain
-  uint64 to_chain_id                          = 10;
+  uint64 to_chain_id                          = 9;
 
   // Destination token contract address
-  string to_contract_address                  = 11;
+  string to_contract_address                  = 10;
 
   // Destination wallet address
-  string to_address                           = 12;
+  string to_address                           = 11;
 
   // Destination token's amount
-  string to_amount                            = 13;
+  string to_amount                            = 12;
 
   // List of transaction hashes associated with the swap
-  repeated string hashes                      = 14;
+  repeated string hashes                      = 13;
 
   // Primary hash from the source transaction
-  string hash_from                            = 15;
+  string hash_from                            = 14;
 
   // Optional hash to the destination transaction
-  optional string hash_to                     = 16;
+  optional string hash_to                     = 15;
 
   // Replacement hashes for failed, retried, or replacement swaps
-  map <string, string> replaceHashes          = 17;
+  map <string, string> replaceHashes          = 16;
 
   // Timestamp when the swap was recorded
-  google.protobuf.Timestamp timestamp         = 18;
+  google.protobuf.Timestamp timestamp         = 17;
 
   // Optional timestamp of last update
-  google.protobuf.Timestamp updated_at        = 19;
+  google.protobuf.Timestamp updated_at        = 18;
 }
