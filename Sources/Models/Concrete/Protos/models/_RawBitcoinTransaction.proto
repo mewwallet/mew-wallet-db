@@ -13,6 +13,7 @@ message _RawBitcoinTransaction {
   message _Output {
     uint64 value                          = 1;
     optional string address               = 2;
+    optional string scriptPubKey          = 3;
   }
   repeated _Output outputs              = 4;
   

@@ -83,11 +83,21 @@ struct _RawBitcoinTransaction: Sendable {
     /// Clears the value of `address`. Subsequent reads from it will return its default value.
     mutating func clearAddress() {self._address = nil}
 
+    var scriptPubKey: String {
+      get {return _scriptPubKey ?? String()}
+      set {_scriptPubKey = newValue}
+    }
+    /// Returns true if `scriptPubKey` has been explicitly set.
+    var hasScriptPubKey: Bool {return self._scriptPubKey != nil}
+    /// Clears the value of `scriptPubKey`. Subsequent reads from it will return its default value.
+    mutating func clearScriptPubKey() {self._scriptPubKey = nil}
+
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
 
     fileprivate var _address: String? = nil
+    fileprivate var _scriptPubKey: String? = nil
   }
 
   struct _Block: Sendable {
@@ -235,6 +245,7 @@ extension _RawBitcoinTransaction._Output: SwiftProtobuf.Message, SwiftProtobuf._
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "value"),
     2: .same(proto: "address"),
+    3: .same(proto: "scriptPubKey"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -245,6 +256,7 @@ extension _RawBitcoinTransaction._Output: SwiftProtobuf.Message, SwiftProtobuf._
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularUInt64Field(value: &self.value) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self._address) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._scriptPubKey) }()
       default: break
       }
     }
@@ -261,12 +273,16 @@ extension _RawBitcoinTransaction._Output: SwiftProtobuf.Message, SwiftProtobuf._
     try { if let v = self._address {
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     } }()
+    try { if let v = self._scriptPubKey {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _RawBitcoinTransaction._Output, rhs: _RawBitcoinTransaction._Output) -> Bool {
     if lhs.value != rhs.value {return false}
     if lhs._address != rhs._address {return false}
+    if lhs._scriptPubKey != rhs._scriptPubKey {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

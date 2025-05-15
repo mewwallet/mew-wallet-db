@@ -164,7 +164,7 @@ extension HistorySwap {
   public var dex: String { _wrapped.provider }
   
   public var hashFrom: String { _wrapped.hashFrom }
-  public var hashTo: String? { _wrapped.hashTo }
+  public var hashTo: String? { _wrapped.hasHashTo ? _wrapped.hashTo : _wrapped.hashTo }
   
   public var currentHash: String {
     var hash = self._wrapped.hashFrom
@@ -297,6 +297,9 @@ extension HistorySwap: MDBXObject {
     }
     if other._wrapped.hasUpdatedAt {
       self._wrapped.updatedAt = other._wrapped.updatedAt
+    }
+    if other._wrapped.hasHashTo {
+      self._wrapped.hashTo = other._wrapped.hashTo
     }
   }
 }
