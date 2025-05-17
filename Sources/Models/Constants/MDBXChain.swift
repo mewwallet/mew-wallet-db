@@ -102,7 +102,7 @@ public enum MDBXChain: CaseIterable, Sendable {
   case bitcoin
   case custom(Data)
   
-  internal var value: UInt64 {
+  public var value: UInt64 {
     switch self {
     case .evm:                        return 1
     case .invalid:                    return 0
