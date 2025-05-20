@@ -21,8 +21,8 @@ final class MDBXKeyCoder {
   }
   
   func encode(fields: [any MDBXKeyComponent]) -> Data {
-    return fields.reduce(Data()) { partialResult, field in
-      return partialResult + field.encodedData
+    return fields.reduce(into: Data()) { partialResult, field in
+      partialResult += field.encodedData
     }
   }
   

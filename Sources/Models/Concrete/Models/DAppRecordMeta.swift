@@ -38,7 +38,7 @@ public struct DAppRecordMeta: Equatable, Sendable {
   mutating private func tryRestorePrimaryKeyInfo(_ key: Data?) {
     guard let key = key else { return }
     if let primaryKey = DAppRecordMetaKey(data: key) {
-      _hash = primaryKey.urlHash
+      _hash = Data(primaryKey.urlHash)
     }
   }
 }

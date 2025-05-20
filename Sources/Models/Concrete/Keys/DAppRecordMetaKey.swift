@@ -18,18 +18,14 @@ public final class DAppRecordMetaKey: MDBXKey {
   // MARK: - Lifecycle
   
   public init(hash: Data) {
-    let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let hashPart            = hash.setLengthLeft(MDBXKeyLength.hash)
     
-    let key = chainPart + hashPart
-    self.key = key
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _hashRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash
-    
-    self.urlHash = {
-      return key[_hashRange]
-    }()
+    let coder = MDBXKeyCoder()
+    self.key = coder.encode(fields: [
+      MDBXChain.evm,
+      hashPart
+    ])
+    self.urlHash = hashPart
   }
   
   public convenience init(url: URL) {
@@ -37,14 +33,17 @@ public final class DAppRecordMetaKey: MDBXKey {
   }
   
   public init?(data: Data) {
-    guard data.count == MDBXKeyLength.dAppRecordMeta else { return nil }
-    self.key = data
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _hashRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.hash
-    
-    self.urlHash = {
-      return data[_hashRange]
-    }()
+    do {
+      let coder = MDBXKeyCoder()
+      let decoded = try coder.decode(data: data, fields: [
+        .chain,
+        .rawData(count: MDBXKeyLength.hash)
+      ])
+      self.key = data
+      
+      self.urlHash = decoded[1] as! Data
+    } catch {
+      return nil
+    }
   }
 }

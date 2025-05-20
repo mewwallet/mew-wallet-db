@@ -34,7 +34,7 @@ fileprivate final class TokenTests {
   
   @Test("Test simple evm token")
   func evmToken() async throws {
-    var token = Token(chain: .eth,
+    let token = Token(chain: .eth,
                       address: Address("0x00c17f958d2ee523a2206206994597c13d831ec7"),
                       contractAddress: ._primary,
                       rawAmount: "123456789")
@@ -46,7 +46,7 @@ fileprivate final class TokenTests {
   
   @Test("Test simple bitcoin token")
   func btcToken() async throws {
-    var token = Token(chain: .eth,
+    let token = Token(chain: .eth,
                       address: Address("bc1q8c6fshw2dlwun7ekn9qwf37cu2rn755upcp6el"),
                       contractAddress: ._primary,
                       rawAmount: "123456789")

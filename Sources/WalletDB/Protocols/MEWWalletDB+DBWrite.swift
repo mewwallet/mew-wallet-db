@@ -119,6 +119,18 @@ public protocol DBWrite {
   @discardableResult
   func write<S: Sequence>(table: MDBXTableName, keysAndObjects: S, mode: DBWriteMode) async throws -> Int where S.Element == MDBXKeyObject, S: Sendable
   
+  @discardableResult
+  func unsafeWrite(table: MDBXTableName, key: any MDBXKey, data: Data, mode: DBWriteMode) throws -> Int
+  
+  @discardableResult
+  func unsafeWrite(table: MDBXTableName, key: any MDBXKey, object: any MDBXObject, mode: DBWriteMode) throws -> Int
+  
+  @discardableResult
+  func unsafeWrite<S: Sequence>(table: MDBXTableName, keysAndData: S, mode: DBWriteMode) throws -> Int where S.Element == MDBXKeyData, S: Sendable
+  
+  @discardableResult
+  func unsafeWrite<S: Sequence>(table: MDBXTableName, keysAndObjects: S, mode: DBWriteMode) throws -> Int where S.Element == MDBXKeyObject, S: Sendable
+  
   func writeAsync(table: MDBXTableName, key: any MDBXKey, data: Data, mode: DBWriteMode, completion: @escaping @Sendable (Bool, Int) -> Void)
   func writeAsync(table: MDBXTableName, key: any MDBXKey, object: any MDBXObject, mode: DBWriteMode, completion: @escaping @Sendable (Bool, Int) -> Void)
   func writeAsync(table: MDBXTableName, keysAndData: [MDBXKeyData], mode: DBWriteMode, completion: @escaping @Sendable (Bool, Int) -> Void)

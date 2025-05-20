@@ -10,7 +10,9 @@ import os.signpost
 
 final class MEWwalletDBEnvironment {
   let environment: MDBXEnvironment
+  let unsafeWrite: UnsafeWriter
   let writer: Writer
+  
   private var tables: [MDBXTableName: MDBXDatabase]
   
   init(path: String, tables: [MDBXTableName], readOnly: Bool) throws {
@@ -42,9 +44,11 @@ final class MEWwalletDBEnvironment {
     try environment.setGeometry(geometry)
     try environment.open(path: path, flags: [.envDefaults, .noTLS], mode: readOnly ? .readOnlyPermission : .iOSPermission)
     let tables = try MEWwalletDBEnvironment.prepare(tables: tables, in: environment, readonly: readOnly)
-    let writer = Writer(environment: environment)
+    let unsafeWrite = UnsafeWriter(environment: environment)
+    let writer = Writer(unsafeWriter: unsafeWrite)
     
     self.environment = environment
+    self.unsafeWrite = unsafeWrite
     self.writer = writer
     self.tables = tables
   }
