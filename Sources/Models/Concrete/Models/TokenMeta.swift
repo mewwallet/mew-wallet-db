@@ -30,6 +30,7 @@ public struct TokenMeta: Equatable {
               decimals: Int32 = 0, // FIXME: optional decimals?
               icon: String? = nil,
               price: String? = nil,
+              sparkline: [String]? = nil,
               database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
@@ -43,6 +44,9 @@ public struct TokenMeta: Equatable {
         $0.price = price
       }
       $0.decimals = decimals
+      if let sparkline {
+        $0.sparkline = sparkline
+      }
     }
     self._chain = chain
   }

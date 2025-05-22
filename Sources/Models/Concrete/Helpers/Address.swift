@@ -250,9 +250,10 @@ extension Address: MDBXKeyComponent {
         let rawValue = String(data: addressData, encoding: .utf8)!
         self.init(rawValue: rawValue)
       case .unknown:
-        let rawValue = String(data: encodedData, encoding: .utf8)
-        precondition(rawValue != nil)
-        self.init(rawValue: rawValue!)
+        guard let rawValue = String(data: encodedData, encoding: .utf8) else {
+          throw DataReaderError.badValue
+        }
+        self.init(rawValue: rawValue)
       }
     }
   }

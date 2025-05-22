@@ -35,12 +35,15 @@ public struct Token {
   
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, database: (any WalletDB)? = nil) {
+  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, lockedAmount: String? = nil, database: (any WalletDB)? = nil) {
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue
       if let rawAmount {
         $0.amount = rawAmount
+      }
+      if let lockedAmount {
+        $0.lockedAmount = lockedAmount
       }
     }
     self._chain = chain

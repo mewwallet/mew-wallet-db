@@ -9,6 +9,7 @@ import Foundation
 
 enum DataReaderError: Swift.Error {
   case outOfBounds
+  case badValue
 }
 
 extension Data {
