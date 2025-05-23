@@ -26,18 +26,18 @@ public final class NFTCollectionKey: MDBXKey {
     }
     
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let namePart            = nameData.setLengthRight(MDBXKeyLength.name)
-    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let hashPart            = namePart.sha256.setLengthLeft(MDBXKeyLength.hash)
     
     let key = chainPart + addressPart + namePart + contractAddressPart + hashPart
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _nameRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.name
-    let _contractAddressRange: Range<Int> = _nameRange.endIndex..<_nameRange.upperBound+MDBXKeyLength.address
+    let _contractAddressRange: Range<Int> = _nameRange.endIndex..<_nameRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
     
     self.chain = {
@@ -65,18 +65,18 @@ public final class NFTCollectionKey: MDBXKey {
     let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
     
     let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.legacyEVMAddress)
     let namePart            = Data(repeating: rangeValue, count: MDBXKeyLength.name)
-    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.address)
+    let contractAddressPart = Data(repeating: rangeValue, count: MDBXKeyLength.legacyEVMAddress)
     let hashPart            = Data(repeating: rangeValue, count: MDBXKeyLength.hash)
     
     let key = chainPart + addressPart + namePart + contractAddressPart + hashPart
     self.key = key
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _nameRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.name
-    let _contractAddressRange: Range<Int> = _nameRange.endIndex..<_nameRange.upperBound+MDBXKeyLength.address
+    let _contractAddressRange: Range<Int> = _nameRange.endIndex..<_nameRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
     
     self.chain = {
@@ -105,9 +105,9 @@ public final class NFTCollectionKey: MDBXKey {
     self.key = data
     
     let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
+    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _nameRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.name
-    let _contractAddressRange: Range<Int> = _nameRange.endIndex..<_nameRange.upperBound+MDBXKeyLength.address
+    let _contractAddressRange: Range<Int> = _nameRange.endIndex..<_nameRange.upperBound+MDBXKeyLength.legacyEVMAddress
     let _hashRange: Range<Int> = _contractAddressRange.endIndex..<key.count
     
     self.chain = {

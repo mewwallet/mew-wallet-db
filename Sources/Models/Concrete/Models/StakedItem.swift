@@ -114,7 +114,7 @@ extension StakedItem {
   public var account: Account {
     get throws {
       let address = Address(rawValue: _wrapped.address)
-      return try _account.getData(key: AccountKey(address: address), policy: .ignoreCache, chain: .universal, database: self.database)
+      return try _account.getData(key: AccountKey(address: address), policy: .ignoreCache, chain: .evm, database: self.database)
     }
   }
   
@@ -247,7 +247,7 @@ extension _StakedItem: ProtoWrappedMessage {
   }
 }
 
-// MARK: - StakedItem + Equitable
+// MARK: - StakedItem + Equatable
 
 public extension StakedItem {
   static func ==(lhs: StakedItem, rhs: StakedItem) -> Bool {

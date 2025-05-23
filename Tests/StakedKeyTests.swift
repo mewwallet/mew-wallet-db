@@ -11,7 +11,7 @@ import XCTest
 final class StakedKeyTests: XCTestCase {
   func testInitWithChainAddressTimestamp() {
     let chain = MDBXChain.eth
-    let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
+    let address = Address("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let timestamp = Date(timeIntervalSince1970: 1680835030.123)
     
     let stakedKey = StakedItem.Key(chain: chain, address: address, timestamp: timestamp)
@@ -25,7 +25,7 @@ final class StakedKeyTests: XCTestCase {
   
   func testInitWithChainAddressTimestamp2() {
     let chain = MDBXChain.eth
-    let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
+    let address = Address("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let timestamp = Date(timeIntervalSince1970: 1680835030)
     
     let stakedKey = StakedItem.Key(chain: chain, address: address, timestamp: timestamp)
@@ -39,7 +39,7 @@ final class StakedKeyTests: XCTestCase {
   
   func testInitWithChainAddressLowerRange() {
     let chain = MDBXChain.eth
-    let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
+    let address = Address("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let lowerRange = true
     
     let stakedKey = StakedItem.Key(chain: chain, address: address, lowerRange: lowerRange)
@@ -52,7 +52,7 @@ final class StakedKeyTests: XCTestCase {
   
   func testInitWithChainAddressUpperRange() {
     let chain = MDBXChain.eth
-    let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
+    let address = Address("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     let lowerRange = false
     
     let stakedKey = StakedItem.Key(chain: chain, address: address, lowerRange: lowerRange)
@@ -69,7 +69,7 @@ final class StakedKeyTests: XCTestCase {
     
     XCTAssertNotNil(stakedKey)
     XCTAssertEqual(stakedKey?.chain, .eth)
-    XCTAssertEqual(stakedKey?.address, Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665"))
+    XCTAssertEqual(stakedKey?.address, Address("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665"))
     XCTAssertEqual(stakedKey?.timestamp, Date(timeIntervalSince1970: 1680835030))
   }
   
@@ -82,7 +82,7 @@ final class StakedKeyTests: XCTestCase {
   
   func testRange() {
     let chain = MDBXChain.eth
-    let address = Address.unknown("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
+    let address = Address("0xab904e350F27aF4D4A70994AE1f3bBC1dAfEe665")
     
     let range = StakedItem.Key.range(chain: chain, address: address)
     

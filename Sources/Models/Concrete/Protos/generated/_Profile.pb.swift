@@ -91,6 +91,16 @@ struct _Profile: @unchecked Sendable {
     /// Stores notifications settings flags
     var notifications: UInt32 = 0
 
+    /// Stores structure of multichain addresses associated with the profile
+    var multichainAddresses: _Profile._Settings._Multichain {
+      get {return _multichainAddresses ?? _Profile._Settings._Multichain()}
+      set {_multichainAddresses = newValue}
+    }
+    /// Returns true if `multichainAddresses` has been explicitly set.
+    var hasMultichainAddresses: Bool {return self._multichainAddresses != nil}
+    /// Clears the value of `multichainAddresses`. Subsequent reads from it will return its default value.
+    mutating func clearMultichainAddresses() {self._multichainAddresses = nil}
+
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     /// Represents notifications settings
@@ -291,9 +301,26 @@ struct _Profile: @unchecked Sendable {
       fileprivate var _daily: _Profile._Settings._PortfolioTracker._TrackerTime? = nil
     }
 
+    struct _Multichain: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      /// Stores array of evm addresses associated with profile
+      var evm: [_Profile._Settings._Address] = []
+
+      /// Stores array of bitcoin addresses associated with profile
+      var btc: [_Profile._Settings._Address] = []
+
+      var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      init() {}
+    }
+
     init() {}
 
     fileprivate var _portfolioTracker: _Profile._Settings._PortfolioTracker? = nil
+    fileprivate var _multichainAddresses: _Profile._Settings._Multichain? = nil
   }
 
   /// Represents status of Profile
@@ -490,6 +517,7 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     6: .standard(proto: "push_token"),
     7: .same(proto: "platform"),
     8: .same(proto: "notifications"),
+    9: .standard(proto: "multichain_addresses"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -505,6 +533,7 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       case 6: try { try decoder.decodeSingularStringField(value: &self.pushToken) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self.platform) }()
       case 8: try { try decoder.decodeSingularUInt32Field(value: &self.notifications) }()
+      case 9: try { try decoder.decodeSingularMessageField(value: &self._multichainAddresses) }()
       default: break
       }
     }
@@ -536,6 +565,9 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if self.notifications != 0 {
       try visitor.visitSingularUInt32Field(value: self.notifications, fieldNumber: 8)
     }
+    try { if let v = self._multichainAddresses {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -547,6 +579,7 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if lhs.pushToken != rhs.pushToken {return false}
     if lhs.platform != rhs.platform {return false}
     if lhs.notifications != rhs.notifications {return false}
+    if lhs._multichainAddresses != rhs._multichainAddresses {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -688,6 +721,44 @@ extension _Profile._Settings._PortfolioTracker._TrackerTime: SwiftProtobuf.Messa
   static func ==(lhs: _Profile._Settings._PortfolioTracker._TrackerTime, rhs: _Profile._Settings._PortfolioTracker._TrackerTime) -> Bool {
     if lhs.enabled != rhs.enabled {return false}
     if lhs.timestamp != rhs.timestamp {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension _Profile._Settings._Multichain: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _Profile._Settings.protoMessageName + "._Multichain"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "evm"),
+    2: .same(proto: "btc"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.evm) }()
+      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.btc) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.evm.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.evm, fieldNumber: 1)
+    }
+    if !self.btc.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.btc, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: _Profile._Settings._Multichain, rhs: _Profile._Settings._Multichain) -> Bool {
+    if lhs.evm != rhs.evm {return false}
+    if lhs.btc != rhs.btc {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

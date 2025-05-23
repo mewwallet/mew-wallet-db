@@ -4,4 +4,5 @@ message _DexItem {
   string contract_address     = 1;
   string name                 = 2;
   string symbol               = 3;
+  optional bool crosschain    = 4;
 }

@@ -20,38 +20,59 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-struct _Account: Sendable {
+struct _Account: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Account address
-  var address: String = String()
+  var address: String {
+    get {return _storage._address}
+    set {_uniqueStorage()._address = newValue}
+  }
 
   /// GroupID, for future purposes. Could be used if we will need to manage few recoveryPhrases in the app
-  var groupID: UInt32 = 0
+  var groupID: UInt32 {
+    get {return _storage._groupID}
+    set {_uniqueStorage()._groupID = newValue}
+  }
 
-  var source: _Account._Source = .unknown
+  var source: _Account._Source {
+    get {return _storage._source}
+    set {_uniqueStorage()._source = newValue}
+  }
 
-  var type: _Account._Type = .internal
+  var type: _Account._Type {
+    get {return _storage._type}
+    set {_uniqueStorage()._type = newValue}
+  }
 
   var keys: _Account._Keys {
-    get {return _keys ?? _Account._Keys()}
-    set {_keys = newValue}
+    get {return _storage._keys ?? _Account._Keys()}
+    set {_uniqueStorage()._keys = newValue}
   }
   /// Returns true if `keys` has been explicitly set.
-  var hasKeys: Bool {return self._keys != nil}
+  var hasKeys: Bool {return _storage._keys != nil}
   /// Clears the value of `keys`. Subsequent reads from it will return its default value.
-  mutating func clearKeys() {self._keys = nil}
+  mutating func clearKeys() {_uniqueStorage()._keys = nil}
 
   var state: _Account._UserState {
-    get {return _state ?? _Account._UserState()}
-    set {_state = newValue}
+    get {return _storage._state ?? _Account._UserState()}
+    set {_uniqueStorage()._state = newValue}
   }
   /// Returns true if `state` has been explicitly set.
-  var hasState: Bool {return self._state != nil}
+  var hasState: Bool {return _storage._state != nil}
   /// Clears the value of `state`. Subsequent reads from it will return its default value.
-  mutating func clearState() {self._state = nil}
+  mutating func clearState() {_uniqueStorage()._state = nil}
+
+  var networkType: _NetworkType {
+    get {return _storage._networkType ?? .evm}
+    set {_uniqueStorage()._networkType = newValue}
+  }
+  /// Returns true if `networkType` has been explicitly set.
+  var hasNetworkType: Bool {return _storage._networkType != nil}
+  /// Clears the value of `networkType`. Subsequent reads from it will return its default value.
+  mutating func clearNetworkType() {_uniqueStorage()._networkType = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -301,8 +322,7 @@ struct _Account: Sendable {
 
   init() {}
 
-  fileprivate var _keys: _Account._Keys? = nil
-  fileprivate var _state: _Account._UserState? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -316,58 +336,116 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     4: .same(proto: "type"),
     5: .same(proto: "keys"),
     6: .same(proto: "state"),
+    7: .same(proto: "networkType"),
   ]
 
+  fileprivate class _StorageClass {
+    var _address: String = String()
+    var _groupID: UInt32 = 0
+    var _source: _Account._Source = .unknown
+    var _type: _Account._Type = .internal
+    var _keys: _Account._Keys? = nil
+    var _state: _Account._UserState? = nil
+    var _networkType: _NetworkType? = nil
+
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _address = source._address
+      _groupID = source._groupID
+      _source = source._source
+      _type = source._type
+      _keys = source._keys
+      _state = source._state
+      _networkType = source._networkType
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.address) }()
-      case 2: try { try decoder.decodeSingularUInt32Field(value: &self.groupID) }()
-      case 3: try { try decoder.decodeSingularEnumField(value: &self.source) }()
-      case 4: try { try decoder.decodeSingularEnumField(value: &self.type) }()
-      case 5: try { try decoder.decodeSingularMessageField(value: &self._keys) }()
-      case 6: try { try decoder.decodeSingularMessageField(value: &self._state) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._address) }()
+        case 2: try { try decoder.decodeSingularUInt32Field(value: &_storage._groupID) }()
+        case 3: try { try decoder.decodeSingularEnumField(value: &_storage._source) }()
+        case 4: try { try decoder.decodeSingularEnumField(value: &_storage._type) }()
+        case 5: try { try decoder.decodeSingularMessageField(value: &_storage._keys) }()
+        case 6: try { try decoder.decodeSingularMessageField(value: &_storage._state) }()
+        case 7: try { try decoder.decodeSingularEnumField(value: &_storage._networkType) }()
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.address.isEmpty {
-      try visitor.visitSingularStringField(value: self.address, fieldNumber: 1)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if !_storage._address.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._address, fieldNumber: 1)
+      }
+      if _storage._groupID != 0 {
+        try visitor.visitSingularUInt32Field(value: _storage._groupID, fieldNumber: 2)
+      }
+      if _storage._source != .unknown {
+        try visitor.visitSingularEnumField(value: _storage._source, fieldNumber: 3)
+      }
+      if _storage._type != .internal {
+        try visitor.visitSingularEnumField(value: _storage._type, fieldNumber: 4)
+      }
+      try { if let v = _storage._keys {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+      } }()
+      try { if let v = _storage._state {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+      } }()
+      try { if let v = _storage._networkType {
+        try visitor.visitSingularEnumField(value: v, fieldNumber: 7)
+      } }()
     }
-    if self.groupID != 0 {
-      try visitor.visitSingularUInt32Field(value: self.groupID, fieldNumber: 2)
-    }
-    if self.source != .unknown {
-      try visitor.visitSingularEnumField(value: self.source, fieldNumber: 3)
-    }
-    if self.type != .internal {
-      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 4)
-    }
-    try { if let v = self._keys {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    } }()
-    try { if let v = self._state {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _Account, rhs: _Account) -> Bool {
-    if lhs.address != rhs.address {return false}
-    if lhs.groupID != rhs.groupID {return false}
-    if lhs.source != rhs.source {return false}
-    if lhs.type != rhs.type {return false}
-    if lhs._keys != rhs._keys {return false}
-    if lhs._state != rhs._state {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._address != rhs_storage._address {return false}
+        if _storage._groupID != rhs_storage._groupID {return false}
+        if _storage._source != rhs_storage._source {return false}
+        if _storage._type != rhs_storage._type {return false}
+        if _storage._keys != rhs_storage._keys {return false}
+        if _storage._state != rhs_storage._state {return false}
+        if _storage._networkType != rhs_storage._networkType {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -13,14 +13,14 @@ public final class DAppRecordKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public let chain: MDBXChain = .universal
+  public let chain: MDBXChain = .evm
   public let urlHash: Data
   public let uuid: UInt64
   
   // MARK: - Lifecycle
   
   public init(hash: Data, uuid: UInt64) {
-    let chainPart           = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
+    let chainPart           = MDBXChain.evm.rawValue.setLengthLeft(MDBXKeyLength.chain)
     let hashPart            = hash.setLengthLeft(MDBXKeyLength.hash)
     let uuidPart            = withUnsafeBytes(of: uuid.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.uuid)
     

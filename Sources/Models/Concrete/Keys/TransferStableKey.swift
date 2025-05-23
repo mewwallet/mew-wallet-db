@@ -21,48 +21,25 @@ public final class TransferStableKey: MDBXKey {
   // MARK: - Lifecycle
   
   public init(chain: MDBXChain, address: Address, direction: Transfer.Direction, nonce: UInt64, order: UInt16) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
-    let directionPart       = withUnsafeBytes(of: direction.rawValue.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.direction)
-    let noncePart           = withUnsafeBytes(of: nonce.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.nonce)
-    let orderPart           = withUnsafeBytes(of: order.bigEndian) { Data($0) }.setLengthLeft(MDBXKeyLength.order)
+    let coder = MDBXKeyCoder()
     
-    let key = chainPart + addressPart + directionPart + noncePart + orderPart
-    self.key = key
+    self.key = coder.encode(fields: [
+      chain,
+      address,
+      direction,
+      nonce,
+      order
+    ])
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
-    let _directionRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.direction
-    let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
-    let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
-    
-    self.chain = {
-      return MDBXChain(rawValue: key[_chainRange])
-    }()
-    
-    self.address = {
-      return Address(rawValue: key[_addressRange].hexString)
-    }()
-    
-    self.direction = {
-      let value = key.subdata(in: _directionRange).withUnsafeBytes { $0.load(as: UInt8.self) }
-      return Transfer.Direction(rawValue: UInt8(bigEndian: value)) ?? .incoming
-    }()
-    
-    self.nonce = {
-      let value = key.subdata(in: _nonceRange).withUnsafeBytes { $0.load(as: UInt64.self) }
-      return UInt64(bigEndian: value)
-    }()
-    
-    self.order = {
-      let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
-      return UInt16(bigEndian: value)
-    }()
+    self.chain = chain
+    self.address = address
+    self.direction = direction
+    self.nonce = nonce
+    self.order = order
   }
   
   public init(chain: MDBXChain, address: Address, lowerRange: Bool) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let coder = MDBXKeyCoder()
 
     let directionPart: Data
     let noncePart: Data
@@ -76,71 +53,43 @@ public final class TransferStableKey: MDBXKey {
       noncePart     = Data(repeating: 0xFF, count: MDBXKeyLength.nonce)
       orderPart     = Data(repeating: 0xFF, count: MDBXKeyLength.order)
     }
-    let key = chainPart + addressPart + directionPart + noncePart + orderPart
-    self.key = key
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
-    let _directionRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.direction
-    let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
-    let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
+    self.key = coder.encode(fields: [
+      chain,
+      address,
+      directionPart,
+      noncePart,
+      orderPart
+    ])
     
-    self.chain = {
-      return MDBXChain(rawValue: key[_chainRange])
-    }()
-    
-    self.address = {
-      return Address(rawValue: key[_addressRange].hexString)
-    }()
-    
-    self.direction = {
-      let value = key.subdata(in: _directionRange).withUnsafeBytes { $0.load(as: UInt8.self) }
-      return Transfer.Direction(rawValue: UInt8(bigEndian: value)) ?? .incoming
-    }()
-    
-    self.nonce = {
-      let value = key.subdata(in: _nonceRange).withUnsafeBytes { $0.load(as: UInt64.self) }
-      return UInt64(bigEndian: value)
-    }()
-    
-    self.order = {
-      let value = key.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
-      return UInt16(bigEndian: value)
-    }()
+    self.chain = chain
+    self.address = address
+    self.direction = .`self`
+    self.nonce = 0
+    self.order = 0
   }
   
   public init?(data: Data) {
-    guard data.count == MDBXKeyLength.transferStable else { return nil }
     self.key = data
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange: Range<Int> = _chainRange.endIndex..<_chainRange.upperBound+MDBXKeyLength.address
-    let _directionRange: Range<Int> = _addressRange.endIndex..<_addressRange.upperBound+MDBXKeyLength.direction
-    let _nonceRange: Range<Int> = _directionRange.endIndex..<_directionRange.upperBound+MDBXKeyLength.nonce
-    let _orderRange: Range<Int> = _nonceRange.endIndex..<key.count
-    
-    self.chain = {
-      return MDBXChain(rawValue: data[_chainRange])
-    }()
-    
-    self.address = {
-      return Address(rawValue: data[_addressRange].hexString)
-    }()
-    
-    self.direction = {
-      let value = data.subdata(in: _directionRange).withUnsafeBytes { $0.load(as: UInt8.self) }
-      return Transfer.Direction(rawValue: UInt8(bigEndian: value)) ?? .incoming
-    }()
-    
-    self.nonce = {
-      let value = data.subdata(in: _nonceRange).withUnsafeBytes { $0.load(as: UInt64.self) }
-      return UInt64(bigEndian: value)
-    }()
-    
-    self.order = {
-      let value = data.subdata(in: _orderRange).withUnsafeBytes { $0.load(as: UInt16.self) }
-      return UInt16(bigEndian: value)
-    }()
+    do {
+      let coder = MDBXKeyCoder()
+      let decoded = try coder.decode(data: data, fields: [
+        .chain,
+        .address,
+        .direction,
+        .nonce,
+        .order
+      ])
+      
+      self.chain = decoded[0] as! MDBXChain
+      self.address = decoded[1] as! Address
+      self.direction = decoded[2] as! Transfer.Direction
+      self.nonce = decoded[3] as! UInt64
+      self.order = decoded[4] as! UInt16
+    } catch {
+      return nil
+    }
   }
 }
 

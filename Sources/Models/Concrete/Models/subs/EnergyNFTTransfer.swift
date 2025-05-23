@@ -36,7 +36,7 @@ extension EnergyNFTTransfer {
   
   public var tokenID: Int { Int(_wrapped.tokenID, radix: 10) ?? 0 }
   public var hash: String { _wrapped.hash }
-  public var address: Address { .unknown(_wrapped.address) }
+  public var address: Address { Address(_wrapped.address) }
   public var timestamp: Date? { _wrapped.hasTimestamp ? _wrapped.timestamp.date : nil }
 }
 

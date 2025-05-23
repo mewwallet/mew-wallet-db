@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+message _RawBitcoinTransaction {
+  string txid                           = 1;
+  uint64 fee                            = 2;
+  
+  message _Input {
+    uint64 value                          = 1;
+    optional string address               = 2;
+  }
+  repeated _Input inputs                = 3;
+  
+  message _Output {
+    uint64 value                          = 1;
+    optional string address               = 2;
+    optional string scriptPubKey          = 3;
+  }
+  repeated _Output outputs              = 4;
+  
+  message _Block {
+    optional uint64 height                = 1;
+    optional uint64 position              = 2;
+  }
+  optional _Block block                = 5;
+}
