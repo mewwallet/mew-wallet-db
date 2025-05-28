@@ -93,6 +93,12 @@ extension Token {
       )
     }
   }
+  public var symbol: String {
+    get throws {
+      let meta = try self.meta
+      return meta.symbol
+    }
+  }
   
   public func isHidden(locked: Bool) -> Bool {
     guard let account = try? account else { return false }
