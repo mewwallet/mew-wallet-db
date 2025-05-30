@@ -168,7 +168,7 @@ extension _RawTransaction: ProtoWrappedMessage {
   }
 }
 
-// MARK: - RawTransaction + Equitable
+// MARK: - RawTransaction + Equatable
 
 public extension RawTransaction {
   static func ==(lhs: RawTransaction, rhs: RawTransaction) -> Bool {

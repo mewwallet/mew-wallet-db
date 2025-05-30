@@ -21,6 +21,9 @@ public struct SwapListV5TokenMetaWrapper: MDBXWrapperObject {
     if self._wrapped.d.isEmpty {
       self._wrapped.d = [Int32](repeating: 18, count: self._wrapped.c.count)
     }
+    if self._wrapped.cc.isEmpty {
+      self._wrapped.cc = [Int32](repeating: 0, count: self._wrapped.c.count)
+    }
   }
   
   public init(jsonData: Data, chain: MDBXChain) throws {
@@ -30,6 +33,9 @@ public struct SwapListV5TokenMetaWrapper: MDBXWrapperObject {
     self._wrapped = try _SwapListV5TokenMetaWrapper(jsonUTF8Data: jsonData, options: options)
     if self._wrapped.d.isEmpty {
       self._wrapped.d = [Int32](repeating: 18, count: self._wrapped.c.count)
+    }
+    if self._wrapped.cc.isEmpty {
+      self._wrapped.cc = [Int32](repeating: 0, count: self._wrapped.c.count)
     }
   }
 }
@@ -56,32 +62,58 @@ extension SwapListV5TokenMetaWrapper {
   }
 
   public var tokens_dexItems: [DexItem] {
-    self._wrapped.c.enumerated().map { (index, chain) in
-      return DexItem(
-        chain: MDBXChain(rawValue: chain),
-        contractAddress: self._wrapped.ca[index],
-        name: self._wrapped.n,
-        symbol: self._wrapped.s,
-        order: nil,
-        database: database
-      )
-    }
+    return zip(self._wrapped.c, self._wrapped.cc)
+      .enumerated()
+      .map { (index, zipObject) in
+        let (chain, crosschain) = zipObject
+        return DexItem(
+          chain: MDBXChain(rawValue: chain),
+          contractAddress: self._wrapped.ca[index],
+          name: self._wrapped.n,
+          symbol: self._wrapped.s,
+          order: nil,
+          crosschain: crosschain == 1,
+          database: database
+        )
+      }
   }
   
   public var featured_dexItems: [DexItem] {
     guard !self._wrapped.f.isEmpty else { return [] }
-    return self._wrapped.c.enumerated().compactMap { (index, chain) -> DexItem? in
-      let featuredIndex = self._wrapped.f[index]
-      guard featuredIndex != -1 else { return nil }
-      return DexItem(
-        chain: MDBXChain(rawValue: chain),
-        contractAddress: self._wrapped.ca[index],
-        name: self._wrapped.n,
-        symbol: self._wrapped.s,
-        order: UInt16(clamping: featuredIndex),
-        database: database
-      )
-    }
+    return zip(self._wrapped.c, self._wrapped.cc)
+      .enumerated()
+      .compactMap { (index, zipObject) -> DexItem? in
+        let (chain, crosschain) = zipObject
+        let featuredIndex = self._wrapped.f[index]
+        guard featuredIndex != -1 else { return nil }
+        return DexItem(
+          chain: MDBXChain(rawValue: chain),
+          contractAddress: self._wrapped.ca[index],
+          name: self._wrapped.n,
+          symbol: self._wrapped.s,
+          order: UInt16(clamping: featuredIndex),
+          crosschain: crosschain == 1,
+          database: database
+        )
+      }
+  }
+  
+  public var crosschain_dexItems: [DexItem] {
+    guard !self._wrapped.cc.isEmpty else { return [] }
+    return zip(self._wrapped.c, self._wrapped.cc)
+      .enumerated()
+      .compactMap { (index, zipObject) -> DexItem? in
+        let (chain, crosschain) = zipObject
+        guard crosschain != 0 else { return nil }
+        return DexItem(
+          chain: MDBXChain(rawValue: chain),
+          contractAddress: self._wrapped.ca[index],
+          name: self._wrapped.n,
+          symbol: self._wrapped.s,
+          order: nil,
+          crosschain: true,
+          database: database)
+      }
   }
 }
 
@@ -107,11 +139,11 @@ extension SwapListV5TokenMetaWrapper: ProtoWrapper {
 
 extension SwapListV5TokenMetaWrapper {
   public static func array(fromJSONString: String) throws -> [Self] {
-    return try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.universal) })
+    return try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.evm) })
   }
   
   public static func array(fromJSONUTF8Data: Data) throws -> [Self] {
-    return try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.universal) })
+    return try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.evm) })
   }
 }
 
@@ -119,19 +151,22 @@ public struct SwapListV5Wrapper: Sendable {
   public let tokens: [TokenMeta]
   public let tokens_dexItems: [DexItem]
   public let featured_dexItems: [DexItem]
+  public let crossChain_dexItems: [DexItem]
   
   public init(fromJSONString: String) throws {
-    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.universal) })
+    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONString: fromJSONString).map({ $0.wrapped(.evm) })
     self.tokens = items.tokens
     self.tokens_dexItems = items.tokens_dexItems
     self.featured_dexItems = items.featured_dexItems
+    self.crossChain_dexItems = items.crosschain_dexItems
   }
   
   public init(fromJSONUTF8Data: Data) throws {
-    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.universal) })
+    let items = try _SwapListV5TokenMetaWrapper.array(fromJSONUTF8Data: fromJSONUTF8Data).map({ $0.wrapped(.evm) })
     self.tokens = items.tokens
     self.tokens_dexItems = items.tokens_dexItems
     self.featured_dexItems = items.featured_dexItems
+    self.crossChain_dexItems = items.crosschain_dexItems
   }
 }
 
@@ -158,5 +193,19 @@ public extension Array where Element == SwapListV5TokenMetaWrapper {
     return self.flatMap {
       $0.featured_dexItems
     }
+  }
+  
+  var crosschain_dexItems: [DexItem] {
+    var order: UInt16 = 0
+    return self
+      .flatMap {
+        $0.crosschain_dexItems
+          .map { item in
+            var item = item
+            item.order = order
+            order &+= 1
+            return item
+          }
+      }
   }
 }

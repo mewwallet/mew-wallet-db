@@ -15,34 +15,50 @@ public extension MEWwalletDBImpl {
   
   @discardableResult
   func write(table: MDBXTableName, key: any MDBXKey, data: Data, mode: DBWriteMode) async throws -> Int {
-    let environment = try self.getEnvironment()
-    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
-    let table = (table, db)
-    return try await environment.writer.write(table: table, key: key, data: data, mode: mode)
+    let env = try self._environmentTable(for: table)
+    return try await env.environment.writer.write(table: env.table, key: key, data: data, mode: mode)
   }
   
   @discardableResult
   func write(table: MDBXTableName, key: any MDBXKey, object: any MDBXObject, mode: DBWriteMode) async throws -> Int {
-    let environment = try self.getEnvironment()
-    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
-    let table = (table, db)
-    return try await environment.writer.write(table: table, key: key, object: object, mode: mode)
+    let env = try self._environmentTable(for: table)
+    return try await env.environment.writer.write(table: env.table, key: key, object: object, mode: mode)
   }
   
   @discardableResult
   func write<S: Sequence>(table: MDBXTableName, keysAndData: S, mode: DBWriteMode) async throws -> Int where S.Element == MDBXKeyData, S: Sendable {
-    let environment = try self.getEnvironment()
-    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
-    let table = (table, db)
-    return try await environment.writer.write(table: table, keysAndData: keysAndData, mode: mode)
+    let env = try self._environmentTable(for: table)
+    return try await env.environment.writer.write(table: env.table, keysAndData: keysAndData, mode: mode)
   }
   
   @discardableResult
   func write<S: Sequence>(table: MDBXTableName, keysAndObjects: S, mode: DBWriteMode) async throws -> Int where S.Element == MDBXKeyObject, S: Sendable {
-    let environment = try self.getEnvironment()
-    guard let db = environment.getDatabase(for: table) else { throw MDBXError.notFound }
-    let table = (table, db)
-    return try await environment.writer.write(table: table, keysAndObject: keysAndObjects, mode: mode)
+    let env = try self._environmentTable(for: table)
+    return try await env.environment.writer.write(table: env.table, keysAndObject: keysAndObjects, mode: mode)
+  }
+  
+  @discardableResult
+  func unsafeWrite(table: MDBXTableName, key: any MDBXKey, data: Data, mode: DBWriteMode) throws -> Int {
+    let env = try self._environmentTable(for: table)
+    return try env.environment.unsafeWrite.write(table: env.table, key: key, data: data, mode: mode)
+  }
+  
+  @discardableResult
+  func unsafeWrite(table: MDBXTableName, key: any MDBXKey, object: any MDBXObject, mode: DBWriteMode) throws -> Int {
+    let env = try self._environmentTable(for: table)
+    return try env.environment.unsafeWrite.write(table: env.table, key: key, object: object, mode: mode)
+  }
+  
+  @discardableResult
+  func unsafeWrite<S: Sequence>(table: MDBXTableName, keysAndData: S, mode: DBWriteMode) throws -> Int where S.Element == MDBXKeyData, S: Sendable {
+    let env = try self._environmentTable(for: table)
+    return try env.environment.unsafeWrite.write(table: env.table, keysAndData: keysAndData, mode: mode)
+  }
+  
+  @discardableResult
+  func unsafeWrite<S: Sequence>(table: MDBXTableName, keysAndObjects: S, mode: DBWriteMode) throws -> Int where S.Element == MDBXKeyObject, S: Sendable {
+    let env = try self._environmentTable(for: table)
+    return try env.environment.unsafeWrite.write(table: env.table, keysAndObject: keysAndObjects, mode: mode)
   }
   
   // MARK: - Completions
@@ -89,5 +105,14 @@ public extension MEWwalletDBImpl {
         completion(false, 0)
       }
     }
+  }
+  
+  // MARK: - Private
+  
+  private func _environmentTable(for name: MDBXTableName) throws -> (environment: MEWwalletDBEnvironment, table: MDBXTable) {
+    let environment = try self.getEnvironment()
+    guard let db = environment.getDatabase(for: name) else { throw MDBXError.notFound }
+    
+    return (environment, (name, db))
   }
 }

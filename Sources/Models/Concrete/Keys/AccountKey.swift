@@ -13,30 +13,53 @@ public final class AccountKey: MDBXKey {
   // MARK: - Public
   
   public let key: Data
-  public let chain: MDBXChain = .universal 
+  public let chain: MDBXChain
   public let address: String
   
   // MARK: - Lifecycle
   
-  public init(address: Address) {
-    let chainPart     = MDBXChain.universal.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart   = Data(hex: address.rawValue).setLengthLeft(MDBXKeyLength.address)
+  public convenience init(address: Address) {
+    self.init(chain: address.networkChain, address: address)
+  }
+  
+  public init(chain: MDBXChain, address: Address) {
+    let coder = MDBXKeyCoder()
     
-    self.key = chainPart + addressPart
+    self.key = coder.encode(fields: [
+      chain,
+      address
+    ])
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange = _chainRange.endIndex..<key.count
-    
-    self.address = key[_addressRange].hexString
+    self.chain = chain
+    self.address = address.rawValue
   }
   
   public init?(data: Data) {
-    guard data.count == MDBXKeyLength.account else { return nil }
-    self.key = data
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _addressRange = _chainRange.endIndex..<key.count
-    
-    self.address = key[_addressRange].hexString
+    do {
+      self.key = data
+      
+      let coder = MDBXKeyCoder()
+      
+      let decoded = try coder.decode(data: data, fields: [
+        .network,
+        .address
+      ])
+      self.chain = decoded[0] as! MDBXChain
+      self.address = (decoded[1] as! Address).rawValue
+    } catch {
+      return nil
+    }
+  }
+}
+
+// MARK: - AccountKey + Equatable
+
+extension AccountKey: Equatable {
+  public static func == (lhs: AccountKey, rhs: AccountKey) -> Bool { lhs.key == rhs.key }
+}
+
+extension AccountKey: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(key)
   }
 }

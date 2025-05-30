@@ -50,7 +50,7 @@ extension NFTAsset {
     get throws {
       guard let collectionKey = _collectionKey else { return nil }
       let key = AccountKey(address: collectionKey.address)
-      return try _account.getData(key: key, policy: .ignoreCache, chain: .universal, database: self.database)
+      return try _account.getData(key: key, policy: .ignoreCache, chain: .evm, database: self.database)
     }
   }
 
@@ -161,7 +161,7 @@ extension NFTAsset: MDBXObject {
   public var key: any MDBXKey {
     NFTAssetKey(collectionKey: _collectionKey,
                 date: _wrapped.lastAcquiredDate,
-                contractAddress: .unknown(_wrapped.contractAddress),
+                contractAddress: Address(_wrapped.contractAddress),
                 id: _wrapped.tokenID)
   }
   
@@ -241,7 +241,7 @@ extension _NFTAsset: ProtoWrappedMessage {
   }
 }
 
-// MARK: - NFTAsset + Equitable
+// MARK: - NFTAsset + Equatable
 
 public extension NFTAsset {
   static func ==(lhs: NFTAsset, rhs: NFTAsset) -> Bool {

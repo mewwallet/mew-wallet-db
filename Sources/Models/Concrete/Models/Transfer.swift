@@ -119,22 +119,22 @@ extension Transfer {
   
   public var from: Account {
     get throws {
-      let address = Address(rawValue: _wrapped.from)
-      return try _from.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
+      let key = AccountKey(address: self.fromAddress)
+      return try _from.getData(key: key, policy: .cacheOrLoad, chain: key.chain, database: self.database)
     }
   }
   
   public var to: Account {
     get throws {
-      let address = Address(rawValue: _wrapped.to)
-      return try _to.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
+      let key = AccountKey(address: self.toAddress)
+      return try _to.getData(key: key, policy: .cacheOrLoad, chain: key.chain, database: self.database)
     }
   }
   
   public var owner: Account {
     get throws {
-      let address = Address(rawValue: _wrapped.address)
-      return try _owner.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: .universal, database: self.database)
+      let key = AccountKey(address: self.address)
+      return try _owner.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: key.chain, database: self.database)
     }
   }
   
@@ -197,7 +197,7 @@ extension Transfer: MDBXObject {
   }
   
   public var key: any MDBXKey {
-    return TransferKey(chain: _chain, address: self.address, block: _wrapped.blockNumber, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0)
+    return TransferKey(chain: _chain, address: self.address, block: _wrapped.blockNumber, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0, contractAddress: self.contractAddress)
   }
   
   public var alternateKey: (any MDBXKey)? {
@@ -278,7 +278,7 @@ extension _Transfer: ProtoWrappedMessage {
   }
 }
 
-// MARK: - Transfer + Equitable
+// MARK: - Transfer + Equatable
 
 public extension Transfer {
   static func ==(lhs: Transfer, rhs: Transfer) -> Bool {

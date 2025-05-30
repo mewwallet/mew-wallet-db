@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "subs/_NetworkType.proto";
 
 message _Account {
   // Account address
@@ -66,4 +67,6 @@ message _Account {
     repeated _Token tokenHidden             = 8;
   }
   _UserState state                        = 6;
+
+  optional _NetworkType networkType       = 7;
 }

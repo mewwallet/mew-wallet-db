@@ -8,6 +8,7 @@
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
+import mew_wallet_ios_extensions
 
 public struct TokenMeta: Equatable {
   public weak var database: (any WalletDB)?
@@ -29,6 +30,7 @@ public struct TokenMeta: Equatable {
               decimals: Int32 = 0, // FIXME: optional decimals?
               icon: String? = nil,
               price: String? = nil,
+              sparkline: [String]? = nil,
               database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
@@ -42,6 +44,9 @@ public struct TokenMeta: Equatable {
         $0.price = price
       }
       $0.decimals = decimals
+      if let sparkline {
+        $0.sparkline = sparkline
+      }
     }
     self._chain = chain
   }
@@ -78,6 +83,7 @@ extension TokenMeta {
   public var name: String { self._wrapped.name }
   public var symbol: String { self._wrapped.symbol }
   public var decimals: Int { Int(self._wrapped.decimals) }
+  public var cryptoUnit: CryptoUnit { return .custom(decimals) }
   public var icon: URL? {
     guard self._wrapped.hasIcon else { return nil }
     return URL(string: self._wrapped.icon)
@@ -195,7 +201,7 @@ extension _TokenMeta: ProtoWrappedMessage {
   }
 }
 
-// MARK: - TokenMeta + Equitable
+// MARK: - TokenMeta + Equatable
 
 public extension TokenMeta {
   static func ==(lhs: TokenMeta, rhs: TokenMeta) -> Bool {

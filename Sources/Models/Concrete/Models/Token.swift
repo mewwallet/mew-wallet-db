@@ -8,8 +8,9 @@
 import Foundation
 import SwiftProtobuf
 import mdbx_ios
+import mew_wallet_ios_extensions
 
-public struct Token: Equatable {
+public struct Token {
   public enum Error: LocalizedError {
     case badValue
   }
@@ -23,6 +24,7 @@ public struct Token: Equatable {
   }
   var _wrapped: _Token
   var _chain: MDBXChain
+  public var chain: MDBXChain { _chain }
 
   // MARK: - Private Properties
   
@@ -33,12 +35,15 @@ public struct Token: Equatable {
   
   // MARK: - LifeCycle
     
-  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, database: (any WalletDB)? = nil) {
+  public init(chain: MDBXChain, address: Address, contractAddress: Address, rawAmount: String? = nil, lockedAmount: String? = nil, database: (any WalletDB)? = nil) {
     self._wrapped = .with {
       $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue
       if let rawAmount {
         $0.amount = rawAmount
+      }
+      if let lockedAmount {
+        $0.lockedAmount = lockedAmount
       }
     }
     self._chain = chain
@@ -59,8 +64,8 @@ extension Token {
   
   public var account: Account? {
     get throws {
-      let key = AccountKey(address: .unknown(_wrapped.address))
-      return try _account.getData(key: key, policy: .ignoreCache, chain: .universal, database: self.database)
+      let key = AccountKey(address: Address(_wrapped.address))
+      return try _account.getData(key: key, policy: .ignoreCache, chain: .evm, database: self.database)
     }
   }
   
@@ -73,10 +78,27 @@ extension Token {
   
   // MARK: - Properties
   
-  public var contract_address: Address { Address(rawValue: self._wrapped.contractAddress) }
-  public var address: Address { Address(rawValue: self._wrapped.address) }
+  public var contract_address: Address { Address(self._wrapped.contractAddress) }
+  public var address: Address { Address(self._wrapped.address) }
   public var amount: Decimal { Decimal(wrapped: self._wrapped.amount, hex: true) ?? .zero }
   public var lockedAmount: Decimal { Decimal(wrapped: self._wrapped.lockedAmount, hex: true) ?? .zero }
+  public var availableAmount: Decimal { max(amount - lockedAmount, .zero) }
+  /// Contains human-readable balance (counts decimals of the token)
+  public var bundledAvailableAmount: BundledDecimal.Decimal {
+    get throws {
+      let meta = try self.meta
+      return .init(
+        availableAmount.convert(from: .wei, to: .custom(meta.decimals)),
+        symbol: meta.symbol
+      )
+    }
+  }
+  public var symbol: String {
+    get throws {
+      let meta = try self.meta
+      return meta.symbol
+    }
+  }
   
   public func isHidden(locked: Bool) -> Bool {
     guard let account = try? account else { return false }
@@ -194,10 +216,10 @@ extension Token: ProtoWrapper {
   }
 }
 
-// MARK: - Token + Equitable
+// MARK: - Token + Equatable
 
-public extension Token {
-  static func ==(lhs: Token, rhs: Token) -> Bool {
+extension Token: Equatable {
+  public static func ==(lhs: Token, rhs: Token) -> Bool {
     return lhs._chain == rhs._chain &&
            lhs._wrapped == rhs._wrapped
   }
