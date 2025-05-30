@@ -150,10 +150,6 @@ final class DBWrite_tests: XCTestCase {
         XCTAssertEqual(set3.count, 7)
         XCTAssertEqual(allNew.count, 5)
         
-        let mode22: DBWriteMode = [.append, .override]
-        
-        debugPrint(mode22)
-        
         // APPEND
         var count = try await db.write(table: .tokenMeta, keysAndObjects: set0, mode: [.append])
         var fetched: [TokenMeta] = try db.fetch(range: .all, from: .tokenMeta, order: .asc)

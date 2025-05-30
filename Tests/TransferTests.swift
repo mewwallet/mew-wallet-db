@@ -334,29 +334,6 @@ final class Transfer_tests: XCTestCase {
       let transfersDesc: [Transfer] = try db.fetch(range: .all, from: .transfer, order: .desc)
       
       debugPrint(transfersDesc.map({$0.block}))
-      
-      debugPrint("done")
-//      let dexItem = DexItem(chain: MDBXChain(rawValue: Data(hex: "0x1")), contractAddress: "0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", order: 0)
-//      let dexItem2 = DexItem(chain: .eth, contractAddress: "0x00c17f958d2ee523a2206206994597c13d831ec7", order: 2)
-//      let dexItem3 = DexItem(chain: .eth, contractAddress: "0x00aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE", order: 1)
-      
-//      try await db.write(table: .orderedDex, keysAndObjects: [
-//        (dexItem.alternateKey!, dexItem),
-//        (dexItem2.alternateKey!, dexItem2),
-//        (dexItem3.alternateKey!, dexItem3)
-//      ], mode: .append)
-      
-//      try await db.write(table: .dex, keysAndObjects: [
-//        (dexItem.key, dexItem),
-//        (dexItem2.key, dexItem2),
-//        (dexItem3.key, dexItem3)
-//      ], mode: .append)
-//
-//      var dex = try dexItem.meta.dexItem.meta.dexItem
-//      dex.order = 0
-      
-//      let renBTC: TokenMeta = try db.read(key: TokenMetaKey(chain: .eth, contractAddress: .renBTC), table: .tokenMeta)
-//      XCTAssertEqual(renBTC.contract_address, .renBTC)
     } catch {
       XCTFail(error.localizedDescription)
     }
@@ -389,10 +366,10 @@ final class Transfer_tests: XCTestCase {
       try await db.write(table: .transfer, keysAndObjects: keysAndObjects, mode: .recommended(.transfer))
       
       
-      let transfers: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: .unknown("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"), limit: 3),
+      let transfers: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: Address("0x7fb1077e28b8c771330d323dbdc42e0623e05e3d"), limit: 3),
                                                from: .transfer, order: .desc)
       
-      let transfers2: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: .unknown("0x810fb3b90f7261878c9d3326923e3547d7713971"), limit: 3),
+      let transfers2: [Transfer] = try db.fetch(range: TransferKey.range(chain: .eth, address: Address("0x810fb3b90f7261878c9d3326923e3547d7713971"), limit: 3),
                                                from: .transfer, order: .desc)
       
       debugPrint(transfers.map({ $0.hash }))
@@ -401,17 +378,4 @@ final class Transfer_tests: XCTestCase {
       XCTFail(error.localizedDescription)
     }
   }
-  
-  func testKey() {
-//    let tokenKey = TokenKey(chain: .eth, address: "0x112233445566778899aabbccddeeff0011223344", contractAddress: "0x5566778899aabbccddeeff001122334455667788")
-//    XCTAssertEqual(tokenKey.address, "0x112233445566778899aabbccddeeff0011223344")
-//    XCTAssertEqual(tokenKey.contractAddress, "0x5566778899aabbccddeeff001122334455667788")
-//    XCTAssertEqual(tokenKey.key.hexString, "0x00000000000000000000000000000001112233445566778899aabbccddeeff00112233445566778899aabbccddeeff001122334455667788")
-  }
 }
-
-//["0xbac71a4960443728c310d8fb8de2205c8a22ecc471eed7774d6857a7c36652bb", "0x600072fb3c0ebfa3b144543aa798c67511eba647294ecfd27e2e3278c2737452", "0xdc99245a8fc795125a2c36fa5bd5c311f40c6d0d445370ef41eda5fb3f6664ef"]
-//["0xa404cbb8b4f30192fe84b8f8d71731f9bd371076a78f77de7c47dd44d1eb538e", "0xa404cbb8b4f30192fe84b8f8d71731f9bd371076a78f77de7c47dd44d1eb538e", "0xdd37f0f80c7332e62b863fbcca309200df4c7fa98cd133d42502a077ac724e89"]
-
-//["0x3e9390ebc2fc6e7e6cefd8b933fcf3536cd3e57359b7ecd367612fde9b831933", "0x76f38af08e7b540c00efb639ce63dd662ec0a7950eeab4bd7eecba9699b8cecc", "0xc02be610b50fa70f22601b3eef7855001455029fa2c0740fb5f9ca42f0653f0c"]
-//["0xbac71a4960443728c310d8fb8de2205c8a22ecc471eed7774d6857a7c36652bb", "0x53fb323ea331e40b52ad01ff5d787e0b7b4214f965e91084183c0d8aab60a0c6", "0x314222c8d0a27daf20a9b8feb491b7abf2b15ae2fc282540ddc53d826371db60"]

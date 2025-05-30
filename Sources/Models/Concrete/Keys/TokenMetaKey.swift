@@ -18,56 +18,46 @@ public final class TokenMetaKey: MDBXKey {
   // MARK: - Lifecycle
   
   public init(chain: MDBXChain, contractAddress: Address) {
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let contractAddressPart = Data(hex: contractAddress.rawValue).setLengthLeft(MDBXKeyLength.address)
+    let coder = MDBXKeyCoder()
     
-    let key = chainPart + contractAddressPart
-    self.key = key
+    self.key = coder.encode(fields: [
+      chain,
+      contractAddress
+    ])
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _contractAddressRange: Range<Int> = _chainRange.endIndex..<key.count
-    self.chain = {
-      return MDBXChain(rawValue: key[_chainRange])
-    }()
-    
-    self.contractAddress = {
-      return Address(rawValue: key[_contractAddressRange].hexString)
-    }()
+    self.chain = chain
+    self.contractAddress = contractAddress
   }
   
   public init(chain: MDBXChain, lowerRange: Bool) {
-    let rangeValue: UInt8 = lowerRange ? 0x00 : 0xFF
+    let rangeData = Data([lowerRange ? 0x00 : 0xFF])
     
-    let chainPart           = chain.rawValue.setLengthLeft(MDBXKeyLength.chain)
-    let addressPart         = Data(repeating: rangeValue, count: MDBXKeyLength.address)
+    let coder = MDBXKeyCoder()
     
-    let key = chainPart + addressPart
-    self.key = key
+    self.key = coder.encode(fields: [
+      chain,
+      rangeData
+    ])
     
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _contractAddressRange: Range<Int> = _chainRange.endIndex..<key.count
-    self.chain = {
-      return MDBXChain(rawValue: key[_chainRange])
-    }()
-    
-    self.contractAddress = {
-      return Address(rawValue: key[_contractAddressRange].hexString)
-    }()
+    self.chain = chain
+    self.contractAddress = .invalid(rangeData.hexString)
   }
   
   public init?(data: Data) {
-    guard data.count == MDBXKeyLength.tokenMeta else { return nil }
-    self.key = data
-    
-    let _chainRange: Range<Int> = 0..<MDBXKeyLength.chain
-    let _contractAddressRange: Range<Int> = _chainRange.endIndex..<key.count
-    self.chain = {
-      return MDBXChain(rawValue: data[_chainRange])
-    }()
-    
-    self.contractAddress = {
-      return Address(rawValue: data[_contractAddressRange].hexString)
-    }()
+    do {
+      self.key = data
+      
+      let coder = MDBXKeyCoder()
+      let decoded = try coder.decode(data: data, fields: [
+        .chain,
+        .address
+      ])
+      
+      self.chain = decoded[0] as! MDBXChain
+      self.contractAddress = decoded[1] as! Address
+    } catch {
+      return nil
+    }
   }
 }
 

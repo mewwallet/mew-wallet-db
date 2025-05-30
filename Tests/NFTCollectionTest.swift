@@ -230,7 +230,7 @@ final class nft_collection_tests: XCTestCase {
       }
       XCTAssertFalse(asset.isFavorite(chain: .eth))
       XCTAssertTrue(asset2.isFavorite(chain: .eth))
-      var freshAccount: Account = try db.read(key: AccountKey(address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
+      var freshAccount: Account = try db.read(key: AccountKey(chain: .evm, address: Address("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
       XCTAssertEqual([asset2.key.key.hexString], try freshAccount.nftFavorite(chain: .eth).map({ $0.key.key.hexString }))
       
       if let accountToUpdate = asset.toggleFavorite() {
@@ -238,7 +238,7 @@ final class nft_collection_tests: XCTestCase {
       }
       XCTAssertTrue(asset.isFavorite(chain: .eth))
       XCTAssertTrue(asset2.isFavorite(chain: .eth))
-      freshAccount = try db.read(key: AccountKey(address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
+      freshAccount = try db.read(key: AccountKey(chain: .evm, address: Address("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
       XCTAssertEqual([asset2.key.key.hexString, asset.key.key.hexString], try freshAccount.nftFavorite(chain: .eth).map({ $0.key.key.hexString }))
       
       if let accountToUpdate = asset2.toggleFavorite() {
@@ -249,7 +249,7 @@ final class nft_collection_tests: XCTestCase {
       }
       XCTAssertTrue(asset.isFavorite(chain: .eth))
       XCTAssertTrue(asset2.isFavorite(chain: .eth))
-      freshAccount = try db.read(key: AccountKey(address: .unknown("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
+      freshAccount = try db.read(key: AccountKey(chain: .evm, address: Address("0x4Dd2a335d53BCD17445EBF4504c5632c13A818A1")), table: .account)
       XCTAssertEqual([asset.key.key.hexString, asset2.key.key.hexString], try freshAccount.nftFavorite(chain: .eth).map({ $0.key.key.hexString }))
       
       debugPrint(try freshAccount.nftFavorite(chain: .eth))

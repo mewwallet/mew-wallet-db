@@ -21,7 +21,7 @@ public struct DAppRecordMeta: Equatable, Sendable {
   
   public init(url: URL, icon: URL?, database: (any WalletDB)? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = .universal
+    self._chain = .evm
     self._hash = url.sha256
     
     guard let icon = icon else {
@@ -38,7 +38,7 @@ public struct DAppRecordMeta: Equatable, Sendable {
   mutating private func tryRestorePrimaryKeyInfo(_ key: Data?) {
     guard let key = key else { return }
     if let primaryKey = DAppRecordMetaKey(data: key) {
-      _hash = primaryKey.urlHash
+      _hash = Data(primaryKey.urlHash)
     }
   }
 }
@@ -88,7 +88,7 @@ extension DAppRecordMeta: MDBXObject {
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _DAppRecordMeta(serializedBytes: data)
     self.tryRestorePrimaryKeyInfo(key)
   }
@@ -96,7 +96,7 @@ extension DAppRecordMeta: MDBXObject {
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _DAppRecordMeta(jsonUTF8Data: jsonData, options: options)
     self.tryRestorePrimaryKeyInfo(key)
   }
@@ -104,7 +104,7 @@ extension DAppRecordMeta: MDBXObject {
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _DAppRecordMeta(jsonString: jsonString, options: options)
     self.tryRestorePrimaryKeyInfo(key)
   }
@@ -113,14 +113,14 @@ extension DAppRecordMeta: MDBXObject {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _DAppRecordMeta.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
 
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _DAppRecordMeta.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
 
   mutating public func merge(with object: any MDBXObject) {
@@ -135,11 +135,11 @@ extension DAppRecordMeta: MDBXObject {
 
 extension _DAppRecordMeta: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> DAppRecordMeta {
-    return DAppRecordMeta(self, chain: .universal)
+    return DAppRecordMeta(self, chain: .evm)
   }
 }
 
-// MARK: - DAppRecordMeta + Equitable
+// MARK: - DAppRecordMeta + Equatable
 
 public extension DAppRecordMeta {
   static func ==(lhs: DAppRecordMeta, rhs: DAppRecordMeta) -> Bool {
@@ -152,7 +152,7 @@ public extension DAppRecordMeta {
 
 extension DAppRecordMeta: ProtoWrapper {
   init(_ wrapped: _DAppRecordMeta, chain: MDBXChain) {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = wrapped
   }
 }

@@ -9,4 +9,5 @@ message _SwapListV5TokenMetaWrapper {
   repeated string ca = 6;      // Contract addresses
   repeated int32 d = 7;        // Decimals
   repeated int32 f = 8;        // Featured index
+  repeated int32 cc = 9;       // Cross chain, 0 or 1, related to chain id
 }

@@ -49,6 +49,9 @@ struct _SwapListV5TokenMetaWrapper: Sendable {
   /// Featured index
   var f: [Int32] = []
 
+  /// Cross chain, 0 or 1, related to chain id
+  var cc: [Int32] = []
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -67,6 +70,7 @@ extension _SwapListV5TokenMetaWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mes
     6: .same(proto: "ca"),
     7: .same(proto: "d"),
     8: .same(proto: "f"),
+    9: .same(proto: "cc"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -83,6 +87,7 @@ extension _SwapListV5TokenMetaWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mes
       case 6: try { try decoder.decodeRepeatedStringField(value: &self.ca) }()
       case 7: try { try decoder.decodeRepeatedInt32Field(value: &self.d) }()
       case 8: try { try decoder.decodeRepeatedInt32Field(value: &self.f) }()
+      case 9: try { try decoder.decodeRepeatedInt32Field(value: &self.cc) }()
       default: break
       }
     }
@@ -113,6 +118,9 @@ extension _SwapListV5TokenMetaWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mes
     if !self.f.isEmpty {
       try visitor.visitPackedInt32Field(value: self.f, fieldNumber: 8)
     }
+    if !self.cc.isEmpty {
+      try visitor.visitPackedInt32Field(value: self.cc, fieldNumber: 9)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -125,6 +133,7 @@ extension _SwapListV5TokenMetaWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mes
     if lhs.ca != rhs.ca {return false}
     if lhs.d != rhs.d {return false}
     if lhs.f != rhs.f {return false}
+    if lhs.cc != rhs.cc {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

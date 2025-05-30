@@ -20,6 +20,7 @@ private enum _MDBXChain: Data, Sendable {
   case base               = "0x00000000000000000000000000002105" // 8453
   case arbitrum           = "0x0000000000000000000000000000A4B1" // 42161
   case optimism           = "0x0000000000000000000000000000000A" // 10
+  case bitcoin            = "0x00000000000000000000bcbcbcbcbcbc" // 207518806359228 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
   
   var chain: MDBXChain {
     switch self {
@@ -35,6 +36,14 @@ private enum _MDBXChain: Data, Sendable {
     case .base:               return .base
     case .arbitrum:           return .arbitrum
     case .optimism:           return .optimism
+    case .bitcoin:            return .bitcoin
+    }
+  }
+  
+  var networkChain: MDBXChain {
+    switch self {
+    case .bitcoin:            return .bitcoin
+    default:                  return .evm
     }
   }
 }
@@ -51,9 +60,14 @@ public enum MDBXChain: CaseIterable, Sendable {
     56:     .bsc,
     8453:   .base,
     42161:  .arbitrum,
-    10:     .optimism
+    10:     .optimism,
+    207518806359228: .bitcoin
   ]
-  public static let allCases: [MDBXChain] = [
+  
+  @available(*, deprecated, renamed: "evmCases", message: "No longer supported")
+  public static let allCases: [MDBXChain] = []
+  
+  public static let evmCases: [MDBXChain] = [
     .eth,
     .goerli,
     .polygon_mainnet,
@@ -67,9 +81,13 @@ public enum MDBXChain: CaseIterable, Sendable {
     .optimism
   ]
   
+  public static let bitcoinCases: [MDBXChain] = [
+    .bitcoin
+  ]
+  
   case invalid
   /// Convenient `MDBXChain` == `.eth`
-  case universal
+  case evm
   case eth
   case goerli
   case polygon_mainnet
@@ -81,11 +99,12 @@ public enum MDBXChain: CaseIterable, Sendable {
   case base
   case arbitrum
   case optimism
+  case bitcoin
   case custom(Data)
   
-  internal var value: UInt64 {
+  public var value: UInt64 {
     switch self {
-    case .universal:                  return 1
+    case .evm:                        return 1
     case .invalid:                    return 0
     case .eth:                        return 1
     case .goerli:                     return 5
@@ -98,6 +117,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:                       return 8453
     case .arbitrum:                   return 42161
     case .optimism:                   return 10
+    case .bitcoin:                    return 207518806359228
     case .custom(let data):           return data.withUnsafeBytes { $0.load(as: UInt64.self) }
     }
   }
@@ -105,7 +125,7 @@ public enum MDBXChain: CaseIterable, Sendable {
   public var rawValue: Data {
     switch self {
     case .invalid:            return _MDBXChain.invalid.rawValue
-    case .universal:          return _MDBXChain.eth.rawValue
+    case .evm:                return _MDBXChain.eth.rawValue
     case .eth:                return _MDBXChain.eth.rawValue
     case .goerli:             return _MDBXChain.goerli.rawValue
     case .polygon_mainnet:    return _MDBXChain.polygon_mainnet.rawValue
@@ -117,8 +137,18 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return _MDBXChain.base.rawValue
     case .arbitrum:           return _MDBXChain.arbitrum.rawValue
     case .optimism:           return _MDBXChain.optimism.rawValue
+    case .bitcoin:            return _MDBXChain.bitcoin.rawValue
     case .custom(let data): return data
     }
+  }
+  
+  public init(networkRawValue: Data) {
+    let data = networkRawValue.setLengthLeft(MDBXKeyLength.chain)
+    guard let chain = _MDBXChain(rawValue: data) else {
+      self = .custom(data)
+      return
+    }
+    self = chain.networkChain
   }
   
   public init(rawValue: Data) {
@@ -152,6 +182,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case "ZKSYNC_MAINNET":    self = .zksync_v2_mainnet
     case "ARB":               self = .arbitrum
     case "OP":                self = .optimism
+    case "BTC":               self = .bitcoin
     default:                  self = .eth
     }
   }
@@ -169,6 +200,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return "Base"
     case .arbitrum:           return "Arbitrum"
     case .optimism:           return "Optimism"
+    case .bitcoin:            return "Bitcoin"
     default:    return ""
     }
   }
@@ -186,6 +218,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return "ETH"
     case .arbitrum:           return "ETH"
     case .optimism:           return "ETH"
+    case .bitcoin:            return "BTC"
     default:    return ""
     }
   }
@@ -203,6 +236,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .base:               return 18
     case .arbitrum:           return 18
     case .optimism:           return 18
+    case .bitcoin:            return 8
     default:                  return 18
     }
   }
@@ -216,6 +250,10 @@ public enum MDBXChain: CaseIterable, Sendable {
     return zkChains.contains(self)
   }
   
+  public var isBitcoinNetwork: Bool {
+    return self == .bitcoin
+  }
+  
   internal var hexString: String {
     switch self {
     case .invalid:            return "0x00000000000000000000000000000000" // 0
@@ -225,12 +263,13 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .polygon_mumbai:     return "0x00000000000000000000000000013881" // 80001
     case .zksync_v2_mainnet:  return "0x00000000000000000000000000000144" // 324
     case .zksync_v2_testnet:  return "0x00000000000000000000000000000118" // 280
-    case .universal:          return "0x00000000000000000000000000000001" // 1
+    case .evm:                return "0x00000000000000000000000000000001" // 1
     case .canto:              return "0x00000000000000000000000000001e14" // 7700
     case .bsc:                return "0x00000000000000000000000000000038" // 56
     case .base:               return "0x00000000000000000000000000002105" // 8453
     case .arbitrum:           return "0x0000000000000000000000000000A4B1" // 42161
     case .optimism:           return "0x0000000000000000000000000000000A" // 10
+    case .bitcoin:            return "0x00000000000000000000bcbcbcbcbcbc" // 207518806359228 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
     case .custom(let chain):  return chain.hexString
     }
   }
@@ -243,5 +282,15 @@ extension MDBXChain: Hashable {}
 extension MDBXChain: CustomDebugStringConvertible {
   public var debugDescription: String {
     self.rawValue.hexString
+  }
+}
+
+extension MDBXChain: MDBXKeyComponent {
+  public init(encodedData: Data) {
+    self.init(rawValue: encodedData)
+  }
+  
+  public var encodedData: Data {
+    self.rawValue.setLengthLeft(MDBXKeyLength.chain)
   }
 }

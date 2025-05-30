@@ -168,7 +168,7 @@ extension EnergyRewardReceipt {
                 payload: Payload,
                 database: (any WalletDB)? = nil) {
       self.database = database ?? MEWwalletDBImpl.shared
-      self._chain = .universal
+      self._chain = .evm
       self._wrapped = .with {
         $0.itemID = itemId
         $0.name = name
@@ -258,7 +258,7 @@ extension EnergyRewardReceipt.Item {
 
 extension _EnergyRewardReceipt._Item: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> EnergyRewardReceipt.Item {
-    return EnergyRewardReceipt.Item(self, chain: .universal)
+    return EnergyRewardReceipt.Item(self, chain: .evm)
   }
 }
 

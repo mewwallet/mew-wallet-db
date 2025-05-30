@@ -126,7 +126,7 @@ public struct Profile {
   
   public init() {
     self.database = database ?? MEWwalletDBImpl.shared
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = .with {
       $0.settings = .with {
         $0.addresses = []
@@ -176,6 +176,7 @@ public struct Profile {
         $0.pushToken = ""
         $0.platform = ""
         $0.notifications = NotificationFlags.all.rawValue
+        $0.multichainAddresses = .with { _ in }
       }
       $0.status = .with {
         $0.status = Profile.Status.Status.inactive.rawValue
@@ -183,7 +184,7 @@ public struct Profile {
         $0.checksum = ($0.lastUpdate.textFormatString() + $0.status).sha256.hexString
       }
     }
-    self.commonInit(chain: .universal)
+    self.commonInit(chain: .evm)
   }
 }
 
@@ -264,29 +265,57 @@ extension Profile {
   mutating public func add(address: Address, flags: AddressFlags = [.includeInDailyPortfolio, .includeInWeeklyPortfolio]) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
     
-    guard !_wrapped.settings.addresses.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
-    
-    let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.addresses.last
-    
-    var account = _Profile._Settings._Address()
-    account.address = address.rawValue
-    account.flags = flags.rawValue
-    
-    _wrapped.settings.addresses.append(account)
-    
-    return .add(path: keypath.stringValue, value: account)
+    switch address.networkType {
+    case .bitcoin:
+      guard !_wrapped.settings.multichainAddresses.btc.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.btc.last
+      
+      var account = _Profile._Settings._Address()
+      account.address = address.rawValue
+      account.flags = flags.rawValue
+      
+      _wrapped.settings.multichainAddresses.btc.append(account)
+      
+      return .add(path: keypath.stringValue, value: account)
+      
+    case .evm:
+      guard !_wrapped.settings.multichainAddresses.evm.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.evm.last
+      
+      var account = _Profile._Settings._Address()
+      account.address = address.rawValue
+      account.flags = flags.rawValue
+      
+      _wrapped.settings.multichainAddresses.evm.append(account)
+      
+      return .add(path: keypath.stringValue, value: account)
+    }
   }
   
   mutating public func remove(address: Address) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
     
-    guard let index = _wrapped.settings.addresses.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
-    
-    let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.addresses.first
-    
-    _wrapped.settings.addresses.remove(at: index)
-    
-    return .remove(path: keypath.stringValue(index))
+    switch address.networkType {
+    case .bitcoin:
+      guard let index = _wrapped.settings.multichainAddresses.btc.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.btc.first
+      
+      _wrapped.settings.multichainAddresses.btc.remove(at: index)
+      
+      return .remove(path: keypath.stringValue(index, networkType: address.networkType))
+      
+    case .evm:
+      guard let index = _wrapped.settings.multichainAddresses.evm.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.evm.first
+      
+      _wrapped.settings.multichainAddresses.evm.remove(at: index)
+      
+      return .remove(path: keypath.stringValue(index, networkType: address.networkType))
+    }
   }
   
   /// Prepares `PATCH` data to enable/disable daily portfolio tracker
@@ -409,25 +438,49 @@ extension Profile {
   mutating public func set(flag: AddressFlags, for address: Address, enable: Bool) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
     
-    guard let index = _wrapped.settings.addresses.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
-    
-    var account = _wrapped.settings.addresses[index]
-    
-    var flags = AddressFlags(rawValue: account.flags)
-    if enable {
-      flags = flags.union(flag)
-    } else {
-      flags = flags.subtracting(flag)
+    switch address.networkType {
+    case .bitcoin:
+      guard let index = _wrapped.settings.multichainAddresses.btc.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
+      
+      var account = _wrapped.settings.multichainAddresses.btc[index]
+      
+      var flags = AddressFlags(rawValue: account.flags)
+      if enable {
+        flags = flags.union(flag)
+      } else {
+        flags = flags.subtracting(flag)
+      }
+      
+      guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
+      
+      let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.multichainAddresses.btc.last?.flags
+      
+      account.flags = flags.rawValue
+      _wrapped.settings.multichainAddresses.btc[index] = account
+      
+      return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
+      
+    case .evm:
+      guard let index = _wrapped.settings.multichainAddresses.evm.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
+      
+      var account = _wrapped.settings.multichainAddresses.evm[index]
+      
+      var flags = AddressFlags(rawValue: account.flags)
+      if enable {
+        flags = flags.union(flag)
+      } else {
+        flags = flags.subtracting(flag)
+      }
+      
+      guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
+      
+      let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.multichainAddresses.evm.last?.flags
+      
+      account.flags = flags.rawValue
+      _wrapped.settings.multichainAddresses.evm[index] = account
+      
+      return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
     }
-    
-    guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
-    
-    let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.addresses.last?.flags
-    
-    account.flags = flags.rawValue
-    _wrapped.settings.addresses[index] = account
-    
-    return .replace(path: keypath.stringValue(index), value: flags.rawValue)
   }
   
   // MARK: - Properties
@@ -436,7 +489,7 @@ extension Profile {
   
   public var dailyTracker: Profile.TrackerTime {
     guard let tracker = self.$_dailyPortfolioTracker else {
-      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: .universal)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.daily, chain: .evm)
       tracker._type = .daily
       return tracker
     }
@@ -446,7 +499,7 @@ extension Profile {
   
   public var weeklyTracker: Profile.TrackerTime {
     guard let tracker = self.$_weeklyPortfolioTracker else {
-      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: .universal)
+      var tracker = Profile.TrackerTime(_wrapped.settings.portfolioTracker.weekly, chain: .evm)
       tracker._type = .weekly
       return tracker
     }
@@ -454,7 +507,10 @@ extension Profile {
     return tracker
   }
   
-  public var addresses: [Address] { _wrapped.settings.addresses.map({ Address($0.address) }) }
+  public var addresses: [Address] {
+    _wrapped.settings.multichainAddresses.evm.map({ Address($0.address) }) +
+    _wrapped.settings.multichainAddresses.btc.map({ Address($0.address) })
+  }
   public var notificationsFlags: NotificationFlags { NotificationFlags(rawValue: _wrapped.settings.notifications) }
   public var pushToken: String { _wrapped.settings.pushToken }
   public var status: Profile.Status {
@@ -484,39 +540,39 @@ extension Profile: MDBXObject {
   }
 
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _Profile(serializedBytes: data)
-    self.commonInit(chain: .universal)
+    self.commonInit(chain: .evm)
   }
 
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _Profile(jsonUTF8Data: jsonData, options: options)
-    self.commonInit(chain: .universal)
+    self.commonInit(chain: .evm)
   }
 
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = try _Profile(jsonString: jsonString, options: options)
-    self.commonInit(chain: .universal)
+    self.commonInit(chain: .evm)
   }
 
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _Profile.array(fromJSONString: string, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
 
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _Profile.array(fromJSONUTF8Data: data, options: options)
-    return objects.lazy.map({ $0.wrapped(.universal) })
+    return objects.lazy.map({ $0.wrapped(.evm) })
   }
 
   mutating public func merge(with object: any MDBXObject) {
@@ -533,12 +589,12 @@ extension Profile: MDBXObject {
 extension _Profile: ProtoWrappedMessage {
   func wrapped(_ chain: MDBXChain) -> Profile {
     var profile = Profile(self, chain: chain)
-    profile.commonInit(chain: .universal)
+    profile.commonInit(chain: .evm)
     return profile
   }
 }
 
-// MARK: - Profile + Equitable
+// MARK: - Profile + Equatable
 
 extension Profile: Equatable {
   public static func ==(lhs: Profile, rhs: Profile) -> Bool {
@@ -551,9 +607,9 @@ extension Profile: Equatable {
 
 extension Profile: ProtoWrapper {
   init(_ wrapped: _Profile, chain: MDBXChain) {
-    self._chain = .universal
+    self._chain = .evm
     self._wrapped = wrapped
-    self.commonInit(chain: .universal)
+    self.commonInit(chain: .evm)
   }
 }
 
@@ -574,25 +630,29 @@ extension Profile: Sendable {}
 private extension PartialKeyPath where Root == _Profile {
   var stringValue: String {
     switch self {
-    case \_Profile.settings.notifications:                      return "/settings/notifications"
-    case \_Profile.settings.timezone:                           return "/settings/timezone"
-    case \_Profile.settings.gmtOffset:                          return "/settings/gmt_offset"
-    case \_Profile.settings.addresses.last:                     return "/settings/addresses/-"
-    case \_Profile.settings.platform:                           return "/settings/platform"
-    case \_Profile.settings.portfolioTracker.daily.enabled:     return "/settings/portfolio_tracker/daily/enabled"
-    case \_Profile.settings.portfolioTracker.daily.timestamp:   return "/settings/portfolio_tracker/daily/timestamp"
-    case \_Profile.settings.portfolioTracker.weekly.enabled:    return "/settings/portfolio_tracker/weekly/enabled"
-    case \_Profile.settings.portfolioTracker.weekly.timestamp:  return "/settings/portfolio_tracker/weekly/timestamp"
-    case \_Profile.settings.pushToken:                          return "/settings/push_token"
+    case \_Profile.settings.notifications:                                      return "/settings/notifications"
+    case \_Profile.settings.timezone:                                           return "/settings/timezone"
+    case \_Profile.settings.gmtOffset:                                          return "/settings/gmt_offset"
+    case \_Profile.settings.addresses.last:                                     return "/settings/addresses/-"
+    case \_Profile.settings.multichainAddresses.evm.last:                       return "/settings/multichain_addresses/evm/-"
+    case \_Profile.settings.multichainAddresses.btc.last:                       return "/settings/multichain_addresses/btc/-"
+    case \_Profile.settings.platform:                                           return "/settings/platform"
+    case \_Profile.settings.portfolioTracker.daily.enabled:                     return "/settings/portfolio_tracker/daily/enabled"
+    case \_Profile.settings.portfolioTracker.daily.timestamp:                   return "/settings/portfolio_tracker/daily/timestamp"
+    case \_Profile.settings.portfolioTracker.weekly.enabled:                    return "/settings/portfolio_tracker/weekly/enabled"
+    case \_Profile.settings.portfolioTracker.weekly.timestamp:                  return "/settings/portfolio_tracker/weekly/timestamp"
+    case \_Profile.settings.pushToken:                                          return "/settings/push_token"
       
     default: fatalError("Unexpected key path")
     }
   }
   
-  func stringValue(_ index: Int) -> String {
-    switch self {
-    case \_Profile.settings.addresses.first:                    return "/settings/addresses/\(index)"
-    case \_Profile.settings.addresses.last?.flags:              return "/settings/addresses/\(index)/flags"
+  func stringValue(_ index: Int, networkType: NetworkType) -> String {
+    switch (networkType, self) {
+    case (.bitcoin, \_Profile.settings.multichainAddresses.btc.first):          return "/settings/multichain_addresses/btc/\(index)"
+    case (.bitcoin, \_Profile.settings.multichainAddresses.btc.last?.flags):    return "/settings/multichain_addresses/btc/\(index)/flags"
+    case (.evm, \_Profile.settings.multichainAddresses.evm.first):              return "/settings/multichain_addresses/evm/\(index)"
+    case (.evm, \_Profile.settings.multichainAddresses.evm.last?.flags):        return "/settings/multichain_addresses/evm/\(index)/flags"
     default:
       return stringValue
     }
@@ -620,15 +680,15 @@ extension _Profile._Settings._Address: Encodable {
 extension Profile {
   mutating func commonInit(chain: MDBXChain) {
     // Wrappers
-    __dailyPortfolioTracker.chain = .universal
+    __dailyPortfolioTracker.chain = .evm
     __dailyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.daily)
     __dailyPortfolioTracker.projectedValue?._type = .daily
     
-    __weeklyPortfolioTracker.chain = .universal
+    __weeklyPortfolioTracker.chain = .evm
     __weeklyPortfolioTracker.refreshProjected(wrapped: _wrapped.settings.portfolioTracker.weekly)
     __weeklyPortfolioTracker.projectedValue?._type = .weekly
     
-    __status.chain = .universal
+    __status.chain = .evm
     __status.refreshProjected(wrapped: _wrapped.status)
   }
 }

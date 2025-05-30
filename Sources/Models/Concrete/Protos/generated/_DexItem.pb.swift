@@ -31,9 +31,20 @@ struct _DexItem: Sendable {
 
   var symbol: String = String()
 
+  var crosschain: Bool {
+    get {return _crosschain ?? false}
+    set {_crosschain = newValue}
+  }
+  /// Returns true if `crosschain` has been explicitly set.
+  var hasCrosschain: Bool {return self._crosschain != nil}
+  /// Clears the value of `crosschain`. Subsequent reads from it will return its default value.
+  mutating func clearCrosschain() {self._crosschain = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+
+  fileprivate var _crosschain: Bool? = nil
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -44,6 +55,7 @@ extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     1: .standard(proto: "contract_address"),
     2: .same(proto: "name"),
     3: .same(proto: "symbol"),
+    4: .same(proto: "crosschain"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -55,12 +67,17 @@ extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       case 1: try { try decoder.decodeSingularStringField(value: &self.contractAddress) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.symbol) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self._crosschain) }()
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.contractAddress.isEmpty {
       try visitor.visitSingularStringField(value: self.contractAddress, fieldNumber: 1)
     }
@@ -70,6 +87,9 @@ extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     if !self.symbol.isEmpty {
       try visitor.visitSingularStringField(value: self.symbol, fieldNumber: 3)
     }
+    try { if let v = self._crosschain {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 4)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -77,6 +97,7 @@ extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     if lhs.contractAddress != rhs.contractAddress {return false}
     if lhs.name != rhs.name {return false}
     if lhs.symbol != rhs.symbol {return false}
+    if lhs._crosschain != rhs._crosschain {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
