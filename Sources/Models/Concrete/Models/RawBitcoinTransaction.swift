@@ -52,7 +52,11 @@ extension RawBitcoinTransaction {
   public var hash: String { _wrapped.txid }
   public var rawFee: Decimal { Decimal(_wrapped.fee) }
   public var fee: Decimal { rawFee.convert(to: .bitcoin) }
-  public var block: UInt64? { _wrapped.hasBlock ? _wrapped.block.height : nil }
+  public var block: Int64? {
+    guard _wrapped.hasBlock else { return nil }
+    guard _wrapped.block.height != -1 else { return nil }
+    return _wrapped.block.height
+  }
 }
 
 // MARK: - RawBitcoinTransaction + MDBXObject
