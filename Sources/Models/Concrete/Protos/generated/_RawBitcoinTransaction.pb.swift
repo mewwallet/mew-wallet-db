@@ -105,7 +105,7 @@ struct _RawBitcoinTransaction: Sendable {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    var height: UInt64 {
+    var height: Int64 {
       get {return _height ?? 0}
       set {_height = newValue}
     }
@@ -127,7 +127,7 @@ struct _RawBitcoinTransaction: Sendable {
 
     init() {}
 
-    fileprivate var _height: UInt64? = nil
+    fileprivate var _height: Int64? = nil
     fileprivate var _position: UInt64? = nil
   }
 
@@ -301,7 +301,7 @@ extension _RawBitcoinTransaction._Block: SwiftProtobuf.Message, SwiftProtobuf._M
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularUInt64Field(value: &self._height) }()
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self._height) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self._position) }()
       default: break
       }
@@ -314,7 +314,7 @@ extension _RawBitcoinTransaction._Block: SwiftProtobuf.Message, SwiftProtobuf._M
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
     try { if let v = self._height {
-      try visitor.visitSingularUInt64Field(value: v, fieldNumber: 1)
+      try visitor.visitSingularInt64Field(value: v, fieldNumber: 1)
     } }()
     try { if let v = self._position {
       try visitor.visitSingularUInt64Field(value: v, fieldNumber: 2)
