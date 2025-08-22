@@ -312,6 +312,7 @@ struct _Profile: @unchecked Sendable {
       /// Stores array of bitcoin addresses associated with profile
       var btc: [_Profile._Settings._Address] = []
 
+
       var unknownFields = SwiftProtobuf.UnknownStorage()
 
       init() {}

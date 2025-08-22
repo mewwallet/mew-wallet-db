@@ -21,6 +21,7 @@ private enum _MDBXChain: Data, Sendable {
   case arbitrum           = "0x0000000000000000000000000000A4B1" // 42161
   case optimism           = "0x0000000000000000000000000000000A" // 10
   case bitcoin            = "0x00000000000000000000bcbcbcbcbcbc" // 207518806359228 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
+  case solana             = "0x00000000000000000000aaaaaaaaaaaa" // fake chain id for non-evm chain
   
   var chain: MDBXChain {
     switch self {
@@ -37,12 +38,14 @@ private enum _MDBXChain: Data, Sendable {
     case .arbitrum:           return .arbitrum
     case .optimism:           return .optimism
     case .bitcoin:            return .bitcoin
+    case .solana:             return .solana
     }
   }
   
   var networkChain: MDBXChain {
     switch self {
     case .bitcoin:            return .bitcoin
+    case .solana:             return .solana
     default:                  return .evm
     }
   }
@@ -100,6 +103,7 @@ public enum MDBXChain: CaseIterable, Sendable {
   case arbitrum
   case optimism
   case bitcoin
+  case solana
   case custom(Data)
   
   public var value: UInt64 {
@@ -118,6 +122,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .arbitrum:                   return 42161
     case .optimism:                   return 10
     case .bitcoin:                    return 207518806359228
+    case .solana:                     return 0
     case .custom(let data):           return data.withUnsafeBytes { $0.load(as: UInt64.self) }
     }
   }
@@ -138,6 +143,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .arbitrum:           return _MDBXChain.arbitrum.rawValue
     case .optimism:           return _MDBXChain.optimism.rawValue
     case .bitcoin:            return _MDBXChain.bitcoin.rawValue
+    case .solana:             return _MDBXChain.solana.rawValue
     case .custom(let data): return data
     }
   }
@@ -183,6 +189,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case "ARB":               self = .arbitrum
     case "OP":                self = .optimism
     case "BTC":               self = .bitcoin
+    case "SOL":               self = .solana
     default:                  self = .eth
     }
   }
@@ -201,6 +208,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .arbitrum:           return "Arbitrum"
     case .optimism:           return "Optimism"
     case .bitcoin:            return "Bitcoin"
+    case .solana:             return "Solana"
     default:    return ""
     }
   }
@@ -219,6 +227,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .arbitrum:           return "ETH"
     case .optimism:           return "ETH"
     case .bitcoin:            return "BTC"
+    case .solana:             return "SOL"
     default:    return ""
     }
   }
@@ -237,6 +246,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .arbitrum:           return 18
     case .optimism:           return 18
     case .bitcoin:            return 8
+    case .solana:             return 9
     default:                  return 18
     }
   }
@@ -270,6 +280,7 @@ public enum MDBXChain: CaseIterable, Sendable {
     case .arbitrum:           return "0x0000000000000000000000000000A4B1" // 42161
     case .optimism:           return "0x0000000000000000000000000000000A" // 10
     case .bitcoin:            return "0x00000000000000000000bcbcbcbcbcbc" // 207518806359228 fake chain id, since real one is 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f and too big for type (219091820017965452120151157118720403)
+    case .solana:             return "0x00000000000000000000aaaaaaaaaaaa"
     case .custom(let chain):  return chain.hexString
     }
   }
