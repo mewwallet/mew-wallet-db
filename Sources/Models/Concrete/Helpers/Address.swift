@@ -292,14 +292,23 @@ extension Address: MDBXKeyComponent {
   }
 }
 
+// MARK: - String + Solana detection
+
+extension String {
+  static let solanaAlphabet: String = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+  
+  func satisfy(alphabet: String, length: Range<Int>) -> Bool {
+    guard self.count >= length.lowerBound && self.count <= length.upperBound else { return false }
+    let characterSet = CharacterSet(charactersIn: alphabet)
+    return self.unicodeScalars.allSatisfy { characterSet.contains($0) }
+  }
+}
+
 // MARK: - Address + Solana detection
 
 private extension Address {
   static func isProbableSolanaAddress(_ value: String) -> Bool {
     // Solana addresses are base58, typically length 32...44 characters
-    let length = value.count
-    guard length >= 32 && length <= 44 else { return false }
-    let alphabet = CharacterSet(charactersIn: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
-    return value.unicodeScalars.allSatisfy { alphabet.contains($0) }
+    return value.satisfy(alphabet: String.solanaAlphabet, length: 32..<45)
   }
 }

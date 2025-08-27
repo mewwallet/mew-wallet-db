@@ -264,8 +264,7 @@ extension Profile {
   /// - Returns: `PATCH` data
   mutating public func add(address: Address, flags: AddressFlags = [.includeInDailyPortfolio, .includeInWeeklyPortfolio]) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
-    // Guard: Solana not supported in Profile storage without proto schema support
-    if address.isSolanaNetwork { throw UpdateError.badData }
+
     
     switch address.networkType {
     case .bitcoin:
@@ -294,26 +293,22 @@ extension Profile {
       
       return .add(path: keypath.stringValue, value: account)
     case .solana:
-      // TODO: When proto supports SOLANA, add to multichainAddresses.sol
-      // guard !_wrapped.settings.multichainAddresses.sol.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
-      // 
-      // let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.sol.last
-      // 
-      // var account = _Profile._Settings._Address()
-      // account.address = address.rawValue
-      // account.flags = flags.rawValue
-      // 
-      // _wrapped.settings.multichainAddresses.sol.append(account)
-      // 
-      // return .add(path: keypath.stringValue, value: account)
-      throw UpdateError.badData
+      guard !_wrapped.settings.multichainAddresses.sol.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.sol.last
+      
+      var account = _Profile._Settings._Address()
+      account.address = address.rawValue
+      account.flags = flags.rawValue
+      
+      _wrapped.settings.multichainAddresses.sol.append(account)
+      
+      return .add(path: keypath.stringValue, value: account)
     }
   }
   
   mutating public func remove(address: Address) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
-    // Guard: Solana not supported in Profile storage without proto schema support
-    if address.isSolanaNetwork { throw UpdateError.notFound }
     
     switch address.networkType {
     case .bitcoin:
@@ -334,15 +329,13 @@ extension Profile {
       
       return .remove(path: keypath.stringValue(index, networkType: address.networkType))
     case .solana:
-      // TODO: When proto supports SOLANA, remove from multichainAddresses.sol
-      // guard let index = _wrapped.settings.multichainAddresses.sol.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
-      // 
-      // let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.sol.first
-      // 
-      // _wrapped.settings.multichainAddresses.sol.remove(at: index)
-      // 
-      // return .remove(path: keypath.stringValue(index, networkType: address.networkType))
-      throw UpdateError.notFound
+      guard let index = _wrapped.settings.multichainAddresses.sol.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.sol.first
+      
+      _wrapped.settings.multichainAddresses.sol.remove(at: index)
+      
+      return .remove(path: keypath.stringValue(index, networkType: address.networkType))
     }
   }
   
@@ -465,8 +458,6 @@ extension Profile {
   /// - Returns: `PATCH` data
   mutating public func set(flag: AddressFlags, for address: Address, enable: Bool) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
-    // Guard: Solana not supported in Profile storage without proto schema support
-    if address.isSolanaNetwork { throw UpdateError.notFound }
     
     switch address.networkType {
     case .bitcoin:
@@ -511,27 +502,25 @@ extension Profile {
       
       return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
     case .solana:
-      // TODO: When proto supports SOLANA, update flags in multichainAddresses.sol
-      // guard let index = _wrapped.settings.multichainAddresses.sol.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
-      // 
-      // var account = _wrapped.settings.multichainAddresses.sol[index]
-      // 
-      // var flags = AddressFlags(rawValue: account.flags)
-      // if enable {
-      //   flags = flags.union(flag)
-      // } else {
-      //   flags = flags.subtracting(flag)
-      // }
-      // 
-      // guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
-      // 
-      // let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.multichainAddresses.sol.last?.flags
-      // 
-      // account.flags = flags.rawValue
-      // _wrapped.settings.multichainAddresses.sol[index] = account
-      // 
-      // return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
-      throw UpdateError.notFound
+      guard let index = _wrapped.settings.multichainAddresses.sol.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
+      
+      var account = _wrapped.settings.multichainAddresses.sol[index]
+      
+      var flags = AddressFlags(rawValue: account.flags)
+      if enable {
+        flags = flags.union(flag)
+      } else {
+        flags = flags.subtracting(flag)
+      }
+      
+      guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
+      
+      let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.multichainAddresses.sol.last?.flags
+      
+      account.flags = flags.rawValue
+      _wrapped.settings.multichainAddresses.sol[index] = account
+      
+      return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
     }
   }
   
@@ -561,8 +550,8 @@ extension Profile {
   
   public var addresses: [Address] {
     _wrapped.settings.multichainAddresses.evm.map({ Address($0.address) }) +
-    _wrapped.settings.multichainAddresses.btc.map({ Address($0.address) })
-    // + _wrapped.settings.multichainAddresses.sol.map({ Address($0.address) })
+    _wrapped.settings.multichainAddresses.btc.map({ Address($0.address) }) +
+    _wrapped.settings.multichainAddresses.sol.map({ Address($0.address) })
   }
   public var notificationsFlags: NotificationFlags { NotificationFlags(rawValue: _wrapped.settings.notifications) }
   public var pushToken: String { _wrapped.settings.pushToken }
@@ -706,9 +695,8 @@ private extension PartialKeyPath where Root == _Profile {
     case (.bitcoin, \_Profile.settings.multichainAddresses.btc.last?.flags):    return "/settings/multichain_addresses/btc/\(index)/flags"
     case (.evm, \_Profile.settings.multichainAddresses.evm.first):              return "/settings/multichain_addresses/evm/\(index)"
     case (.evm, \_Profile.settings.multichainAddresses.evm.last?.flags):        return "/settings/multichain_addresses/evm/\(index)/flags"
-    // TODO: When proto supports SOLANA, add SOL paths
-    // case (.solana, \_Profile.settings.multichainAddresses.sol.first):            return "/settings/multichain_addresses/sol/\(index)"
-    // case (.solana, \_Profile.settings.multichainAddresses.sol.last?.flags):      return "/settings/multichain_addresses/sol/\(index)/flags"
+    case (.solana, \_Profile.settings.multichainAddresses.sol.first):            return "/settings/multichain_addresses/sol/\(index)"
+    case (.solana, \_Profile.settings.multichainAddresses.sol.last?.flags):      return "/settings/multichain_addresses/sol/\(index)/flags"
     default:
       return stringValue
     }
