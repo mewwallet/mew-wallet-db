@@ -106,17 +106,7 @@ struct _NFTAsset: @unchecked Sendable {
 
 extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_NFTAsset"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "token_id"),
-    2: .standard(proto: "contract_address"),
-    3: .same(proto: "name"),
-    4: .same(proto: "description"),
-    5: .same(proto: "traits"),
-    6: .same(proto: "urls"),
-    7: .standard(proto: "last_sale"),
-    8: .standard(proto: "opensea_url"),
-    9: .standard(proto: "last_acquired_date"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}token_id\0\u{3}contract_address\0\u{1}name\0\u{1}description\0\u{1}traits\0\u{1}urls\0\u{3}last_sale\0\u{3}opensea_url\0\u{3}last_acquired_date\0")
 
   fileprivate class _StorageClass {
     var _tokenID: String = String()
@@ -129,15 +119,11 @@ extension _NFTAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     var _openseaURL: String? = nil
     var _lastAcquiredDate: String = String()
 
-    #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
       // This will force a copy to be made of this reference when the first mutation occurs;
       // hence, it is safe to mark this as `nonisolated(unsafe)`.
       static nonisolated(unsafe) let defaultInstance = _StorageClass()
-    #else
-      static let defaultInstance = _StorageClass()
-    #endif
 
     private init() {}
 

@@ -312,7 +312,6 @@ struct _Profile: @unchecked Sendable {
       /// Stores array of bitcoin addresses associated with profile
       var btc: [_Profile._Settings._Address] = []
 
-
       var unknownFields = SwiftProtobuf.UnknownStorage()
 
       init() {}
@@ -418,26 +417,18 @@ struct _Profile: @unchecked Sendable {
 
 extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_Profile"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "settings"),
-    2: .same(proto: "status"),
-    3: .standard(proto: "share_code"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}settings\0\u{1}status\0\u{3}share_code\0")
 
   fileprivate class _StorageClass {
     var _settings: _Profile._Settings? = nil
     var _status: _Profile._Status? = nil
     var _shareCode: String? = nil
 
-    #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
       // This will force a copy to be made of this reference when the first mutation occurs;
       // hence, it is safe to mark this as `nonisolated(unsafe)`.
       static nonisolated(unsafe) let defaultInstance = _StorageClass()
-    #else
-      static let defaultInstance = _StorageClass()
-    #endif
 
     private init() {}
 
@@ -510,16 +501,7 @@ extension _Profile: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
 
 extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile.protoMessageName + "._Settings"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "addresses"),
-    2: .same(proto: "timezone"),
-    3: .standard(proto: "portfolio_tracker"),
-    5: .standard(proto: "gmt_offset"),
-    6: .standard(proto: "push_token"),
-    7: .same(proto: "platform"),
-    8: .same(proto: "notifications"),
-    9: .standard(proto: "multichain_addresses"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}addresses\0\u{1}timezone\0\u{3}portfolio_tracker\0\u{4}\u{2}gmt_offset\0\u{3}push_token\0\u{1}platform\0\u{1}notifications\0\u{3}multichain_addresses\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -587,24 +569,12 @@ extension _Profile._Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 }
 
 extension _Profile._Settings._Notifications: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "DISABLED"),
-    1: .same(proto: "OUTGOING_TX"),
-    2: .same(proto: "INCOMING_TX"),
-    4: .same(proto: "ANNOUNCEMENTS"),
-    8: .same(proto: "SECURITY"),
-    16: .same(proto: "BIG_MOVERS"),
-    32: .same(proto: "ENERGY_SEASON_START"),
-    64: .same(proto: "ENERGY_SEASON_END"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0DISABLED\0\u{1}OUTGOING_TX\0\u{1}INCOMING_TX\0\u{2}\u{2}ANNOUNCEMENTS\0\u{2}\u{4}SECURITY\0\u{2}\u{8}BIG_MOVERS\0\u{2}\u{10}ENERGY_SEASON_START\0\u{2} ENERGY_SEASON_END\0")
 }
 
 extension _Profile._Settings._Address: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile._Settings.protoMessageName + "._Address"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .same(proto: "flags"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}address\0\u{1}flags\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -638,21 +608,12 @@ extension _Profile._Settings._Address: SwiftProtobuf.Message, SwiftProtobuf._Mes
 }
 
 extension _Profile._Settings._Address._AddressFlags: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "DISABLED"),
-    1: .same(proto: "INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER"),
-    2: .same(proto: "INCLUDE_IN_DAILY_PORTFOLIO_TRACKER"),
-    64: .same(proto: "TYPE_WATCH_ONLY"),
-    128: .same(proto: "TYPE_INTERNAL"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0DISABLED\0\u{1}INCLUDE_IN_WEEKLY_PORTFOLIO_TRACKER\0\u{1}INCLUDE_IN_DAILY_PORTFOLIO_TRACKER\0\u{2}>TYPE_WATCH_ONLY\0\u{2}@\u{1}TYPE_INTERNAL\0")
 }
 
 extension _Profile._Settings._PortfolioTracker: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile._Settings.protoMessageName + "._PortfolioTracker"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "weekly"),
-    2: .same(proto: "daily"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}weekly\0\u{1}daily\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -691,10 +652,7 @@ extension _Profile._Settings._PortfolioTracker: SwiftProtobuf.Message, SwiftProt
 
 extension _Profile._Settings._PortfolioTracker._TrackerTime: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile._Settings._PortfolioTracker.protoMessageName + "._TrackerTime"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "enabled"),
-    2: .same(proto: "timestamp"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{1}timestamp\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -729,10 +687,7 @@ extension _Profile._Settings._PortfolioTracker._TrackerTime: SwiftProtobuf.Messa
 
 extension _Profile._Settings._Multichain: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile._Settings.protoMessageName + "._Multichain"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "evm"),
-    2: .same(proto: "btc"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}evm\0\u{1}btc\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -767,15 +722,7 @@ extension _Profile._Settings._Multichain: SwiftProtobuf.Message, SwiftProtobuf._
 
 extension _Profile._Status: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile.protoMessageName + "._Status"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "products"),
-    2: .standard(proto: "last_update"),
-    3: .standard(proto: "product_id"),
-    4: .same(proto: "start"),
-    5: .same(proto: "expiration"),
-    6: .same(proto: "status"),
-    7: .same(proto: "checksum"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}products\0\u{3}last_update\0\u{3}product_id\0\u{1}start\0\u{1}expiration\0\u{1}status\0\u{1}checksum\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -839,10 +786,7 @@ extension _Profile._Status: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 
 extension _Profile._Status._Product: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile._Status.protoMessageName + "._Product"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "product_id"),
-    2: .same(proto: "trial"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}product_id\0\u{1}trial\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

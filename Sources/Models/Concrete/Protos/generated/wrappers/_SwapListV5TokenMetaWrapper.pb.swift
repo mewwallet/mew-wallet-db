@@ -61,17 +61,7 @@ struct _SwapListV5TokenMetaWrapper: Sendable {
 
 extension _SwapListV5TokenMetaWrapper: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_SwapListV5TokenMetaWrapper"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "n"),
-    2: .same(proto: "s"),
-    3: .same(proto: "p"),
-    4: .same(proto: "i"),
-    5: .same(proto: "c"),
-    6: .same(proto: "ca"),
-    7: .same(proto: "d"),
-    8: .same(proto: "f"),
-    9: .same(proto: "cc"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}n\0\u{1}s\0\u{1}p\0\u{1}i\0\u{1}c\0\u{1}ca\0\u{1}d\0\u{1}f\0\u{1}cc\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

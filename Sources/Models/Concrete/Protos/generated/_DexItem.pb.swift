@@ -51,12 +51,7 @@ struct _DexItem: Sendable {
 
 extension _DexItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_DexItem"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "contract_address"),
-    2: .same(proto: "name"),
-    3: .same(proto: "symbol"),
-    4: .same(proto: "crosschain"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}contract_address\0\u{1}name\0\u{1}symbol\0\u{1}crosschain\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

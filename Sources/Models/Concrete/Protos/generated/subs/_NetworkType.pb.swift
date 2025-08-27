@@ -57,8 +57,5 @@ enum _NetworkType: SwiftProtobuf.Enum, Swift.CaseIterable {
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _NetworkType: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "EVM"),
-    1: .same(proto: "BITCOIN"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0EVM\0\u{1}BITCOIN\0")
 }

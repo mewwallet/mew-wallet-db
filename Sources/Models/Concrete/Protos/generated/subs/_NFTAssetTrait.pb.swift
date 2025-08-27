@@ -63,14 +63,7 @@ struct _NFTAssetTrait: Sendable {
 
 extension _NFTAssetTrait: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_NFTAssetTrait"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "trait"),
-    2: .same(proto: "count"),
-    3: .same(proto: "value"),
-    6: .same(proto: "percentage"),
-    5: .standard(proto: "display_type"),
-    4: .standard(proto: "deprecated_percentage"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}trait\0\u{1}count\0\u{1}value\0\u{3}deprecated_percentage\0\u{3}display_type\0\u{1}percentage\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

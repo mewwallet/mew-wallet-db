@@ -400,15 +400,7 @@ struct _EnergyRewardReceipt: @unchecked Sendable {
 
 extension _EnergyRewardReceipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_EnergyRewardReceipt"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "uuid"),
-    2: .standard(proto: "purchase_type"),
-    3: .standard(proto: "reward_id"),
-    4: .same(proto: "item"),
-    5: .standard(proto: "is_spent"),
-    6: .standard(proto: "purchase_date"),
-    7: .standard(proto: "nft_tx"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}uuid\0\u{3}purchase_type\0\u{3}reward_id\0\u{1}item\0\u{3}is_spent\0\u{3}purchase_date\0\u{3}nft_tx\0")
 
   fileprivate class _StorageClass {
     var _uuid: String = String()
@@ -419,15 +411,11 @@ extension _EnergyRewardReceipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     var _purchaseDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _nftTx: _EnergyNFTTransfer? = nil
 
-    #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
       // This will force a copy to be made of this reference when the first mutation occurs;
       // hence, it is safe to mark this as `nonisolated(unsafe)`.
       static nonisolated(unsafe) let defaultInstance = _StorageClass()
-    #else
-      static let defaultInstance = _StorageClass()
-    #endif
 
     private init() {}
 
@@ -523,25 +511,12 @@ extension _EnergyRewardReceipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 }
 
 extension _EnergyRewardReceipt._PurchaseType: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "_PURCHASETYPE_UNKNOWN"),
-    1: .same(proto: "_PURCHASETYPE_CONSUMABLE"),
-    2: .same(proto: "_PURCHASETYPE_NONCONSUMABLE"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0_PURCHASETYPE_UNKNOWN\0\u{1}_PURCHASETYPE_CONSUMABLE\0\u{1}_PURCHASETYPE_NONCONSUMABLE\0")
 }
 
 extension _EnergyRewardReceipt._Item: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _EnergyRewardReceipt.protoMessageName + "._Item"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "item_id"),
-    2: .same(proto: "name"),
-    3: .same(proto: "description"),
-    4: .same(proto: "chance"),
-    5: .same(proto: "type"),
-    6: .same(proto: "nft"),
-    7: .same(proto: "icon"),
-    8: .same(proto: "energy"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}item_id\0\u{1}name\0\u{1}description\0\u{1}chance\0\u{1}type\0\u{1}nft\0\u{1}icon\0\u{1}energy\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -649,21 +624,12 @@ extension _EnergyRewardReceipt._Item: SwiftProtobuf.Message, SwiftProtobuf._Mess
 }
 
 extension _EnergyRewardReceipt._Item._ItemType: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "_ITEMTYPE_UNKNOWN"),
-    1: .same(proto: "_ITEMTYPE_ICON"),
-    2: .same(proto: "_ITEMTYPE_ENERGY"),
-    3: .same(proto: "_ITEMTYPE_NFT"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0_ITEMTYPE_UNKNOWN\0\u{1}_ITEMTYPE_ICON\0\u{1}_ITEMTYPE_ENERGY\0\u{1}_ITEMTYPE_NFT\0")
 }
 
 extension _EnergyRewardReceipt._Item._NFT: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _EnergyRewardReceipt._Item.protoMessageName + "._NFT"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "url"),
-    2: .same(proto: "rarity"),
-    3: .standard(proto: "token_id"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}url\0\u{1}rarity\0\u{3}token_id\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -702,22 +668,12 @@ extension _EnergyRewardReceipt._Item._NFT: SwiftProtobuf.Message, SwiftProtobuf.
 }
 
 extension _EnergyRewardReceipt._Item._NFT._Rarity: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "_RARITY_UNKNOWN"),
-    1: .same(proto: "_RARITY_COMMON"),
-    2: .same(proto: "_RARITY_UNCOMMON"),
-    3: .same(proto: "_RARITY_RARE"),
-    4: .same(proto: "_RARITY_EPIC"),
-    5: .same(proto: "_RARITY_LEGENDARY"),
-    6: .same(proto: "_RARITY_EXCLUSIVE"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0_RARITY_UNKNOWN\0\u{1}_RARITY_COMMON\0\u{1}_RARITY_UNCOMMON\0\u{1}_RARITY_RARE\0\u{1}_RARITY_EPIC\0\u{1}_RARITY_LEGENDARY\0\u{1}_RARITY_EXCLUSIVE\0")
 }
 
 extension _EnergyRewardReceipt._Item._ICON: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _EnergyRewardReceipt._Item.protoMessageName + "._ICON"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}id\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -746,19 +702,12 @@ extension _EnergyRewardReceipt._Item._ICON: SwiftProtobuf.Message, SwiftProtobuf
 }
 
 extension _EnergyRewardReceipt._Item._ICON._IconID: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "_ICON_UNKNOWN"),
-    1: .same(proto: "_ICON_ENERGY"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0_ICON_UNKNOWN\0\u{1}_ICON_ENERGY\0")
 }
 
 extension _EnergyRewardReceipt._Item._ENERGY: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _EnergyRewardReceipt._Item.protoMessageName + "._ENERGY"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "url"),
-    2: .same(proto: "amount"),
-    3: .same(proto: "size"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}url\0\u{1}amount\0\u{1}size\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -797,10 +746,5 @@ extension _EnergyRewardReceipt._Item._ENERGY: SwiftProtobuf.Message, SwiftProtob
 }
 
 extension _EnergyRewardReceipt._Item._ENERGY._Size: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "_SIZE_UNKNOWN"),
-    1: .same(proto: "_SIZE_SMALL"),
-    2: .same(proto: "_SIZE_MEDIUM"),
-    3: .same(proto: "_SIZE_LARGE"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0_SIZE_UNKNOWN\0\u{1}_SIZE_SMALL\0\u{1}_SIZE_MEDIUM\0\u{1}_SIZE_LARGE\0")
 }
