@@ -25,13 +25,13 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     public var rawValue: UInt8 {
       switch self {
       case .evm:     return 1
-      case .solana:  return 5
       case .bitcoin(let bitcoin):
         switch bitcoin {
         case .legacy:    return 2
         case .segwit:    return 3
         case .taproot:   return 4
         }
+      case .solana:  return 5
         
       default:
         return 0
