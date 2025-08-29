@@ -24,6 +24,7 @@ enum _NetworkType: SwiftProtobuf.Enum, Swift.CaseIterable {
   typealias RawValue = Int
   case evm // = 0
   case bitcoin // = 1
+  case solana // = 2
   case UNRECOGNIZED(Int)
 
   init() {
@@ -34,6 +35,7 @@ enum _NetworkType: SwiftProtobuf.Enum, Swift.CaseIterable {
     switch rawValue {
     case 0: self = .evm
     case 1: self = .bitcoin
+    case 2: self = .solana
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -42,6 +44,7 @@ enum _NetworkType: SwiftProtobuf.Enum, Swift.CaseIterable {
     switch self {
     case .evm: return 0
     case .bitcoin: return 1
+    case .solana: return 2
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -50,6 +53,7 @@ enum _NetworkType: SwiftProtobuf.Enum, Swift.CaseIterable {
   static let allCases: [_NetworkType] = [
     .evm,
     .bitcoin,
+    .solana,
   ]
 
 }
@@ -57,5 +61,5 @@ enum _NetworkType: SwiftProtobuf.Enum, Swift.CaseIterable {
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _NetworkType: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0EVM\0\u{1}BITCOIN\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0EVM\0\u{1}BITCOIN\0\u{1}SOLANA\0")
 }

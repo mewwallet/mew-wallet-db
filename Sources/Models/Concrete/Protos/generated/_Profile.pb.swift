@@ -312,6 +312,9 @@ struct _Profile: @unchecked Sendable {
       /// Stores array of bitcoin addresses associated with profile
       var btc: [_Profile._Settings._Address] = []
 
+      /// Stores array of solana addresses associated with profile
+      var sol: [_Profile._Settings._Address] = []
+
       var unknownFields = SwiftProtobuf.UnknownStorage()
 
       init() {}
@@ -687,7 +690,7 @@ extension _Profile._Settings._PortfolioTracker._TrackerTime: SwiftProtobuf.Messa
 
 extension _Profile._Settings._Multichain: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Profile._Settings.protoMessageName + "._Multichain"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}evm\0\u{1}btc\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}evm\0\u{1}btc\0\u{1}sol\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -697,6 +700,7 @@ extension _Profile._Settings._Multichain: SwiftProtobuf.Message, SwiftProtobuf._
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedMessageField(value: &self.evm) }()
       case 2: try { try decoder.decodeRepeatedMessageField(value: &self.btc) }()
+      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.sol) }()
       default: break
       }
     }
@@ -709,12 +713,16 @@ extension _Profile._Settings._Multichain: SwiftProtobuf.Message, SwiftProtobuf._
     if !self.btc.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.btc, fieldNumber: 2)
     }
+    if !self.sol.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.sol, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: _Profile._Settings._Multichain, rhs: _Profile._Settings._Multichain) -> Bool {
     if lhs.evm != rhs.evm {return false}
     if lhs.btc != rhs.btc {return false}
+    if lhs.sol != rhs.sol {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

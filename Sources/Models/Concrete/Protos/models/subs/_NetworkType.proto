@@ -3,4 +3,5 @@ syntax = "proto3";
 enum _NetworkType {
   EVM                                     = 0;
   BITCOIN                                 = 1;
+  SOLANA                                  = 2;
 }
