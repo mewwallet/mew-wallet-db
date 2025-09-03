@@ -69,8 +69,7 @@ extension RawSolanaTransaction {
   
   public var signature: String { _wrapped.signature }
   public var rawFee: Decimal { Decimal(_wrapped.fee) }
-  //FIXME: Add solana to  mew-extensions Solana has 9 decimal places (lamports)
-  public var fee: Decimal { rawFee.convert(to: .custom(9)) } 
+  public var fee: Decimal { rawFee.convert(to: .lamport) } 
   public var instructions: [Instruction] {
     _wrapped.instructions.map { instruction in
       Instruction(
