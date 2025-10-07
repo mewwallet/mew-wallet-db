@@ -678,6 +678,7 @@ private extension PartialKeyPath where Root == _Profile {
     case \_Profile.settings.addresses.last:                                     return "/settings/addresses/-"
     case \_Profile.settings.multichainAddresses.evm.last:                       return "/settings/multichain_addresses/evm/-"
     case \_Profile.settings.multichainAddresses.btc.last:                       return "/settings/multichain_addresses/btc/-"
+    case \_Profile.settings.multichainAddresses.sol.last:                       return "/settings/multichain_addresses/sol/-"
     case \_Profile.settings.platform:                                           return "/settings/platform"
     case \_Profile.settings.portfolioTracker.daily.enabled:                     return "/settings/portfolio_tracker/daily/enabled"
     case \_Profile.settings.portfolioTracker.daily.timestamp:                   return "/settings/portfolio_tracker/daily/timestamp"
@@ -695,8 +696,8 @@ private extension PartialKeyPath where Root == _Profile {
     case (.bitcoin, \_Profile.settings.multichainAddresses.btc.last?.flags):    return "/settings/multichain_addresses/btc/\(index)/flags"
     case (.evm, \_Profile.settings.multichainAddresses.evm.first):              return "/settings/multichain_addresses/evm/\(index)"
     case (.evm, \_Profile.settings.multichainAddresses.evm.last?.flags):        return "/settings/multichain_addresses/evm/\(index)/flags"
-    case (.solana, \_Profile.settings.multichainAddresses.sol.first):            return "/settings/multichain_addresses/sol/\(index)"
-    case (.solana, \_Profile.settings.multichainAddresses.sol.last?.flags):      return "/settings/multichain_addresses/sol/\(index)/flags"
+    case (.solana, \_Profile.settings.multichainAddresses.sol.first):           return "/settings/multichain_addresses/sol/\(index)"
+    case (.solana, \_Profile.settings.multichainAddresses.sol.last?.flags):     return "/settings/multichain_addresses/sol/\(index)/flags"
     default:
       return stringValue
     }

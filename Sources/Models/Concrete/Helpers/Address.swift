@@ -166,6 +166,7 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     case "0xeeeeeece1b4d9c1bd876b3e7fbe1871947c705cd":      self = .mewUniverse
       
     case _ where isHex && value.count == 42:                self = .unknown(.evm, value)
+    case _ where Address.isProbableSolanaAddress(value):    self = .unknown(.solana, value)
     case _ where value.hasPrefix("1"):                      self = .unknown(.bitcoin(.legacy), value)
     case _ where value.hasPrefix("2"):                      self = .unknown(.bitcoin(.legacy), value)
     case _ where value.hasPrefix("3"):                      self = .unknown(.bitcoin(.legacy), value)
@@ -175,7 +176,6 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     case _ where value.hasPrefix("bc1p"):                   self = .unknown(.bitcoin(.taproot), value)
     case _ where value.hasPrefix("tb1q"):                   self = .unknown(.bitcoin(.segwit), value)
     case _ where value.hasPrefix("tb1p"):                   self = .unknown(.bitcoin(.taproot), value)
-    case _ where Address.isProbableSolanaAddress(value):    self = .unknown(.solana, value)
     default:                                                self = .invalid(value)
     }
   }
@@ -200,7 +200,11 @@ public enum Address: RawRepresentable, Equatable, Sendable {
       
     case .mewUniverse:                                return "0xeeeeeece1b4d9c1bd876b3e7fbe1871947c705cd"
       
-    case .unknown(_, let address):                    return address.lowercased()
+    case .unknown(let type, let address):
+      switch type {
+      case .solana:                                   return address
+      default:                                        return address.lowercased()
+      }
     case .invalid(let address):                       return address.lowercased()
     }
   }
@@ -289,26 +293,5 @@ extension Address: MDBXKeyComponent {
       let lenghtData = withUnsafeBytes(of: count.bigEndian) { Data($0) }
       return Data([self.addressType.rawValue.bigEndian]) + lenghtData + data
     }
-  }
-}
-
-// MARK: - String + Solana detection
-
-extension String {
-  static let solanaAlphabet: String = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-  
-  func satisfy(alphabet: String, length: Range<Int>) -> Bool {
-    guard self.count >= length.lowerBound && self.count <= length.upperBound else { return false }
-    let characterSet = CharacterSet(charactersIn: alphabet)
-    return self.unicodeScalars.allSatisfy { characterSet.contains($0) }
-  }
-}
-
-// MARK: - Address + Solana detection
-
-private extension Address {
-  static func isProbableSolanaAddress(_ value: String) -> Bool {
-    // Solana addresses are base58, typically length 32...44 characters
-    return value.satisfy(alphabet: String.solanaAlphabet, length: 32..<45)
   }
 }
