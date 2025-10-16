@@ -18,6 +18,7 @@ public enum MDBXTableName: String, CaseIterable, Sendable {
   case token                  = "Token_0"
   case rawTransaction         = "RawTransaction_0"
   case rawBTCTransaction      = "RawBTCTransaction_0"
+  case rawSOLTransaction      = "RawSOLTransaction_0"
   case dappLists              = "DAppLists_0"
   case dappRecord             = "DAppRecord_1"
   case dappRecordRecent       = "DAppRecordRecent_1"

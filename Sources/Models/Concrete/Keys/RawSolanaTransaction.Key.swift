@@ -23,7 +23,7 @@ extension RawSolanaTransaction {
       
       self.key = coder.encode(fields: [
         chain,
-        Data(hex: signature)
+        signature.data(using: .utf8)!
       ])
       
       self.chain = chain
@@ -35,11 +35,11 @@ extension RawSolanaTransaction {
         let coder = MDBXKeyCoder()
         let decoded = try coder.decode(data: data, fields: [
           .chain,
-          .rawData(count: MDBXKeyLength.hash)
+          .rawData(count: MDBXKeyLength.signature)
         ])
         self.key = data
         self.chain = decoded[0] as! MDBXChain
-        self.signature = (decoded[1] as! Data).hexString
+        self.signature = String(data: (decoded[1] as! Data), encoding: .utf8)!
       } catch {
         return nil
       }

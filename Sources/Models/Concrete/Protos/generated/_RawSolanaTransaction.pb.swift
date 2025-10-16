@@ -8,7 +8,6 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
-import Foundation
 import SwiftProtobuf
 
 // If the compiler emits an error on this type, it is because this file
@@ -34,37 +33,15 @@ struct _RawSolanaTransaction: Sendable {
 
   var instructions: [_RawSolanaTransaction._Instruction] = []
 
-  /// All account keys involved in transaction
-  var accountKeys: [String] = []
-
-  var block: _RawSolanaTransaction._Block {
-    get {return _block ?? _RawSolanaTransaction._Block()}
-    set {_block = newValue}
-  }
-  /// Returns true if `block` has been explicitly set.
-  var hasBlock: Bool {return self._block != nil}
-  /// Clears the value of `block`. Subsequent reads from it will return its default value.
-  mutating func clearBlock() {self._block = nil}
-
   /// Recent blockhash (base58)
-  var recentBlockhash: UInt64 {
-    get {return _recentBlockhash ?? 0}
+  var recentBlockhash: String {
+    get {return _recentBlockhash ?? String()}
     set {_recentBlockhash = newValue}
   }
   /// Returns true if `recentBlockhash` has been explicitly set.
   var hasRecentBlockhash: Bool {return self._recentBlockhash != nil}
   /// Clears the value of `recentBlockhash`. Subsequent reads from it will return its default value.
   mutating func clearRecentBlockhash() {self._recentBlockhash = nil}
-
-  /// Transaction version
-  var version: UInt32 {
-    get {return _version ?? 0}
-    set {_version = newValue}
-  }
-  /// Returns true if `version` has been explicitly set.
-  var hasVersion: Bool {return self._version != nil}
-  /// Clears the value of `version`. Subsequent reads from it will return its default value.
-  mutating func clearVersion() {self._version = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -80,8 +57,8 @@ struct _RawSolanaTransaction: Sendable {
     var accounts: [String] = []
 
     /// Instruction data
-    var data: Data {
-      get {return _data ?? Data()}
+    var data: String {
+      get {return _data ?? String()}
       set {_data = newValue}
     }
     /// Returns true if `data` has been explicitly set.
@@ -93,54 +70,19 @@ struct _RawSolanaTransaction: Sendable {
 
     init() {}
 
-    fileprivate var _data: Data? = nil
-  }
-
-  struct _Block: Sendable {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    /// Solana slot number
-    var slot: UInt64 {
-      get {return _slot ?? 0}
-      set {_slot = newValue}
-    }
-    /// Returns true if `slot` has been explicitly set.
-    var hasSlot: Bool {return self._slot != nil}
-    /// Clears the value of `slot`. Subsequent reads from it will return its default value.
-    mutating func clearSlot() {self._slot = nil}
-
-    /// Block timestamp
-    var blockTime: UInt64 {
-      get {return _blockTime ?? 0}
-      set {_blockTime = newValue}
-    }
-    /// Returns true if `blockTime` has been explicitly set.
-    var hasBlockTime: Bool {return self._blockTime != nil}
-    /// Clears the value of `blockTime`. Subsequent reads from it will return its default value.
-    mutating func clearBlockTime() {self._blockTime = nil}
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-
-    fileprivate var _slot: UInt64? = nil
-    fileprivate var _blockTime: UInt64? = nil
+    fileprivate var _data: String? = nil
   }
 
   init() {}
 
-  fileprivate var _block: _RawSolanaTransaction._Block? = nil
-  fileprivate var _recentBlockhash: UInt64? = nil
-  fileprivate var _version: UInt32? = nil
+  fileprivate var _recentBlockhash: String? = nil
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension _RawSolanaTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_RawSolanaTransaction"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}signature\0\u{1}fee\0\u{1}instructions\0\u{1}accountKeys\0\u{1}block\0\u{1}recentBlockhash\0\u{1}version\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}signature\0\u{1}fee\0\u{1}instructions\0\u{1}recentBlockhash\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -151,10 +93,7 @@ extension _RawSolanaTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 1: try { try decoder.decodeSingularStringField(value: &self.signature) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.fee) }()
       case 3: try { try decoder.decodeRepeatedMessageField(value: &self.instructions) }()
-      case 4: try { try decoder.decodeRepeatedStringField(value: &self.accountKeys) }()
-      case 5: try { try decoder.decodeSingularMessageField(value: &self._block) }()
-      case 6: try { try decoder.decodeSingularUInt64Field(value: &self._recentBlockhash) }()
-      case 7: try { try decoder.decodeSingularUInt32Field(value: &self._version) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self._recentBlockhash) }()
       default: break
       }
     }
@@ -174,17 +113,8 @@ extension _RawSolanaTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if !self.instructions.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.instructions, fieldNumber: 3)
     }
-    if !self.accountKeys.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.accountKeys, fieldNumber: 4)
-    }
-    try { if let v = self._block {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    } }()
     try { if let v = self._recentBlockhash {
-      try visitor.visitSingularUInt64Field(value: v, fieldNumber: 6)
-    } }()
-    try { if let v = self._version {
-      try visitor.visitSingularUInt32Field(value: v, fieldNumber: 7)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -193,10 +123,7 @@ extension _RawSolanaTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs.signature != rhs.signature {return false}
     if lhs.fee != rhs.fee {return false}
     if lhs.instructions != rhs.instructions {return false}
-    if lhs.accountKeys != rhs.accountKeys {return false}
-    if lhs._block != rhs._block {return false}
     if lhs._recentBlockhash != rhs._recentBlockhash {return false}
-    if lhs._version != rhs._version {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -214,7 +141,7 @@ extension _RawSolanaTransaction._Instruction: SwiftProtobuf.Message, SwiftProtob
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.programID) }()
       case 2: try { try decoder.decodeRepeatedStringField(value: &self.accounts) }()
-      case 3: try { try decoder.decodeSingularBytesField(value: &self._data) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._data) }()
       default: break
       }
     }
@@ -232,7 +159,7 @@ extension _RawSolanaTransaction._Instruction: SwiftProtobuf.Message, SwiftProtob
       try visitor.visitRepeatedStringField(value: self.accounts, fieldNumber: 2)
     }
     try { if let v = self._data {
-      try visitor.visitSingularBytesField(value: v, fieldNumber: 3)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -241,45 +168,6 @@ extension _RawSolanaTransaction._Instruction: SwiftProtobuf.Message, SwiftProtob
     if lhs.programID != rhs.programID {return false}
     if lhs.accounts != rhs.accounts {return false}
     if lhs._data != rhs._data {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension _RawSolanaTransaction._Block: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _RawSolanaTransaction.protoMessageName + "._Block"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}slot\0\u{1}blockTime\0")
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularUInt64Field(value: &self._slot) }()
-      case 2: try { try decoder.decodeSingularUInt64Field(value: &self._blockTime) }()
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._slot {
-      try visitor.visitSingularUInt64Field(value: v, fieldNumber: 1)
-    } }()
-    try { if let v = self._blockTime {
-      try visitor.visitSingularUInt64Field(value: v, fieldNumber: 2)
-    } }()
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: _RawSolanaTransaction._Block, rhs: _RawSolanaTransaction._Block) -> Bool {
-    if lhs._slot != rhs._slot {return false}
-    if lhs._blockTime != rhs._blockTime {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

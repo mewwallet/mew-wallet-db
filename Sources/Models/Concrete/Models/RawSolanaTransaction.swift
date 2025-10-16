@@ -19,10 +19,8 @@ public struct RawSolanaTransaction: Equatable {
   public init(chain: MDBXChain,
               signature: String,
               fee: Decimal,
-              instructions: [Instruction],
-              accountKeys: [String],
-              recentBlockhash: String? = nil,
-              version: UInt32? = nil) {
+              instructions: [Instruction] = [],
+              recentBlockhash: String? = nil) {
     self.database = database ?? MEWwalletDBImpl.shared
     _wrapped = .with {
       $0.signature = signature
@@ -36,12 +34,8 @@ public struct RawSolanaTransaction: Equatable {
           }
         }
       }
-      $0.accountKeys = accountKeys
       if let recentBlockhash = recentBlockhash {
-        $0.recentBlockhash = UInt64(recentBlockhash) ?? 0
-      }
-      if let version = version {
-        $0.version = version
+        $0.recentBlockhash = recentBlockhash
       }
     }
     self._chain = chain
@@ -52,9 +46,9 @@ public struct RawSolanaTransaction: Equatable {
   public struct Instruction {
     public let programId: String
     public let accounts: [String]
-    public let data: Data?
+    public let data: String?
     
-    public init(programId: String, accounts: [String], data: Data? = nil) {
+    public init(programId: String, accounts: [String], data: String? = nil) {
       self.programId = programId
       self.accounts = accounts
       self.data = data
@@ -69,7 +63,7 @@ extension RawSolanaTransaction {
   
   public var signature: String { _wrapped.signature }
   public var rawFee: Decimal { Decimal(_wrapped.fee) }
-  public var fee: Decimal { rawFee.convert(to: .lamport) } 
+  public var fee: Decimal { rawFee.convert(from: .lamport, to: .sol) } 
   public var instructions: [Instruction] {
     _wrapped.instructions.map { instruction in
       Instruction(
@@ -79,22 +73,9 @@ extension RawSolanaTransaction {
       )
     }
   }
-  public var accountKeys: [String] { _wrapped.accountKeys }
-  public var slot: UInt64? {
-    guard _wrapped.hasBlock else { return nil }
-    return _wrapped.block.slot
-  }
-  public var blockTime: UInt64? {
-    guard _wrapped.hasBlock else { return nil }
-    return _wrapped.block.blockTime
-  }
   public var recentBlockhash: String? {
     guard _wrapped.hasRecentBlockhash else { return nil }
     return String(_wrapped.recentBlockhash)
-  }
-  public var version: UInt32? {
-    guard _wrapped.hasVersion else { return nil }
-    return _wrapped.version
   }
 }
 
@@ -154,17 +135,8 @@ extension RawSolanaTransaction: MDBXObject {
     if !other._wrapped.instructions.isEmpty {
       self._wrapped.instructions = other._wrapped.instructions
     }
-    if !other._wrapped.accountKeys.isEmpty {
-      self._wrapped.accountKeys = other._wrapped.accountKeys
-    }
-    if other._wrapped.hasBlock {
-      self._wrapped.block = other._wrapped.block
-    }
     if other._wrapped.hasRecentBlockhash {
       self._wrapped.recentBlockhash = other._wrapped.recentBlockhash
-    }
-    if other._wrapped.hasVersion {
-      self._wrapped.version = other._wrapped.version
     }
   }
 }
