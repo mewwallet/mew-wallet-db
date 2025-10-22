@@ -79,6 +79,7 @@ extension DBWriteMode {
     case .token:                  return .default
     case .rawTransaction:         return .default
     case .rawBTCTransaction:      return .default
+    case .rawSOLTransaction:      return .default
     case .dappLists:              return .appendOverrideMerge
     case .dappRecord:             return .appendOverrideMerge
     case .dappRecordRecent:       return .appendOverrideMerge

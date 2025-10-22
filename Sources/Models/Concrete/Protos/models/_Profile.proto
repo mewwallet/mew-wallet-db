@@ -96,6 +96,9 @@ message _Profile {
       
       // Stores array of bitcoin addresses associated with profile
       repeated _Address btc               = 2;
+      
+      // Stores array of solana addresses associated with profile
+      repeated _Address sol               = 3;
     }
     
     // Stores structure of multichain addresses associated with the profile

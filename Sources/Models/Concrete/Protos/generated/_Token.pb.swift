@@ -42,12 +42,7 @@ struct _Token: Sendable {
 
 extension _Token: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_Token"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .standard(proto: "contract_address"),
-    3: .same(proto: "amount"),
-    4: .standard(proto: "locked_amount"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}address\0\u{3}contract_address\0\u{1}amount\0\u{3}locked_amount\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

@@ -26,7 +26,7 @@ extension HistorySwap {
       self.key = coder.encode(fields: [
         chain,
         account,
-        Data(hex: hash)
+        chain == .solana ? hash.data(using: .utf8)! : Data(hex: hash)
       ])
       
       self.chain = chain
@@ -70,7 +70,11 @@ extension HistorySwap {
         self.key = data
         self.chain = decoded[0] as! MDBXChain
         self.address = decoded[1] as! Address
-        self.hash = (decoded[2] as! Data).hexString
+        if self.chain == .solana {
+          self.hash = String(data: (decoded[2] as! Data), encoding: .utf8) ?? (decoded[2] as! Data).hexString
+        } else {
+          self.hash = (decoded[2] as! Data).hexString
+        }
       } catch {
         return nil
       }

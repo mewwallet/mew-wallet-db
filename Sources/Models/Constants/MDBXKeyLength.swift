@@ -23,6 +23,7 @@ public enum MDBXKeyLength {
   public static let timestamp             = 4
   public static let timestampMilliseconds = 8
   public static let dateHex               = 10
+  public static let signature             = 64
   
   public static var addressEncodedLength: Int { return addressNetwork + addressLength + 193 }                           // 196, addressNetwork + addressLength + 193, usually bitcoin address is less than 90
   

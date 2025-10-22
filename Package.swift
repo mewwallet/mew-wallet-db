@@ -18,7 +18,7 @@ let package = Package(
     .package(url: "git@github.com:mewwallet/mew-wallet-ios-extensions.git", .upToNextMajor(from: "2.0.0")),
     .package(url: "git@github.com:mewwallet/mdbx-ios.git", .upToNextMajor(from: "1.1.0")),
     .package(url: "https://github.com/apple/swift-algorithms.git", exact: "1.0.0"),
-    .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMinor(from: "1.28.0"))
+    .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMinor(from: "1.31.0"))
   ],
   targets: [
     .target(

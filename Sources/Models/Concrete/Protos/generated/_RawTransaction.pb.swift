@@ -100,19 +100,7 @@ struct _RawTransaction: Sendable {
 
 extension _RawTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_RawTransaction"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "hash"),
-    2: .same(proto: "from"),
-    3: .same(proto: "to"),
-    4: .same(proto: "value"),
-    5: .same(proto: "input"),
-    6: .same(proto: "nonce"),
-    7: .same(proto: "gas"),
-    8: .same(proto: "gasPrice"),
-    9: .same(proto: "blockNumber"),
-    10: .same(proto: "maxFeePerGas"),
-    11: .same(proto: "maxPriorityFeePerGas"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}hash\0\u{1}from\0\u{1}to\0\u{1}value\0\u{1}input\0\u{1}nonce\0\u{1}gas\0\u{1}gasPrice\0\u{1}blockNumber\0\u{1}maxFeePerGas\0\u{1}maxPriorityFeePerGas\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

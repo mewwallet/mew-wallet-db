@@ -165,26 +165,7 @@ struct _HistorySwap: @unchecked Sendable {
 
 extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_HistorySwap"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-    2: .standard(proto: "order_id"),
-    3: .same(proto: "provider"),
-    4: .same(proto: "status"),
-    5: .standard(proto: "from_chain_id"),
-    6: .standard(proto: "from_contract_address"),
-    7: .standard(proto: "from_address"),
-    8: .standard(proto: "from_amount"),
-    9: .standard(proto: "to_chain_id"),
-    10: .standard(proto: "to_contract_address"),
-    11: .standard(proto: "to_address"),
-    12: .standard(proto: "to_amount"),
-    13: .same(proto: "hashes"),
-    14: .standard(proto: "hash_from"),
-    15: .standard(proto: "hash_to"),
-    16: .same(proto: "replaceHashes"),
-    17: .same(proto: "timestamp"),
-    18: .standard(proto: "updated_at"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}id\0\u{3}order_id\0\u{1}provider\0\u{1}status\0\u{3}from_chain_id\0\u{3}from_contract_address\0\u{3}from_address\0\u{3}from_amount\0\u{3}to_chain_id\0\u{3}to_contract_address\0\u{3}to_address\0\u{3}to_amount\0\u{1}hashes\0\u{3}hash_from\0\u{3}hash_to\0\u{1}replaceHashes\0\u{1}timestamp\0\u{3}updated_at\0")
 
   fileprivate class _StorageClass {
     var _id: String? = nil
@@ -206,15 +187,11 @@ extension _HistorySwap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     var _timestamp: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _updatedAt: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 
-    #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
       // This will force a copy to be made of this reference when the first mutation occurs;
       // hence, it is safe to mark this as `nonisolated(unsafe)`.
       static nonisolated(unsafe) let defaultInstance = _StorageClass()
-    #else
-      static let defaultInstance = _StorageClass()
-    #endif
 
     private init() {}
 

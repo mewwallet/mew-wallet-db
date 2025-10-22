@@ -68,11 +68,7 @@ struct _NFTSocial: Sendable {
 
 extension _NFTSocial: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_NFTSocial"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "website"),
-    2: .same(proto: "discord"),
-    3: .same(proto: "telegram"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}website\0\u{1}discord\0\u{1}telegram\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

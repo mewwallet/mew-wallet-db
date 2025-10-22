@@ -176,7 +176,9 @@ extension TokenMeta: MDBXObject {
       self._wrapped.decimals            = other._wrapped.decimals
     }
     if other._wrapped.hasIcon {
-      self._wrapped.icon                = other._wrapped.icon
+      if other._wrapped.icon.hasPrefix("https://raw.git") {
+        self._wrapped.icon                = other._wrapped.icon
+      }
     }
     if other._wrapped.hasPrice {
       self._wrapped.price               = other._wrapped.price

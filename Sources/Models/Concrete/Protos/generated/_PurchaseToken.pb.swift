@@ -65,15 +65,7 @@ struct _PurchaseToken: Sendable {
 
 extension _PurchaseToken: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_PurchaseToken"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "chain"),
-    2: .same(proto: "symbol"),
-    3: .same(proto: "name"),
-    4: .standard(proto: "contract_address"),
-    5: .same(proto: "providers"),
-    6: .standard(proto: "market_data"),
-    7: .standard(proto: "is_sell_supported"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}chain\0\u{1}symbol\0\u{1}name\0\u{3}contract_address\0\u{1}providers\0\u{3}market_data\0\u{3}is_sell_supported\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

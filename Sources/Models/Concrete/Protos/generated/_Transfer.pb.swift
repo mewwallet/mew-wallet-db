@@ -94,20 +94,7 @@ struct _Transfer: Sendable {
 
 extension _Transfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_Transfer"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "hash"),
-    2: .standard(proto: "contract_address"),
-    3: .same(proto: "address"),
-    4: .same(proto: "from"),
-    5: .same(proto: "to"),
-    6: .standard(proto: "block_number"),
-    7: .same(proto: "nonce"),
-    8: .same(proto: "delta"),
-    9: .same(proto: "timestamp"),
-    10: .same(proto: "status"),
-    11: .same(proto: "nft"),
-    12: .same(proto: "local"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}hash\0\u{3}contract_address\0\u{1}address\0\u{1}from\0\u{1}to\0\u{3}block_number\0\u{1}nonce\0\u{1}delta\0\u{1}timestamp\0\u{1}status\0\u{1}nft\0\u{1}local\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

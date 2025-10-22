@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message _RawSolanaTransaction {
+  string signature                      = 1;  // Transaction signature (base58)
+  uint64 fee                            = 2;  // Transaction fee in lamports
+  
+  message _Instruction {
+    string programId                     = 1;  // Program ID (base58)
+    repeated string accounts             = 2;  // Account addresses (base58)
+    optional string data                 = 3;  // Instruction data
+  }
+  repeated _Instruction instructions    = 3;
+    
+  optional string recentBlockhash       = 4;  // Recent blockhash (base58)
+}

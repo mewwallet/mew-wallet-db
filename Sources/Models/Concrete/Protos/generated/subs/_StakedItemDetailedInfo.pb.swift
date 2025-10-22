@@ -46,12 +46,7 @@ struct _StakedItemDetailedInfo: Sendable {
 
 extension _StakedItemDetailedInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_StakedItemDetailedInfo"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "eth_two_balance"),
-    2: .standard(proto: "eth_two_rewards_and_fees"),
-    3: .standard(proto: "eth_two_rewards"),
-    4: .standard(proto: "eth_two_fees"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}eth_two_balance\0\u{3}eth_two_rewards_and_fees\0\u{3}eth_two_rewards\0\u{3}eth_two_fees\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
