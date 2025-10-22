@@ -96,20 +96,7 @@ struct _NFTCollection: Sendable {
 
 extension _NFTCollection: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_NFTCollection"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .same(proto: "name"),
-    3: .same(proto: "description"),
-    4: .same(proto: "image"),
-    5: .standard(proto: "schema_type"),
-    6: .standard(proto: "contract_address"),
-    7: .standard(proto: "contract_name"),
-    8: .standard(proto: "contract_symbol"),
-    9: .same(proto: "social"),
-    10: .same(proto: "stats"),
-    11: .same(proto: "assets"),
-    12: .same(proto: "cursor"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}address\0\u{1}name\0\u{1}description\0\u{1}image\0\u{3}schema_type\0\u{3}contract_address\0\u{3}contract_name\0\u{3}contract_symbol\0\u{1}social\0\u{1}stats\0\u{1}assets\0\u{1}cursor\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

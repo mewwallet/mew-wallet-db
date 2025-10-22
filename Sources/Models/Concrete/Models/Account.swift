@@ -235,12 +235,22 @@ extension Account {
     }
   }
   
-  /// Last component of derivation path
+  /// Last component of derivation path for evm or btc
+  /// Last-1 component of derivation path for solana
   public var index: UInt32? {
-    guard let derivationPath = derivationPath,
-          let index = derivationPath.components(separatedBy: "/").last else { return nil }
-    guard let uint64 = UInt64(index, radix: 10) else { return nil }
-    return UInt32(clamping: uint64)
+    guard let derivationPath = derivationPath else { return nil }
+    switch self.networkType {
+    case .solana:
+      let components = derivationPath.components(separatedBy: "/")
+      guard components.count > 1 else { return nil }
+      let index = String(components[components.count - 2].dropLast()) // drop hardened character (like "500'")
+      guard let uint64 = UInt64(index, radix: 10) else { return nil }
+      return UInt32(clamping: uint64)
+    default:
+      guard let index = derivationPath.components(separatedBy: "/").last else { return nil }
+      guard let uint64 = UInt64(index, radix: 10) else { return nil }
+      return UInt32(clamping: uint64)
+    }
   }
   
   /// AnonymizedId

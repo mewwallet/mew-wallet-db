@@ -93,17 +93,7 @@ struct _TokenMeta: Sendable {
 
 extension _TokenMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_TokenMeta"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "contract_address"),
-    2: .same(proto: "name"),
-    3: .same(proto: "symbol"),
-    4: .same(proto: "decimals"),
-    5: .same(proto: "icon"),
-    6: .same(proto: "price"),
-    7: .standard(proto: "market_cap"),
-    8: .same(proto: "sparkline"),
-    9: .standard(proto: "volume_24h"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}contract_address\0\u{1}name\0\u{1}symbol\0\u{1}decimals\0\u{1}icon\0\u{1}price\0\u{3}market_cap\0\u{1}sparkline\0\u{3}volume_24h\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

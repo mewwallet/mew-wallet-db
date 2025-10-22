@@ -264,6 +264,7 @@ extension Profile {
   /// - Returns: `PATCH` data
   mutating public func add(address: Address, flags: AddressFlags = [.includeInDailyPortfolio, .includeInWeeklyPortfolio]) throws -> Patch {
     guard self.platform != .empty else { throw UpdateError.platformNotSet }
+
     
     switch address.networkType {
     case .bitcoin:
@@ -291,6 +292,18 @@ extension Profile {
       _wrapped.settings.multichainAddresses.evm.append(account)
       
       return .add(path: keypath.stringValue, value: account)
+    case .solana:
+      guard !_wrapped.settings.multichainAddresses.sol.contains(where: { Address($0.address) == address }) else { throw UpdateError.alreadyExist }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.sol.last
+      
+      var account = _Profile._Settings._Address()
+      account.address = address.rawValue
+      account.flags = flags.rawValue
+      
+      _wrapped.settings.multichainAddresses.sol.append(account)
+      
+      return .add(path: keypath.stringValue, value: account)
     }
   }
   
@@ -313,6 +326,14 @@ extension Profile {
       let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.evm.first
       
       _wrapped.settings.multichainAddresses.evm.remove(at: index)
+      
+      return .remove(path: keypath.stringValue(index, networkType: address.networkType))
+    case .solana:
+      guard let index = _wrapped.settings.multichainAddresses.sol.firstIndex(where: { Address($0.address) == address }) else { throw UpdateError.notFound }
+      
+      let keypath: KeyPath<_Profile, _Profile._Settings._Address?> = \_Profile.settings.multichainAddresses.sol.first
+      
+      _wrapped.settings.multichainAddresses.sol.remove(at: index)
       
       return .remove(path: keypath.stringValue(index, networkType: address.networkType))
     }
@@ -480,6 +501,26 @@ extension Profile {
       _wrapped.settings.multichainAddresses.evm[index] = account
       
       return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
+    case .solana:
+      guard let index = _wrapped.settings.multichainAddresses.sol.firstIndex(where: { Address(rawValue: $0.address) == address }) else { throw UpdateError.notFound }
+      
+      var account = _wrapped.settings.multichainAddresses.sol[index]
+      
+      var flags = AddressFlags(rawValue: account.flags)
+      if enable {
+        flags = flags.union(flag)
+      } else {
+        flags = flags.subtracting(flag)
+      }
+      
+      guard account.flags != flags.rawValue else { throw UpdateError.nothingToUpdate }
+      
+      let keypath: KeyPath<_Profile, UInt32?> = \_Profile.settings.multichainAddresses.sol.last?.flags
+      
+      account.flags = flags.rawValue
+      _wrapped.settings.multichainAddresses.sol[index] = account
+      
+      return .replace(path: keypath.stringValue(index, networkType: address.networkType), value: flags.rawValue)
     }
   }
   
@@ -509,7 +550,8 @@ extension Profile {
   
   public var addresses: [Address] {
     _wrapped.settings.multichainAddresses.evm.map({ Address($0.address) }) +
-    _wrapped.settings.multichainAddresses.btc.map({ Address($0.address) })
+    _wrapped.settings.multichainAddresses.btc.map({ Address($0.address) }) +
+    _wrapped.settings.multichainAddresses.sol.map({ Address($0.address) })
   }
   public var notificationsFlags: NotificationFlags { NotificationFlags(rawValue: _wrapped.settings.notifications) }
   public var pushToken: String { _wrapped.settings.pushToken }
@@ -636,6 +678,7 @@ private extension PartialKeyPath where Root == _Profile {
     case \_Profile.settings.addresses.last:                                     return "/settings/addresses/-"
     case \_Profile.settings.multichainAddresses.evm.last:                       return "/settings/multichain_addresses/evm/-"
     case \_Profile.settings.multichainAddresses.btc.last:                       return "/settings/multichain_addresses/btc/-"
+    case \_Profile.settings.multichainAddresses.sol.last:                       return "/settings/multichain_addresses/sol/-"
     case \_Profile.settings.platform:                                           return "/settings/platform"
     case \_Profile.settings.portfolioTracker.daily.enabled:                     return "/settings/portfolio_tracker/daily/enabled"
     case \_Profile.settings.portfolioTracker.daily.timestamp:                   return "/settings/portfolio_tracker/daily/timestamp"
@@ -653,6 +696,8 @@ private extension PartialKeyPath where Root == _Profile {
     case (.bitcoin, \_Profile.settings.multichainAddresses.btc.last?.flags):    return "/settings/multichain_addresses/btc/\(index)/flags"
     case (.evm, \_Profile.settings.multichainAddresses.evm.first):              return "/settings/multichain_addresses/evm/\(index)"
     case (.evm, \_Profile.settings.multichainAddresses.evm.last?.flags):        return "/settings/multichain_addresses/evm/\(index)/flags"
+    case (.solana, \_Profile.settings.multichainAddresses.sol.first):           return "/settings/multichain_addresses/sol/\(index)"
+    case (.solana, \_Profile.settings.multichainAddresses.sol.last?.flags):     return "/settings/multichain_addresses/sol/\(index)/flags"
     default:
       return stringValue
     }

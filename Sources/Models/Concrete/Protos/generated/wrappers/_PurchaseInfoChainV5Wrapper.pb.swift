@@ -43,11 +43,7 @@ struct _PurchaseInfoChainV5Wrapper: Sendable {
 
 extension _PurchaseInfoChainV5Wrapper: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_PurchaseInfoChainV5Wrapper"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "chain"),
-    2: .same(proto: "name"),
-    3: .same(proto: "assets"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}chain\0\u{1}name\0\u{1}assets\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

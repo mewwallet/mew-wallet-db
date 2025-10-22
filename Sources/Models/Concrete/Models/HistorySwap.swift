@@ -34,6 +34,47 @@ public struct HistorySwap {
     }
   }
   
+  /// Name of a particular Dex
+  public enum Provider: RawRepresentable, Sendable {
+    public typealias RawValue = String
+    
+    case oneInch
+    case zeroX
+    case paraswap
+    case rango
+    case unknown(String)
+    
+    public init(rawValue: String) {
+      switch rawValue.uppercased() {
+      case "ONE_INCH":  self = .oneInch
+      case "ZERO_X":    self = .zeroX
+      case "PARASWAP":  self = .paraswap
+      case "RANGO":     self = .rango
+      default:          self = .unknown(rawValue)
+      }
+    }
+    
+    public var rawValue: String {
+      switch self {
+      case .oneInch:              return "ONE_INCH"
+      case .zeroX:                return "ZERO_X"
+      case .paraswap:             return "PARASWAP"
+      case .rango:                return "RANGO"
+      case .unknown(let raw):     return raw
+      }
+    }
+    
+    public var displayName: String {
+      switch self {
+      case .oneInch:              return "1inch"
+      case .zeroX:                return "0x"
+      case .paraswap:             return "Paraswap"
+      case .rango:                return "Rango"
+      case .unknown(let raw):     return raw
+      }
+    }
+  }
+  
   public weak var database: (any WalletDB)?
   var _wrapped: _HistorySwap
   var _chain: MDBXChain
@@ -160,7 +201,7 @@ extension HistorySwap {
     set { _wrapped.status = HistorySwap.Status(newValue).rawValue }
     get { History.Status(_status) }
   }
-  public var dex: String { _wrapped.provider }
+  public var dex: Provider { Provider(rawValue: _wrapped.provider) }
   
   public var hashFrom: String { _wrapped.hashFrom }
   public var hashTo: String? { _wrapped.hasHashTo ? _wrapped.hashTo : nil }

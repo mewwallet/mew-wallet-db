@@ -17,19 +17,22 @@ public enum Address: RawRepresentable, Equatable, Sendable {
       case 2: self = .bitcoin(.legacy)
       case 3: self = .bitcoin(.segwit)
       case 4: self = .bitcoin(.taproot)
+      case 5: self = .solana
       default: self = .unknown
       }
     }
     
     public var rawValue: UInt8 {
       switch self {
-      case .evm:  return 1
+      case .evm:     return 1
       case .bitcoin(let bitcoin):
         switch bitcoin {
         case .legacy:    return 2
         case .segwit:    return 3
         case .taproot:   return 4
         }
+      case .solana:  return 5
+        
       default:
         return 0
       }
@@ -44,6 +47,7 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     }
     case evm
     case bitcoin(Bitcoin)
+    case solana
     case unknown
   }
   
@@ -102,11 +106,19 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     return true
   }
   
-  public var networkType: NetworkType {
-    guard case .bitcoin = addressType else {
-      return .evm
+  public var isSolanaNetwork: Bool  {
+    guard case .solana = addressType else {
+      return false
     }
-    return .bitcoin
+    return true
+  }
+  
+  public var networkType: NetworkType {
+    switch addressType {
+    case .bitcoin:  return .bitcoin
+    case .solana:   return .solana
+    default:        return .evm
+    }
   }
   
   public var addressType: AddressType {
@@ -121,6 +133,7 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     switch self.addressType {
     case .evm:                    return .evm
     case .bitcoin:                return .bitcoin
+    case .solana:                 return .solana
     case .unknown:                return .evm
     }
   }
@@ -153,6 +166,7 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     case "0xeeeeeece1b4d9c1bd876b3e7fbe1871947c705cd":      self = .mewUniverse
       
     case _ where isHex && value.count == 42:                self = .unknown(.evm, value)
+    case _ where Address.isProbableSolanaAddress(value):    self = .unknown(.solana, value)
     case _ where value.hasPrefix("1"):                      self = .unknown(.bitcoin(.legacy), value)
     case _ where value.hasPrefix("2"):                      self = .unknown(.bitcoin(.legacy), value)
     case _ where value.hasPrefix("3"):                      self = .unknown(.bitcoin(.legacy), value)
@@ -186,7 +200,11 @@ public enum Address: RawRepresentable, Equatable, Sendable {
       
     case .mewUniverse:                                return "0xeeeeeece1b4d9c1bd876b3e7fbe1871947c705cd"
       
-    case .unknown(_, let address):                    return address.lowercased()
+    case .unknown(let type, let address):
+      switch type {
+      case .solana:                                   return address
+      default:                                        return address.lowercased()
+      }
     case .invalid(let address):                       return address.lowercased()
     }
   }
@@ -195,6 +213,7 @@ public enum Address: RawRepresentable, Equatable, Sendable {
     switch self.addressType {
     case .evm:                  return Data(hex: rawValue)
     case .bitcoin:              return rawValue.data(using: .utf8)!
+    case .solana:               return rawValue.data(using: .utf8)!
     case .unknown:              return rawValue.data(using: .utf8)!
     }
   }
@@ -249,6 +268,9 @@ extension Address: MDBXKeyComponent {
       case .bitcoin:
         let rawValue = String(data: addressData, encoding: .utf8)!
         self.init(rawValue: rawValue)
+      case .solana:
+        let rawValue = String(data: addressData, encoding: .utf8)!
+        self.init(rawValue: rawValue)
       case .unknown:
         guard let rawValue = String(data: encodedData, encoding: .utf8) else {
           throw DataReaderError.badValue
@@ -265,7 +287,7 @@ extension Address: MDBXKeyComponent {
       let count = UInt16(clamping: data.count)
       let lenghtData = withUnsafeBytes(of: count.bigEndian) { Data($0) }
       return Data([self.addressType.rawValue.bigEndian]) + lenghtData + data
-    case .bitcoin, .unknown:
+    case .bitcoin, .solana, .unknown:
       let data = rawValue.data(using: .utf8)!
       let count = UInt16(clamping: data.count)
       let lenghtData = withUnsafeBytes(of: count.bigEndian) { Data($0) }

@@ -90,18 +90,7 @@ struct _HistoryPurchase: Sendable {
 
 extension _HistoryPurchase: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_HistoryPurchase"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .standard(proto: "transaction_id"),
-    3: .standard(proto: "fiat_amount"),
-    4: .standard(proto: "fiat_currency"),
-    5: .standard(proto: "crypto_amount"),
-    6: .standard(proto: "crypto_currency"),
-    7: .same(proto: "status"),
-    8: .same(proto: "provider"),
-    9: .same(proto: "timestamp"),
-    10: .standard(proto: "order_details"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}address\0\u{3}transaction_id\0\u{3}fiat_amount\0\u{3}fiat_currency\0\u{3}crypto_amount\0\u{3}crypto_currency\0\u{1}status\0\u{1}provider\0\u{1}timestamp\0\u{3}order_details\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

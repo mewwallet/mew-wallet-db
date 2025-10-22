@@ -52,12 +52,7 @@ struct _EnergyNFTTransfer: Sendable {
 
 extension _EnergyNFTTransfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_EnergyNFTTransfer"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "token_id"),
-    2: .same(proto: "hash"),
-    3: .same(proto: "address"),
-    4: .same(proto: "timestamp"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}token_id\0\u{1}hash\0\u{1}address\0\u{1}timestamp\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
