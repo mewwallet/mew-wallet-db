@@ -305,7 +305,9 @@ extension Transfer: Comparable {
   public static func < (lhs: Transfer, rhs: Transfer) -> Bool {
     let lhsKey = (lhs.key as! TransferKey).sortingKey
     let rhsKey = (rhs.key as! TransferKey).sortingKey
-
+   
+    guard lhsKey.count == rhsKey.count else { return false }
+    
     return lhsKey.lexicographicallyPrecedes(rhsKey)
   }
 }

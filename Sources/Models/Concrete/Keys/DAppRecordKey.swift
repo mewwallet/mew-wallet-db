@@ -36,11 +36,12 @@ public final class DAppRecordKey: MDBXKey {
     }()
     
     self.uuid = {
-      let slice = key[_uuidRange]
-      let v: UInt64 = slice.withUnsafeBytes { raw in
-        raw.loadUnaligned(as: UInt64.self)
+      let value = key[_uuidRange].withUnsafeBytes {
+        $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
+          $0.pointee
+        })
       }
-      return UInt64(bigEndian: v)
+      return UInt64(bigEndian: value)
     }()
   }
   
@@ -61,11 +62,12 @@ public final class DAppRecordKey: MDBXKey {
     }()
     
     self.uuid = {
-      let slice = data[_uuidRange]
-      let v: UInt64 = slice.withUnsafeBytes { raw in
-        raw.loadUnaligned(as: UInt64.self)
+      let value = data[_uuidRange].withUnsafeBytes {
+        $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
+          $0.pointee
+        })
       }
-      return UInt64(bigEndian: v)
+      return UInt64(bigEndian: value)
     }()
   }
 }
