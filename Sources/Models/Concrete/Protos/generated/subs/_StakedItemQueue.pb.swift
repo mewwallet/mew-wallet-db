@@ -52,11 +52,7 @@ struct _StakedItemQueue: Sendable {
 
 extension _StakedItemQueue: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_StakedItemQueue"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "position"),
-    2: .same(proto: "total"),
-    3: .standard(proto: "estimated_activation_timestamp"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}position\0\u{1}total\0\u{3}estimated_activation_timestamp\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

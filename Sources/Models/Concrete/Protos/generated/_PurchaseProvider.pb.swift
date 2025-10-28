@@ -120,11 +120,7 @@ struct _PurchaseProvider: Sendable {
 
 extension _PurchaseProvider: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_PurchaseProvider"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "provider"),
-    2: .same(proto: "isos"),
-    3: .same(proto: "fiats"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}provider\0\u{1}isos\0\u{1}fiats\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -164,9 +160,7 @@ extension _PurchaseProvider: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 
 extension _PurchaseProvider._ISO: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _PurchaseProvider.protoMessageName + "._ISO"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "allowed"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}allowed\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -200,10 +194,7 @@ extension _PurchaseProvider._ISO: SwiftProtobuf.Message, SwiftProtobuf._MessageI
 
 extension _PurchaseProvider._ISO._Allowed: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _PurchaseProvider._ISO.protoMessageName + "._Allowed"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "buy"),
-    2: .same(proto: "sell"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}buy\0\u{1}sell\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -238,12 +229,7 @@ extension _PurchaseProvider._ISO._Allowed: SwiftProtobuf.Message, SwiftProtobuf.
 
 extension _PurchaseProvider._Fiat: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _PurchaseProvider.protoMessageName + "._Fiat"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "fiat_currency"),
-    2: .same(proto: "limits"),
-    3: .standard(proto: "payment_methods"),
-    4: .standard(proto: "is_sell_supported"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}fiat_currency\0\u{1}limits\0\u{3}payment_methods\0\u{3}is_sell_supported\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -292,10 +278,7 @@ extension _PurchaseProvider._Fiat: SwiftProtobuf.Message, SwiftProtobuf._Message
 
 extension _PurchaseProvider._Fiat._Limits: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _PurchaseProvider._Fiat.protoMessageName + "._Limits"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "min"),
-    2: .same(proto: "max"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}min\0\u{1}max\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

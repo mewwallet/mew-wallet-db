@@ -329,15 +329,7 @@ struct _Account: @unchecked Sendable {
 
 extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_Account"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .same(proto: "groupID"),
-    3: .same(proto: "source"),
-    4: .same(proto: "type"),
-    5: .same(proto: "keys"),
-    6: .same(proto: "state"),
-    7: .same(proto: "networkType"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}address\0\u{1}groupID\0\u{1}source\0\u{1}type\0\u{1}keys\0\u{1}state\0\u{1}networkType\0")
 
   fileprivate class _StorageClass {
     var _address: String = String()
@@ -348,15 +340,11 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _state: _Account._UserState? = nil
     var _networkType: _NetworkType? = nil
 
-    #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
       // This will force a copy to be made of this reference when the first mutation occurs;
       // hence, it is safe to mark this as `nonisolated(unsafe)`.
       static nonisolated(unsafe) let defaultInstance = _StorageClass()
-    #else
-      static let defaultInstance = _StorageClass()
-    #endif
 
     private init() {}
 
@@ -452,30 +440,16 @@ extension _Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
 }
 
 extension _Account._Source: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "UNKNOWN"),
-    1: .same(proto: "RECOVERY_PHRASE"),
-    2: .same(proto: "PRIVATE_KEY"),
-    3: .same(proto: "WALLET_CONNECT"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0UNKNOWN\0\u{1}RECOVERY_PHRASE\0\u{1}PRIVATE_KEY\0\u{1}WALLET_CONNECT\0")
 }
 
 extension _Account._Type: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "INTERNAL"),
-    1: .same(proto: "READ_ONLY"),
-    2: .same(proto: "EXTERNAL"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0INTERNAL\0\u{1}READ_ONLY\0\u{1}EXTERNAL\0")
 }
 
 extension _Account._Keys: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Account.protoMessageName + "._Keys"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "derivationPath"),
-    2: .same(proto: "anonymizedId"),
-    3: .same(proto: "encryptionPublicKey"),
-    4: .same(proto: "withdrawalPublicKey"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}derivationPath\0\u{1}anonymizedId\0\u{1}encryptionPublicKey\0\u{1}withdrawalPublicKey\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -524,16 +498,7 @@ extension _Account._Keys: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Account.protoMessageName + "._UserState"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "order"),
-    2: .same(proto: "name"),
-    3: .same(proto: "isHidden"),
-    4: .standard(proto: "deprecated_nftHidden"),
-    5: .standard(proto: "deprecated_nftFavorite"),
-    6: .same(proto: "nftHidden"),
-    7: .same(proto: "nftFavorite"),
-    8: .same(proto: "tokenHidden"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}order\0\u{1}name\0\u{1}isHidden\0\u{3}deprecated_nftHidden\0\u{3}deprecated_nftFavorite\0\u{1}nftHidden\0\u{1}nftFavorite\0\u{1}tokenHidden\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -598,10 +563,7 @@ extension _Account._UserState: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 
 extension _Account._UserState._NFT: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Account._UserState.protoMessageName + "._NFT"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "key"),
-    2: .same(proto: "timestamp"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}key\0\u{1}timestamp\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -640,11 +602,7 @@ extension _Account._UserState._NFT: SwiftProtobuf.Message, SwiftProtobuf._Messag
 
 extension _Account._UserState._Token: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _Account._UserState.protoMessageName + "._Token"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "contract_address"),
-    2: .same(proto: "locked"),
-    3: .same(proto: "timestamp"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}contract_address\0\u{1}locked\0\u{1}timestamp\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

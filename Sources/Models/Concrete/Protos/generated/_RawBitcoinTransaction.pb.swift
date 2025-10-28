@@ -140,13 +140,7 @@ struct _RawBitcoinTransaction: Sendable {
 
 extension _RawBitcoinTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_RawBitcoinTransaction"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "txid"),
-    2: .same(proto: "fee"),
-    3: .same(proto: "inputs"),
-    4: .same(proto: "outputs"),
-    5: .same(proto: "block"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}txid\0\u{1}fee\0\u{1}inputs\0\u{1}outputs\0\u{1}block\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -200,10 +194,7 @@ extension _RawBitcoinTransaction: SwiftProtobuf.Message, SwiftProtobuf._MessageI
 
 extension _RawBitcoinTransaction._Input: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _RawBitcoinTransaction.protoMessageName + "._Input"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "value"),
-    2: .same(proto: "address"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}value\0\u{1}address\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -242,11 +233,7 @@ extension _RawBitcoinTransaction._Input: SwiftProtobuf.Message, SwiftProtobuf._M
 
 extension _RawBitcoinTransaction._Output: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _RawBitcoinTransaction.protoMessageName + "._Output"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "value"),
-    2: .same(proto: "address"),
-    3: .same(proto: "scriptPubKey"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}value\0\u{1}address\0\u{1}scriptPubKey\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -290,10 +277,7 @@ extension _RawBitcoinTransaction._Output: SwiftProtobuf.Message, SwiftProtobuf._
 
 extension _RawBitcoinTransaction._Block: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _RawBitcoinTransaction.protoMessageName + "._Block"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "height"),
-    2: .same(proto: "position"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}height\0\u{1}position\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

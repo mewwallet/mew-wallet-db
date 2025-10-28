@@ -40,11 +40,7 @@ struct _DAppLists: Sendable {
 
 extension _DAppLists: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_DAppLists"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "denylist"),
-    2: .same(proto: "fuzzylist"),
-    3: .same(proto: "allowlist"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}denylist\0\u{1}fuzzylist\0\u{1}allowlist\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

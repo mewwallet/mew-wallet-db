@@ -91,10 +91,7 @@ struct _BalancesV3Wrapper: Sendable {
 
 extension _BalancesV3Wrapper: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_BalancesV3Wrapper"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .same(proto: "balances"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}address\0\u{1}balances\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -129,17 +126,7 @@ extension _BalancesV3Wrapper: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 
 extension _BalancesV3Wrapper._Balance: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _BalancesV3Wrapper.protoMessageName + "._Balance"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "contract_address"),
-    2: .same(proto: "amount"),
-    3: .standard(proto: "locked_amount"),
-    4: .same(proto: "name"),
-    5: .same(proto: "symbol"),
-    6: .same(proto: "decimals"),
-    7: .same(proto: "icon"),
-    8: .same(proto: "price"),
-    9: .same(proto: "sparkline"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}contract_address\0\u{1}amount\0\u{3}locked_amount\0\u{1}name\0\u{1}symbol\0\u{1}decimals\0\u{1}icon\0\u{1}price\0\u{1}sparkline\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

@@ -172,25 +172,7 @@ struct _StakedItem: @unchecked Sendable {
 
 extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "_StakedItem"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "address"),
-    2: .standard(proto: "provisioning_request_uuid"),
-    3: .same(proto: "status"),
-    4: .standard(proto: "eth_two_staked"),
-    5: .standard(proto: "eth_two_balance"),
-    6: .standard(proto: "eth_two_earned"),
-    7: .standard(proto: "eth_two_addresses"),
-    8: .standard(proto: "eth_two_exited"),
-    9: .standard(proto: "eth_two_addresses_exited"),
-    10: .same(proto: "hash"),
-    11: .standard(proto: "requires_upgrade"),
-    12: .same(proto: "apr"),
-    13: .standard(proto: "average_apr"),
-    14: .same(proto: "timestamp"),
-    15: .same(proto: "queue"),
-    16: .standard(proto: "detailed_info"),
-    17: .standard(proto: "validator_indexes"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}address\0\u{3}provisioning_request_uuid\0\u{1}status\0\u{3}eth_two_staked\0\u{3}eth_two_balance\0\u{3}eth_two_earned\0\u{3}eth_two_addresses\0\u{3}eth_two_exited\0\u{3}eth_two_addresses_exited\0\u{1}hash\0\u{3}requires_upgrade\0\u{1}apr\0\u{3}average_apr\0\u{1}timestamp\0\u{1}queue\0\u{3}detailed_info\0\u{3}validator_indexes\0")
 
   fileprivate class _StorageClass {
     var _address: String = String()
@@ -211,15 +193,11 @@ extension _StakedItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     var _detailedInfo: _StakedItemDetailedInfo? = nil
     var _validatorIndexes: [UInt64] = []
 
-    #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
       // This will force a copy to be made of this reference when the first mutation occurs;
       // hence, it is safe to mark this as `nonisolated(unsafe)`.
       static nonisolated(unsafe) let defaultInstance = _StorageClass()
-    #else
-      static let defaultInstance = _StorageClass()
-    #endif
 
     private init() {}
 
