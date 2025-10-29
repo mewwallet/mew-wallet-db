@@ -36,7 +36,7 @@ public final class DAppRecordKey: MDBXKey {
     }()
     
     self.uuid = {
-      let value = key[_uuidRange].bytes.withUnsafeBufferPointer {
+      let value = key[_uuidRange].withUnsafeBytes {
         $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
           $0.pointee
         })
@@ -62,7 +62,7 @@ public final class DAppRecordKey: MDBXKey {
     }()
     
     self.uuid = {
-      let value = data[_uuidRange].bytes.withUnsafeBufferPointer {
+      let value = data[_uuidRange].withUnsafeBytes {
         $0.baseAddress!.withMemoryRebound(to: UInt64.self, capacity: 1, {
           $0.pointee
         })

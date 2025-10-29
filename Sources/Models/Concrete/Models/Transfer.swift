@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Mikhail Nikanorov on 9/23/22.
 //
@@ -15,13 +15,13 @@ public struct Transfer: Equatable {
     case outgoing
     case incoming
   }
-  
+
   public enum Status: String {
     case pending = "PENDING"
     case success = "SUCCESS"
     case failed  = "FAIL"
     case dropped = "DROPPED"
-    
+
     public init(rawValue: String) {
       switch rawValue {
       case "PENDING":   self = .pending
@@ -31,7 +31,7 @@ public struct Transfer: Equatable {
       default:          self = .pending
       }
     }
-    
+
     public init(_ status: History.Status) {
       switch status {
       case .pending:    self = .pending
@@ -41,12 +41,12 @@ public struct Transfer: Equatable {
       }
     }
   }
-  
+
   public weak var database: (any WalletDB)?
   var _wrapped: _Transfer
   var _chain: MDBXChain
   public var order: UInt16?
-  
+
   // MARK: - Private Properties
   private let _metaKey: TokenMetaKey
   private let _meta: MDBXPointer<TokenMetaKey, TokenMeta> = .init(.tokenMeta)
@@ -55,9 +55,9 @@ public struct Transfer: Equatable {
   private let _to: MDBXPointer<AccountKey, Account> = .init(.account)
   private let _owner: MDBXPointer<AccountKey, Account> = .init(.account)
   @SubProperty<_NFTTransfer, NFTTransfer> var _nftTransfer: _NFTTransfer?
-  
+
   // MARK: - LifeCycle
-   
+
   public init(chain: MDBXChain,
               address: Address,
               hash: String,
@@ -76,12 +76,12 @@ public struct Transfer: Equatable {
 
     self.database = database ?? MEWwalletDBImpl.shared
     self._wrapped = .with {
-      
+
       $0.contractAddress = contractAddress.rawValue
       $0.address = address.rawValue
       $0.from = from.rawValue
       $0.to = to.rawValue
-      
+
       $0.hash = hash
       $0.blockNumber = blockNumber
       $0.nonce = nonce
@@ -102,42 +102,42 @@ public struct Transfer: Equatable {
 // MARK: - Transfer + Properties
 
 extension Transfer {
-  
+
   // MARK: - Relations
-  
+
   public var meta: TokenMeta {
     get throws {
       return try _meta.getData(key: self._metaKey, policy: .cacheOrLoad, chain: _chain, database: self.database)
     }
   }
-  
+
   public var primary: TokenMeta {
     get throws {
       return try _primaryMeta.getData(key: TokenMetaKey(chain: _chain, contractAddress: _chain.primary), policy: .cacheOrLoad, chain: _chain, database: self.database)
     }
   }
-  
+
   public var from: Account {
     get throws {
       let key = AccountKey(address: self.fromAddress)
       return try _from.getData(key: key, policy: .cacheOrLoad, chain: key.chain, database: self.database)
     }
   }
-  
+
   public var to: Account {
     get throws {
       let key = AccountKey(address: self.toAddress)
       return try _to.getData(key: key, policy: .cacheOrLoad, chain: key.chain, database: self.database)
     }
   }
-  
+
   public var owner: Account {
     get throws {
       let key = AccountKey(address: self.address)
       return try _owner.getData(key: AccountKey(address: address), policy: .cacheOrLoad, chain: key.chain, database: self.database)
     }
   }
-  
+
   // MARK: - Properties
 
   public var chain: MDBXChain { _chain }
@@ -160,13 +160,13 @@ extension Transfer {
     set { _wrapped.status = Transfer.Status(newValue).rawValue }
     get { History.Status(_status) }
   }
-  
-  
+
+
   public var nft: NFTTransfer? {
     guard _wrapped.hasNft else { return nil }
     return self.$_nftTransfer
   }
-  
+
   public var direction: Direction {
     if self._wrapped.from == self._wrapped.to {
       return .`self`
@@ -181,9 +181,9 @@ extension Transfer {
     set { _wrapped.local = newValue }
     get { _wrapped.local }
   }
-  
+
   // MARK: - Private
-  
+
   private var _status: Status { Status(rawValue: self._wrapped.status) }
 }
 
@@ -195,15 +195,15 @@ extension Transfer: MDBXObject {
       return try self._wrapped.serializedData()
     }
   }
-  
+
   public var key: any MDBXKey {
     return TransferKey(chain: _chain, address: self.address, block: _wrapped.blockNumber, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0, contractAddress: self.contractAddress)
   }
-  
+
   public var alternateKey: (any MDBXKey)? {
     return TransferStableKey(chain: _chain, address: self.address, direction: self.direction, nonce: _wrapped.nonce, order: self.order ?? 0)
   }
-  
+
   public init(serializedData data: Data, chain: MDBXChain, key: Data?) throws {
     self._chain = chain
     self._wrapped = try _Transfer(serializedBytes: data)
@@ -211,7 +211,7 @@ extension Transfer: MDBXObject {
     self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: key)
   }
-  
+
   public init(jsonData: Data, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
@@ -221,7 +221,7 @@ extension Transfer: MDBXObject {
     self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: key)
   }
-  
+
   public init(jsonString: String, chain: MDBXChain, key: Data?) throws {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
@@ -231,24 +231,24 @@ extension Transfer: MDBXObject {
     self._metaKey = TokenMetaKey(chain: chain, contractAddress: address)
     commonInit(chain: chain, key: key)
   }
-  
+
   public static func array(fromJSONString string: String, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _Transfer.array(fromJSONString: string, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
-  
+
   public static func array(fromJSONData data: Data, chain: MDBXChain) throws -> [Self] {
     var options = JSONDecodingOptions()
     options.ignoreUnknownFields = true
     let objects = try _Transfer.array(fromJSONUTF8Data: data, options: options)
     return objects.lazy.map({ $0.wrapped(chain) })
   }
-  
+
   mutating public func merge(with object: any MDBXObject) {
     let other = object as! Transfer
-    
+
     _wrapped.hash               = other._wrapped.hash
     _wrapped.contractAddress    = other._wrapped.contractAddress
     _wrapped.address            = other._wrapped.address
@@ -283,7 +283,7 @@ extension _Transfer: ProtoWrappedMessage {
 public extension Transfer {
   static func ==(lhs: Transfer, rhs: Transfer) -> Bool {
     return lhs._chain == rhs._chain &&
-           lhs._wrapped == rhs._wrapped
+    lhs._wrapped == rhs._wrapped
   }
 }
 
@@ -303,19 +303,12 @@ extension Transfer: ProtoWrapper {
 
 extension Transfer: Comparable {
   public static func < (lhs: Transfer, rhs: Transfer) -> Bool {
-    let lhsKey = (lhs.key as! TransferKey).sortingKey.bytes
-    let rhsKey = (rhs.key as! TransferKey).sortingKey.bytes
-    
+    let lhsKey = (lhs.key as! TransferKey).sortingKey
+    let rhsKey = (rhs.key as! TransferKey).sortingKey
+   
     guard lhsKey.count == rhsKey.count else { return false }
     
-    for i in 0..<lhsKey.count {
-      let lhsByte = lhsKey[i]
-      let rhsByte = rhsKey[i]
-      if lhsByte != rhsByte {
-        return lhsByte < rhsByte
-      }
-    }
-    return false
+    return lhsKey.lexicographicallyPrecedes(rhsKey)
   }
 }
 
@@ -326,7 +319,7 @@ extension Transfer {
     // Wrappers
     __nftTransfer.chain = chain
     __nftTransfer.refreshProjected(wrapped: _wrapped.nft)
-    
+
     if let key, let transferKey = TransferKey(data: key) {
       self.order = transferKey.order
     }
